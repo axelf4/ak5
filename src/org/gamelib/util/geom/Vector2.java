@@ -7,7 +7,7 @@ package org.gamelib.util.geom;
  * Encapsulates a 2D vector. Allows chaining operations by returning a reference
  * to itself in all modification methods.
  * 
- * @author Axel
+ * @author pwnedary
  * 
  */
 public class Vector2 implements Vector<Vector2> {

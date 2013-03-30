@@ -12,7 +12,7 @@ import org.gamelib.Handler;
 import org.gamelib.HandlerRegistry;
 
 /**
- * @author Axel
+ * @author pwnedary
  * 
  */
 public class ParticleEmitter implements Handler {

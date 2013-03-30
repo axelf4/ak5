@@ -12,7 +12,7 @@ import java.awt.image.ImageObserver;
 /**
  * An two-dimensional animation integrated into an larger image.
  * 
- * @author Axel
+ * @author pwnedary
  * 
  */
 public class Sprite {

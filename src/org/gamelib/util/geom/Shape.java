@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 /**
  * TODO
  * 
- * @author Axel
+ * @author pwnedary
  * 
  */
 public interface Shape {

@@ -11,7 +11,7 @@ import org.w3c.dom.Element;
 
 /**
  * TODO make more standard not to only use TilED.
- * @author Axel
+ * @author pwnedary
  * 
  */
 public class TileSet {

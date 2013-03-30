@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 
 /**
- * @author Axel
+ * @author pwnedary
  * @see java.awt.Polygon
  */
 public class Polygon implements Shape {

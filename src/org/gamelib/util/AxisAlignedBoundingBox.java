@@ -9,7 +9,7 @@ import java.awt.Rectangle;
 /**
  * A bounding box which edges are parallel to the coordinate axes. (AABB)
  * 
- * @author Axel
+ * @author pwnedary
  */
 public class AxisAlignedBoundingBox {
 

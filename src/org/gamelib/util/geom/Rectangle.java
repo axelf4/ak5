@@ -10,7 +10,7 @@ import java.awt.Graphics2D;
  * enclosed by the <code>Rectangle</code> object's upper-left point
  * {@code (x,y)} in the coordinate space, its width, and its height.
  * 
- * @author Axel
+ * @author pwnedary
  * @see java.awt.Rectangle
  */
 public class Rectangle implements Shape {

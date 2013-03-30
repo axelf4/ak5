@@ -11,7 +11,7 @@ import java.awt.image.ImageObserver;
 /**
  * An image divided into animated sprites.
  * 
- * @author Axel
+ * @author pwnedary
  * 
  */
 public class SpriteSheet {

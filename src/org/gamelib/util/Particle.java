@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.util.Random;
 
 /**
- * @author Axel
+ * @author pwnedary
  * 
  */
 public class Particle implements Cloneable {

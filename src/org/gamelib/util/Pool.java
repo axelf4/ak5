@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * A pool of objects that can be reused to avoid allocation.
  * 
- * @author Axel
+ * @author pwnedary
  * 
  */
 public abstract class Pool<T> {

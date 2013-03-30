@@ -6,7 +6,7 @@ package org.gamelib.util;
 import static java.lang.Math.*;
 
 /**
- * @author Axel
+ * @author pwnedary
  * 
  */
 public class Math2D {

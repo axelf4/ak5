@@ -18,7 +18,7 @@ import org.w3c.dom.NodeList;
  * 
  * @see TileED TileED map editor <a
  *      href="http://mapeditor.org/">http://mapeditor.org/</a>
- * @author Axel
+ * @author pwnedary
  * 
  */
 public class Map {

@@ -5,7 +5,7 @@ package org.gamelib.util;
 
 
 /**
- * @author Axel
+ * @author pwnedary
  * 
  */
 public enum Direction {
