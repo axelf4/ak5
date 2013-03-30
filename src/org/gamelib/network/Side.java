@@ -23,7 +23,7 @@ public enum Side {
 	}
 
 	/**
-	 * @return if this is the Client environment
+	 * @return if this is the client environment
 	 */
 	public boolean isClient() {
 		return this == CLIENT;

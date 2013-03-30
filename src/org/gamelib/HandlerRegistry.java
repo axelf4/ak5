@@ -30,8 +30,7 @@ public class HandlerRegistry {
 
 	private static HandlerRegistry instance;
 	private Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers;
-	// public List<View> views;
-	public Node<View> views;
+	public List<View> views;
 
 	/**
 	 * 
@@ -39,8 +38,8 @@ public class HandlerRegistry {
 	private HandlerRegistry() {
 		// instance = this; // remove this line
 		handlers = new HashMap<Class<? extends Event>, CopyOnWriteArrayList<Handler>>(1);
-		// (views = new ArrayList<View>()).add(DEFAULT_VIEW);
-		(views = new Node<View>(null)).add(new Node<View>(DEFAULT_VIEW));
+		(views = new ArrayList<View>()).add(DEFAULT_VIEW);
+		// (views = new Node<View>(null)).add(new Node<View>(DEFAULT_VIEW));
 	}
 
 	/**
@@ -79,9 +78,9 @@ public class HandlerRegistry {
 		 * RuntimeException("must add the view first"); */
 		// register view
 		if (!views.contains(view)) {
+			views.add(view);
 			/*Node<View> node = new Node<View>(view);
 			views.add(node);*/
-			views.add(view);
 		}
 		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = view.handlers;
 		ArrayList<Class<? extends Event>> list = new ArrayList<Class<? extends Event>>();
@@ -117,8 +116,7 @@ public class HandlerRegistry {
 	 */
 	public void unregister(Handler handler, Class<? extends Event> type) {
 		if (type == null) {
-			
-			for (View view : views.asList()) {
+			for (View view : views) {
 				for (CopyOnWriteArrayList<Handler> list : view.handlers.values()) {
 					list.remove(handler);
 				}
@@ -144,7 +142,7 @@ public class HandlerRegistry {
 		}*/
 		/*for (int i = 0; i < views.size(); i++) {
 			View view = views.get(i);*/
-		for (View view : views.asList()) {
+		for (View view : views) {
 			if (view == null || !view.active)
 				continue;
 			Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = view.handlers;
@@ -174,7 +172,7 @@ public class HandlerRegistry {
 	}
 	
 	public void calculateViews() {
-		List<View> list = views.asList();
+		List<View> list = views;
 		for (int i = 0; i < list.size(); i++) {
 			View view1 = list.get(i);
 			Rectangle rectangle1 = view1.getRectangle();

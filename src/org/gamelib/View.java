@@ -13,13 +13,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.gamelib.Handler.Event;
 import org.gamelib.ui.Component;
-import org.gamelib.util.Node;
 
 /**
  * @author Axel
  *
  */
-public class View extends Node<View> {
+public class View {
 	public Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = new HashMap<Class<? extends Event>, CopyOnWriteArrayList<Handler>>(1);
 	private Rectangle rectangle = null;
 	/** Whether the handler should receive events */
@@ -72,7 +71,7 @@ public class View extends Node<View> {
 	/* View utility */
 
 	public void switchTo() {
-		for (View toCheck : HandlerRegistry.instance().views.asList()) {
+		for (View toCheck : HandlerRegistry.instance().views) {
 			toCheck.active = false;
 		}
 		active = true;
