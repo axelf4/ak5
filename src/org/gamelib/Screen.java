@@ -80,7 +80,6 @@ public class Screen extends JPanel { // JPanel Canvas
 				graphics2d.dispose();
 			} while (volatileImage.contentsLost());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			// g.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), this);

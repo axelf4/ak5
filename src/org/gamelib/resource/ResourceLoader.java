@@ -3,6 +3,9 @@
  */
 package org.gamelib.resource;
 
+import java.applet.Applet;
+import java.awt.Container;
+import java.awt.Frame;
 import java.awt.Image;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -28,6 +31,8 @@ public class ResourceLoader {
 	private static final Map<String, FileParser> parsers = new HashMap<String, FileParser>();
 	public static final List<Image> images = new ArrayList<Image>();
 	
+	public static Container container;
+	
 	static {
 		addFileParser(new FileParserImage(), new FileParserMap());
 	}
@@ -47,7 +52,13 @@ public class ResourceLoader {
 
 	public static InputStream getResourceAsStream(String path)
 			throws FileNotFoundException {
-		return new BufferedInputStream(new FileInputStream(path));
+		if (container instanceof Frame)
+			return new FileInputStream(path);
+		else if (container instanceof Applet) {
+			System.out.println(new File(((Applet) container).getCodeBase().getPath(), path).toString());
+			return new FileInputStream(new File(((Applet) container).getCodeBase().getPath(), path));
+		} else
+			return null;
 	}
 
 	/**

@@ -49,7 +49,7 @@ public class Log {
 	public static void error(String message, Throwable e) {
 		if (level >= LEVEL_ERROR) {
 			err.println(timeStamp() + " ERROR: " + message);
-			err.println(timeStamp() + " ERROR: " + e.getMessage());
+			// err.println(timeStamp() + " ERROR: " + e.getMessage());
 			e.printStackTrace(err);
 		}
 	}

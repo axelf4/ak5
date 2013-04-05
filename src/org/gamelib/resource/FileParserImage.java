@@ -11,16 +11,18 @@ import javax.imageio.ImageIO;
 
 /**
  * @author Axel
- *
+ * 
  */
 public class FileParserImage implements FileParser {
 
 	/* (non-Javadoc)
-	 * @see org.gamelib.resource.FileParser#parse(java.io.File)
-	 */
+	 * 
+	 * @see org.gamelib.resource.FileParser#parse(java.io.File) */
 	@Override
 	public Object parse(File file) throws IOException {
-		return ImageIO.read(new FileInputStream(file));
+		// return ImageIO.read(new FileInputStream(file));
+		// return ImageIO.read(getClass().getResourceAsStream(file.getPath()));
+		return ImageIO.read(ResourceLoader.getResourceAsStream(file.getPath()));
 	}
 
 	@Override
