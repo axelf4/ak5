@@ -34,7 +34,7 @@ public class ResourceLoader {
 	public static Container container;
 	
 	static {
-		addFileParser(new FileParserImage(), new FileParserMap());
+		addFileParser(new ImageFileParser(), new MapFileParser());
 	}
 	
 	public static Object load(String path) {

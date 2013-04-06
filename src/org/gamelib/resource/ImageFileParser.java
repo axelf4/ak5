@@ -13,7 +13,7 @@ import javax.imageio.ImageIO;
  * @author Axel
  * 
  */
-public class FileParserImage implements FileParser {
+public class ImageFileParser implements FileParser {
 
 	/* (non-Javadoc)
 	 * 

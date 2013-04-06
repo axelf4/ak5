@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
  * @author Axel
  * 
  */
-public class FileParserMap implements FileParser {
+public class MapFileParser implements FileParser {
 
 	/** The code used to decode Base64 encoding */
 	private static byte[] baseCodes = new byte[256];
