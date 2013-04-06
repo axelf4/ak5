@@ -3,13 +3,11 @@
  */
 package org.gamelib.resource;
 
-import java.awt.Font;
 import java.awt.FontFormatException;
 import java.io.File;
 import java.io.IOException;
 
 import org.gamelib.util.Log;
-import org.gamelib.util.UnicodeFont;
 
 /**
  * @author pwnedary
@@ -22,12 +20,14 @@ public class FontFileParser implements FileParser {
 	 */
 	@Override
 	public Object parse(File file) throws IOException {
-		try {
+		/*try {
 			return new UnicodeFont(Font.createFont(Font.TRUETYPE_FONT, file));
 		} catch (FontFormatException e) {
 			Log.error("can't create font", e);
 			return null;
-		}
+		}*/
+		
+		return null;
 	}
 
 	/* (non-Javadoc)

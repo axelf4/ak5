@@ -37,5 +37,17 @@ public class DisplayMode {
 	public DisplayMode(boolean fullscreen) {
 		this.fullscreen = fullscreen;
 	}
+	
+	public boolean isFullscreen() {
+		return fullscreen;
+	}
+	
+	public int getWidth() {
+		return width;
+	}
+	
+	public int getHeight() {
+		return height;
+	}
 
 }

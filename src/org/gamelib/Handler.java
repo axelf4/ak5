@@ -39,16 +39,19 @@ public interface Handler {
 	public void handlers(List<Class<? extends Event>> list);
 
 	public static abstract class Event {
-		protected static final boolean cancelable = true;
+		protected static final boolean DEFAULT_CANCELABLE = true;
 		public boolean cancelled;
 
 		/**
 		 * Stops the next handlers from receiving this event.
 		 */
 		public void cancel() {
-			if (!cancelable)
-				throw new UnsupportedOperationException();
+			if (!cancelable()) throw new UnsupportedOperationException();
 			cancelled = true;
+		}
+
+		protected boolean cancelable() {
+			return DEFAULT_CANCELABLE;
 		}
 
 		/** Event triggered each tick. */
@@ -57,10 +60,16 @@ public interface Handler {
 		/** Event triggered when the screen redraws. */
 		public static final class Draw extends Event {
 			public Graphics2D graphics2d;
+			public Graphics graphics;
 			public float interpolation;
 
 			public Draw(Graphics2D graphics2d, float interpolation) {
 				this.graphics2d = graphics2d;
+				this.interpolation = interpolation;
+			}
+
+			public Draw(Graphics graphics, float interpolation) {
+				this.graphics = graphics;
 				this.interpolation = interpolation;
 			}
 		}
@@ -74,23 +83,45 @@ public interface Handler {
 				this.event = event;
 				this.input = input;
 			}
+
+			public Control(Input input) {
+				this.input = input;
+			}
 		}
 
 		public static final class Key extends Control<KeyEvent> {
 			public Key(KeyEvent event, Input input) {
 				super(event, input);
 			}
+
+			public Key(Input input) {
+				super(input);
+			}
 		}
 
 		public static final class Mouse extends Control<MouseEvent> {
+			public int id;
+
 			public Mouse(MouseEvent event, Input input) {
 				super(event, input);
+			}
+
+			public Mouse(Input input, int id) {
+				super(input);
+				this.id = id;
 			}
 		}
 
 		public static final class MouseWheel extends Control<MouseWheelEvent> {
+			public double scrollAmount;
+
 			public MouseWheel(MouseWheelEvent event, Input input) {
 				super(event, input);
+			}
+
+			public MouseWheel(Input input, double scrollAmount) {
+				super(input);
+				this.scrollAmount = scrollAmount;
 			}
 		}
 
@@ -106,7 +137,7 @@ public interface Handler {
 		public static final class Layout extends Event {
 			public Component id;
 			public Event event;
-			
+
 			public Layout(Component id, Event event) {
 				this.id = id;
 			}

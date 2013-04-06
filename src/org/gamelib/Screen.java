@@ -21,7 +21,7 @@ import org.gamelib.Handler.Event;
  * @author Axel
  * 
  */
-public class Screen extends JPanel { // JPanel Canvas
+public class Screen { // JPanel Canvas
 
 	/**
 	 * 
@@ -30,31 +30,32 @@ public class Screen extends JPanel { // JPanel Canvas
 	private AffineTransform affineTransform;
 	public float interpolation;
 	// private BufferedImage bufferedImage;
+	private int width, height;
 
 	public VolatileImage volatileImage;
 
 	public int fps;
-	
+
 	public Screen() {
-		setIgnoreRepaint(true);
+		// setIgnoreRepaint(true);
+	}
+	
+	public Screen(DisplayMode mode) {
+		this.width = mode.getWidth();
+		this.height = mode.getHeight();
 	}
 
 	/**
 	 * 
 	 */
-	/*public Screen(GameClass game) {
-		// TODO Auto-generated constructor stub
-		super();
-		this.game = game;
-		setIgnoreRepaint(true);
-		// bufferedImage = (BufferedImage) createImage(getWidth(), getHeight());
-		// HandlerRegistry.getInstance().registerHandler(this);
-		// volatileImage = createVolatileImage(getWidth(), getHeight());
-	}*/
+	/* public Screen(GameClass game) { // TODO Auto-generated constructor stub
+	 * super(); this.game = game; setIgnoreRepaint(true); // bufferedImage =
+	 * (BufferedImage) createImage(getWidth(), getHeight()); //
+	 * HandlerRegistry.getInstance().registerHandler(this); // volatileImage =
+	 * createVolatileImage(getWidth(), getHeight()); } */
 
-	@Override
+	/*@Override
 	public void paintComponent(Graphics g) {
-		// TODO Auto-generated method stub
 		super.paintComponent(g);
 		try {
 			do {
@@ -92,6 +93,21 @@ public class Screen extends JPanel { // JPanel Canvas
 		// extra ms until
 		// Drawing is done which looks very jerky
 		Toolkit.getDefaultToolkit().sync();
+	}*/
+	
+	public void update() {
+		Game.getBackend().screenUpdate();
+	}
+	
+	public void drawHandlers(org.gamelib.Graphics g) {
+		g.setColor(Color.WHITE); // Color.WHITE
+		g.fillRect(0, 0, getWidth(), getHeight());
+		g.setColor(Color.BLACK);
+		// HandlerRegistry.getInstance().invokeHandlers(HandlerType.RENDER,
+		// graphics2d, interpolation);
+		HandlerRegistry.instance().invokeHandlers(new Event.Draw(g, interpolation));
+		g.setColor(Color.RED);
+		g.drawString("FPS: " + fps, 500, 10); // 5 10
 	}
 
 	/**
@@ -102,23 +118,14 @@ public class Screen extends JPanel { // JPanel Canvas
 	 * @return the loaded image
 	 * @throws IOException
 	 */
-	/*@Deprecated
-	public BufferedImage loadImage(String pathname) throws IOException {
-		Container container = game.container;
-		if (container instanceof JFrame)
-			return ImageIO.read(new File(pathname));
-		else if (container instanceof JApplet) {
-			URL url = ((JApplet) container).getCodeBase();
-			File f;
-			try {
-				f = new File(url.toURI());
-			} catch (URISyntaxException e) {
-				f = new File(url.getPath());
-			}
-			return (BufferedImage) ((JApplet) container).getImage(new URL("file:/" + f.getParent() + "/" + pathname));
-		}
-		return null;
-	}*/
+	/* @Deprecated public BufferedImage loadImage(String pathname) throws
+	 * IOException { Container container = game.container; if (container
+	 * instanceof JFrame) return ImageIO.read(new File(pathname)); else if
+	 * (container instanceof JApplet) { URL url = ((JApplet)
+	 * container).getCodeBase(); File f; try { f = new File(url.toURI()); }
+	 * catch (URISyntaxException e) { f = new File(url.getPath()); } return
+	 * (BufferedImage) ((JApplet) container).getImage(new URL("file:/" +
+	 * f.getParent() + "/" + pathname)); } return null; } */
 
 	public void reset(Graphics2D graphics2d) {
 		// TODO Auto-generated method stub
@@ -129,5 +136,13 @@ public class Screen extends JPanel { // JPanel Canvas
 	 * 
 	 * @RegisterHandler() public void repaint() { // TODO Auto-generated method
 	 * stub super.repaint(); } */
+	
+	public int getWidth() {
+		return width;
+	}
+	
+	public int getHeight() {
+		return height;
+	}
 
 }

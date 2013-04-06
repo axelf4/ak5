@@ -4,22 +4,13 @@
 package org.gamelib;
 
 import java.awt.AWTException;
-import java.awt.Component;
-import java.awt.EventQueue;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.util.HashMap;
 import java.util.Timer;
 
@@ -29,28 +20,34 @@ import org.gamelib.Handler.Event;
  * @author Axel
  * 
  */
-public class Input implements KeyEventDispatcher, MouseListener, MouseMotionListener, MouseWheelListener {
+public abstract class Input {
 
 	@SuppressWarnings("unused")
 	private final int MAX_REPEAT_RATE = 100; // Hz
 
-	private HashMap<Integer, Boolean> pressedKeys;
+	/** The "key pressed" event. */
+	public static final int KEY_PRESSED = KeyEvent.KEY_PRESSED;
+	/** The "key released" event. */
+	public static final int KEY_RELEASED = KeyEvent.KEY_RELEASED;
+	
+	public static final int MOUSE_MOVED = 0;
+	public static final int MOUSE_DRAGGED = 1;
+	public static final int MOUSE_PRESSED = 2;
+	public static final int MOUSE_RELEASED = 3;
+	public static final int MOUSE_CLICKED = 4;
+
+	protected HashMap<Integer, Boolean> pressedKeys;
 	Timer keyRepeatTimer;
 	public Point mousePosition;
-	public boolean[] pressedMouseButtons;
+	protected boolean[] pressedMouseButtons;
 
 	/**
 	 * 
 	 */
-	public Input(Component component) {
-		// TODO Auto-generated constructor stub
+	public Input() {
 		pressedKeys = new HashMap<Integer, Boolean>();
 		mousePosition = new Point(0, 0);
 		pressedMouseButtons = new boolean[3];
-		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
-		component.addMouseListener(this);
-		component.addMouseMotionListener(this);
-		component.addMouseWheelListener(this);
 	}
 
 	/**
@@ -70,7 +67,7 @@ public class Input implements KeyEventDispatcher, MouseListener, MouseMotionList
 		return b;
 	}
 
-	public void moveMouse(Point p) {
+	public void mouseMove(Point p) {
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice[] gs = ge.getScreenDevices();
 		// Search the devices for the one that draws the specified point.
@@ -96,83 +93,40 @@ public class Input implements KeyEventDispatcher, MouseListener, MouseMotionList
 		return;
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.KeyEventDispatcher#dispatchKeyEvent(java.awt.event.KeyEvent) */
-	@Override
-	public boolean dispatchKeyEvent(KeyEvent e) {
-		assert EventQueue.isDispatchThread();
-
-		// int keyCode = e.getKeyCode();
-		if (e.getID() == KeyEvent.KEY_PRESSED) {
-			pressedKeys.put(e.getKeyCode(), true);
-			switch (e.getKeyCode()) {
+	protected void keyEvent(int id, int keyCode) {
+		if (id == KeyEvent.KEY_PRESSED) {
+			pressedKeys.put(keyCode, true);
+			switch (keyCode) {
 			case KeyEvent.VK_ESCAPE:
 				System.exit(0);
 				break;
-
 			default:
 				break;
 			}
-		} else if (e.getID() == KeyEvent.KEY_RELEASED)
-			pressedKeys.put(e.getKeyCode(), false);
+		} else if (id == KeyEvent.KEY_RELEASED)
+			pressedKeys.put(keyCode, false);
 		// pressedKeys.put(e.getKeyCode(), e.getID() == KeyEvent.KEY_PRESSED);
-		HandlerRegistry.instance().invokeHandlers(new Event.Key(e, this));
-		return false;
+		HandlerRegistry.instance().invokeHandlers(new Event.Key(this));
 	}
-
-	/* Mouse listeners */
-
-	@Override
-	public void mouseMoved(java.awt.event.MouseEvent e) {
-		mousePosition = e.getPoint();
-		// HandlerRegistry.getInstance().invokeHandlers(HandlerType.MOUSE, this,
-		// e);
-		HandlerRegistry.instance().invokeHandlers(new Event.Mouse(e, this));
+	
+	protected void mouseEvent(int id, int button, Point p) {
+		mousePosition = p;
+		switch (id) {
+		case MOUSE_PRESSED:
+			pressedMouseButtons[button - 1] = true;
+			System.out.println("x: " + p.getX() + " y: " + p.getY());
+			break;
+		case MOUSE_RELEASED:
+			pressedMouseButtons[button - 1] = false;
+			break;
+		default:
+			break;
+		}
+		HandlerRegistry.instance().invokeHandlers(new Event.Mouse(this, id));
 	}
-
-	@Override
-	public void mousePressed(java.awt.event.MouseEvent e) {
-		pressedMouseButtons[e.getButton() - 1] = true;
-		mousePosition = e.getPoint();
-		System.out.println("x: " + e.getX() + " y: " + e.getY());
-		HandlerRegistry.instance().invokeHandlers(new Event.Mouse(e, this));
-	}
-
-	@Override
-	public void mouseReleased(java.awt.event.MouseEvent e) {
-		pressedMouseButtons[e.getButton() - 1] = false;
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		mousePosition = e.getPoint();
-		HandlerRegistry.instance().invokeHandlers(new Event.Mouse(e, this));
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		HandlerRegistry.instance().invokeHandlers(new Event.Mouse(e, this));
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		// HandlerRegistry.getInstance().invokeHandlers(HandlerType.MOUSEWHEEL,
-		// this, e);
-		HandlerRegistry.instance().invokeHandlers(new Event.MouseWheel(e, this));
+	
+	protected void mouseWheelEvent(double scrollAmount) {
+		HandlerRegistry.instance().invokeHandlers(new Event.MouseWheel(this, scrollAmount));
 	}
 
 	/**
@@ -658,13 +612,10 @@ public class Input implements KeyEventDispatcher, MouseListener, MouseMotionList
 	public static final class Mouse {
 		/** Indicates no mouse buttons; used by {@link #getButton}. */
 		public static final int NOBUTTON = 0;
-
 		/** Indicates mouse button #1; used by {@link #getButton}. */
 		public static final int BUTTON1 = 1;
-
 		/** Indicates mouse button #2; used by {@link #getButton}. */
 		public static final int BUTTON2 = 2;
-
 		/** Indicates mouse button #3; used by {@link #getButton}. */
 		public static final int BUTTON3 = 3;
 	}

@@ -10,11 +10,17 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.jar.JarFile;
 
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 
+import org.gamelib.backends.Backend;
 import org.gamelib.resource.ResourceLoader;
+import org.gamelib.util.Log;
 
 /**
  * @author Axel
@@ -26,10 +32,12 @@ public abstract class Game {
 
 	protected Thread thread;
 	public Container container;
-	protected Screen screen;
+	public Screen screen;
 	@SuppressWarnings("unused")
 	private HandlerRegistry handlerRegistry;
 	public Input input;
+	
+	private Backend backend;
 
 	/**
 	 * 
@@ -39,8 +47,7 @@ public abstract class Game {
 	}
 
 	protected void start(Container container) {
-		System.out.println("hello");
-		(this.container = container).add(screen = new Screen());
+		// (this.container = container).add(screen = new Screen());
 		DisplayMode mode = getDisplayMode();
 		if (container instanceof JFrame) {
 			((JFrame) container).setTitle(instance.toString());
@@ -52,7 +59,20 @@ public abstract class Game {
 		if (container instanceof JApplet)
 			((JApplet) container).resize(new Dimension(mode.width, mode.height));
 		handlerRegistry = HandlerRegistry.instance();
-		input = new Input(screen);
+		// input = new Input(screen);
+		ResourceLoader.container = container;
+
+		instance.initialize();
+		info("Initialized " + instance.toString());
+		(thread = new Thread(new FixedTimestepLoop(screen))).start();
+	}
+	
+	protected void start(Backend backend) {
+		(this.backend = backend).start(this, getDisplayMode());
+		
+		screen = new Screen(getDisplayMode());
+		handlerRegistry = HandlerRegistry.instance();
+		input = backend.getInput();
 		ResourceLoader.container = container;
 
 		instance.initialize();
@@ -103,6 +123,14 @@ public abstract class Game {
 			graphicsDevice.setFullScreenWindow(null);
 			frame.setVisible(true);
 		}
+	}
+	
+	public static Game getInstance() {
+		return instance;
+	}
+	
+	public static Backend getBackend() {
+		return instance.backend;
 	}
 
 }

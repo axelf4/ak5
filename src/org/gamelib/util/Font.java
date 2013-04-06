@@ -4,8 +4,11 @@
 package org.gamelib.util;
 
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
 /**
+ * 
+ * this.metrics = new BufferedImage(1, 1, BufferedImage.TYPE_BYTE_GRAY).getGraphics().getFontMetrics(font);
  * @author pwnedary
  * 
  */

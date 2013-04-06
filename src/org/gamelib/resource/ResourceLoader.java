@@ -21,6 +21,7 @@ import java.util.Map;
 import org.gamelib.util.Log;
 
 /**
+ * change to FileLoader
  * @author Axel
  * 
  */

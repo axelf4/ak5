@@ -46,7 +46,8 @@ public class FixedTimestepLoop implements Runnable {
 		while (isRunning) {
 			try {
 				HandlerRegistry.instance().invokeHandlers(new Event.Tick());
-				screen.repaint();
+				// screen.repaint();
+				screen.update();
 				long sleepTime = 50;// figure out sleepTime 5000000
 				long now = System.nanoTime(), diff;
 				while ((diff = System.nanoTime() - now) < sleepTime) {
@@ -103,7 +104,8 @@ public class FixedTimestepLoop implements Runnable {
 			float interpolation = Math.min(1.0f, (float) ((now - lastUpdateTime) / TIME_BETWEEN_UPDATES));
 			// drawGame(interpolation);
 			screen.interpolation = interpolation;
-			screen.repaint(0);
+			// screen.repaint(0);
+			screen.update();
 			frameCount++;
 			lastRenderTime = now;
 
