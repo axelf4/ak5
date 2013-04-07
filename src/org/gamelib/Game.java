@@ -5,24 +5,19 @@ package org.gamelib;
 
 import static org.gamelib.util.Log.info;
 
-import java.applet.Applet;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.jar.JarFile;
 
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 
 import org.gamelib.backends.Backend;
 import org.gamelib.resource.ResourceLoader;
-import org.gamelib.util.Log;
 
 /**
+ * TODO distribute backend better
  * @author Axel
  * 
  */
@@ -68,7 +63,8 @@ public abstract class Game {
 	}
 	
 	protected void start(Backend backend) {
-		(this.backend = backend).start(this, getDisplayMode());
+		// (this.backend = backend).start(this, getDisplayMode());
+		this.backend = backend;
 		
 		screen = new Screen(getDisplayMode());
 		handlerRegistry = HandlerRegistry.instance();
@@ -131,6 +127,10 @@ public abstract class Game {
 	
 	public static Backend getBackend() {
 		return instance.backend;
+	}
+	
+	public static DisplayMode getDisplayMode2() {
+		return instance.getDisplayMode();
 	}
 
 }

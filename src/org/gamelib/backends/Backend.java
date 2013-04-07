@@ -10,6 +10,7 @@ import org.gamelib.Input;
 
 /**
  * maybe interface?
+ * 
  * @author pwnedary
  * 
  */
@@ -21,4 +22,9 @@ public abstract class Backend {
 	public abstract Input getInput();
 
 	public abstract void screenUpdate();
+
+	/** @return system time in milliseconds */
+	public abstract long getTime();
+	
+	public abstract boolean shouldClose();
 }

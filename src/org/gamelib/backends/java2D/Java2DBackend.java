@@ -143,9 +143,17 @@ public class Java2DBackend extends Backend {
 			panel.graphics2d.drawRect(x, y, width, height);
 		}
 
+		/* (non-Javadoc)
+		 * @see org.gamelib.Graphics#drawLine(int, int, int, int)
+		 */
+		@Override
+		public void drawLine(int x1, int y1, int x2, int y2) {
+			panel.graphics2d.drawLine(x1, y1, x2, y2);
+		}
+
 	}
 
-	public class Java2DInput extends Input implements KeyEventDispatcher, MouseListener, MouseMotionListener, MouseWheelListener {
+	private class Java2DInput extends Input implements KeyEventDispatcher, MouseListener, MouseMotionListener, MouseWheelListener {
 		public Java2DInput(Component component) {
 			KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
 			component.addMouseListener(this);
@@ -222,6 +230,22 @@ public class Java2DBackend extends Backend {
 	@Override
 	public void screenUpdate() {
 		panel.repaint();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.backends.Backend#getTime()
+	 */
+	@Override
+	public long getTime() {
+		return System.nanoTime() / 1000000;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.backends.Backend#shouldClose()
+	 */
+	@Override
+	public boolean shouldClose() {
+		return false;
 	}
 
 }

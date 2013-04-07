@@ -34,13 +34,13 @@ public class FixedTimestepLoop implements Runnable {
 	 * 
 	 */
 	public FixedTimestepLoop(Screen screen) {
-		// TODO Auto-generated constructor stub
 		this.screen = screen;
 	}
 
 	/* (non-Javadoc)
 	 * 
 	 * @see java.lang.Runnable#run() */
+	@Deprecated
 	public void run(Math math) {
 		isRunning = true;
 		while (isRunning) {
@@ -67,8 +67,7 @@ public class FixedTimestepLoop implements Runnable {
 	 * 
 	 * @see java.lang.Runnable#run() */
 	public void run() {
-		// TODO Auto-generated method stub
-
+		Game.getBackend().start(Game.getInstance(), Game.getDisplayMode2());
 		// We will need the last update time.
 		double lastUpdateTime = System.nanoTime();
 		// Store the last time we rendered.
@@ -78,7 +77,7 @@ public class FixedTimestepLoop implements Runnable {
 		int lastSecondTime = (int) (lastUpdateTime / 1000000000);
 
 		isRunning = true;
-		while (isRunning) {
+		while (isRunning = !Game.getBackend().shouldClose()) {
 			double now = System.nanoTime();
 			int updateCount = 0;
 
@@ -132,8 +131,7 @@ public class FixedTimestepLoop implements Runnable {
 				// slightly less accurate, but is worth it.
 				// You can remove this line and it will still work (better),
 				// your CPU just climbs on certain OSes.
-				// FYI on some OS's this can cause pretty bad stuttering. Scroll
-				// down and have a look at different peoples' solutions to this.
+				// FYI on some OS's this can cause pretty bad stuttering.
 				try {
 					Thread.sleep(1);
 				} catch (Exception e) {
