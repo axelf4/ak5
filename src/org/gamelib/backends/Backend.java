@@ -9,6 +9,7 @@ import org.gamelib.Graphics;
 import org.gamelib.Input;
 
 /**
+ * maybe interface?
  * @author pwnedary
  * 
  */

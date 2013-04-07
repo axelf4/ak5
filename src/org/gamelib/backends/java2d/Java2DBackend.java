@@ -31,22 +31,22 @@ import org.gamelib.backends.Backend;
 
 /**
  * @author pwnedary
- *
+ * 
  */
-public class Java2dBackend extends Backend {
-	
+public class Java2DBackend extends Backend {
+
 	private Container container;
 	private Java2dPanel panel;
-	
-	private Java2dGraphics graphics;
-	
+
+	private Java2DGraphics graphics;
+
 	/**
 	 * 
 	 */
-	public Java2dBackend(Container container) {
+	public Java2DBackend(Container container) {
 		(this.container = container).add(panel = new Java2dPanel());
 	}
-	
+
 	public void start(Game instance, DisplayMode mode) {
 		if (container instanceof JFrame) {
 			((JFrame) container).setTitle(instance.toString());
@@ -58,7 +58,7 @@ public class Java2dBackend extends Backend {
 		if (container instanceof JApplet)
 			((JApplet) container).resize(new Dimension(mode.getWidth(), mode.getHeight()));
 	}
-	
+
 	private void setFullscreen(JFrame frame, boolean fullscreen) {
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice graphicsDevice = ge.getDefaultScreenDevice();
@@ -89,69 +89,70 @@ public class Java2dBackend extends Backend {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#getGraphics()
-	 */
+	 * 
+	 * @see org.gamelib.backends.Backend#getGraphics() */
 	@Override
 	public Graphics getGraphics() {
-		return graphics == null ? graphics = new Java2dGraphics() : graphics;
+		return graphics == null ? graphics = new Java2DGraphics() : graphics;
 	}
-	
+
 	public Input getInput() {
-		return new Java2dInput(container);
+		return new Java2DInput(container);
 	}
-	
-	private class Java2dGraphics implements Graphics {
+
+	private class Java2DGraphics implements Graphics {
 
 		/* (non-Javadoc)
-		 * @see org.gamelib.Graphics#setColor(java.awt.Color)
-		 */
+		 * 
+		 * @see org.gamelib.Graphics#setColor(java.awt.Color) */
 		@Override
 		public void setColor(Color c) {
 			panel.graphics2d.setColor(c);
 		}
 
 		/* (non-Javadoc)
-		 * @see org.gamelib.Graphics#drawImage(java.awt.Image, int, int, int, int, int, int, int, int)
-		 */
+		 * 
+		 * @see org.gamelib.Graphics#drawImage(java.awt.Image, int, int, int,
+		 * int, int, int, int, int) */
 		@Override
 		public void drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
 			panel.graphics2d.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
 		}
 
 		/* (non-Javadoc)
-		 * @see org.gamelib.Graphics#fillRect(int, int, int, int)
-		 */
+		 * 
+		 * @see org.gamelib.Graphics#fillRect(int, int, int, int) */
 		@Override
 		public void fillRect(int x, int y, int width, int height) {
 			panel.graphics2d.fillRect(x, y, width, height);
 		}
 
 		/* (non-Javadoc)
-		 * @see org.gamelib.Graphics#drawString(java.lang.String, int, int)
-		 */
+		 * 
+		 * @see org.gamelib.Graphics#drawString(java.lang.String, int, int) */
 		@Override
 		public void drawString(String str, int x, int y) {
 			panel.graphics2d.drawString(str, x, y);
 		}
 
 		/* (non-Javadoc)
-		 * @see org.gamelib.Graphics#drawRect(int, int, int, int)
-		 */
+		 * 
+		 * @see org.gamelib.Graphics#drawRect(int, int, int, int) */
 		@Override
 		public void drawRect(int x, int y, int width, int height) {
 			panel.graphics2d.drawRect(x, y, width, height);
 		}
-		
+
 	}
-	
-	public class Java2dInput extends Input implements KeyEventDispatcher, MouseListener, MouseMotionListener, MouseWheelListener {
-		public Java2dInput(Component component) {
+
+	public class Java2DInput extends Input implements KeyEventDispatcher, MouseListener, MouseMotionListener, MouseWheelListener {
+		public Java2DInput(Component component) {
 			KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
 			component.addMouseListener(this);
 			component.addMouseMotionListener(this);
 			component.addMouseWheelListener(this);
 		}
-		
+
 		/* (non-Javadoc)
 		 * 
 		 * @see
@@ -162,7 +163,7 @@ public class Java2dBackend extends Backend {
 			keyEvent(e.getID(), e.getKeyCode());
 			return false;
 		}
-		
+
 		/* Mouse listeners */
 
 		@Override
@@ -206,11 +207,18 @@ public class Java2dBackend extends Backend {
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			mouseWheelEvent(e.getPreciseWheelRotation());
 		}
+
+		/* (non-Javadoc)
+		 * 
+		 * @see org.gamelib.Input#poll() */
+		@Override
+		public void poll() {
+		}
 	}
 
 	/* (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#screenUpdate()
-	 */
+	 * 
+	 * @see org.gamelib.backends.Backend#screenUpdate() */
 	@Override
 	public void screenUpdate() {
 		panel.repaint();

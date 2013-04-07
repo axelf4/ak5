@@ -29,7 +29,7 @@ public abstract class Input {
 	public static final int KEY_PRESSED = KeyEvent.KEY_PRESSED;
 	/** The "key released" event. */
 	public static final int KEY_RELEASED = KeyEvent.KEY_RELEASED;
-	
+
 	public static final int MOUSE_MOVED = 0;
 	public static final int MOUSE_DRAGGED = 1;
 	public static final int MOUSE_PRESSED = 2;
@@ -93,6 +93,9 @@ public abstract class Input {
 		return;
 	}
 
+	/** Checks for queued input states. */
+	public abstract void poll();
+
 	protected void keyEvent(int id, int keyCode) {
 		if (id == KeyEvent.KEY_PRESSED) {
 			pressedKeys.put(keyCode, true);
@@ -108,7 +111,7 @@ public abstract class Input {
 		// pressedKeys.put(e.getKeyCode(), e.getID() == KeyEvent.KEY_PRESSED);
 		HandlerRegistry.instance().invokeHandlers(new Event.Key(this));
 	}
-	
+
 	protected void mouseEvent(int id, int button, Point p) {
 		mousePosition = p;
 		switch (id) {
@@ -124,7 +127,7 @@ public abstract class Input {
 		}
 		HandlerRegistry.instance().invokeHandlers(new Event.Mouse(this, id));
 	}
-	
+
 	protected void mouseWheelEvent(double scrollAmount) {
 		HandlerRegistry.instance().invokeHandlers(new Event.MouseWheel(this, scrollAmount));
 	}
