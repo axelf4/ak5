@@ -1,0 +1,2 @@
+add getX and getY that returns the upper hand left corner
+add shapemath that handles collisions between shapes
