@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.backends.java2d;
+package org.gamelib.backends.java2D;
 
 import java.awt.Color;
 import java.awt.Component;
