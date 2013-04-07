@@ -12,18 +12,6 @@ import java.awt.Graphics2D;
  * 
  */
 public interface Shape {
-	/* /** Tests if the specified rectangle is inside the boundary of this
-	 * <code>Shape</code>.
-	 * 
-	 * @param x
-	 * 
-	 * @param y
-	 * 
-	 * @param width
-	 * 
-	 * @param height
-	 * 
-	 * @return4/ public boolean collides(int x, int y, int width, int height); */
 	/**
 	 * Tests if the specified {@link Shape} is inside the boundary of this
 	 * {@link Shape}.
@@ -34,16 +22,21 @@ public interface Shape {
 	public boolean collides(Shape shape);
 
 	/**
-	 * Translates the vertices of this <code>Shape</code>.
+	 * Translates the vertices of this {@link Shape}.
 	 * 
 	 * @param deltaX the amount to translate along the X axis
 	 * @param deltaY the amount to translate along the Y axis
 	 */
 	public void translate(int deltaX, int deltaY);
-	
+
+	/**
+	 * Rotates the vertices of this {@link Shape} around the center.
+	 * 
+	 * @param theta amount in degrees
+	 */
 	public void rotate(double theta);
 
-	/** Gets the bounding box of this <code>Shape</code>. */
+	/** @return the bounding box of this {@link Shape}. */
 	public Rectangle getBounds();
 
 	/**
