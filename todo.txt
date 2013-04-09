@@ -2,3 +2,4 @@ add getX and getY that returns the upper hand left corner
 add shapemath that handles collisions between shapes
 delete MOUSE_CLICKED event as it is unnecesarry
 maybe change Event.Tick to Event.Update
+in graphics add drawPoint
