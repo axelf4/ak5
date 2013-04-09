@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.gamelib.Handler.Event;
-import org.gamelib.util.Log;
-import org.gamelib.util.Node;
 
 /**
  * The registry holding all of the handlers. An handler should be registered
@@ -26,7 +24,7 @@ import org.gamelib.util.Node;
 public class HandlerRegistry {
 
 	/** Used of all undefined handlers. */
-	public static final View DEFAULT_VIEW = new View();
+	public static final View DEFAULT_VIEW = new View().setAlwaysActive(true);
 
 	private static HandlerRegistry instance;
 	private Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers;

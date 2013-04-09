@@ -3,10 +3,10 @@
  */
 package org.gamelib.util.geom;
 
-import java.awt.Graphics2D;
+import org.gamelib.Graphics;
 
 /**
- * TODO
+ * TODO add getX and getY that return the upper hand left corner
  * 
  * @author pwnedary
  * 
@@ -14,7 +14,10 @@ import java.awt.Graphics2D;
 public interface Shape {
 	/**
 	 * Tests if the specified {@link Shape} is inside the boundary of this
-	 * {@link Shape}.
+	 * {@link Shape}. supported:
+	 * rectangle -> rectangle
+	 * rectangle -> point
+	 * polygon -> polygon
 	 * 
 	 * @param shape the {@link Shape} to test against
 	 * @return if it's a collision
@@ -32,7 +35,7 @@ public interface Shape {
 	/**
 	 * Rotates the vertices of this {@link Shape} around the center.
 	 * 
-	 * @param theta amount in degrees
+	 * @param theta amount in radians
 	 */
 	public void rotate(double theta);
 
@@ -42,7 +45,9 @@ public interface Shape {
 	/**
 	 * Draws the shape.
 	 * 
-	 * @param g2d the {@link Graphics2D} reference
+	 * @param g the {@link Graphics} reference
 	 */
-	public void draw(Graphics2D g2d);
+	public void draw(Graphics g);
+	
+	public java.awt.Shape toAWT();
 }

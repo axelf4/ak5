@@ -16,13 +16,14 @@ import org.gamelib.ui.Component;
 
 /**
  * @author Axel
- *
+ * 
  */
 public class View {
 	public Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = new HashMap<Class<? extends Event>, CopyOnWriteArrayList<Handler>>(1);
 	private Rectangle rectangle = null;
 	/** Whether the handler should receive events */
 	public boolean active = true;
+	private boolean alwaysActive = false;
 
 	// private List<Scene> views = HandlerRegistry.instance().views;
 
@@ -51,7 +52,12 @@ public class View {
 	public void setRectangle(Rectangle rectangle) {
 		this.rectangle = rectangle;
 	}
-	
+
+	public View setAlwaysActive(boolean b) {
+		this.alwaysActive = b;
+		return this;
+	}
+
 	/**
 	 * Registers an handler
 	 * 
@@ -72,21 +78,21 @@ public class View {
 
 	public void switchTo() {
 		for (View toCheck : HandlerRegistry.instance().views) {
-			toCheck.active = false;
+			if (!toCheck.alwaysActive) toCheck.active = false;
 		}
 		active = true;
 	}
-	
+
 	public static class UIPane extends View {
 		private List<Component> components = new ArrayList<Component>();
-		
+
 		/**
 		 * 
 		 */
 		public UIPane() {
 			// TODO Auto-generated constructor stub
 		}
-		
+
 		public void add(Component component) {
 			components.add(component);
 		}

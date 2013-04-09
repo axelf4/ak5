@@ -3,9 +3,10 @@
  */
 package org.gamelib.util.geom;
 
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.Arrays;
+
+import org.gamelib.Graphics;
 
 
 /**
@@ -23,6 +24,7 @@ public class Polygon implements Shape {
 
 	private int deltaX, deltaY;
 	public int xCenter, yCenter;
+	private double angle;
 
 	/**
 	 * Creates an empty polygon.
@@ -109,10 +111,20 @@ public class Polygon implements Shape {
 	 * 
 	 * @see org.gamelib.util.Shape#draw(java.awt.Graphics2D) */
 	@Override
-	public void draw(Graphics2D g2d) {
+	public void draw(Graphics g) {
 		java.awt.Polygon polygon = new java.awt.Polygon(xpoints, ypoints, npoints);
 		polygon.translate(deltaX, deltaY);
-		g2d.draw(polygon);
+		// g2d.draw(polygon);
+		int prevX = 0, prevY = 0;
+		for (int i = 0; i < npoints; i++) {
+			if (i <= 0) {
+				prevX = getPointX(i);
+				prevY = getPointY(i);
+				continue;
+			}
+			g.drawLine(prevX, prevY, prevX = getPointX(i), prevY = getPointY(i));
+		}
+		g.drawLine(getPointX(0), getPointY(0), prevX, prevY);
 	}
 
 	/**
@@ -168,6 +180,9 @@ public class Polygon implements Shape {
 	@Override
 	public void rotate(double theta) {
 		findCenter();
+		double increment = angle - theta;
+		angle += theta;
+		theta -= increment;
 		for (int i = 0; i < npoints; i++) {
 			double Xo = xpoints[i]; // temp X location for use in y vertices
 			// modification
@@ -202,6 +217,14 @@ public class Polygon implements Shape {
 	
 	public int getPointY(int id) {
 		return ypoints[id] + deltaY;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.util.geom.Shape#toAWT()
+	 */
+	@Override
+	public java.awt.Shape toAWT() {
+		return new java.awt.Polygon(xpoints, ypoints, npoints);
 	}
 
 }

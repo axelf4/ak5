@@ -67,6 +67,7 @@ public abstract class Game {
 		this.backend = backend;
 		
 		screen = new Screen(getDisplayMode());
+		System.out.println(screen.getWidth());
 		handlerRegistry = HandlerRegistry.instance();
 		input = backend.getInput();
 		ResourceLoader.container = container;

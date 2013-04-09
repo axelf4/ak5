@@ -3,8 +3,6 @@
  */
 package org.gamelib;
 
-import java.awt.Graphics2D;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -53,11 +51,11 @@ public class Universe2d implements Handler {
 				entity.update();
 			}
 		} else if (event instanceof Event.Draw) {
-			Graphics2D g2d = ((Event.Draw) event).graphics2d;
+			Graphics g = ((Event.Draw) event).graphics;
 			float interpolation = ((Event.Draw) event).interpolation;
 			for (Iterator<Entity> iterator = entities.iterator(); iterator.hasNext();) {
 				Entity entity = (Entity) iterator.next();
-				entity.draw(g2d, interpolation);
+				entity.draw(g, interpolation);
 			}
 		}
 	}

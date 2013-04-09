@@ -5,6 +5,7 @@ package org.gamelib.backends.lwjgl;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Point;
 
 import org.gamelib.DisplayMode;
 import org.gamelib.Game;
@@ -14,6 +15,7 @@ import org.gamelib.backends.Backend;
 import org.gamelib.util.Log;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
@@ -33,12 +35,13 @@ public class LWJGLBackend extends Backend {
 	public void start(Game instance, DisplayMode mode) {
 		try {
 			// Display.setDisplayModeAndFullscreen(convertModes(mode));
-			Display.setDisplayMode(new org.lwjgl.opengl.DisplayMode(800,600));
+			Display.setDisplayMode(new org.lwjgl.opengl.DisplayMode(800, 600));
 			Display.create();
-			
+
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
 			GL11.glLoadIdentity();
-			GL11.glOrtho(0, 800, 0, 600, 1, -1);
+			// GL11.glOrtho(0, mode.getWidth(), 0, mode.getHeight(), 1, -1);
+			GL11.glOrtho(0, mode.getWidth(), mode.getHeight(), 0, -1, 1);
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		} catch (LWJGLException e) {
 			Log.error("", e);
@@ -64,6 +67,7 @@ public class LWJGLBackend extends Backend {
 		@Override
 		public void setColor(Color c) {
 			this.currentColor = c;
+			GL11.glColor3f(currentColor.getRed() / 255, currentColor.getGreen() / 255, currentColor.getBlue() / 255);
 		}
 
 		/* (non-Javadoc)
@@ -129,7 +133,66 @@ public class LWJGLBackend extends Backend {
 	 * @see org.gamelib.backends.Backend#getInput() */
 	@Override
 	public Input getInput() {
-		return null;
+		return new LWJGLInput();
+	}
+
+	private class LWJGLInput extends Input {
+
+		/* (non-Javadoc)
+		 * 
+		 * @see org.gamelib.Input#poll() */
+		@Override
+		public void poll() {
+			while (Keyboard.next())
+				// pressedKeys.put(Keyboard.getEventKey(),
+				// Keyboard.getEventKeyState());
+				keyEvent(Keyboard.getEventKeyState() ? KEY_PRESSED : KEY_RELEASED, translateKeyCode(Keyboard.getEventKey()));
+			// mousePosition.setLocation(org.lwjgl.input.Mouse.getX(),
+			// org.lwjgl.input.Mouse.getY());
+			Point p = new Point(org.lwjgl.input.Mouse.getX(), org.lwjgl.input.Mouse.getY());
+			while (org.lwjgl.input.Mouse.next()) {
+				boolean pressed = org.lwjgl.input.Mouse.getEventButtonState();
+				int button = org.lwjgl.input.Mouse.getEventButton();
+				if (org.lwjgl.input.Mouse.getEventDX() != 0 || org.lwjgl.input.Mouse.getEventDY() != 0) // moved
+				mouseEvent(pressed ? MOUSE_DRAGGED : MOUSE_MOVED, button, p);
+				else {
+					mouseEvent(pressed ? MOUSE_PRESSED : MOUSE_RELEASED, button, p);
+					if (!pressed) {
+						mouseEvent(MOUSE_CLICKED, button, p);
+					}
+				}
+			}
+		}
+
+		/* (non-Javadoc)
+		 * 
+		 * @see org.gamelib.Input#translateBackendKeyCode(int) */
+		@Override
+		public int translateKeyCode(int keyCode) {
+			switch (keyCode) {
+			case Keyboard.KEY_W:
+				return Input.Key.VK_W;
+			case Keyboard.KEY_A:
+				return Input.Key.VK_A;
+			case Keyboard.KEY_S:
+				return Input.Key.VK_S;
+			case Keyboard.KEY_D:
+				return Input.Key.VK_D;
+			case Keyboard.KEY_LEFT:
+				return Input.Key.VK_LEFT;
+			case Keyboard.KEY_RIGHT:
+				return Input.Key.VK_RIGHT;
+			case Keyboard.KEY_UP:
+				return Input.Key.VK_UP;
+			case Keyboard.KEY_DOWN:
+				return Input.Key.VK_DOWN;
+			case Keyboard.KEY_SPACE:
+				return Input.Key.VK_SPACE;
+
+			default:
+				return -1;
+			}
+		}
 	}
 
 	/* (non-Javadoc)

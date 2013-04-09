@@ -116,11 +116,11 @@ public abstract class Input {
 		mousePosition = p;
 		switch (id) {
 		case MOUSE_PRESSED:
-			pressedMouseButtons[button - 1] = true;
+			pressedMouseButtons[button] = true;
 			System.out.println("x: " + p.getX() + " y: " + p.getY());
 			break;
 		case MOUSE_RELEASED:
-			pressedMouseButtons[button - 1] = false;
+			pressedMouseButtons[button] = false;
 			break;
 		default:
 			break;
@@ -605,6 +605,20 @@ public abstract class Input {
 		 */
 		public static final int VK_UNDEFINED = 0x0;
 	}
+	
+	/** Constants for keyboard hardware. */
+	/*public static final class Keyboard {
+		
+	}*/
+
+	/**
+	 * Translates the keyCode to match the ones in {@link Input.Key}. The normal
+	 * user should never need to use this method.
+	 * 
+	 * @param keyCode the key to translate
+	 * @return the translated key
+	 */
+	public abstract int translateKeyCode(int keyCode);
 
 	/**
 	 * Constants for mouse hardware.

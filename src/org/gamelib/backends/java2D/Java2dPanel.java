@@ -32,6 +32,7 @@ public class Java2dPanel extends JPanel {
 	 */
 	public Java2dPanel() {
 		setIgnoreRepaint(true);
+		setRequestFocusEnabled(true);
 	}
 	
 	@Override

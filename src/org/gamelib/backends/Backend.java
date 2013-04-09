@@ -17,8 +17,10 @@ import org.gamelib.Input;
 public abstract class Backend {
 	public abstract void start(Game instance, DisplayMode mode);
 
+	/** better with singleton */
 	public abstract Graphics getGraphics();
 
+	/** no need for singleton */
 	public abstract Input getInput();
 
 	public abstract void screenUpdate();

@@ -33,6 +33,7 @@ public interface Graphics {
 	public void drawRect(int x, int y, int width, int height);
 	public void fillRect(int x, int y, int width, int height);
 	
+	/* replace with fonts and delete */
 	public void drawString(String str, int x, int y);
 
 }

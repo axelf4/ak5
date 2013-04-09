@@ -3,7 +3,7 @@
  */
 package org.gamelib.util.geom;
 
-import java.awt.Graphics2D;
+import org.gamelib.Graphics;
 
 /**
  * A <code>Rectangle</code> specifies an area in a coordinate space that is
@@ -15,11 +15,14 @@ import java.awt.Graphics2D;
  */
 public class Rectangle implements Shape {
 
-	public int /** The X coordinate of the upper-left corner. */
-	x, /** The Y coordinate of the upper-left corner. */
-	y, /** The width of the <code>Rectangle</code>. */
-	width, /** The width of the <code>Rectangle</code>. */
-	height;
+	/** The X coordinate of the upper-left corner. */
+	public int x;
+	/** The Y coordinate of the upper-left corner. */
+	public int y;
+	/** The width of the <code>Rectangle</code>. */
+	public int width;
+	/** The width of the <code>Rectangle</code>. */
+	public int height;
 
 	/**
 	 * 
@@ -43,18 +46,23 @@ public class Rectangle implements Shape {
 	 * @see org.gamelib.util.Shape#collides(org.gamelib.util.Shape) */
 	@Override
 	public boolean collides(Shape shape) {
-		Rectangle r = (Rectangle) shape;
-		int w1 = x + width, w2 = r.x + r.width, h1 = y + height, h2 = r.y + r.height;
-		return !(r.x > w1 || w2 < x || r.y > h1 || h2 < y);
+		if (shape instanceof Rectangle) {
+			Rectangle r = (Rectangle) shape;
+			int w1 = x + width, w2 = r.x + r.width, h1 = y + height, h2 = r.y + r.height;
+			return !(r.x > w1 || w2 < x || r.y > h1 || h2 < y);
+		} else if (shape instanceof Point) {
+			Point p = (Point) shape;
+			return p.getX() >= x && p.getX() <= x + width && p.getY() >= y && p.getY() <= y + height;
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)
 	 * 
 	 * @see org.gamelib.util.Shape#draw(java.awt.Graphics2D) */
 	@Override
-	public void draw(Graphics2D g2d) {
-		// TODO Auto-generated method stub
-
+	public void draw(Graphics g) {
+		g.drawRect(x, y, width, height);
 	}
 
 	/* (non-Javadoc)
@@ -81,6 +89,14 @@ public class Rectangle implements Shape {
 	public void rotate(double theta) {
 		// TODO Auto-generated method stub
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.util.geom.Shape#toAWT()
+	 */
+	@Override
+	public java.awt.Shape toAWT() {
+		return new java.awt.Rectangle(x, y, width, height);
 	}
 
 }
