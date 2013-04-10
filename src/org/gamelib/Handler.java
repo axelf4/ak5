@@ -61,16 +61,16 @@ public interface Handler {
 		public static final class Draw extends Event {
 			public Graphics2D graphics2d;
 			public Graphics graphics;
-			public float interpolation;
+			public float delta;
 
-			public Draw(Graphics2D graphics2d, float interpolation) {
-				this.graphics2d = graphics2d;
-				this.interpolation = interpolation;
+			public Draw(Graphics graphics, float delta) {
+				this.graphics = graphics;
+				this.delta = delta;
 			}
 
-			public Draw(Graphics graphics, float interpolation) {
-				this.graphics = graphics;
-				this.interpolation = interpolation;
+			public Draw(Graphics2D graphics2d, float delta) {
+				this.graphics2d = graphics2d;
+				this.delta = delta;
 			}
 		}
 

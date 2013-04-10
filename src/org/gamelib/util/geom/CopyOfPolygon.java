@@ -13,7 +13,7 @@ import org.gamelib.Graphics;
  * @author pwnedary
  * @see java.awt.Polygon
  */
-public class Polygon implements Shape {
+public class CopyOfPolygon implements Shape {
 
 	/** The total number of points */
 	private int npoints;
@@ -29,7 +29,7 @@ public class Polygon implements Shape {
 	/**
 	 * Creates an empty polygon.
 	 */
-	public Polygon() {
+	public CopyOfPolygon() {
 		xpoints = new int[4];
 		ypoints = new int[4];
 		npoints = 4;
@@ -43,7 +43,7 @@ public class Polygon implements Shape {
 	 * @param ypoints an array of Y coordinates
 	 * @param npoints the total number of points in the <code>Polygon</code>
 	 */
-	public Polygon(int[] xpoints, int[] ypoints, int npoints) {
+	public CopyOfPolygon(int[] xpoints, int[] ypoints, int npoints) {
 		if (npoints > xpoints.length || npoints > ypoints.length)
 			throw new IndexOutOfBoundsException("npoints > xpoints.length || " + "npoints > ypoints.length");
 		if (npoints < 0)
@@ -59,11 +59,11 @@ public class Polygon implements Shape {
 	 * @see org.gamelib.util.Shape#collides(Shape) */
 	@Override
 	public boolean collides(Shape shape) {
-		Polygon polygon = (Polygon) shape;
+		CopyOfPolygon polygon = (CopyOfPolygon) shape;
 		// test separation axes of current polygon
 		for (int j = npoints - 1, i = 0; i < npoints; j = i, i++) {
 			// Separate axis is perpendicular to the edge
-			Point axis = new Point(getPointY(i) - getPointY(j), getPointX(i) - getPointX(j));
+			Point axis = new Point(ypoints[i] + deltaY - ypoints[j] - deltaY, xpoints[i] + deltaX - xpoints[j] - deltaX); // nullified
 
 			if (separatedByAxis(axis, polygon))
 				return false;
@@ -72,7 +72,7 @@ public class Polygon implements Shape {
 		// test separation axes of other polygon
 		for (int j = polygon.npoints - 1, i = 0; i < polygon.npoints; j = i, i++) {
 			// Separate axis is perpendicular to the edge
-			Point axis = new Point(-polygon.getPointY(i) - polygon.getPointY(j), polygon.getPointX(i) - polygon.getPointX(j));
+			Point axis = new Point(-polygon.ypoints[i] + -deltaX - polygon.ypoints[j] - deltaY, polygon.xpoints[i] + deltaX - polygon.xpoints[j] - deltaX);
 
 			if (separatedByAxis(axis, polygon))
 				return false;
@@ -83,10 +83,10 @@ public class Polygon implements Shape {
 	float min, max, mina, maxa, minb, maxb;
 
 	public void calculateInterval(Point axis) {
-		this.min = this.max = (float) getPointX(0) * axis.x + getPointY(0) * axis.y;
+		this.min = this.max = (float) (xpoints[0] + deltaX) * axis.x + (ypoints[0] + deltaY) * axis.y;
 
 		for (int i = 1; i < npoints; i++) {
-			float d = (float) getPointX(i) * axis.x + getPointY(i) * axis.y;
+			float d = (float) (xpoints[i] + deltaX) * axis.x + (ypoints[i] + deltaY) * axis.y;
 			if (d < this.min)
 				this.min = d;
 			else if (d > this.max)
@@ -98,7 +98,7 @@ public class Polygon implements Shape {
 		return (mina > maxb) || (minb > maxa);
 	}
 
-	public boolean separatedByAxis(Point axis, Polygon polygon) {
+	public boolean separatedByAxis(Point axis, CopyOfPolygon polygon) {
 		calculateInterval(axis);
 		mina = min;
 		maxa = max;
@@ -181,7 +181,7 @@ public class Polygon implements Shape {
 	@Override
 	public void rotate(double theta) {
 		double increment = angle - theta;
-		angle += increment;
+		angle += theta;
 		theta -= increment;
 		for (int i = 0; i < npoints; i++) {
 			double Xo = xpoints[i]; // temp X location for use in y vertices

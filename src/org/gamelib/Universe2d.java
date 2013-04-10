@@ -52,7 +52,7 @@ public class Universe2d implements Handler {
 			}
 		} else if (event instanceof Event.Draw) {
 			Graphics g = ((Event.Draw) event).graphics;
-			float interpolation = ((Event.Draw) event).interpolation;
+			float interpolation = ((Event.Draw) event).delta;
 			for (Iterator<Entity> iterator = entities.iterator(); iterator.hasNext();) {
 				Entity entity = (Entity) iterator.next();
 				entity.draw(g, interpolation);

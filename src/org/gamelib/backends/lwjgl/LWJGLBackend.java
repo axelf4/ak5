@@ -149,7 +149,7 @@ public class LWJGLBackend extends Backend {
 				keyEvent(Keyboard.getEventKeyState() ? KEY_PRESSED : KEY_RELEASED, translateKeyCode(Keyboard.getEventKey()));
 			// mousePosition.setLocation(org.lwjgl.input.Mouse.getX(),
 			// org.lwjgl.input.Mouse.getY());
-			Point p = new Point(org.lwjgl.input.Mouse.getX(), org.lwjgl.input.Mouse.getY());
+			Point p = new Point(org.lwjgl.input.Mouse.getX(), Display.getHeight() - org.lwjgl.input.Mouse.getY());
 			while (org.lwjgl.input.Mouse.next()) {
 				boolean pressed = org.lwjgl.input.Mouse.getEventButtonState();
 				int button = org.lwjgl.input.Mouse.getEventButton();
