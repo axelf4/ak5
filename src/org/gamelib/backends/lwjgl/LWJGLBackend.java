@@ -169,29 +169,7 @@ public class LWJGLBackend extends Backend {
 		 * @see org.gamelib.Input#translateBackendKeyCode(int) */
 		@Override
 		public int translateKeyCode(int keyCode) {
-			switch (keyCode) {
-			case Keyboard.KEY_W:
-				return Input.Key.VK_W;
-			case Keyboard.KEY_A:
-				return Input.Key.VK_A;
-			case Keyboard.KEY_S:
-				return Input.Key.VK_S;
-			case Keyboard.KEY_D:
-				return Input.Key.VK_D;
-			case Keyboard.KEY_LEFT:
-				return Input.Key.VK_LEFT;
-			case Keyboard.KEY_RIGHT:
-				return Input.Key.VK_RIGHT;
-			case Keyboard.KEY_UP:
-				return Input.Key.VK_UP;
-			case Keyboard.KEY_DOWN:
-				return Input.Key.VK_DOWN;
-			case Keyboard.KEY_SPACE:
-				return Input.Key.VK_SPACE;
-
-			default:
-				return -1;
-			}
+			return keyCode;
 		}
 	}
 

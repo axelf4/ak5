@@ -144,8 +144,8 @@ public class Java2DBackend extends Backend {
 		}
 
 		/* (non-Javadoc)
-		 * @see org.gamelib.Graphics#drawLine(int, int, int, int)
-		 */
+		 * 
+		 * @see org.gamelib.Graphics#drawLine(int, int, int, int) */
 		@Override
 		public void drawLine(int x1, int y1, int x2, int y2) {
 			panel.graphics2d.drawLine(x1, y1, x2, y2);
@@ -224,11 +224,16 @@ public class Java2DBackend extends Backend {
 		}
 
 		/* (non-Javadoc)
-		 * @see org.gamelib.Input#translateKeyCode(int)
-		 */
+		 * 
+		 * @see org.gamelib.Input#translateKeyCode(int) */
 		@Override
 		public int translateKeyCode(int keyCode) {
-			return keyCode;
+			switch (keyCode) {
+			case KeyEvent.VK_ESCAPE:
+				return Key.KEY_ESCAPE;
+			default:
+				return Key.KEY_UNDEFINED;
+			}
 		}
 	}
 
@@ -241,28 +246,27 @@ public class Java2DBackend extends Backend {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#getTime()
-	 */
+	 * 
+	 * @see org.gamelib.backends.Backend#getTime() */
 	@Override
 	public long getTime() {
 		return System.nanoTime() / 1000000;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#shouldClose()
-	 */
+	 * 
+	 * @see org.gamelib.backends.Backend#shouldClose() */
 	@Override
 	public boolean shouldClose() {
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#setTitle(java.lang.String)
-	 */
+	 * 
+	 * @see org.gamelib.backends.Backend#setTitle(java.lang.String) */
 	@Override
 	public void setTitle(String s) {
-		if (container instanceof JFrame)
-			((JFrame) container).setTitle(s);
+		if (container instanceof JFrame) ((JFrame) container).setTitle(s);
 	}
 
 }
