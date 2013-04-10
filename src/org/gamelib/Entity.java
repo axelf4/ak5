@@ -66,23 +66,23 @@ public interface Entity {
 	 * @author Axel
 	 * @return the speed traveling the x-axis coordinate.
 	 */
-	public float getHSpeed();
+	public float getDX();
 
 	/**
 	 * @author Axel
 	 * @param the new speed traveling the x-axis coordinate.
 	 */
-	public void setHSpeed(float hspeed);
+	public void setDX(float hspeed);
 
 	/**
 	 * @author Axel
 	 * @return the speed traveling the y-axis coordinate.
 	 */
-	public float getVSpeed();
+	public float getDY();
 
 	/**
 	 * @author Axel
 	 * @param the new speed traveling the y-axis coordinate.
 	 */
-	public void setVSpeed(float vspeed);
+	public void setDY(float vspeed);
 }
