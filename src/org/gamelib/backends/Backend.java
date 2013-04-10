@@ -29,4 +29,6 @@ public abstract class Backend {
 	public abstract long getTime();
 	
 	public abstract boolean shouldClose();
+	
+	public abstract void setTitle(String s);
 }

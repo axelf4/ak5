@@ -256,4 +256,13 @@ public class Java2DBackend extends Backend {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gamelib.backends.Backend#setTitle(java.lang.String)
+	 */
+	@Override
+	public void setTitle(String s) {
+		if (container instanceof JFrame)
+			((JFrame) container).setTitle(s);
+	}
+
 }

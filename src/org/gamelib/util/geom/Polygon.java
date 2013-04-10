@@ -8,7 +8,6 @@ import java.util.Arrays;
 
 import org.gamelib.Graphics;
 
-
 /**
  * @author pwnedary
  * @see java.awt.Polygon
@@ -25,6 +24,7 @@ public class Polygon implements Shape {
 	private int deltaX, deltaY;
 	public int xCenter, yCenter;
 	private double angle;
+	private Polygon rotated;
 
 	/**
 	 * Creates an empty polygon.
@@ -33,6 +33,7 @@ public class Polygon implements Shape {
 		xpoints = new int[4];
 		ypoints = new int[4];
 		npoints = 4;
+		rotated = this;
 	}
 
 	/**
@@ -46,12 +47,12 @@ public class Polygon implements Shape {
 	public Polygon(int[] xpoints, int[] ypoints, int npoints) {
 		if (npoints > xpoints.length || npoints > ypoints.length)
 			throw new IndexOutOfBoundsException("npoints > xpoints.length || " + "npoints > ypoints.length");
-		if (npoints < 0)
-			throw new NegativeArraySizeException("npoints < 0");
+		if (npoints < 0) throw new NegativeArraySizeException("npoints < 0");
 		this.xpoints = xpoints;
 		this.ypoints = ypoints;
 		this.npoints = npoints;
 		findCenter();
+		rotated = this;
 	}
 
 	/* (non-Javadoc)
@@ -65,8 +66,7 @@ public class Polygon implements Shape {
 			// Separate axis is perpendicular to the edge
 			Point axis = new Point(getPointY(i) - getPointY(j), getPointX(i) - getPointX(j));
 
-			if (separatedByAxis(axis, polygon))
-				return false;
+			if (separatedByAxis(axis, polygon)) return false;
 		}
 
 		// test separation axes of other polygon
@@ -74,8 +74,7 @@ public class Polygon implements Shape {
 			// Separate axis is perpendicular to the edge
 			Point axis = new Point(-polygon.getPointY(i) - polygon.getPointY(j), polygon.getPointX(i) - polygon.getPointX(j));
 
-			if (separatedByAxis(axis, polygon))
-				return false;
+			if (separatedByAxis(axis, polygon)) return false;
 		}
 		return true;
 	}
@@ -87,10 +86,8 @@ public class Polygon implements Shape {
 
 		for (int i = 1; i < npoints; i++) {
 			float d = (float) getPointX(i) * axis.x + getPointY(i) * axis.y;
-			if (d < this.min)
-				this.min = d;
-			else if (d > this.max)
-				this.max = d;
+			if (d < this.min) this.min = d;
+			else if (d > this.max) this.max = d;
 		}
 	}
 
@@ -113,9 +110,8 @@ public class Polygon implements Shape {
 	 * @see org.gamelib.util.Shape#draw(java.awt.Graphics2D) */
 	@Override
 	public void draw(Graphics g) {
-		/*java.awt.Polygon polygon = new java.awt.Polygon(xpoints, ypoints, npoints);
-		polygon.translate(deltaX, deltaY);
-		g2d.draw(polygon);*/
+		/* java.awt.Polygon polygon = new java.awt.Polygon(xpoints, ypoints,
+		 * npoints); polygon.translate(deltaX, deltaY); g2d.draw(polygon); */
 		int prevX = 0, prevY = 0;
 		for (int i = 0; i < npoints; i++) {
 			if (i <= 0) {
@@ -176,21 +172,31 @@ public class Polygon implements Shape {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.gamelib.util.Shape#rotate(double)
-	 */
+	 * 
+	 * @see org.gamelib.util.Shape#rotate(double) */
 	@Override
 	public void rotate(double theta) {
-		double increment = angle - theta;
-		angle += increment;
-		theta -= increment;
+		// double increment = angle - theta;
+		// angle += increment;
+		// theta -= increment;
+		this.angle = theta;
+		rotated.xpoints = xpoints;
+		rotated.ypoints = ypoints;
+		rotated.npoints = npoints;
+		rotated = new Polygon(xpoints.clone(), ypoints.clone(), npoints);
+		rotated.translate(deltaX, deltaY);
 		for (int i = 0; i < npoints; i++) {
-			double Xo = xpoints[i]; // temp X location for use in y vertices
-			// modification
-			xpoints[i] = (int) (xCenter + ((Xo - xCenter) * Math.cos(theta) - (ypoints[i] - yCenter) * Math.sin(theta)));
-			ypoints[i] = (int) (yCenter + ((Xo - xCenter) * Math.sin(theta) + (ypoints[i] - yCenter) * Math.cos(theta)));
+			double px = rotated.xpoints[i];
+			double py = rotated.ypoints[i];
+			rotated.xpoints[i] = (int) (rotated.xCenter + ((px - rotated.xCenter) * Math.cos(angle) - (py - rotated.yCenter) * Math.sin(angle)));
+			rotated.ypoints[i] = (int) (rotated.yCenter + ((px - rotated.xCenter) * Math.sin(angle) + (py - rotated.yCenter) * Math.cos(angle)));
 		}
 	}
 	
+	public Polygon getRotated() {
+		return rotated;
+	}
+
 	public void findCenter() {
 		double area = 0;
 		int xSum = 0, ySum = 0;
@@ -210,18 +216,18 @@ public class Polygon implements Shape {
 		xCenter = (int) (xSum / (6 * area)) + deltaX;
 		yCenter = (int) (ySum / (6 * area)) + deltaY;
 	}
-	
+
 	public int getPointX(int id) {
 		return xpoints[id] + deltaX;
 	}
-	
+
 	public int getPointY(int id) {
 		return ypoints[id] + deltaY;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.gamelib.util.geom.Shape#toAWT()
-	 */
+	 * 
+	 * @see org.gamelib.util.geom.Shape#toAWT() */
 	@Override
 	public java.awt.Shape toAWT() {
 		return new java.awt.Polygon(xpoints, ypoints, npoints);

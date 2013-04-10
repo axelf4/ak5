@@ -235,4 +235,12 @@ public class LWJGLBackend extends Backend {
 		Display.destroy();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gamelib.backends.Backend#setTitle(java.lang.String)
+	 */
+	@Override
+	public void setTitle(String s) {
+		Display.setTitle(s);
+	}
+
 }

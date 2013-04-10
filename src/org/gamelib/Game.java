@@ -65,6 +65,7 @@ public abstract class Game {
 	protected void start(Backend backend) {
 		// (this.backend = backend).start(this, getDisplayMode());
 		this.backend = backend;
+		backend.setTitle(instance.toString());
 		
 		screen = new Screen(getDisplayMode());
 		System.out.println(screen.getWidth());

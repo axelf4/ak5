@@ -6,6 +6,7 @@ package org.gamelib.util.geom;
 import org.gamelib.Graphics;
 
 /**
+ * Interface for geometric shapes.
  * TODO add getX and getY that return the upper hand left corner
  * 
  * @author pwnedary
