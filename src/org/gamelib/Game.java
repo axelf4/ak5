@@ -14,6 +14,7 @@ import javax.swing.JApplet;
 import javax.swing.JFrame;
 
 import org.gamelib.backends.Backend;
+import org.gamelib.backends.java2D.Java2DBackend;
 import org.gamelib.resource.ResourceLoader;
 
 /**
@@ -80,7 +81,7 @@ public abstract class Game {
 
 	protected void start() {
 		// (container = new JFrame()).add(screen = new Screen());
-		start(new JFrame());
+		start(new Java2DBackend(new JFrame()));
 	}
 
 	/**

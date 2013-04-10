@@ -88,9 +88,21 @@ public class Vector2 implements Vector<Vector2> {
 	 */
 	public float angle() {
 		float angle = (float) Math.toDegrees(Math.atan2(y, x));
-		if (angle < 0)
-			angle += 360;
+		if (angle < 0) angle += 360;
 		return angle;
+	}
+
+	/**
+	 * Add a vector to this vector
+	 * 
+	 * @param v The vector to add
+	 * @return This vector - useful for chaning operations
+	 */
+	public Vector2 add(Vector2 v) {
+		x += v.x;
+		y += v.y;
+
+		return this;
 	}
 
 }
