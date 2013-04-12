@@ -93,7 +93,7 @@ public class Screen { // JPanel Canvas
 		Game.getBackend().screenUpdate();
 	}
 	
-	public void drawHandlers(org.gamelib.Graphics g) {
+	public void drawHandlers(org.gamelib.graphics.Graphics g) {
 		g.setColor(Color.WHITE); // Color.WHITE
 		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setColor(Color.BLACK);

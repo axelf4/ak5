@@ -15,7 +15,7 @@ import javax.swing.JFrame;
 
 import org.gamelib.backends.Backend;
 import org.gamelib.backends.java2D.Java2DBackend;
-import org.gamelib.resource.ResourceLoader;
+import org.gamelib.resource.FileLoader;
 
 /**
  * TODO distribute backend better
@@ -56,7 +56,7 @@ public abstract class Game {
 			((JApplet) container).resize(new Dimension(mode.width, mode.height));
 		handlerRegistry = HandlerRegistry.instance();
 		// input = new Input(screen);
-		ResourceLoader.container = container;
+		FileLoader.backend = backend;
 
 		instance.initialize();
 		info("Initialized " + instance.toString());
@@ -72,9 +72,9 @@ public abstract class Game {
 		System.out.println(screen.getWidth());
 		handlerRegistry = HandlerRegistry.instance();
 		input = backend.getInput();
-		ResourceLoader.container = container;
+		FileLoader.container = container;
 
-		instance.initialize();
+		// instance.initialize();
 		info("Initialized " + instance.toString());
 		(thread = new Thread(new FixedTimestepLoop(screen))).start();
 	}

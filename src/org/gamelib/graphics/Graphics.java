@@ -1,10 +1,9 @@
 /**
  * 
  */
-package org.gamelib;
+package org.gamelib.graphics;
 
 import java.awt.Color;
-import java.awt.Image;
 
 /**
  * @author pwnedary

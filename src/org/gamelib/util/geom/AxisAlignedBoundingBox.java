@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.util;
+package org.gamelib.util.geom;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;

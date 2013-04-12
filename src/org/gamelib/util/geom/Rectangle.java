@@ -3,7 +3,7 @@
  */
 package org.gamelib.util.geom;
 
-import org.gamelib.Graphics;
+import org.gamelib.graphics.Graphics;
 
 /**
  * A <code>Rectangle</code> specifies an area in a coordinate space that is

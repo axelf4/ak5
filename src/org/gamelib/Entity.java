@@ -3,6 +3,8 @@
  */
 package org.gamelib;
 
+import org.gamelib.graphics.Graphics;
+
 
 /**
  * An entity with a coordinate in a 2d space.
@@ -11,7 +13,7 @@ package org.gamelib;
  */
 public interface Entity {
 	
-	public void draw(Graphics g, float interpolation);
+	public void draw(Graphics g, float delta);
 	public void update();
 	
 	/**

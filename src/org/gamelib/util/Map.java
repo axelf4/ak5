@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.gamelib.resource.ResourceLoader;
+import org.gamelib.resource.FileLoader;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
  * A map intended to parse TileED maps. Maps can be loaded with
- * {@link ResourceLoader#load(String)}.
+ * {@link FileLoader#load(String)}.
  * 
  * @see TileED TileED map editor <a
  *      href="http://mapeditor.org/">http://mapeditor.org/</a>

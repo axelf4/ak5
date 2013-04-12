@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.gamelib.graphics.Graphics;
 import org.gamelib.ui.Component;
 import org.gamelib.util.Log;
 

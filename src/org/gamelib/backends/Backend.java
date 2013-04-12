@@ -5,8 +5,8 @@ package org.gamelib.backends;
 
 import org.gamelib.DisplayMode;
 import org.gamelib.Game;
-import org.gamelib.Graphics;
 import org.gamelib.Input;
+import org.gamelib.graphics.Graphics;
 
 /**
  * maybe interface?

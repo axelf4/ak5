@@ -6,7 +6,7 @@ package org.gamelib.util;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
-import org.gamelib.resource.ResourceLoader;
+import org.gamelib.resource.FileLoader;
 import org.w3c.dom.Element;
 
 /**
@@ -63,7 +63,7 @@ public class TileSet {
 		tilesAcross = Integer.parseInt(imageNode.getAttribute("width")) / tileWidth;
 		tilesDown = Integer.parseInt(imageNode.getAttribute("height")) / tileHeight;
 
-		image = (Image) ResourceLoader.load(mapLocation + "/" + imageNode.getAttribute("source"));
+		image = (Image) FileLoader.load(mapLocation + "/" + imageNode.getAttribute("source"));
 	}
 
 	public void draw(Graphics2D g2d, int gid, int x, int y) {

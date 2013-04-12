@@ -22,7 +22,7 @@ public class ImageFileParser implements FileParser {
 	public Object parse(File file) throws IOException {
 		// return ImageIO.read(new FileInputStream(file));
 		// return ImageIO.read(getClass().getResourceAsStream(file.getPath()));
-		return ImageIO.read(ResourceLoader.getResourceAsStream(file.getPath()));
+		return ImageIO.read(FileLoader.getResourceStream(file.getPath()));
 	}
 
 	@Override

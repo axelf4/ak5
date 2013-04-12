@@ -6,7 +6,7 @@ package org.gamelib.util.geom;
 import java.awt.Point;
 import java.util.Arrays;
 
-import org.gamelib.Graphics;
+import org.gamelib.graphics.Graphics;
 
 /**
  * @author pwnedary

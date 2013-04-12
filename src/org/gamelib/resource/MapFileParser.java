@@ -61,7 +61,7 @@ public class MapFileParser implements FileParser {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setValidating(false);
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(ResourceLoader.getResourceAsStream(file.getPath()));
+			Document doc = builder.parse(FileLoader.getResourceStream(file.getPath()));
 			Element root = doc.getDocumentElement();
 
 			int orientation = root.getAttribute("orientation").equals("orthogonal") ? Map.ORTHOGONAL : Map.ISOMETRIC;

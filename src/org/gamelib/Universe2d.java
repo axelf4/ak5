@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.gamelib.graphics.Graphics;
+
 /**
  * @author Axel
  * 
@@ -21,7 +23,7 @@ public class Universe2d implements Handler {
 	public Universe2d() {
 		HandlerRegistry.instance().register(this);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -32,7 +34,7 @@ public class Universe2d implements Handler {
 	public void add(Entity entity) {
 		entities.add(entity);
 	}
-	
+
 	public void remove(Entity entity) {
 		entities.remove(entity);
 	}
@@ -40,8 +42,8 @@ public class Universe2d implements Handler {
 	@Override
 	public void handle(Event event) {
 		if (event instanceof Event.Tick) {
-			for (Iterator<Entity> iterator = entities.iterator(); iterator.hasNext();) {
-				Entity entity = (Entity) iterator.next();
+			for (int i = 0; i < entities.size(); i++) {
+				Entity entity = entities.get(i);
 				entity.setLastX(entity.getX());
 				entity.setLastY(entity.getY());
 
@@ -52,10 +54,10 @@ public class Universe2d implements Handler {
 			}
 		} else if (event instanceof Event.Draw) {
 			Graphics g = ((Event.Draw) event).graphics;
-			float interpolation = ((Event.Draw) event).delta;
-			for (Iterator<Entity> iterator = entities.iterator(); iterator.hasNext();) {
-				Entity entity = (Entity) iterator.next();
-				entity.draw(g, interpolation);
+			float delta = ((Event.Draw) event).delta;
+			for (int i = 0; i < entities.size(); i++) {
+				Entity entity = entities.get(i);
+				entity.draw(g, delta);
 			}
 		}
 	}

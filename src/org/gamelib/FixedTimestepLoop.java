@@ -68,6 +68,7 @@ public class FixedTimestepLoop implements Runnable {
 	 * @see java.lang.Runnable#run() */
 	public void run() {
 		Game.getBackend().start(Game.getInstance(), Game.getDisplayMode2());
+		Game.instance.initialize();
 		// We will need the last update time.
 		double lastUpdateTime = System.nanoTime();
 		// Store the last time we rendered.
