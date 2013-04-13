@@ -17,7 +17,22 @@ import org.lwjgl.opengl.GL11;
 public class LWJGLGraphics implements Graphics {
 
 	/** The current color */
-	private Color currentColor = Color.white;
+	private Color currentColor = Color.BLACK;
+	protected LWJGLImage image;
+
+	/**
+	 * 
+	 */
+	public LWJGLGraphics() {
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * 
+	 */
+	public LWJGLGraphics(LWJGLImage img) {
+		this.image = img;
+	}
 
 	/* (non-Javadoc)
 	 * 
@@ -25,7 +40,15 @@ public class LWJGLGraphics implements Graphics {
 	@Override
 	public void setColor(Color c) {
 		this.currentColor = c;
-		GL11.glColor3f(currentColor.getRed() / 255, currentColor.getGreen() / 255, currentColor.getBlue() / 255);
+		float r = currentColor.getRed() / 255;
+		float g = currentColor.getGreen() / 255;
+		float b = currentColor.getBlue() / 255;
+		float a = currentColor.getAlpha() / 255;
+		a = 1.0F;
+		// GL11.glColor3f(currentColor.getRed() / 255, currentColor.getGreen() /
+		// 255, currentColor.getBlue() / 255);
+		// System.out.println(r + " " + g + " " + b + " " + a);
+		GL11.glColor4f(r, g, b, a);
 	}
 
 	/* (non-Javadoc)
@@ -36,26 +59,25 @@ public class LWJGLGraphics implements Graphics {
 	public void drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
 		LWJGLImage image = (LWJGLImage) img;
 
-		glPushMatrix();
-		glTranslatef(dx1, dy1, 0);
-		image.bind();
-		// glBindTexture(GL_TEXTURE_2D, textureID);
-		glBegin(GL_QUADS);
+		//glPushMatrix();
+		// glTranslatef(dx1, dy1, 0);
+		// image.bind();
+		GL11.glBindTexture(image.target, image.textureID);
+		
+		GL11.glBegin(GL11.GL_QUADS);
 		{
-			glTexCoord2f(0, 0);
-			glVertex2f(0, 0);
-
-			glTexCoord2f(1, 0);
-			glVertex2f(128, 0);
-
-			glTexCoord2f(1, 1);
-			glVertex2f(128, 128);
-
-			glTexCoord2f(0, 1);
-			glVertex2f(0, 128);
+			GL11.glTexCoord2f(0, 0);
+			GL11.glVertex2f(dx1, dy1);
+			GL11.glTexCoord2f(1, 0);
+			GL11.glVertex2f(dx2, dy1);
+			GL11.glTexCoord2f(1, 1);
+			GL11.glVertex2f(dx2, dy2);
+			GL11.glTexCoord2f(0, 1);
+			GL11.glVertex2f(dx1, dy2);
 		}
-		glEnd();
-		glPopMatrix();
+		GL11.glEnd();
+		image.unbind();
+		// glPopMatrix();
 	}
 
 	/* (non-Javadoc)
@@ -63,7 +85,6 @@ public class LWJGLGraphics implements Graphics {
 	 * @see org.gamelib.Graphics#drawLine(int, int, int, int) */
 	@Override
 	public void drawLine(int x1, int y1, int x2, int y2) {
-		GL11.glColor3f(currentColor.getRed() / 255, currentColor.getGreen() / 255, currentColor.getBlue() / 255);
 		GL11.glBegin(GL11.GL_LINE_STRIP);
 
 		GL11.glVertex2d(x1, y1);
@@ -87,7 +108,6 @@ public class LWJGLGraphics implements Graphics {
 	 * @see org.gamelib.Graphics#fillRect(int, int, int, int) */
 	@Override
 	public void fillRect(int x, int y, int width, int height) {
-		GL11.glColor3f(currentColor.getRed() / 255, currentColor.getGreen() / 255, currentColor.getBlue() / 255);
 		GL11.glBegin(GL11.GL_QUADS);
 		GL11.glVertex2f(x, y);
 		GL11.glVertex2f(x + width, y);

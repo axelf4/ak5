@@ -10,6 +10,7 @@ import org.gamelib.Game;
 import org.gamelib.Input;
 import org.gamelib.backends.Backend;
 import org.gamelib.graphics.Graphics;
+import org.gamelib.graphics.Image;
 import org.gamelib.resource.FileLoader;
 import org.gamelib.util.Log;
 import org.lwjgl.LWJGLException;
@@ -152,6 +153,14 @@ public class LWJGLBackend extends Backend {
 	@Override
 	public void setTitle(String s) {
 		Display.setTitle(s);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.backends.Backend#getGraphics(org.gamelib.graphics.Image)
+	 */
+	@Override
+	public Graphics getGraphics(Image img) {
+		return new FBOGraphics((LWJGLImage)img);
 	}
 
 }

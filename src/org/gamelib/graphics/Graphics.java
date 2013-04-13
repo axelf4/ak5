@@ -6,6 +6,7 @@ package org.gamelib.graphics;
 import java.awt.Color;
 
 /**
+ * TODO add methods for starting and stopping drawing
  * @author pwnedary
  * 
  */
@@ -34,5 +35,7 @@ public interface Graphics {
 	
 	/* replace with fonts and delete */
 	public void drawString(String str, int x, int y);
+	
+	// public void clear();
 
 }

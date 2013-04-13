@@ -29,6 +29,40 @@ public class Node<E> {
 		// TODO Auto-generated constructor stub
 	}
 
+	public void add(Node<E> node) {
+		node.parent = this;
+		children.add(node);
+	}
+
+	/**
+	 * @return This node's element and all of it's child's in a list.
+	 */
+	public List<E> asList() {
+		List<E> list = new ArrayList<E>();
+		list.add(element);
+		for (int i = 0; i < children.size(); i++)
+			list.addAll(children.get(i).asList());
+		return list;
+	}
+
+	/**
+	 * @deprecated only use asList()
+	 */
+	@Deprecated
+	public boolean contains(Object o) {
+		return asList().contains(o);
+	}
+
+	/* (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString() */
+	@Override
+	public String toString() {
+		return element + (children.size() > 0 ? ", " + children : "");
+	}
+
+	/* Getters and Setters */
+
 	/**
 	 * @return the element
 	 */
@@ -55,34 +89,6 @@ public class Node<E> {
 	 */
 	public List<Node<E>> getChildren() {
 		return children;
-	}
-
-	public void add(Node<E> node) {
-		node.parent = this;
-		children.add(node);
-	}
-
-	/**
-	 * @return This node's element and all of it's child's in a list.
-	 */
-	public List<E> asList() {
-		List<E> list = new ArrayList<E>();
-		list.add(element);
-		for (int i = 0; i < children.size(); i++)
-			list.addAll(children.get(i).asList());
-		return list;
-	}
-
-	public boolean contains(Object o) {
-		return asList().contains(o);
-	}
-
-	/* (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString() */
-	@Override
-	public String toString() {
-		return element + (children.size() >= 1 ? ", " + children : "");
 	}
 
 }

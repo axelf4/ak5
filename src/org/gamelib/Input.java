@@ -100,7 +100,7 @@ public abstract class Input {
 		if (id == KeyEvent.KEY_PRESSED) {
 			pressedKeys.put(keyCode, true);
 			switch (keyCode) {
-			case KeyEvent.VK_ESCAPE:
+			case Key.KEY_ESCAPE:
 				System.exit(0);
 				break;
 			default:

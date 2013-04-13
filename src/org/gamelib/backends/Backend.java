@@ -7,6 +7,7 @@ import org.gamelib.DisplayMode;
 import org.gamelib.Game;
 import org.gamelib.Input;
 import org.gamelib.graphics.Graphics;
+import org.gamelib.graphics.Image;
 
 /**
  * maybe interface?
@@ -19,6 +20,8 @@ public abstract class Backend {
 
 	/** better with singleton */
 	public abstract Graphics getGraphics();
+	
+	public abstract Graphics getGraphics(Image img);
 
 	/** no need for singleton */
 	public abstract Input getInput();

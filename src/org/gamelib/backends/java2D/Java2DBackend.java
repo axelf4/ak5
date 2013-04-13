@@ -26,6 +26,7 @@ import org.gamelib.Game;
 import org.gamelib.Input;
 import org.gamelib.backends.Backend;
 import org.gamelib.graphics.Graphics;
+import org.gamelib.graphics.Image;
 
 /**
  * @author pwnedary
@@ -212,6 +213,15 @@ public class Java2DBackend extends Backend {
 	@Override
 	public void setTitle(String s) {
 		if (container instanceof JFrame) ((JFrame) container).setTitle(s);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.backends.Backend#getGraphics(org.gamelib.graphics.Image)
+	 */
+	@Override
+	public Graphics getGraphics(Image img) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
