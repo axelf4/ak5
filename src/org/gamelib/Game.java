@@ -19,8 +19,8 @@ import org.gamelib.resource.FileLoader;
 
 /**
  * TODO distribute backend better
- * @author Axel
  * 
+ * @author Axel
  */
 public abstract class Game {
 
@@ -32,7 +32,7 @@ public abstract class Game {
 	@SuppressWarnings("unused")
 	private HandlerRegistry handlerRegistry;
 	public Input input;
-	
+
 	private Backend backend;
 
 	/**
@@ -62,14 +62,13 @@ public abstract class Game {
 		info("Initialized " + instance.toString());
 		(thread = new Thread(new FixedTimestepLoop(screen))).start();
 	}
-	
+
 	protected void start(Backend backend) {
 		// (this.backend = backend).start(this, getDisplayMode());
 		this.backend = backend;
 		backend.setTitle(instance.toString());
-		
+
 		screen = new Screen(getDisplayMode());
-		System.out.println(screen.getWidth());
 		handlerRegistry = HandlerRegistry.instance();
 		input = backend.getInput();
 		FileLoader.container = container;
@@ -123,15 +122,15 @@ public abstract class Game {
 			frame.setVisible(true);
 		}
 	}
-	
+
 	public static Game getInstance() {
 		return instance;
 	}
-	
+
 	public static Backend getBackend() {
 		return instance.backend;
 	}
-	
+
 	public static DisplayMode getDisplayMode2() {
 		return instance.getDisplayMode();
 	}

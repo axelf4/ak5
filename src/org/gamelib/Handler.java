@@ -4,24 +4,15 @@
 package org.gamelib;
 
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.gamelib.graphics.Graphics;
 import org.gamelib.ui.Component;
-import org.gamelib.util.Log;
 
-/**
- * @author Axel
- */
+/** @author Axel */
 public interface Handler {
 	/**
 	 * Called when one of the registered events are fired.
@@ -31,10 +22,9 @@ public interface Handler {
 	public void handle(Event event);
 
 	/**
-	 * Used at registration to determine to which events this handler should
-	 * bind to.
+	 * Used at registration to determine which events to register to.
 	 * 
-	 * @return
+	 * @param list which events to register to
 	 */
 	// public Class<? extends Event>[] handlers();
 	public void handlers(List<Class<? extends Event>> list);
@@ -43,11 +33,10 @@ public interface Handler {
 		protected static final boolean DEFAULT_CANCELABLE = true;
 		public boolean cancelled;
 
-		/**
-		 * Stops the next handlers from receiving this event.
-		 */
+		/** Stops the next handlers from receiving this event. */
 		public void cancel() {
-			if (!cancelable()) throw new UnsupportedOperationException();
+			if (!cancelable())
+				throw new UnsupportedOperationException();
 			cancelled = true;
 		}
 
@@ -56,7 +45,8 @@ public interface Handler {
 		}
 
 		/** Event triggered each tick. */
-		public static class Tick extends Event {}
+		public static class Tick extends Event {
+		}
 
 		/** Event triggered when the screen redraws. */
 		public static final class Draw extends Event {

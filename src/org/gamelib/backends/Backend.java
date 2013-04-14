@@ -15,23 +15,25 @@ import org.gamelib.graphics.Image;
  * @author pwnedary
  * 
  */
-public abstract class Backend {
-	public abstract void start(Game instance, DisplayMode mode);
+public interface Backend {
+	public void start(Game instance, DisplayMode mode);
 
 	/** better with singleton */
-	public abstract Graphics getGraphics();
+	public Graphics getGraphics();
 	
-	public abstract Graphics getGraphics(Image img);
+	public Graphics getGraphics(Image image);
 
 	/** no need for singleton */
-	public abstract Input getInput();
+	public Input getInput();
 
-	public abstract void screenUpdate();
+	public void screenUpdate();
 
 	/** @return system time in milliseconds */
-	public abstract long getTime();
+	public long getTime();
 	
-	public abstract boolean shouldClose();
+	public boolean shouldClose();
 	
-	public abstract void setTitle(String s);
+	public void setTitle(String s);
+	
+	// public abstract void getImage();
 }

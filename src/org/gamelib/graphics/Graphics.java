@@ -37,5 +37,8 @@ public interface Graphics {
 	public void drawString(String str, int x, int y);
 	
 	// public void clear();
+	
+	public void begin();
+	public void end();
 
 }

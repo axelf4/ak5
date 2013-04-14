@@ -32,7 +32,7 @@ import org.gamelib.graphics.Image;
  * @author pwnedary
  * 
  */
-public class Java2DBackend extends Backend {
+public class Java2DBackend implements Backend {
 
 	private Container container;
 	private Java2dPanel panel;

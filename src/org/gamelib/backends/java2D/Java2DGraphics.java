@@ -69,4 +69,16 @@ public class Java2DGraphics implements Graphics {
 		panel.graphics2d.drawLine(x1, y1, x2, y2);
 	}
 
+	@Override
+	public void begin() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void end() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
