@@ -81,4 +81,10 @@ public class Java2DGraphics implements Graphics {
 		
 	}
 
+	@Override
+	public void clear() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -36,7 +36,8 @@ public interface Graphics {
 	/* replace with fonts and delete */
 	public void drawString(String str, int x, int y);
 	
-	// public void clear();
+	/** Clears the screen in the selected color. */
+	public void clear();
 	
 	public void begin();
 	public void end();

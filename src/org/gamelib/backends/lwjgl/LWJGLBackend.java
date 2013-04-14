@@ -6,11 +6,6 @@ package org.gamelib.backends.lwjgl;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
 
 import org.gamelib.DisplayMode;
 import org.gamelib.Game;
@@ -20,7 +15,6 @@ import org.gamelib.graphics.Graphics;
 import org.gamelib.graphics.Image;
 import org.gamelib.resource.FileLoader;
 import org.gamelib.util.Log;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -196,7 +190,7 @@ public class LWJGLBackend implements Backend {
 			throw new Error("Your OpenGL card doesn't support offscreen buffers.");
 	}
 
-	public Image createImage2(int width, int height) {
+	/*public Image createImage2(int width, int height) {
 		IntBuffer buffer = ByteBuffer.allocateDirect(4 * 10000).order(ByteOrder.nativeOrder()).asIntBuffer();
 		glGenTextures(buffer);
 		int textureID = buffer.get(0);
@@ -218,15 +212,18 @@ public class LWJGLBackend implements Backend {
 		image.setWidth(width);
 		image.setHeight(height);
 		return image;
-	}
+	}*/
 
 	public Image createImage(int width, int height) {
 		int textureID = glGenTextures();
-		// initialize color texture
+		// initialize texture
 		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // make it linear filterd
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 512, 512, 0, GL_RGBA, GL_INT, (java.nio.ByteBuffer) null); // Create the texture data
-		return new LWJGLImage(GL_TEXTURE_2D, textureID);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // make it linear filtered
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 512, 512, 0, GL_RGBA, GL_INT, (java.nio.ByteBuffer) null); // create the texture data
+		Image image = new LWJGLImage(GL_TEXTURE_2D, textureID);
+		image.setWidth(width);
+		image.setHeight(height);
+		return image;
 	}
 
 }

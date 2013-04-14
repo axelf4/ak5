@@ -73,15 +73,15 @@ public class LWJGLGraphics implements Graphics {
 			// GL11.glTexCoord2f(sx1, sy1);
 			GL11.glTexCoord2f(0f, 0f);
 			GL11.glVertex2f(dx1, dx1);
-			
+
 			// GL11.glTexCoord2f(sx2, sy1);
 			GL11.glTexCoord2f(1f, 0f);
 			GL11.glVertex2f(dx2, dy1);
-			
+
 			// GL11.glTexCoord2f(sx2, sy2);
 			GL11.glTexCoord2f(1f, 1f);
 			GL11.glVertex2f(dx2, dy2);
-			
+
 			// GL11.glTexCoord2f(sx1, sy2);
 			GL11.glTexCoord2f(0f, 1f);
 			GL11.glVertex2f(dx1, dy2);
@@ -143,13 +143,20 @@ public class LWJGLGraphics implements Graphics {
 	@Override
 	public void begin() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void end() {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void clear() {
+		// clear the screen and depth buffer
+		GL11.glClearColor(0, 0, 0, 0);
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 	}
 
 }
