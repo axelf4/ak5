@@ -35,5 +35,5 @@ public interface Backend {
 	
 	public void setTitle(String s);
 	
-	// public abstract void getImage();
+	public Image createImage(int width, int height);
 }

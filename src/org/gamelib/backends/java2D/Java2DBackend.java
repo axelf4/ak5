@@ -224,4 +224,10 @@ public class Java2DBackend implements Backend {
 		return null;
 	}
 
+	@Override
+	public Image createImage(int width, int height) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
