@@ -224,6 +224,9 @@ public class Java2DBackend implements Backend {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gamelib.backends.Backend#createImage(int, int)
+	 */
 	@Override
 	public Image createImage(int width, int height) {
 		// TODO Auto-generated method stub
