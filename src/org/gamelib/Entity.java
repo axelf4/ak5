@@ -3,7 +3,7 @@
  */
 package org.gamelib;
 
-import org.gamelib.graphics.Graphics;
+import org.gamelib.backend.Graphics;
 
 
 /**

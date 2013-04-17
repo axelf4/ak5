@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.backends.lwjgl;
+package org.gamelib.backend.lwjgl;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.*;

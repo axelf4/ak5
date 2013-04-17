@@ -3,7 +3,7 @@
  */
 package org.gamelib.util.geom;
 
-import org.gamelib.graphics.Graphics;
+import org.gamelib.backend.Graphics;
 
 /**
  * @author pwnedary

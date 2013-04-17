@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.gamelib.graphics.Graphics;
+import org.gamelib.backend.Graphics;
 
 /**
  * @author Axel

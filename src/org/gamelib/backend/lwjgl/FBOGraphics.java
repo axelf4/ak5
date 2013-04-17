@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.backends.lwjgl;
+package org.gamelib.backend.lwjgl;
 
 import java.awt.Color;
 

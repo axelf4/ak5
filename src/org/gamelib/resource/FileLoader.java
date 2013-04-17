@@ -14,7 +14,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.gamelib.backends.Backend;
+import org.gamelib.backend.Backend;
 import org.gamelib.util.Log;
 
 /**

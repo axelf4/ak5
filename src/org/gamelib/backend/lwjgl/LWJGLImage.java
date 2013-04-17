@@ -1,9 +1,9 @@
 /**
  * 
  */
-package org.gamelib.backends.lwjgl;
+package org.gamelib.backend.lwjgl;
 
-import org.gamelib.graphics.Image;
+import org.gamelib.backend.Image;
 import org.lwjgl.opengl.GL11;
 
 /**

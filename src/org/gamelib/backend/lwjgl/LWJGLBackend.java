@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.backends.lwjgl;
+package org.gamelib.backend.lwjgl;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -10,9 +10,9 @@ import java.awt.Point;
 import org.gamelib.DisplayMode;
 import org.gamelib.Game;
 import org.gamelib.Input;
-import org.gamelib.backends.Backend;
-import org.gamelib.graphics.Graphics;
-import org.gamelib.graphics.Image;
+import org.gamelib.backend.Backend;
+import org.gamelib.backend.Graphics;
+import org.gamelib.backend.Image;
 import org.gamelib.resource.FileLoader;
 import org.gamelib.util.Log;
 import org.lwjgl.LWJGLException;

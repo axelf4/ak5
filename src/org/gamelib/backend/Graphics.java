@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.graphics;
+package org.gamelib.backend;
 
 import java.awt.Color;
 
@@ -33,11 +33,8 @@ public interface Graphics {
 	public void drawRect(int x, int y, int width, int height);
 	public void fillRect(int x, int y, int width, int height);
 	
-	/* replace with fonts and delete */
-	public void drawString(String str, int x, int y);
-	
-	/** Clears the screen in the selected color. */
-	public void clear();
+	/*/** Clears the screen in the selected color. * /
+	public void clear();*/
 	
 	public void begin();
 	public void end();

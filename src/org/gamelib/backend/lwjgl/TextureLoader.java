@@ -1,4 +1,4 @@
-package org.gamelib.backends.lwjgl;
+package org.gamelib.backend.lwjgl;
 
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_RGB;
@@ -34,7 +34,7 @@ import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 
-import org.gamelib.graphics.Image;
+import org.gamelib.backend.Image;
 import org.lwjgl.BufferUtils;
 
 /**

@@ -13,8 +13,8 @@ import java.awt.GraphicsEnvironment;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 
-import org.gamelib.backends.Backend;
-import org.gamelib.backends.java2D.Java2DBackend;
+import org.gamelib.backend.Backend;
+import org.gamelib.backend.java2D.Java2DBackend;
 import org.gamelib.resource.FileLoader;
 
 /**

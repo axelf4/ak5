@@ -10,6 +10,8 @@ import java.awt.image.VolatileImage;
 import java.io.IOException;
 
 import org.gamelib.Handler.Event;
+import org.gamelib.backend.java2D.Java2DGraphics;
+import org.gamelib.util.Log;
 
 /**
  * @author Axel
@@ -93,7 +95,7 @@ public class Screen { // JPanel Canvas
 		Game.getBackend().screenUpdate();
 	}
 	
-	public void drawHandlers(org.gamelib.graphics.Graphics g) {
+	public void drawHandlers(org.gamelib.backend.Graphics g) {
 		g.setColor(Color.WHITE); // Color.WHITE
 		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setColor(Color.BLACK);
@@ -101,7 +103,19 @@ public class Screen { // JPanel Canvas
 		// graphics2d, interpolation);
 		HandlerRegistry.instance().invokeHandlers(new Event.Draw(g, interpolation));
 		g.setColor(Color.RED);
-		g.drawString("FPS: " + fps, 500, 10); // 5 10
+		// g.drawString("FPS: " + fps, 500, 10); // 5 10
+	}
+	
+	public void drawHandlers(org.gamelib.backend.Graphics g, Graphics2D g2d) {
+		g.setColor(Color.WHITE); // Color.WHITE
+		g.fillRect(0, 0, getWidth(), getHeight());
+		g.setColor(Color.BLACK);
+		// HandlerRegistry.getInstance().invokeHandlers(HandlerType.RENDER,
+		// graphics2d, interpolation);
+		HandlerRegistry.instance().invokeHandlers(new Event.Draw(g, interpolation));
+		g.setColor(Color.RED);
+		// g.drawString("FPS: " + fps, 500, 10); // 5 10
+		Log.debug(Boolean.toString(((Java2DGraphics)g).getG().equals(g2d)));
 	}
 
 	/**

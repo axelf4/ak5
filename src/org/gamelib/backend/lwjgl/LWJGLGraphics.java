@@ -1,13 +1,13 @@
 /**
  * 
  */
-package org.gamelib.backends.lwjgl;
+package org.gamelib.backend.lwjgl;
 
 import static org.lwjgl.opengl.GL11.*;
 import java.awt.Color;
 
-import org.gamelib.graphics.Graphics;
-import org.gamelib.graphics.Image;
+import org.gamelib.backend.Graphics;
+import org.gamelib.backend.Image;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -130,16 +130,6 @@ public class LWJGLGraphics implements Graphics {
 		GL11.glEnd();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Graphics#drawString(java.lang.String, int, int)
-	 */
-	@Override
-	public void drawString(String str, int x, int y) {
-		// TODO Auto-generated method stub
-
-	}
-
 	@Override
 	public void begin() {
 		// TODO Auto-generated method stub
@@ -152,11 +142,11 @@ public class LWJGLGraphics implements Graphics {
 
 	}
 
-	@Override
+	/*@Override
 	public void clear() {
 		// clear the screen and depth buffer
 		GL11.glClearColor(0, 0, 0, 0);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-	}
+	}*/
 
 }
