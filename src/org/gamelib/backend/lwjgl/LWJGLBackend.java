@@ -6,6 +6,8 @@ package org.gamelib.backend.lwjgl;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Point;
+import java.io.File;
+import java.io.IOException;
 
 import org.gamelib.DisplayMode;
 import org.gamelib.Game;
@@ -29,10 +31,6 @@ import org.lwjgl.opengl.Pbuffer;
 public class LWJGLBackend implements Backend {
 
 	private LWJGLGraphics graphics;
-
-	public LWJGLBackend() {
-		FileLoader.addFileParser(new LWJGLImageFileParser());
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -224,6 +222,15 @@ public class LWJGLBackend implements Backend {
 		image.setWidth(width);
 		image.setHeight(height);
 		return image;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.backend.Backend#getImage(java.io.File)
+	 */
+	@Override
+	public Image getImage(File file) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -90,4 +90,12 @@ public class Java2DGraphics implements Graphics {
 		g.dispose();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gamelib.backend.Graphics#dispose()
+	 */
+	@Override
+	public void dispose() {
+		g.dispose();
+	}
+
 }

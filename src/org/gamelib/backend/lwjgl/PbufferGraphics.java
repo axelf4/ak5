@@ -31,6 +31,21 @@ public class PbufferGraphics extends LWJGLGraphics {
 			}
 			
 			initPbuffer();
+			
+			pbuffer.makeCurrent();
+		} catch (LWJGLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.gamelib.backend.lwjgl.LWJGLGraphics#dispose()
+	 */
+	@Override
+	public void dispose() {
+		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, image.getWidth(), image.getHeight(), 0);
+		try {
+			Display.makeCurrent();
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}

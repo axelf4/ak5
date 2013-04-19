@@ -9,8 +9,10 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Transparency;
-import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 
@@ -22,6 +24,8 @@ import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 
 /**
+ * change to AWTBackend
+ * 
  * @author pwnedary
  */
 public class Java2DBackend implements Backend {
@@ -144,10 +148,16 @@ public class Java2DBackend implements Backend {
 	 */
 	@Override
 	public Image createImage(int width, int height) {
-		/*
-		 * GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment(); GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration(); BufferedImage img = gc.createCompatibleImage(width, height, Transparency.TRANSLUCENT); img.setAccelerationPriority(1); return new Java2DImage(img);
-		 */
-		return new Java2DImage(new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR));
+		// return new Java2DImage(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
+		GraphicsConfiguration config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+		return new Java2DImage(config.createCompatibleImage(width, height, Transparency.TRANSLUCENT));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gamelib.backend.Backend#getImage(java.io.File)
+	 */
+	@Override
+	public Image getImage(File file) throws IOException {
+		return new Java2DImage(ImageIO.read(file));
+	}
 }

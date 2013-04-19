@@ -20,6 +20,8 @@ public class Java2DImage implements Image {
 	 */
 	public Java2DImage(BufferedImage img) {
 		this.bufferedImage = img;
+		setWidth(bufferedImage.getWidth());
+		setHeight(bufferedImage.getHeight());
 	}
 
 	/*

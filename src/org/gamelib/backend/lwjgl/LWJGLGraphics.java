@@ -142,6 +142,15 @@ public class LWJGLGraphics implements Graphics {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gamelib.backend.Graphics#dispose()
+	 */
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	/*@Override
 	public void clear() {
 		// clear the screen and depth buffer
