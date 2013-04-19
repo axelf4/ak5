@@ -6,6 +6,7 @@ package org.gamelib.util;
 import static java.lang.Math.*;
 
 /**
+ * rename to MathUtils
  * @author pwnedary
  * 
  */
@@ -30,11 +31,11 @@ public class Math2D {
 		return i == 0 ? 0 : i < 1 ? 1 : i > -1 ? -1 : 0;
 	}
 
-	public static int range(int i, int min, int max) {
-		return min(min, max(i, max));
+	public static int clamp(int i, int min, int max) {
+		return i < min ? min : i > max ? max : i;
 	}
 
-	public static float range(float i, float min, float max) {
+	public static float clamp(float i, float min, float max) {
 		return i < min ? min : i > max ? max : i;
 	}
 
