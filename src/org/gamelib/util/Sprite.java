@@ -3,10 +3,10 @@
  */
 package org.gamelib.util;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.image.ImageObserver;
+
+import org.gamelib.backend.Graphics;
+import org.gamelib.backend.Image;
 
 
 /**
@@ -39,16 +39,16 @@ public class Sprite {
 		this("", subImages);
 	}
 	
-	public void draw(Graphics2D g2d, Image image, int x, int y, int flip, ImageObserver observer) {
+	public void draw(Graphics g, Image image, int x, int y, int flip) {
 		Rectangle rectangle = subImages[frame];
 		int sx = rectangle.x;
 		int sy = rectangle.y;
 		int width = rectangle.width;
 		int height = rectangle.height;
 		
-		g2d.rotate(rotation, x + width / 2, y + height / 2);
-		g2d.drawImage(image, x + flip, y, x + width - flip, y + height, sx, sy, sx + width, sy + height, observer);
-		g2d.rotate(-rotation, x + width / 2, y + height / 2);
+		// g.rotate(rotation, x + width / 2, y + height / 2);
+		g.drawImage(image, x + flip, y, x + width - flip, y + height, sx, sy, sx + width, sy + height);
+		// g.rotate(-rotation, x + width / 2, y + height / 2);
 		
 		if (++step_counter > duration) {
 			step_counter = 0;

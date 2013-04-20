@@ -3,16 +3,18 @@
  */
 package org.gamelib.util;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
 
-import org.gamelib.resource.FileLoader;
+import org.gamelib.Game;
+import org.gamelib.backend.Graphics;
+import org.gamelib.backend.Image;
 import org.w3c.dom.Element;
 
 /**
  * TODO make more standard not to only use TilED.
- * @author pwnedary
  * 
+ * @author pwnedary
  */
 public class TileSet {
 
@@ -40,9 +42,9 @@ public class TileSet {
 	private int tileSpacing = 0;
 	/** The margin of the tileset */
 	private int tileMargin = 0;
-	
+
 	public TileSet() {
-		
+
 	}
 
 	/**
@@ -56,21 +58,27 @@ public class TileSet {
 		tileHeight = Integer.parseInt(element.getAttribute("tileheight"));
 		String spacing = element.getAttribute("spacing");
 		tileSpacing = Integer.parseInt(spacing == "" || spacing == null ? "0" : spacing);
-		String margin = element.getAttribute("spacing");
+		String margin = element.getAttribute("margin");
 		tileMargin = Integer.parseInt(margin == "" || margin == null ? "0" : margin);
 
 		Element imageNode = (Element) element.getElementsByTagName("image").item(0);
 		tilesAcross = Integer.parseInt(imageNode.getAttribute("width")) / tileWidth;
 		tilesDown = Integer.parseInt(imageNode.getAttribute("height")) / tileHeight;
 
-		image = (Image) FileLoader.load(mapLocation + "/" + imageNode.getAttribute("source"));
+		// image = (Image) FileLoader.load(mapLocation + "/" + imageNode.getAttribute("source"));
+		try {
+			image = Game.getBackend().getImage(new File(mapLocation + "/" + imageNode.getAttribute("source")));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	public void draw(Graphics2D g2d, int gid, int x, int y) {
+	public void draw(Graphics g, int gid, int x, int y) {
 		int id = gid - firstGID;
 		int sx = getTileX(id) * tileWidth;
 		int sy = getTileY(id) * tileHeight;
-		g2d.drawImage(image, x, y, x + tileWidth, y + tileHeight, sx, sy, sx + tileWidth, sy + tileHeight, null);
+		g.drawImage(image, x, y, x + tileWidth, y + tileHeight, sx, sy, sx + tileWidth, sy + tileHeight);
 	}
 
 	/**

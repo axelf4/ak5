@@ -3,9 +3,22 @@
  */
 package org.gamelib.backend.lwjgl;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_INT;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_RGBA8;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glGenTextures;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glTexImage2D;
+import static org.lwjgl.opengl.GL11.glTexParameterf;
+import static org.lwjgl.opengl.GL11.glViewport;
 
-import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 
@@ -15,11 +28,10 @@ import org.gamelib.Input;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
-import org.gamelib.resource.FileLoader;
+import org.gamelib.backend.Sound;
 import org.gamelib.util.Log;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
@@ -76,45 +88,6 @@ public class LWJGLBackend implements Backend {
 	@Override
 	public Input getInput() {
 		return new LWJGLInput();
-	}
-
-	private class LWJGLInput extends Input {
-
-		/*
-		 * (non-Javadoc)
-		 * @see org.gamelib.Input#poll()
-		 */
-		@Override
-		public void poll() {
-			while (Keyboard.next())
-				// pressedKeys.put(Keyboard.getEventKey(),
-				// Keyboard.getEventKeyState());
-				keyEvent(Keyboard.getEventKeyState() ? KEY_PRESSED : KEY_RELEASED, translateKeyCode(Keyboard.getEventKey()));
-			// mousePosition.setLocation(org.lwjgl.input.Mouse.getX(),
-			// org.lwjgl.input.Mouse.getY());
-			Point p = new Point(org.lwjgl.input.Mouse.getX(), Display.getHeight() - org.lwjgl.input.Mouse.getY());
-			while (org.lwjgl.input.Mouse.next()) {
-				boolean pressed = org.lwjgl.input.Mouse.getEventButtonState();
-				int button = org.lwjgl.input.Mouse.getEventButton();
-				if (org.lwjgl.input.Mouse.getEventDX() != 0 || org.lwjgl.input.Mouse.getEventDY() != 0) // moved
-					mouseEvent(pressed ? MOUSE_DRAGGED : MOUSE_MOVED, button, p);
-				else {
-					mouseEvent(pressed ? MOUSE_PRESSED : MOUSE_RELEASED, button, p);
-					if (!pressed) {
-						mouseEvent(MOUSE_CLICKED, button, p);
-					}
-				}
-			}
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see org.gamelib.Input#translateBackendKeyCode(int)
-		 */
-		@Override
-		public int translateKeyCode(int keyCode) {
-			return keyCode;
-		}
 	}
 
 	/*
@@ -229,6 +202,15 @@ public class LWJGLBackend implements Backend {
 	 */
 	@Override
 	public Image getImage(File file) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.backend.Backend#getSound(java.io.File)
+	 */
+	@Override
+	public Sound getSound(File file) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -3,10 +3,17 @@
  */
 package org.gamelib.backend.java2D;
 
+import java.awt.AWTException;
 import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -18,7 +25,6 @@ import org.gamelib.Input;
 
 /**
  * @author Axel
- *
  */
 public class Java2DInput extends Input implements KeyEventDispatcher, MouseListener, MouseMotionListener, MouseWheelListener {
 	public Java2DInput(Component component) {
@@ -28,10 +34,10 @@ public class Java2DInput extends Input implements KeyEventDispatcher, MouseListe
 		component.addMouseWheelListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.KeyEventDispatcher#dispatchKeyEvent(java.awt.event.KeyEvent) */
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.KeyEventDispatcher#dispatchKeyEvent(java.awt.event.KeyEvent)
+	 */
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent e) {
 		assert EventQueue.isDispatchThread();
@@ -83,23 +89,93 @@ public class Java2DInput extends Input implements KeyEventDispatcher, MouseListe
 		mouseWheelEvent(e.getPreciseWheelRotation());
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see org.gamelib.Input#poll() */
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.Input#poll()
+	 */
 	@Override
 	public void poll() {
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see org.gamelib.Input#translateKeyCode(int) */
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.Input#translateKeyCode(int)
+	 */
 	@Override
 	public int translateKeyCode(int keyCode) {
 		switch (keyCode) {
 		case KeyEvent.VK_ESCAPE:
 			return Key.KEY_ESCAPE;
+		case KeyEvent.VK_1:
+			return Key.KEY_1;
+		case KeyEvent.VK_Q:
+			return Key.KEY_Q;
+		case KeyEvent.VK_W:
+			return Key.KEY_W;
+		case KeyEvent.VK_E:
+			return Key.KEY_E;
+		case KeyEvent.VK_R:
+			return Key.KEY_R;
+		case KeyEvent.VK_T:
+			return Key.KEY_T;
+		case KeyEvent.VK_Y:
+			return Key.KEY_Y;
+		case KeyEvent.VK_U:
+			return Key.KEY_U;
+		case KeyEvent.VK_I:
+			return Key.KEY_I;
+		case KeyEvent.VK_O:
+			return Key.KEY_O;
+		case KeyEvent.VK_P:
+			return Key.KEY_P;
+		case KeyEvent.VK_BRACELEFT:
+			return Key.KEY_LBRACKET;
+		case KeyEvent.VK_BRACERIGHT:
+			return Key.KEY_RBRACKET;
+		case KeyEvent.VK_ENTER:
+			return Key.KEY_RETURN;
+		case KeyEvent.VK_CONTROL:
+			return Key.KEY_LCONTROL;
+		case KeyEvent.VK_A:
+			return Key.KEY_A;
+		case KeyEvent.VK_S:
+			return Key.KEY_S;
+		case KeyEvent.VK_D:
+			return Key.KEY_D;
+
 		default:
 			return Key.KEY_UNDEFINED;
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.Input#mouseMove(java.awt.Point)
+	 */
+	@Override
+	public void mouseMove(int x, int y) {
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice[] gs = ge.getScreenDevices();
+		Point p = new Point(x, y);
+		// Search the devices for the one that draws the specified point.
+		for (GraphicsDevice device : gs) {
+			GraphicsConfiguration[] configurations = device.getConfigurations();
+			for (GraphicsConfiguration config : configurations) {
+				Rectangle bounds = config.getBounds();
+				if (bounds.contains(p)) {
+					// Set point to screen coordinates.
+					Point b = bounds.getLocation();
+					Point s = new Point(p.x - b.x, p.y - b.y);
+					try {
+						Robot r = new Robot(device);
+						r.mouseMove(s.x, s.y);
+					} catch (AWTException e) {
+						e.printStackTrace();
+					}
+					return;
+				}
+			}
+		}
+		throw new RuntimeException("couldn't move mouse"); // Couldn't move to the point, it may be off screen.
 	}
 }

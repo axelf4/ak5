@@ -66,46 +66,18 @@ public abstract class Input {
 		// pressedMouseButtons[button - 1] = false;
 		return b;
 	}
-
-	public void mouseMove(Point p) {
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice[] gs = ge.getScreenDevices();
-		// Search the devices for the one that draws the specified point.
-		for (GraphicsDevice device : gs) {
-			GraphicsConfiguration[] configurations = device.getConfigurations();
-			for (GraphicsConfiguration config : configurations) {
-				Rectangle bounds = config.getBounds();
-				if (bounds.contains(p)) {
-					// Set point to screen coordinates.
-					Point b = bounds.getLocation();
-					Point s = new Point(p.x - b.x, p.y - b.y);
-					try {
-						Robot r = new Robot(device);
-						r.mouseMove(s.x, s.y);
-					} catch (AWTException e) {
-						e.printStackTrace();
-					}
-					return;
-				}
-			}
-		}
-		// Couldn't move to the point, it may be off screen.
-		return;
-	}
+	
+	public abstract void mouseMove(int x, int y);
 
 	/** Checks for queued input states. */
 	public abstract void poll();
 
 	protected void keyEvent(int id, int keyCode) {
+		keyCode = translateKeyCode(keyCode);
 		if (id == KeyEvent.KEY_PRESSED) {
 			pressedKeys.put(keyCode, true);
-			switch (keyCode) {
-			case Key.KEY_ESCAPE:
+			if (keyCode == Key.KEY_ESCAPE)
 				System.exit(0);
-				break;
-			default:
-				break;
-			}
 		} else if (id == KeyEvent.KEY_RELEASED)
 			pressedKeys.put(keyCode, false);
 		// pressedKeys.put(e.getKeyCode(), e.getID() == KeyEvent.KEY_PRESSED);

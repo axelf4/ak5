@@ -6,6 +6,8 @@ package org.gamelib.util.geom;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
+import org.gamelib.backend.Graphics;
+
 /**
  * A bounding box which edges are parallel to the coordinate axes. (AABB)
  * 
@@ -89,12 +91,12 @@ public class AxisAlignedBoundingBox {
 	 * 
 	 * @param g2d the {@link Graphics2D} reference to draw on
 	 */
-	public void draw(Graphics2D g2d) {
-		g2d.drawRect(x, y, width, height);
+	public void draw(Graphics g) {
+		g.drawRect(x, y, width, height);
 	}
 	
-	public void draw(Graphics2D g2d, int x, int y) {
-		g2d.drawRect(x, y, width, height);
+	public void draw(Graphics g, int x, int y) {
+		g.drawRect(x, y, width, height);
 	}
 
 }

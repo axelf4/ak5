@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.gamelib.backend.Graphics;
 import org.gamelib.resource.FileLoader;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -95,7 +96,7 @@ public class Map {
 	 * @param rw region width
 	 * @param rh region height
 	 */
-	public void draw(Graphics2D g2d, int rx, int ry, int rw, int rh) {
+	public void draw(Graphics g, int rx, int ry, int rw, int rh) {
 		for (int tileSet = 0; tileSet < tileSets.size(); tileSet++) {
 			TileSet set = tileSets.get(tileSet);
 			for (int layer = 0; layer < layers.size(); layer++) {
@@ -104,7 +105,7 @@ public class Map {
 					for (int ty = ry; ty < data[0].length; ty++) {
 						int gid = data[tx][ty];
 						if (gid >= set.firstGID && gid <= set.lastGID) {
-							set.draw(g2d, gid, tx * tileWidth, ty * tileHeight);
+							set.draw(g, gid, tx * tileWidth, ty * tileHeight);
 						}
 					}
 				}
@@ -117,8 +118,8 @@ public class Map {
 	 * 
 	 * @param g2d the {@link Graphics2D} object
 	 */
-	public void draw(Graphics2D g2d) {
-		draw(g2d, 0, 0, width, height);
+	public void draw(Graphics g) {
+		draw(g, 0, 0, width, height);
 	}
 
 	/**

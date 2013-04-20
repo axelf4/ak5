@@ -3,10 +3,11 @@
  */
 package org.gamelib.util;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
+
+import org.gamelib.backend.Graphics;
+import org.gamelib.backend.Image;
 
 /**
  * An image divided into animated sprites.
@@ -36,7 +37,7 @@ public class SpriteSheet {
 		this.spriteSheet = spriteSheet;
 	}
 	
-	public void draw(Graphics2D g2d, int x, int y, ImageObserver observer) {
+	public void draw(Graphics g, int x, int y) {
 		Sprite sprite2 = spriteSheet[sprite];
 		Rectangle rectangle = spriteSheet[sprite].subImages[sprite2.frame];
 		int sx = rectangle.x;
@@ -45,7 +46,7 @@ public class SpriteSheet {
 		int height = rectangle.height;
 		
 		int flip = (flippedHorizontal ? width : 0);
-		spriteSheet[sprite].draw(g2d, image, x, y, flip, observer);
+		spriteSheet[sprite].draw(g, image, x, y, flip);
 	}
 	
 	public Sprite addSprite(Sprite sprite) {
