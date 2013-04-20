@@ -45,4 +45,6 @@ public interface Backend {
 
 	/** @return an empty image */
 	public Image createImage(int width, int height);
+	
+	public Sound getSound(File file) throws IOException;
 }

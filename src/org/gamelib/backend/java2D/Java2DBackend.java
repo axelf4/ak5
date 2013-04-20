@@ -22,6 +22,7 @@ import org.gamelib.Input;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
+import org.gamelib.backend.Sound;
 
 /**
  * change to AWTBackend
@@ -159,5 +160,14 @@ public class Java2DBackend implements Backend {
 	@Override
 	public Image getImage(File file) throws IOException {
 		return new Java2DImage(ImageIO.read(file));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.backend.Backend#getSound(java.io.File)
+	 */
+	@Override
+	public Sound getSound(File file) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
