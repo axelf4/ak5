@@ -8,6 +8,9 @@ import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.EXTFramebufferObject.*;
+
 /**
  * @author pwnedary
  */
@@ -29,19 +32,18 @@ public class FBOGraphics extends LWJGLGraphics {
 		/*
 		 * IntBuffer buffer = BufferUtils.createIntBuffer(1); EXTFramebufferObject.glGenFramebuffersEXT(buffer); FBO = buffer.get();
 		 */
-		// initialize frame buffer
-		frameBufferID = EXTFramebufferObject.glGenFramebuffersEXT(); // create new framebuffer
-		// renderBufferID = EXTFramebufferObject.glGenRenderbuffersEXT(); // and new renderbuffer
 
 		// FBOs wont work if textures isn't just created
 		LWJGLImage tmp = (LWJGLImage) ((LWJGLBackend) Game.getBackend()).createImage(image.getWidth(), image.getHeight());
 		image.textureID = tmp.textureID;
-
+		
+		// initialize frame buffer
+		frameBufferID = EXTFramebufferObject.glGenFramebuffersEXT(); // create new framebuffer
 		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, frameBufferID);
 		EXTFramebufferObject.glFramebufferTexture2DEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT, GL11.GL_TEXTURE_2D, image.textureID, 0);
 		check();
 
-		// initialize renderbuffer
+		// initialize renderbuffer renderBufferID = EXTFramebufferObject.glGenRenderbuffersEXT();
 		/*
 		 * glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, renderBufferID); // bind the depth renderbuffer glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL14.GL_DEPTH_COMPONENT24, 512, 512); // get the data space for it glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,GL_DEPTH_ATTACHMENT_EXT,GL_RENDERBUFFER_EXT, renderBufferID); // bind it to the renderbuffer
 		 */
@@ -51,10 +53,10 @@ public class FBOGraphics extends LWJGLGraphics {
 			throw new Error("Could not create FBO!");
 
 		// An fbo has its own viewport, so lets set it
-		GL11.glPushAttrib(GL11.GL_VIEWPORT_BIT);
-		GL11.glViewport(0, 0, img.getWidth(), img.getHeight());
+		/*GL11.glPushAttrib(GL11.GL_VIEWPORT_BIT);
+		GL11.glViewport(0, 0, img.getWidth(), img.getHeight());*/
 
-		// EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
+		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
 		// GL11.glReadBuffer(GL11.GL_BACK);
 	}
 
@@ -65,13 +67,18 @@ public class FBOGraphics extends LWJGLGraphics {
 	@Override
 	public void dispose() {
 		// Finish all operations so can use texture
-		GL11.glFlush();
+		// GL11.glFlush();
+		
+		// Copy framebuffer to texture
+		// glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, image.getWidth(), image.getHeight(), 0);
+		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, image.getWidth(), image.getHeight());
 
 		// Restore saved information for main rendering context
-		GL11.glPopAttrib();
+		// GL11.glPopAttrib();
 
 		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
 		// GL11.glReadBuffer(GL11.GL_BACK);
+		// glDeleteFramebuffersEXT(frameBufferID);
 	}
 
 	/**

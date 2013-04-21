@@ -3,21 +3,7 @@
  */
 package org.gamelib.backend.lwjgl;
 
-import static org.lwjgl.opengl.GL11.GL_INT;
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_RGBA;
-import static org.lwjgl.opengl.GL11.GL_RGBA8;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glGenTextures;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glTexImage2D;
-import static org.lwjgl.opengl.GL11.glTexParameterf;
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +22,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.Pbuffer;
+import org.lwjgl.opengl.Util;
 
 /**
  * @author pwnedary
@@ -161,43 +148,31 @@ public class LWJGLBackend implements Backend {
 			throw new Error("Your OpenGL card doesn't support offscreen buffers.");
 	}
 
-	/*public Image createImage2(int width, int height) {
-		IntBuffer buffer = ByteBuffer.allocateDirect(4 * 10000).order(ByteOrder.nativeOrder()).asIntBuffer();
-		glGenTextures(buffer);
-		int textureID = buffer.get(0);
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
-		byte[] tmp = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();
-		ByteBuffer test = BufferUtils.createByteBuffer(tmp.length);
-		test.put(tmp);
-		test.flip();
-		// produce a texture from the byte buffer
-		// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, get2Fold(bufferedImage.getWidth()), get2Fold(bufferedImage.getHeight()), 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-		Image image = new LWJGLImage(GL_TEXTURE_2D, textureID);
-		image.setWidth(width);
-		image.setHeight(height);
-		return image;
-	}*/
+	/*
+	 * public Image createImage2(int width, int height) { IntBuffer buffer = ByteBuffer.allocateDirect(4 * 10000).order(ByteOrder.nativeOrder()).asIntBuffer(); glGenTextures(buffer); int textureID = buffer.get(0); glBindTexture(GL_TEXTURE_2D, textureID); glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP); glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP); glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR); byte[] tmp = ((DataBufferByte) img.getRaster().getDataBuffer()).getData(); ByteBuffer test = BufferUtils.createByteBuffer(tmp.length); test.put(tmp); test.flip(); // produce a texture from the byte buffer // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, get2Fold(bufferedImage.getWidth()), get2Fold(bufferedImage.getHeight()), 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer); glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+	 * width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer); Image image = new LWJGLImage(GL_TEXTURE_2D, textureID); image.setWidth(width); image.setHeight(height); return image; }
+	 */
 
 	public Image createImage(int width, int height) {
 		int textureID = glGenTextures();
 		// initialize texture
 		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // make it linear filtered
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 512, 512, 0, GL_RGBA, GL_INT, (java.nio.ByteBuffer) null); // create the texture data
+		// {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // make it linear filtered
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL11.GL_UNSIGNED_BYTE, (java.nio.ByteBuffer) null); // create the texture data
+		// }
+		glBindTexture(GL_TEXTURE_2D, 0);
 		Image image = new LWJGLImage(GL_TEXTURE_2D, textureID);
 		image.setWidth(width);
 		image.setHeight(height);
 		return image;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.backend.Backend#getImage(java.io.File)
 	 */
 	@Override
@@ -206,7 +181,8 @@ public class LWJGLBackend implements Backend {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.backend.Backend#getSound(java.io.File)
 	 */
 	@Override
