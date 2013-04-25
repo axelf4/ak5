@@ -65,8 +65,7 @@ public class LWJGLGraphics implements Graphics {
 		// bind to the appropriate texture for this sprite
 		// image.bind();
 		GL11.glBindTexture(image.target, image.textureID);
-		// translate to the right location and prepare to draw
-		// glTranslatef(dx1, dy1, 0);
+		// glTranslatef(dx1, dy1, 0); translate to the right location and prepare to draw
 
 		GL11.glBegin(GL11.GL_QUADS);
 		{

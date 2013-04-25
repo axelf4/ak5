@@ -3,13 +3,15 @@
  */
 package org.gamelib.backend.lwjgl;
 
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glCopyTexSubImage2D;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.EXTFramebufferObject.*;
+
 import org.gamelib.Game;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
-
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.EXTFramebufferObject.*;
 
 /**
  * @author pwnedary
@@ -19,7 +21,7 @@ public class FBOGraphics extends LWJGLGraphics {
 	private int frameBufferID; // FBO
 
 	// private int renderBufferID;
-
+	
 	/**
 	 * 
 	 */
@@ -29,18 +31,20 @@ public class FBOGraphics extends LWJGLGraphics {
 		if (!GLContext.getCapabilities().GL_EXT_framebuffer_object)
 			throw new Error("FBOs not supported.");
 
+		glBindTexture(GL_TEXTURE_2D, 0); // unlink textures because if we dont it all is gonna fail
+
 		/*
 		 * IntBuffer buffer = BufferUtils.createIntBuffer(1); EXTFramebufferObject.glGenFramebuffersEXT(buffer); FBO = buffer.get();
 		 */
 
-		// FBOs wont work if textures isn't just created
+		// FBOs wont work if texture isn't just created
 		LWJGLImage tmp = (LWJGLImage) ((LWJGLBackend) Game.getBackend()).createImage(image.getWidth(), image.getHeight());
 		image.textureID = tmp.textureID;
-		
+
 		// initialize frame buffer
 		frameBufferID = EXTFramebufferObject.glGenFramebuffersEXT(); // create new framebuffer
-		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, frameBufferID);
-		EXTFramebufferObject.glFramebufferTexture2DEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT, GL11.GL_TEXTURE_2D, image.textureID, 0);
+		EXTFramebufferObject.glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, frameBufferID);
+		EXTFramebufferObject.glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, image.textureID, 0);
 		check();
 
 		// initialize renderbuffer renderBufferID = EXTFramebufferObject.glGenRenderbuffersEXT();
@@ -51,12 +55,19 @@ public class FBOGraphics extends LWJGLGraphics {
 		// Check
 		if (EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT) != EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT)
 			throw new Error("Could not create FBO!");
+		
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+		glBindTexture(GL_TEXTURE_2D, 0); // random
+		EXTFramebufferObject.glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, frameBufferID);
 
 		// An fbo has its own viewport, so lets set it
-		/*GL11.glPushAttrib(GL11.GL_VIEWPORT_BIT);
-		GL11.glViewport(0, 0, img.getWidth(), img.getHeight());*/
+		GL11.glPushAttrib(GL11.GL_VIEWPORT_BIT);
+		GL11.glViewport(0, 0, image.getWidth(), image.getHeight());
 
-		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
+		GL11.glClearColor(1F, 0F, 0.5F, 1F);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+
+		// EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
 		// GL11.glReadBuffer(GL11.GL_BACK);
 	}
 
@@ -68,16 +79,17 @@ public class FBOGraphics extends LWJGLGraphics {
 	public void dispose() {
 		// Finish all operations so can use texture
 		// GL11.glFlush();
-		
+
 		// Copy framebuffer to texture
 		// glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, image.getWidth(), image.getHeight(), 0);
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, image.getWidth(), image.getHeight());
-
-		// Restore saved information for main rendering context
-		// GL11.glPopAttrib();
+		// glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, image.getWidth(), image.getHeight());
 
 		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
 		// GL11.glReadBuffer(GL11.GL_BACK);
+
+		// Restore saved information for main rendering context
+		GL11.glPopAttrib();
+
 		// glDeleteFramebuffersEXT(frameBufferID);
 	}
 
@@ -134,7 +146,7 @@ public class FBOGraphics extends LWJGLGraphics {
 			throw new RuntimeException("Unexpected reply from glCheckFramebufferStatusEXT: " + framebuffer);
 		}
 	}
-	
+
 	/**
 	 * Bind to the FBO created
 	 */
