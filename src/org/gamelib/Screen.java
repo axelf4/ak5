@@ -10,8 +10,8 @@ import java.awt.image.VolatileImage;
 import java.io.IOException;
 
 import org.gamelib.Handler.Event;
-import org.gamelib.backend.java2D.Java2DGraphics;
-import org.gamelib.util.Log;
+import org.gamelib.backend.java2D.AWTFont;
+import org.gamelib.util.Font;
 
 /**
  * @author Axel
@@ -31,6 +31,7 @@ public class Screen { // JPanel Canvas
 	public VolatileImage volatileImage;
 
 	public int fps;
+	private Font f;
 
 	public Screen() {
 		// setIgnoreRepaint(true);
@@ -39,6 +40,8 @@ public class Screen { // JPanel Canvas
 	public Screen(DisplayMode mode) {
 		this.width = mode.getWidth();
 		this.height = mode.getHeight();
+		
+		f = new AWTFont(new java.awt.Font(null, Font.PLAIN, 12));
 	}
 
 	/**
@@ -104,18 +107,9 @@ public class Screen { // JPanel Canvas
 		HandlerRegistry.instance().invokeHandlers(new Event.Draw(g, interpolation));
 		g.setColor(Color.RED);
 		// g.drawString("FPS: " + fps, 500, 10); // 5 10
-	}
-	
-	public void drawHandlers(org.gamelib.backend.Graphics g, Graphics2D g2d) {
-		g.setColor(Color.WHITE); // Color.WHITE
-		g.fillRect(0, 0, getWidth(), getHeight());
-		g.setColor(Color.BLACK);
-		// HandlerRegistry.getInstance().invokeHandlers(HandlerType.RENDER,
-		// graphics2d, interpolation);
-		HandlerRegistry.instance().invokeHandlers(new Event.Draw(g, interpolation));
-		g.setColor(Color.RED);
-		// g.drawString("FPS: " + fps, 500, 10); // 5 10
-		Log.debug(Boolean.toString(((Java2DGraphics)g).getG().equals(g2d)));
+		String str = "FPS: 60" + fps + " 60";
+		System.out.println(fps);
+		f.drawString(g, str, getWidth() - f.getWidth(str) - 1, 10);
 	}
 
 	/**

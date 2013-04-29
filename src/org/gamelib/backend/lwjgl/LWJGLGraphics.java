@@ -129,18 +129,6 @@ public class LWJGLGraphics implements Graphics {
 		GL11.glEnd();
 	}
 
-	@Override
-	public void begin() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void end() {
-		// TODO Auto-generated method stub
-
-	}
-
 	/* (non-Javadoc)
 	 * @see org.gamelib.backend.Graphics#dispose()
 	 */

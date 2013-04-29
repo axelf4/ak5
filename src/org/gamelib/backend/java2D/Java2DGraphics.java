@@ -4,6 +4,7 @@
 package org.gamelib.backend.java2D;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import org.gamelib.backend.Graphics;
@@ -24,11 +25,6 @@ public class Java2DGraphics implements Graphics {
 
 	public Java2DGraphics(java.awt.Graphics g) {
 		this.g = g;
-	}
-	
-	/**debug*/
-	public java.awt.Graphics getG() {
-		return g;
 	}
 
 	/*
@@ -79,23 +75,17 @@ public class Java2DGraphics implements Graphics {
 		g.drawLine(x1, y1, x2, y2);
 	}
 
-	@Override
-	public void begin() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void end() {
-		g.dispose();
-	}
-
 	/* (non-Javadoc)
 	 * @see org.gamelib.backend.Graphics#dispose()
 	 */
 	@Override
 	public void dispose() {
 		g.dispose();
+	}
+	
+	/** @return the awt {@link Graphics2D} used to draw */
+	public Graphics2D getGraphics2D() {
+		return (Graphics2D) g;
 	}
 
 }

@@ -118,6 +118,7 @@ public class FixedTimestepLoop implements Runnable {
 
 				// Drawing fps
 				screen.fps = fps;
+				// System.out.println(fps);
 
 				frameCount = 0;
 				lastSecondTime = thisSecond;

@@ -14,6 +14,7 @@ import org.gamelib.Input;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
+import org.gamelib.backend.ResourceFactory;
 import org.gamelib.backend.Sound;
 import org.gamelib.util.Log;
 import org.lwjgl.LWJGLException;
@@ -189,6 +190,14 @@ public class LWJGLBackend implements Backend {
 	public Sound getSound(File file) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.backend.Backend#getResourceFactory()
+	 */
+	@Override
+	public ResourceFactory getResourceFactory() {
+		return new LWJGLResourceFactory();
 	}
 
 }

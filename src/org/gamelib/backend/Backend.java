@@ -40,6 +40,9 @@ public interface Backend {
 	/** @param s the new window title */
 	public void setTitle(String s);
 	
+	/** @return factory for parsing files */
+	public ResourceFactory getResourceFactory();
+	
 	/** @return the image from the file */
 	public Image getImage(File file) throws IOException;
 

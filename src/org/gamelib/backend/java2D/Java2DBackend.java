@@ -22,6 +22,7 @@ import org.gamelib.Input;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
+import org.gamelib.backend.ResourceFactory;
 import org.gamelib.backend.Sound;
 
 /**
@@ -169,5 +170,13 @@ public class Java2DBackend implements Backend {
 	public Sound getSound(File file) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.backend.Backend#getResourceFactory()
+	 */
+	@Override
+	public ResourceFactory getResourceFactory() {
+		return new Java2DResourceFactory();
 	}
 }

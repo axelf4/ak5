@@ -15,6 +15,7 @@ import org.gamelib.Handler.Event;
 import org.gamelib.ui.Component;
 
 /**
+ * possible names: View, Scene, Room, 
  * @author Axel
  * 
  */

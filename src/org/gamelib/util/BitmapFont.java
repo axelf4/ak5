@@ -3,7 +3,7 @@
  */
 package org.gamelib.util;
 
-import java.awt.Graphics2D;
+import org.gamelib.backend.Graphics;
 
 /**
  * @author pwnedary
@@ -22,7 +22,7 @@ public class BitmapFont implements Font {
 	 * @see org.gamelib.util.Font#drawString(java.awt.Graphics2D, java.lang.String, int, int)
 	 */
 	@Override
-	public void drawString(Graphics2D g2d, String str, int x, int y) {
+	public void drawString(Graphics g, String str, int x, int y) {
 		// TODO Auto-generated method stub
 
 	}

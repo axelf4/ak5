@@ -14,6 +14,7 @@ import org.lwjgl.opengl.PixelFormat;
 /**
  * @author Axel
  */
+@Deprecated
 public class PbufferGraphics extends LWJGLGraphics {
 
 	private Pbuffer pbuffer;
@@ -51,7 +52,7 @@ public class PbufferGraphics extends LWJGLGraphics {
 		}
 	}
 	
-	@Override
+	/*@Override
 	public void begin() {
 		if (pbuffer.isBufferLost()) {
 			System.out.println("Buffer contents lost - will recreate the buffer");
@@ -78,7 +79,7 @@ public class PbufferGraphics extends LWJGLGraphics {
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	private void initPbuffer() throws LWJGLException {
 		pbuffer.makeCurrent();

@@ -42,10 +42,4 @@ public interface Graphics {
 	 * /** Clears the screen in the selected color. * / public void clear();
 	 */
 
-	@Deprecated
-	public void begin();
-
-	@Deprecated
-	public void end();
-
 }
