@@ -19,10 +19,6 @@ import org.gamelib.util.Font;
  */
 public class Screen { // JPanel Canvas
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	private AffineTransform affineTransform;
 	public float interpolation;
 	// private BufferedImage bufferedImage;
@@ -94,6 +90,7 @@ public class Screen { // JPanel Canvas
 		Toolkit.getDefaultToolkit().sync();
 	}*/
 	
+	@Deprecated
 	public void update() {
 		Game.getBackend().screenUpdate();
 	}
@@ -107,9 +104,9 @@ public class Screen { // JPanel Canvas
 		HandlerRegistry.instance().invokeHandlers(new Event.Draw(g, interpolation));
 		g.setColor(Color.RED);
 		// g.drawString("FPS: " + fps, 500, 10); // 5 10
-		String str = "FPS: 60" + fps + " 60";
-		System.out.println(fps);
-		f.drawString(g, str, getWidth() - f.getWidth(str) - 1, 10);
+		fps = Game.getLoop().getFPS();
+		String str = "FPS: " + fps;
+		f.drawString(g, str, getWidth() - f.getWidth(str) - 20, 10);
 	}
 
 	/**
@@ -129,6 +126,7 @@ public class Screen { // JPanel Canvas
 	 * (BufferedImage) ((JApplet) container).getImage(new URL("file:/" +
 	 * f.getParent() + "/" + pathname)); } return null; } */
 
+	@Deprecated
 	public void reset(Graphics2D graphics2d) {
 		// TODO Auto-generated method stub
 		graphics2d.setTransform(affineTransform);

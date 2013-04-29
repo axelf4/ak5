@@ -13,6 +13,8 @@ import java.awt.GraphicsEnvironment;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 
+import org.gamelib.Handler.Event;
+import org.gamelib.Loop.LoopListener;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.java2D.Java2DBackend;
 import org.gamelib.resource.FileLoader;
@@ -34,6 +36,7 @@ public abstract class Game {
 	public Input input;
 
 	private Backend backend;
+	private Loop loop;
 
 	/**
 	 * 
@@ -42,6 +45,97 @@ public abstract class Game {
 		instance = instance == null ? this : instance;
 	}
 
+	protected void start(Backend backend) {
+		// (this.backend = backend).start(this, getDisplayMode());
+		this.backend = backend;
+		backend.setTitle(instance.toString());
+
+		screen = new Screen(getDisplayMode());
+		handlerRegistry = HandlerRegistry.instance();
+		input = backend.getInput();
+		FileLoader.container = container;
+
+		// instance.initialize();
+		info("Initialized " + instance.toString());
+		(thread = new Thread(loop = new FixedTimestepLoop(new DefaultLoopListener(this)))).start();
+	}
+
+	protected void start() {
+		// (container = new JFrame()).add(screen = new Screen());
+		start(new Java2DBackend(new JFrame()));
+	}
+
+	/**
+	 * TODO add java-doc
+	 */
+	protected abstract void initialize();
+
+	public abstract String toString();
+
+	public DisplayMode getDisplayMode() {
+		return DisplayMode.r800x600;
+	}
+
+	public static Game getInstance() {
+		return instance;
+	}
+
+	public static Backend getBackend() {
+		return instance.backend;
+	}
+	
+	public static Loop getLoop() {
+		return instance.loop;
+	}
+
+	public static class DefaultLoopListener implements LoopListener {
+		private Game game;
+
+		public DefaultLoopListener(Game game) {
+			this.game = game;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.gamelib.Loop.LoopListener#start()
+		 */
+		@Override
+		public void start() {
+			Game.getBackend().start(game, game.getDisplayMode());
+			game.initialize();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.gamelib.Loop.LoopListener#tick(float)
+		 */
+		@Override
+		public void tick(float delta) {
+			HandlerRegistry.instance().invokeHandlers(new Event.Tick());
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.gamelib.Loop.LoopListener#draw(float)
+		 */
+		@Override
+		public void draw(float delta) {
+			Game.getBackend().screenUpdate();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.gamelib.Loop.LoopListener#shouldStop()
+		 */
+		@Override
+		public boolean shouldStop() {
+			return Game.getBackend().shouldClose();
+		}
+	}
+
+	/* DEPRECATED OLD STUFF */
+	
+	@Deprecated
 	protected void start(Container container) {
 		// (this.container = container).add(screen = new Screen());
 		DisplayMode mode = getDisplayMode();
@@ -60,40 +154,15 @@ public abstract class Game {
 
 		instance.initialize();
 		info("Initialized " + instance.toString());
-		(thread = new Thread(new FixedTimestepLoop(screen))).start();
+		// (thread = new Thread(new FixedTimestepLoop2(screen))).start();
 	}
 
-	protected void start(Backend backend) {
-		// (this.backend = backend).start(this, getDisplayMode());
-		this.backend = backend;
-		backend.setTitle(instance.toString());
-
-		screen = new Screen(getDisplayMode());
-		handlerRegistry = HandlerRegistry.instance();
-		input = backend.getInput();
-		FileLoader.container = container;
-
-		// instance.initialize();
-		info("Initialized " + instance.toString());
-		(thread = new Thread(new FixedTimestepLoop(screen))).start();
+	@Deprecated
+	public static DisplayMode getDisplayMode2() {
+		return instance.getDisplayMode();
 	}
 
-	protected void start() {
-		// (container = new JFrame()).add(screen = new Screen());
-		start(new Java2DBackend(new JFrame()));
-	}
-
-	/**
-	 * TODO add java-doc
-	 */
-	protected abstract void initialize();
-
-	public abstract String toString();
-
-	protected DisplayMode getDisplayMode() {
-		return DisplayMode.r800x600;
-	}
-
+	@Deprecated
 	private void setFullscreen(JFrame frame, boolean fullscreen) {
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice graphicsDevice = ge.getDefaultScreenDevice();
@@ -122,17 +191,4 @@ public abstract class Game {
 			frame.setVisible(true);
 		}
 	}
-
-	public static Game getInstance() {
-		return instance;
-	}
-
-	public static Backend getBackend() {
-		return instance.backend;
-	}
-
-	public static DisplayMode getDisplayMode2() {
-		return instance.getDisplayMode();
-	}
-
 }
