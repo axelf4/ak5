@@ -108,6 +108,7 @@ public class Java2DInput extends Input implements KeyEventDispatcher, MouseListe
 			return Key.KEY_ESCAPE;
 		case KeyEvent.VK_1:
 			return Key.KEY_1;
+			
 		case KeyEvent.VK_Q:
 			return Key.KEY_Q;
 		case KeyEvent.VK_W:
@@ -142,6 +143,20 @@ public class Java2DInput extends Input implements KeyEventDispatcher, MouseListe
 			return Key.KEY_S;
 		case KeyEvent.VK_D:
 			return Key.KEY_D;
+			
+		case KeyEvent.VK_SPACE:
+			return Key.KEY_SPACE;
+			
+		case KeyEvent.VK_UP:
+			return Key.KEY_UP;
+		case KeyEvent.VK_LEFT:
+			return Key.KEY_LEFT;
+		case KeyEvent.VK_RIGHT:
+			return Key.KEY_RIGHT;
+		case KeyEvent.VK_END:
+			return Key.KEY_END;
+		case KeyEvent.VK_DOWN:
+			return Key.KEY_DOWN;
 
 		default:
 			return Key.KEY_UNDEFINED;
