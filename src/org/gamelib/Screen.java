@@ -104,7 +104,7 @@ public class Screen { // JPanel Canvas
 		HandlerRegistry.instance().invokeHandlers(new Event.Draw(g, interpolation));
 		g.setColor(Color.RED);
 		// g.drawString("FPS: " + fps, 500, 10); // 5 10
-		fps = Game.getLoop().getFPS();
+		fps = Game.getInstance().getLoop().getFPS();
 		String str = "FPS: " + fps;
 		f.drawString(g, str, getWidth() - f.getWidth(str) - 20, 10);
 	}

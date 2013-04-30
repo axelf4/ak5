@@ -13,8 +13,8 @@ import org.gamelib.backend.Graphics;
  */
 public interface Entity {
 	
+	public void update(float delta);
 	public void draw(Graphics g, float delta);
-	public void update();
 	
 	/**
 	 * @author Axel

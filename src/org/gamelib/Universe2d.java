@@ -42,6 +42,7 @@ public class Universe2d implements Handler {
 	@Override
 	public void handle(Event event) {
 		if (event instanceof Event.Tick) {
+			float delta = ((Event.Tick) event).delta;
 			for (int i = 0; i < entities.size(); i++) {
 				Entity entity = entities.get(i);
 				entity.setLastX(entity.getX());
@@ -50,7 +51,7 @@ public class Universe2d implements Handler {
 				// entity.setX(entity.getX() + entity.getHSpeed());
 				// entity.setY(entity.getY() + entity.getVSpeed());
 
-				entity.update();
+				entity.update(delta);
 			}
 		} else if (event instanceof Event.Draw) {
 			Graphics g = ((Event.Draw) event).graphics;

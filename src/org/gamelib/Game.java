@@ -36,7 +36,7 @@ public abstract class Game {
 	public Input input;
 
 	private Backend backend;
-	private Loop loop;
+	protected Loop loop;
 
 	/**
 	 * 
@@ -57,7 +57,7 @@ public abstract class Game {
 
 		// instance.initialize();
 		info("Initialized " + instance.toString());
-		(thread = new Thread(loop = new FixedTimestepLoop(new DefaultLoopListener(this)))).start();
+		(thread = new Thread(getLoop())).start();
 	}
 
 	protected void start() {
@@ -84,8 +84,8 @@ public abstract class Game {
 		return instance.backend;
 	}
 	
-	public static Loop getLoop() {
-		return instance.loop;
+	public Loop getLoop() {
+		return loop == null ? loop = new FixedTimestepLoop(new DefaultLoopListener(this)) : loop;
 	}
 
 	public static class DefaultLoopListener implements LoopListener {
@@ -111,7 +111,7 @@ public abstract class Game {
 		 */
 		@Override
 		public void tick(float delta) {
-			HandlerRegistry.instance().invokeHandlers(new Event.Tick());
+			HandlerRegistry.instance().invokeHandlers(new Event.Tick(delta));
 		}
 
 		/*

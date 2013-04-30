@@ -46,6 +46,11 @@ public interface Handler {
 
 		/** Event triggered each tick. */
 		public static class Tick extends Event {
+			public float delta;
+			
+			public Tick(float delta) {
+				this.delta = delta;
+			}
 		}
 
 		/** Event triggered when the screen redraws. */
@@ -119,7 +124,8 @@ public interface Handler {
 		public static final class AdvancedTick extends Tick {
 			public static long counter = 0;
 
-			public AdvancedTick() {
+			public AdvancedTick(float delta) {
+				super(delta);
 				counter = counter >= Long.MAX_VALUE ? 0 : counter + 1;
 			}
 		}
