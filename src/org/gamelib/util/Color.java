@@ -15,9 +15,29 @@ import java.io.Serializable;
 public class Color implements Serializable {
 	/** The color white. */
 	public static final Color WHITE = new Color(255, 255, 255);
+	/** The color light gray. */
+	public static final Color LIGHT_GRAY = new Color(192, 192, 192);
+	/** The color gray. */
+	public static final Color GRAY = new Color(128, 128, 128);
+	/** The color dark gray. */
+	public static final Color DARK_GRAY = new Color(64, 64, 64);
+	/** The color black. */
 	public static final Color BLACK = new Color(0, 0, 0);
+	/** The color red. */
 	public static final Color RED = new Color(255, 0, 0);
+	/** The color pink. */
+	public static final Color PINK = new Color(255, 175, 175);
+	/** The color orange. */
+	public static final Color ORANGE = new Color(255, 200, 0);
+	/** The color yellow. */
+	public static final Color YELLOW = new Color(255, 255, 0);
+	/** The color green. */
 	public static final Color GREEN = new Color(0, 255, 0);
+	/** The color magenta. */
+	public static final Color MAGENTA = new Color(255, 0, 255);
+	/** The color cyan. */
+	public static final Color CYAN = new Color(0, 255, 255);
+	/** The color blue. */
 	public static final Color BLUE = new Color(0, 0, 255);
 
 	/** The color value. */
