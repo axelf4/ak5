@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.gamelib.HandlerRegistry;
 import org.gamelib.Input;
-import org.gamelib.View;
+import org.gamelib.Room;
 
 /**
  * @author Axel
@@ -19,8 +19,8 @@ public class Button extends Component {
 	/**
 	 * 
 	 */
-	public Button(View view) {
-		super(view);
+	public Button(Room room) {
+		super(room);
 	}
 
 	/* (non-Javadoc)
@@ -34,7 +34,7 @@ public class Button extends Component {
 		} else if (event instanceof Event.Mouse) {
 			Input input = ((Event.Control) event).input;
 			if (rectangle.contains(input.mousePosition)) {
-				HandlerRegistry.instance().invokeHandlers(new Event.Layout(this, event), view);
+				HandlerRegistry.instance().invokeHandlers(new Event.Layout(this, event), room);
 			}
 		}
 	}

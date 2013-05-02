@@ -15,33 +15,33 @@ import org.gamelib.Handler.Event;
 import org.gamelib.ui.Component;
 
 /**
- * possible names: View, Scene, Room, 
- * @author Axel
+ * possible names: Room, Scene, Room,
  * 
+ * @author Axel
  */
-public class View {
+public class Room {
 	public Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = new HashMap<Class<? extends Event>, CopyOnWriteArrayList<Handler>>(1);
-	private Rectangle rectangle = null;
+	private Rectangle size = null;
 	/** Whether the handler should receive events */
 	public boolean active = true;
 	private boolean alwaysActive = false;
 
-	// private List<Scene> views = HandlerRegistry.instance().views;
+	// private List<Scene> rooms = HandlerRegistry.instance().views;
 
-	public View() {
+	public Room() {
 		// HandlerRegistry.instance().addScene(this);
 	}
 
-	public View(Rectangle rectangle) {
+	public Room(Rectangle size) {
 		this();
-		this.rectangle = rectangle;
+		this.size = size;
 	}
 
 	/**
 	 * @return the rectangle
 	 */
 	public Rectangle getRectangle() {
-		return rectangle;
+		return size;
 	}
 
 	/**
@@ -50,11 +50,11 @@ public class View {
 	 * @param rectangle
 	 * @return the existing rectangle if the given is null
 	 */
-	public void setRectangle(Rectangle rectangle) {
-		this.rectangle = rectangle;
+	public void setSize(Rectangle size) {
+		this.size = size;
 	}
 
-	public View setAlwaysActive(boolean b) {
+	public Room setAlwaysActive(boolean b) {
 		this.alwaysActive = b;
 		return this;
 	}
@@ -65,6 +65,10 @@ public class View {
 	 * @param handler {@link Handler} instance
 	 */
 	public void register(Handler handler) {
+		List<Room> rooms = HandlerRegistry.instance().rooms;
+		if (!rooms.contains(this))
+			rooms.add(this);
+
 		ArrayList<Class<? extends Event>> list = new ArrayList<Class<? extends Event>>();
 		handler.handlers(list);
 		for (Iterator<Class<? extends Event>> iterator = list.iterator(); iterator.hasNext();) {
@@ -75,16 +79,17 @@ public class View {
 		}
 	}
 
-	/* View utility */
+	/* Room utility */
 
 	public void switchTo() {
-		for (View toCheck : HandlerRegistry.instance().views) {
-			if (!toCheck.alwaysActive) toCheck.active = false;
+		for (Room toCheck : HandlerRegistry.instance().rooms) {
+			if (!toCheck.alwaysActive)
+				toCheck.active = false;
 		}
 		active = true;
 	}
 
-	public static class UIPane extends View {
+	public static class UIPane extends Room {
 		private List<Component> components = new ArrayList<Component>();
 
 		/**

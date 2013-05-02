@@ -86,7 +86,7 @@ public class LWJGLGraphics implements Graphics {
 			GL11.glVertex2f(dx1, dy2);
 		}
 		GL11.glEnd();
-		// restore the model view matrix to prevent contamination
+		// restore the model room matrix to prevent contamination
 		glPopMatrix();
 	}
 

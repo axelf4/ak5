@@ -27,8 +27,8 @@ public class Universe2d implements Handler {
 	/**
 	 * 
 	 */
-	public Universe2d(View view) {
-		HandlerRegistry.instance().register(this, view);
+	public Universe2d(Room room) {
+		HandlerRegistry.instance().register(this, room);
 	}
 
 	public void add(Entity entity) {

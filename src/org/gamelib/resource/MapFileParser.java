@@ -17,9 +17,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.gamelib.util.Log;
-import org.gamelib.util.Map;
-import org.gamelib.util.Map.Layer;
-import org.gamelib.util.Map.ObjectGroup;
+import org.gamelib.util.TiledMap;
+import org.gamelib.util.TiledMap.Layer;
+import org.gamelib.util.TiledMap.ObjectGroup;
 import org.gamelib.util.TileSet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -64,7 +64,7 @@ public class MapFileParser implements FileParser {
 			Document doc = builder.parse(FileLoader.getResourceStream(file.getPath()));
 			Element root = doc.getDocumentElement();
 
-			int orientation = root.getAttribute("orientation").equals("orthogonal") ? Map.ORTHOGONAL : Map.ISOMETRIC;
+			int orientation = root.getAttribute("orientation").equals("orthogonal") ? TiledMap.ORTHOGONAL : TiledMap.ISOMETRIC;
 			int width = Integer.parseInt(root.getAttribute("width"));
 			int height = Integer.parseInt(root.getAttribute("height"));
 			int tileWidth = Integer.parseInt(root.getAttribute("tilewidth"));
@@ -94,8 +94,7 @@ public class MapFileParser implements FileParser {
 			NodeList setNodes = root.getElementsByTagName("tileset");
 			for (int i = 0; i < setNodes.getLength(); i++) {
 				Element element = (Element) setNodes.item(i);
-				tileSet = new TileSet(element, mapLocation); // TODO not
-																// hardcode
+				tileSet = new TileSet(element, mapLocation);
 				tileSet.index = i;
 				if (lastSet != null)
 					lastSet.lastGID = tileSet.firstGID - 1;
@@ -107,7 +106,7 @@ public class MapFileParser implements FileParser {
 			NodeList layerNodes = root.getElementsByTagName("layer");
 			for (int i = 0; i < layerNodes.getLength(); i++) {
 				Element element = (Element) layerNodes.item(i);
-				Layer layer = new Map.Layer(element);
+				Layer layer = new TiledMap.Layer(element);
 				layer.index = i;
 				Element dataNode = (Element) element.getElementsByTagName("data").item(0);
 				String encoding = dataNode.getAttribute("encoding");
@@ -146,13 +145,13 @@ public class MapFileParser implements FileParser {
 			NodeList objectGroupNodes = root.getElementsByTagName("objectgroup");
 			for (int i = 0; i < objectGroupNodes.getLength(); i++) {
 				Element element = (Element) objectGroupNodes.item(i);
-				ObjectGroup objectGroup = new Map.ObjectGroup(element);
+				ObjectGroup objectGroup = new TiledMap.ObjectGroup(element);
 				objectGroup.index = i;
 
 				objectGroups.add(objectGroup);
 			}
 
-			return new Map(tileWidth, tileHeight, tileSets, layers, objectGroups, orientation, mapLocation, props);
+			return new TiledMap(tileWidth, tileHeight, tileSets, layers, objectGroups, orientation, props);
 		} catch (ParserConfigurationException | SAXException e) {
 			Log.error("couldn't parse map", e);
 			return null;

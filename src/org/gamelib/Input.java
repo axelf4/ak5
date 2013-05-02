@@ -3,13 +3,7 @@
  */
 package org.gamelib;
 
-import java.awt.AWTException;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Timer;

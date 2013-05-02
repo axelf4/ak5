@@ -24,11 +24,11 @@ import org.gamelib.Handler.Event;
 public class HandlerRegistry {
 
 	/** Used of all undefined handlers. */
-	public static final View DEFAULT_VIEW = new View().setAlwaysActive(true);
+	public static final Room DEFAULT_VIEW = new Room().setAlwaysActive(true);
 
 	private static HandlerRegistry instance;
 	private Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers;
-	public List<View> views;
+	public List<Room> rooms;
 
 	/**
 	 * 
@@ -36,8 +36,8 @@ public class HandlerRegistry {
 	private HandlerRegistry() {
 		// instance = this; // remove this line
 		handlers = new HashMap<Class<? extends Event>, CopyOnWriteArrayList<Handler>>(1);
-		(views = new ArrayList<View>()).add(DEFAULT_VIEW);
-		// (views = new Node<View>(null)).add(new Node<View>(DEFAULT_VIEW));
+		(rooms = new ArrayList<Room>()).add(DEFAULT_VIEW);
+		// (rooms = new Node<Room>(null)).add(new Node<Room>(DEFAULT_VIEW));
 	}
 
 	/**
@@ -52,14 +52,14 @@ public class HandlerRegistry {
 	 * 
 	 * @param handler {@link Handler} instance
 	 */
-	/*public void register(Handler handler, View view) {
-		if (view == null)
-			throw new IllegalArgumentException("view cannot be null");
-		/* if (!views.contains(view)) throw new
-		 * RuntimeException("must add the view first"); *3/
-		if (!views.contains(view))
-			views.add(view);
-		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = view.handlers;
+	/*public void register(Handler handler, Room room) {
+		if (room == null)
+			throw new IllegalArgumentException("room cannot be null");
+		/* if (!rooms.contains(room)) throw new
+		 * RuntimeException("must add the room first"); *3/
+		if (!rooms.contains(room))
+			rooms.add(room);
+		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = room.handlers;
 		ArrayList<Class<? extends Event>> list = new ArrayList<Class<? extends Event>>();
 		handler.handlers(list);
 		for (Iterator<Class<? extends Event>> iterator = list.iterator(); iterator.hasNext();) {
@@ -69,18 +69,18 @@ public class HandlerRegistry {
 			handlers.get(type).add(handler);
 		}
 	}*/
-	public void register(Handler handler, View view) {
-		if (view == null)
-			throw new IllegalArgumentException("view cannot be null");
-		/* if (!views.contains(view)) throw new
-		 * RuntimeException("must add the view first"); */
-		// register view
-		if (!views.contains(view)) {
-			views.add(view);
-			/*Node<View> node = new Node<View>(view);
-			views.add(node);*/
+	public void register(Handler handler, Room room) {
+		if (room == null)
+			throw new IllegalArgumentException("room cannot be null");
+		/* if (!rooms.contains(room)) throw new
+		 * RuntimeException("must add the room first"); */
+		// register room
+		if (!rooms.contains(room)) {
+			rooms.add(room);
+			/*Node<Room> node = new Node<Room>(room);
+			rooms.add(node);*/
 		}
-		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = view.handlers;
+		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = room.handlers;
 		ArrayList<Class<? extends Event>> list = new ArrayList<Class<? extends Event>>();
 		handler.handlers(list);
 		for (Iterator<Class<? extends Event>> iterator = list.iterator(); iterator.hasNext();) {
@@ -114,8 +114,8 @@ public class HandlerRegistry {
 	 */
 	public void unregister(Handler handler, Class<? extends Event> type) {
 		if (type == null) {
-			for (View view : views) {
-				for (CopyOnWriteArrayList<Handler> list : view.handlers.values()) {
+			for (Room room : rooms) {
+				for (CopyOnWriteArrayList<Handler> list : room.handlers.values()) {
 					list.remove(handler);
 				}
 			}
@@ -125,11 +125,11 @@ public class HandlerRegistry {
 
 	public synchronized void invokeHandlers(Event event) {
 		// Log.startProfiling("invoke");
-		/*for (int i = 0; i < views.size(); i++) {
-			View view = views.get(i);
-			if (view == null || !view.active)
+		/*for (int i = 0; i < rooms.size(); i++) {
+			Room room = rooms.get(i);
+			if (room == null || !room.active)
 				continue;
-			Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = view.handlers;
+			Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = room.handlers;
 
 			if (!handlers.containsKey(event.getClass()))
 				continue;
@@ -138,12 +138,12 @@ public class HandlerRegistry {
 				handler.handle(event);
 			}
 		}*/
-		/*for (int i = 0; i < views.size(); i++) {
-			View view = views.get(i);*/
-		for (View view : views) {
-			if (view == null || !view.active)
+		/*for (int i = 0; i < rooms.size(); i++) {
+			Room room = rooms.get(i);*/
+		for (Room room : rooms) {
+			if (room == null || !room.active)
 				continue;
-			Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = view.handlers;
+			Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = room.handlers;
 
 			if (!handlers.containsKey(event.getClass()))
 				continue;
@@ -156,10 +156,10 @@ public class HandlerRegistry {
 		// Log.stopProfiling("invoke"));
 	}
 
-	public synchronized void invokeHandlers(Event event, View view) {
-		if (view == null || !view.active)
+	public synchronized void invokeHandlers(Event event, Room room) {
+		if (room == null || !room.active)
 			return;
-		/*Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = view.handlers;
+		/*Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = room.handlers;
 
 		if (!handlers.containsKey(event.getClass()))
 			return;
@@ -170,14 +170,14 @@ public class HandlerRegistry {
 	}
 	
 	public void calculateViews() {
-		List<View> list = views;
+		List<Room> list = rooms;
 		for (int i = 0; i < list.size(); i++) {
-			View view1 = list.get(i);
+			Room view1 = list.get(i);
 			Rectangle rectangle1 = view1.getRectangle();
 			if (rectangle1 == null)
 				continue;
 			for (int j = i - 1; j > 0; j--) {
-				View view2 = list.get(j);
+				Room view2 = list.get(j);
 				Rectangle rectangle2 = view2.getRectangle();
 				if (rectangle2 == null)
 					continue;
