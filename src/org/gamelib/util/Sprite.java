@@ -22,7 +22,7 @@ public class Sprite {
 	/** The frame index. */
 	public int frame;
 	public int duration;
-	private int step_counter;
+	private float step_counter;
 	public double rotation;
 
 	public Sprite(String name, int duration, Rectangle... subImages) {
@@ -55,9 +55,26 @@ public class Sprite {
 			if (++frame >= subImages.length)
 				frame = 0;
 		}
+	}
+	
+	public void draw(Graphics g, float delta, Image image, int x, int y, int flip) {
+		Rectangle rectangle = subImages[frame];
+		int sx = rectangle.x;
+		int sy = rectangle.y;
+		int width = rectangle.width;
+		int height = rectangle.height;
 		
-		if (name.equalsIgnoreCase("use")) {
-			Log.debug("" + frame);
+		// g.rotate(rotation, x + width / 2, y + height / 2);
+		g.drawImage(image, x + flip, y, x + width - flip, y + height, sx, sy, sx + width, sy + height);
+		// g.rotate(-rotation, x + width / 2, y + height / 2);
+		
+		step_counter += 35.0 * delta;
+		// System.out.println("counter: " + step_counter + " delta: " + delta);
+		if (step_counter > duration) {
+			step_counter = 0;
+			if (++frame >= subImages.length)
+				frame = 0;
+			System.out.println("frame: " + frame);
 		}
 	}
 

@@ -30,7 +30,7 @@ public interface Backend {
 	/** @return the processor for input */
 	public Input getInput();
 
-	public void screenUpdate();
+	public void screenUpdate(float delta);
 
 	/** @return system time in milliseconds */
 	public long getTime();

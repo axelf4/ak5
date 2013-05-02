@@ -120,7 +120,7 @@ public abstract class Game {
 		 */
 		@Override
 		public void draw(float delta) {
-			Game.getBackend().screenUpdate();
+			Game.getBackend().screenUpdate(delta);
 		}
 
 		/*

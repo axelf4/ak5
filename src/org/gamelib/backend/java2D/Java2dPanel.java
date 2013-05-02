@@ -23,6 +23,7 @@ public class Java2dPanel extends JPanel {
 	
 	private VolatileImage volatileImage;
 	public Graphics2D g2d; // graphics2d
+	public float delta;
 
 	/**
 	 * 
@@ -45,7 +46,7 @@ public class Java2dPanel extends JPanel {
 				AffineTransform affineTransform = g2d.getTransform();
 				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 
-				Game.getInstance().screen.drawHandlers(new Java2DGraphics(g2d));
+				Game.getInstance().screen.drawHandlers(new Java2DGraphics(g2d), delta);
 				// Game.getInstance().screen.drawHandlers(new Java2DGraphics(g2d), g2d);
 
 				g2d.setTransform(affineTransform);

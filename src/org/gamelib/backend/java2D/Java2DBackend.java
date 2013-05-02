@@ -103,7 +103,8 @@ public class Java2DBackend implements Backend {
 	 * @see org.gamelib.backends.Backend#screenUpdate()
 	 */
 	@Override
-	public void screenUpdate() {
+	public void screenUpdate(float delta) {
+		panel.delta = delta;
 		panel.repaint();
 	}
 

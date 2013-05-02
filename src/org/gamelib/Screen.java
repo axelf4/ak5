@@ -90,18 +90,13 @@ public class Screen { // JPanel Canvas
 		Toolkit.getDefaultToolkit().sync();
 	}*/
 	
-	@Deprecated
-	public void update() {
-		Game.getBackend().screenUpdate();
-	}
-	
-	public void drawHandlers(org.gamelib.backend.Graphics g) {
+	public void drawHandlers(org.gamelib.backend.Graphics g, float delta) {
 		g.setColor(Color.WHITE); // Color.WHITE
 		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setColor(Color.BLACK);
 		// HandlerRegistry.getInstance().invokeHandlers(HandlerType.RENDER,
 		// graphics2d, interpolation);
-		HandlerRegistry.instance().invokeHandlers(new Event.Draw(g, interpolation));
+		HandlerRegistry.instance().invokeHandlers(new Event.Draw(g, delta));
 		g.setColor(Color.RED);
 		// g.drawString("FPS: " + fps, 500, 10); // 5 10
 		fps = Game.getInstance().getLoop().getFPS();

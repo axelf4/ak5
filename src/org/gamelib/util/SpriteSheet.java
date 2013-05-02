@@ -49,6 +49,18 @@ public class SpriteSheet {
 		spriteSheet[sprite].draw(g, image, x, y, flip);
 	}
 	
+	public void draw(Graphics g, float delta, int x, int y) {
+		Sprite sprite2 = spriteSheet[sprite];
+		Rectangle rectangle = spriteSheet[sprite].subImages[sprite2.frame];
+		int sx = rectangle.x;
+		int sy = rectangle.y;
+		int width = rectangle.width;
+		int height = rectangle.height;
+		
+		int flip = (flippedHorizontal ? width : 0);
+		spriteSheet[sprite].draw(g, delta, image, x, y, flip);
+	}
+	
 	public Sprite addSprite(Sprite sprite) {
 		Sprite[] tmp = spriteSheet;
 		spriteSheet = new Sprite[tmp.length + 1];
