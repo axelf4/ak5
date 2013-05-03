@@ -123,7 +123,7 @@ public class HandlerRegistry {
 			throw new RuntimeException("no handler of type " + type + " in class " + handler.getClass());
 	}
 
-	public synchronized void invokeHandlers(Event event) {
+	public synchronized void dispatch(Event event) {
 		// Log.startProfiling("invoke");
 		/*for (int i = 0; i < rooms.size(); i++) {
 			Room room = rooms.get(i);

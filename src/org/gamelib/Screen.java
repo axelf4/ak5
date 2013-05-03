@@ -96,7 +96,7 @@ public class Screen { // JPanel Canvas
 		g.setColor(Color.BLACK);
 		// HandlerRegistry.getInstance().invokeHandlers(HandlerType.RENDER,
 		// graphics2d, interpolation);
-		HandlerRegistry.instance().invokeHandlers(new Event.Draw(g, delta));
+		HandlerRegistry.instance().dispatch(new Event.Draw(g, delta));
 		g.setColor(Color.RED);
 		// g.drawString("FPS: " + fps, 500, 10); // 5 10
 		fps = Game.getInstance().getLoop().getFPS();

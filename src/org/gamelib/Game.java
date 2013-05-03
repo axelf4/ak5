@@ -111,7 +111,7 @@ public abstract class Game {
 		 */
 		@Override
 		public void tick(float delta) {
-			HandlerRegistry.instance().invokeHandlers(new Event.Tick(delta));
+			HandlerRegistry.instance().dispatch(new Event.Tick(delta));
 		}
 
 		/*

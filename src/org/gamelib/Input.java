@@ -75,7 +75,7 @@ public abstract class Input {
 		} else if (id == KeyEvent.KEY_RELEASED)
 			pressedKeys.put(keyCode, false);
 		// pressedKeys.put(e.getKeyCode(), e.getID() == KeyEvent.KEY_PRESSED);
-		HandlerRegistry.instance().invokeHandlers(new Event.Key(this));
+		HandlerRegistry.instance().dispatch(new Event.Key(this));
 	}
 
 	protected void mouseEvent(int id, int button, Point p) {
@@ -91,11 +91,11 @@ public abstract class Input {
 		default:
 			break;
 		}
-		HandlerRegistry.instance().invokeHandlers(new Event.Mouse(this, id));
+		HandlerRegistry.instance().dispatch(new Event.Mouse(this, id));
 	}
 
 	protected void mouseWheelEvent(double scrollAmount) {
-		HandlerRegistry.instance().invokeHandlers(new Event.MouseWheel(this, scrollAmount));
+		HandlerRegistry.instance().dispatch(new Event.MouseWheel(this, scrollAmount));
 	}
 
 	/*5* Constants for keyboard hardware. */
