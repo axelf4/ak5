@@ -3,7 +3,8 @@
  */
 package org.gamelib.backend;
 
-import java.awt.Color;
+import org.gamelib.util.Color;
+
 
 /**
  * TODO add methods for starting and stopping drawing

@@ -3,12 +3,12 @@
  */
 package org.gamelib.backend.java2D;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
+import org.gamelib.util.Color;
 
 /**
  * @author pwnedary
@@ -33,7 +33,7 @@ public class Java2DGraphics implements Graphics {
 	 */
 	@Override
 	public void setColor(Color c) {
-		g.setColor(c);
+		g.setColor(new java.awt.Color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()));
 	}
 
 	/*

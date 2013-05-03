@@ -3,7 +3,6 @@
  */
 package org.gamelib;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.VolatileImage;
@@ -11,6 +10,7 @@ import java.io.IOException;
 
 import org.gamelib.Handler.Event;
 import org.gamelib.backend.java2D.AWTFont;
+import org.gamelib.util.Color;
 import org.gamelib.util.Font;
 
 /**
