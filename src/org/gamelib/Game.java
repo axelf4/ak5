@@ -56,8 +56,10 @@ public abstract class Game {
 		FileLoader.container = container;
 
 		// instance.initialize();
+		Game.getBackend().start(this, getDisplayMode());
+		this.initialize();
 		info("Initialized " + instance.toString());
-		(thread = new Thread(getLoop())).start();
+		(thread = new Thread(getLoop(), this.toString() + "_main")).start();
 	}
 
 	protected void start() {
@@ -101,8 +103,8 @@ public abstract class Game {
 		 */
 		@Override
 		public void start() {
-			Game.getBackend().start(game, game.getDisplayMode());
-			game.initialize();
+			/*Game.getBackend().start(game, game.getDisplayMode());
+			game.initialize();*/
 		}
 
 		/*
