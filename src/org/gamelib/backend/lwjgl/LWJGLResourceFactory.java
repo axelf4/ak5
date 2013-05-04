@@ -5,6 +5,7 @@ package org.gamelib.backend.lwjgl;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.gamelib.backend.Image;
 import org.gamelib.backend.ResourceFactory;
@@ -15,11 +16,9 @@ import org.gamelib.backend.ResourceFactory;
  */
 public class LWJGLResourceFactory implements ResourceFactory {
 
-	/**
-	 * 
-	 */
-	public LWJGLResourceFactory() {
-		// TODO Auto-generated constructor stub
+	@Override
+	public InputStream getResourceAsStream(String name) {
+		return Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
 	}
 
 	/* (non-Javadoc)

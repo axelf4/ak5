@@ -3,11 +3,11 @@
  */
 package org.gamelib.backend.java2D;
 
-import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Transparency;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -20,11 +20,9 @@ import org.gamelib.backend.ResourceFactory;
  */
 public class Java2DResourceFactory implements ResourceFactory {
 
-	/**
-	 * 
-	 */
-	public Java2DResourceFactory() {
-		// TODO Auto-generated constructor stub
+	@Override
+	public InputStream getResourceAsStream(String name) {
+		return Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
 	}
 
 	/* (non-Javadoc)
@@ -32,7 +30,8 @@ public class Java2DResourceFactory implements ResourceFactory {
 	 */
 	@Override
 	public Image getImage(File file) throws IOException {
-		return new Java2DImage(ImageIO.read(file));
+		// return new Java2DImage(ImageIO.read(file));
+		return new Java2DImage(ImageIO.read(getResourceAsStream(file.getPath())));
 	}
 
 	/* (non-Javadoc)
