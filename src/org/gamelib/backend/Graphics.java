@@ -5,7 +5,6 @@ package org.gamelib.backend;
 
 import org.gamelib.util.Color;
 
-
 /**
  * TODO add methods for starting and stopping drawing
  * 
@@ -39,8 +38,7 @@ public interface Graphics {
 
 	public void fillRect(int x, int y, int width, int height);
 
-	/*
-	 * /** Clears the screen in the selected color. * / public void clear();
-	 */
+	/** Clears the screen in the desired color. */
+	public void clear();
 
 }

@@ -91,7 +91,7 @@ public class Java2DBackend implements Backend {
 	 */
 	@Override
 	public Graphics getGraphics() {
-		return graphics == null ? graphics = new Java2DGraphics(panel) : graphics;
+		return graphics == null ? graphics = new Java2DGraphics(panel.g2d, panel.getWidth(), panel.getHeight()) : graphics;
 	}
 
 	public Input getInput() {
@@ -142,7 +142,7 @@ public class Java2DBackend implements Backend {
 	 */
 	@Override
 	public Graphics getGraphics(Image img) {
-		return new Java2DGraphics(((Java2DImage) img).bufferedImage.getGraphics());
+		return new Java2DGraphics(((Java2DImage) img).bufferedImage.getGraphics(), img.getWidth(), img.getHeight());
 	}
 
 	/*

@@ -19,6 +19,7 @@ import org.gamelib.Game;
  * @author pwnedary
  *
  */
+@SuppressWarnings("serial")
 public class Java2dPanel extends JPanel {
 	
 	private VolatileImage volatileImage;
@@ -46,7 +47,7 @@ public class Java2dPanel extends JPanel {
 				AffineTransform affineTransform = g2d.getTransform();
 				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 
-				Game.getInstance().screen.drawHandlers(new Java2DGraphics(g2d), delta);
+				Game.getInstance().screen.drawHandlers(new Java2DGraphics(g2d, getWidth(), getHeight()), delta);
 				// Game.getInstance().screen.drawHandlers(new Java2DGraphics(g2d), g2d);
 
 				g2d.setTransform(affineTransform);

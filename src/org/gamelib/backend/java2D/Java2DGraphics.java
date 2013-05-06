@@ -16,14 +16,9 @@ import org.gamelib.util.Color;
 public class Java2DGraphics implements Graphics {
 
 	private java.awt.Graphics g;
-	@Deprecated
-	private Java2dPanel panel;
+	int width, height;
 
-	public Java2DGraphics(Java2dPanel panel) {
-		this.panel = panel;
-	}
-
-	public Java2DGraphics(java.awt.Graphics g) {
+	public Java2DGraphics(java.awt.Graphics g, int width, int height) {
 		this.g = g;
 	}
 
@@ -75,17 +70,27 @@ public class Java2DGraphics implements Graphics {
 		g.drawLine(x1, y1, x2, y2);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.backend.Graphics#dispose()
 	 */
 	@Override
 	public void dispose() {
 		g.dispose();
 	}
-	
+
 	/** @return the awt {@link Graphics2D} used to draw */
 	public Graphics2D getGraphics2D() {
 		return (Graphics2D) g;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.backend.Graphics#clear()
+	 */
+	@Override
+	public void clear() {
+		// TODO Auto-generated method stub
+		g.fillRect(0, 0, width, height);
+	}
 }

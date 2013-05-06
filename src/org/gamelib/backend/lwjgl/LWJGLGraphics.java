@@ -49,6 +49,7 @@ public class LWJGLGraphics implements Graphics {
 		// 255, currentColor.getBlue() / 255);
 		// System.out.println(r + " " + g + " " + b + " " + a);
 		GL11.glColor4f(r, g, b, a);
+		GL11.glClearColor(r, g, b, a);
 	}
 
 	/*
@@ -138,11 +139,11 @@ public class LWJGLGraphics implements Graphics {
 		
 	}
 
-	/*@Override
+	@Override
 	public void clear() {
 		// clear the screen and depth buffer
-		GL11.glClearColor(0, 0, 0, 0);
+		// GL11.glClearColor(0, 0, 0, 0);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-	}*/
+	}
 
 }
