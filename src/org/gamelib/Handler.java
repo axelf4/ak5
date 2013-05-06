@@ -12,21 +12,21 @@ import java.util.List;
 import org.gamelib.backend.Graphics;
 import org.gamelib.ui.Component;
 
-/** @author Axel */
+/**
+ * Captures registered {@link Event}s.
+ * @author Axel
+ */
 public interface Handler {
 	/**
 	 * Called when one of the registered events are fired.
-	 * 
 	 * @param event the triggered event
 	 */
 	public void handle(Event event);
 
 	/**
 	 * Used at registration to determine which events to register to.
-	 * 
-	 * @param list which events to register to
+	 * @param list which events to capture
 	 */
-	// public Class<? extends Event>[] handlers();
 	public void handlers(List<Class<? extends Event>> list);
 
 	public static abstract class Event {
@@ -47,7 +47,7 @@ public interface Handler {
 		/** Event triggered each tick. */
 		public static class Tick extends Event {
 			public float delta;
-			
+
 			public Tick(float delta) {
 				this.delta = delta;
 			}
