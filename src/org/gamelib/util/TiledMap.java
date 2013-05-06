@@ -16,6 +16,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.gamelib.Game;
 import org.gamelib.backend.Graphics;
 import org.gamelib.resource.FileLoader;
 import org.w3c.dom.Document;
@@ -292,7 +293,7 @@ public class TiledMap implements Map {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setValidating(false);
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(FileLoader.getResourceStream(file.getPath()));
+			Document doc = builder.parse(Game.getBackend().getResourceFactory().getResourceAsStream(file.getPath()));
 			Element root = doc.getDocumentElement();
 
 			int orientation = root.getAttribute("orientation").equals("orthogonal") ? TiledMap.ORTHOGONAL : TiledMap.ISOMETRIC;
