@@ -21,19 +21,19 @@ import org.gamelib.Handler.Event;
  * @since 0.0.1
  * 
  */
-public class HandlerRegistry {
+public class Registry {
 
 	/** Used of all undefined handlers. */
 	public static final Room DEFAULT_VIEW = new Room().setAlwaysActive(true);
 
-	private static HandlerRegistry instance;
+	private static Registry instance;
 	private Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers;
 	public List<Room> rooms;
 
 	/**
 	 * 
 	 */
-	private HandlerRegistry() {
+	private Registry() {
 		// instance = this; // remove this line
 		handlers = new HashMap<Class<? extends Event>, CopyOnWriteArrayList<Handler>>(1);
 		(rooms = new ArrayList<Room>()).add(DEFAULT_VIEW);
@@ -43,8 +43,8 @@ public class HandlerRegistry {
 	/**
 	 * @return the singleton instance
 	 */
-	public static HandlerRegistry instance() {
-		return instance == null ? instance = new HandlerRegistry() : instance;
+	public static Registry instance() {
+		return instance == null ? instance = new Registry() : instance;
 	}
 
 	/**
@@ -75,13 +75,13 @@ public class HandlerRegistry {
 		/* if (!rooms.contains(room)) throw new
 		 * RuntimeException("must add the room first"); */
 		// register room
-		if (!rooms.contains(room)) {
+		/*if (!rooms.contains(room)) {
 			rooms.add(room);
 			/*Node<Room> node = new Node<Room>(room);
-			rooms.add(node);*/
-		}
+			rooms.add(node);*2/
+		}*/
 		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = room.handlers;
-		ArrayList<Class<? extends Event>> list = new ArrayList<Class<? extends Event>>();
+		ArrayList<Class<? extends Event>> list = new ArrayList<Class<? extends Event>>(); // get events to register to
 		handler.handlers(list);
 		for (Iterator<Class<? extends Event>> iterator = list.iterator(); iterator.hasNext();) {
 			Class<? extends Event> type = iterator.next();
@@ -123,6 +123,7 @@ public class HandlerRegistry {
 			throw new RuntimeException("no handler of type " + type + " in class " + handler.getClass());
 	}
 
+	@SuppressWarnings("unchecked")
 	public synchronized void dispatch(Event event) {
 		// Log.startProfiling("invoke");
 		/*for (int i = 0; i < rooms.size(); i++) {
@@ -140,24 +141,37 @@ public class HandlerRegistry {
 		}*/
 		/*for (int i = 0; i < rooms.size(); i++) {
 			Room room = rooms.get(i);*/
-		for (Room room : rooms) {
-			if (room == null || !room.active)
+		for (Room room : DEFAULT_VIEW.getHierarchy()) { // rooms
+			if (room == null || !room.isActive())
 				continue;
 			Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = room.handlers;
 
-			if (!handlers.containsKey(event.getClass()))
+			/*if (!handlers.containsKey(event.getClass()))
 				continue;
 			for (Iterator<Handler> iterator = handlers.get(event.getClass()).iterator(); iterator.hasNext();) {
 				Handler handler = (Handler) iterator.next();
 				handler.handle(event);
+			}*/
+			
+			Class<? extends Event> class1 = event.getClass();
+			CopyOnWriteArrayList<Handler>[] values = (CopyOnWriteArrayList[]) handlers.values().toArray(new CopyOnWriteArrayList[handlers.values().size()]);
+			Class<? extends Event>[] keys = (Class<? extends Event>[]) handlers.keySet().toArray(new Class[handlers.keySet().size()]);
+			for (int i = 0; i < keys.length; i++) {
+				Class<? extends Event> class2 = keys[i];
+				if (class2.isAssignableFrom(class1)) {
+					for (Iterator<Handler> iterator = values[i].iterator(); iterator.hasNext();) {
+						Handler handler = (Handler) iterator.next();
+						handler.handle(event);
+					}
+				}
 			}
 		}
 		// Log.debug("invoked " + event + ": time: " +
 		// Log.stopProfiling("invoke"));
 	}
 
-	public synchronized void invokeHandlers(Event event, Room room) {
-		if (room == null || !room.active)
+	public synchronized void dispatch(Event event, Room room) {
+		if (room == null || !room.isActive())
 			return;
 		/*Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = room.handlers;
 
@@ -181,7 +195,7 @@ public class HandlerRegistry {
 				Rectangle rectangle2 = view2.getRectangle();
 				if (rectangle2 == null)
 					continue;
-				view2.active = rectangle1.contains(rectangle2);
+				view2.setActive(rectangle1.contains(rectangle2));
 			}
 		}
 	}

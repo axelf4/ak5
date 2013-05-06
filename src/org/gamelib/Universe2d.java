@@ -3,7 +3,6 @@
  */
 package org.gamelib;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -21,14 +20,14 @@ public class Universe2d implements Handler {
 	 * 
 	 */
 	public Universe2d() {
-		HandlerRegistry.instance().register(this);
+		Registry.instance().register(this);
 	}
 
 	/**
 	 * 
 	 */
 	public Universe2d(Room room) {
-		HandlerRegistry.instance().register(this, room);
+		Registry.instance().register(this, room);
 	}
 
 	public void add(Entity entity) {

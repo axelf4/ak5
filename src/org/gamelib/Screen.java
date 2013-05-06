@@ -46,7 +46,7 @@ public class Screen { // JPanel Canvas
 	/* public Screen(GameClass game) { // TODO Auto-generated constructor stub
 	 * super(); this.game = game; setIgnoreRepaint(true); // bufferedImage =
 	 * (BufferedImage) createImage(getWidth(), getHeight()); //
-	 * HandlerRegistry.getInstance().registerHandler(this); // volatileImage =
+	 * Registry.getInstance().registerHandler(this); // volatileImage =
 	 * createVolatileImage(getWidth(), getHeight()); } */
 
 	/*@Override
@@ -66,9 +66,9 @@ public class Screen { // JPanel Canvas
 				graphics2d.setColor(Color.WHITE); // Color.WHITE
 				graphics2d.fillRect(0, 0, getWidth(), getHeight());
 				graphics2d.setColor(Color.BLACK);
-				// HandlerRegistry.getInstance().invokeHandlers(HandlerType.RENDER,
+				// Registry.getInstance().invokeHandlers(HandlerType.RENDER,
 				// graphics2d, interpolation);
-				HandlerRegistry.instance().invokeHandlers(new Event.Draw(graphics2d, interpolation));
+				Registry.instance().invokeHandlers(new Event.Draw(graphics2d, interpolation));
 				graphics2d.setColor(Color.RED);
 				graphics2d.drawString("FPS: " + fps, 500, 10); // 5 10
 
@@ -94,9 +94,9 @@ public class Screen { // JPanel Canvas
 		g.setColor(Color.WHITE); // Color.WHITE
 		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setColor(Color.BLACK);
-		// HandlerRegistry.getInstance().invokeHandlers(HandlerType.RENDER,
+		// Registry.getInstance().invokeHandlers(HandlerType.RENDER,
 		// graphics2d, interpolation);
-		HandlerRegistry.instance().dispatch(new Event.Draw(g, delta));
+		Registry.instance().dispatch(new Event.Draw(g, delta));
 		g.setColor(Color.RED);
 		// g.drawString("FPS: " + fps, 500, 10); // 5 10
 		fps = Game.getInstance().getLoop().getFPS();
@@ -123,7 +123,6 @@ public class Screen { // JPanel Canvas
 
 	@Deprecated
 	public void reset(Graphics2D graphics2d) {
-		// TODO Auto-generated method stub
 		graphics2d.setTransform(affineTransform);
 	}
 

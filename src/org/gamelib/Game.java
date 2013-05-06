@@ -32,7 +32,7 @@ public abstract class Game {
 	public Container container;
 	public Screen screen;
 	@SuppressWarnings("unused")
-	private HandlerRegistry handlerRegistry;
+	private Registry registry;
 	public Input input;
 
 	private Backend backend;
@@ -51,7 +51,7 @@ public abstract class Game {
 		backend.setTitle(instance.toString());
 
 		screen = new Screen(getDisplayMode());
-		handlerRegistry = HandlerRegistry.instance();
+		registry = Registry.instance();
 		input = backend.getInput();
 		FileLoader.container = container;
 
@@ -113,7 +113,8 @@ public abstract class Game {
 		 */
 		@Override
 		public void tick(float delta) {
-			HandlerRegistry.instance().dispatch(new Event.Tick(delta));
+			// Registry.instance().dispatch(new Event.Tick(delta));
+			Registry.instance().dispatch(new Event.AdvancedTick(delta));
 		}
 
 		/*
@@ -150,7 +151,7 @@ public abstract class Game {
 		}
 		if (container instanceof JApplet)
 			((JApplet) container).resize(new Dimension(mode.width, mode.height));
-		handlerRegistry = HandlerRegistry.instance();
+		registry = Registry.instance();
 		// input = new Input(screen);
 		FileLoader.backend = backend;
 

@@ -6,7 +6,7 @@ package org.gamelib.ui;
 import java.awt.Graphics2D;
 import java.util.List;
 
-import org.gamelib.HandlerRegistry;
+import org.gamelib.Registry;
 import org.gamelib.Input;
 import org.gamelib.Room;
 
@@ -34,7 +34,7 @@ public class Button extends Component {
 		} else if (event instanceof Event.Mouse) {
 			Input input = ((Event.Control) event).input;
 			if (rectangle.contains(input.mousePosition)) {
-				HandlerRegistry.instance().invokeHandlers(new Event.Layout(this, event), room);
+				Registry.instance().dispatch(new Event.Layout(this, event), room);
 			}
 		}
 	}

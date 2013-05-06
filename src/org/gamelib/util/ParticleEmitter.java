@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.gamelib.Handler;
-import org.gamelib.HandlerRegistry;
+import org.gamelib.Registry;
 
 /**
  * @author pwnedary
@@ -19,7 +19,7 @@ public class ParticleEmitter implements Handler {
 
 	public static final List<ParticleEmitter> emitters = new ArrayList<ParticleEmitter>();
 	static {
-		HandlerRegistry.instance().register(new ParticleEmitter());
+		Registry.instance().register(new ParticleEmitter());
 	}
 
 	private final List<Particle> particles = new ArrayList<Particle>();

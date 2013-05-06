@@ -15,7 +15,7 @@ import org.gamelib.Handler.Event;
 import org.gamelib.ui.Component;
 
 /**
- * possible names: Room, Scene, Room,
+ * possible names: View, Scene, Room,
  * 
  * @author Axel
  */
@@ -23,18 +23,24 @@ public class Room {
 	public Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = new HashMap<Class<? extends Event>, CopyOnWriteArrayList<Handler>>(1);
 	private Rectangle size = null;
 	/** Whether the handler should receive events */
-	public boolean active = true;
+	boolean active = true;
 	private boolean alwaysActive = false;
+	Room parent;
+	List<Room> children = new ArrayList<Room>();
 
-	// private List<Scene> rooms = HandlerRegistry.instance().views;
+	// private List<Scene> rooms = Registry.instance().views;
 
 	public Room() {
-		// HandlerRegistry.instance().addScene(this);
+		if (parent == null)
+			parent = Registry.DEFAULT_VIEW;
+		if (parent == null)
+			return; // this is the default
+		parent.children.add(this);
 	}
 
-	public Room(Rectangle size) {
-		this();
-		this.size = size;
+	public Room(Room parent) {
+		this.parent = parent;
+		parent.children.add(this);
 	}
 
 	/**
@@ -59,13 +65,27 @@ public class Room {
 		return this;
 	}
 
+	/** @return if active */
+	public boolean isActive() {
+		return active;
+	}
+
+	/** Sets if this and every underlying room is active. */
+	public void setActive(boolean active) {
+		this.active = active;
+		for (Iterator<Room> iterator = children.iterator(); iterator.hasNext();) {
+			Room room = (Room) iterator.next();
+			room.setActive(active);
+		}
+	}
+
 	/**
 	 * Registers an handler
 	 * 
 	 * @param handler {@link Handler} instance
 	 */
 	public void register(Handler handler) {
-		List<Room> rooms = HandlerRegistry.instance().rooms;
+		List<Room> rooms = Registry.instance().rooms;
 		if (!rooms.contains(this))
 			rooms.add(this);
 
@@ -79,16 +99,41 @@ public class Room {
 		}
 	}
 
-	/* Room utility */
-
-	public void switchTo() {
-		for (Room toCheck : HandlerRegistry.instance().rooms) {
-			if (!toCheck.alwaysActive)
-				toCheck.active = false;
+	List<Room> getHierarchy() {
+		List<Room> list = new ArrayList<>();
+		list.add(this);
+		for (int i = 0; i < children.size(); i++)
+			list.addAll(children.get(i).getHierarchy());
+		return list;
+	}
+	
+	String getHierarchy2() {
+		String s = "";
+		List<Room> list = new ArrayList<>();
+		list.add(this);
+		s += ", " + getClass();
+		for (int i = 0; i < children.size(); i++) {
+			if (i <= 0) s += "{";
+			list.addAll(children.get(i).getHierarchy());
+			s += children.get(i).getHierarchy2();
+			if (i < children.size()) s += "}";
 		}
-		active = true;
+		return s;
 	}
 
+	/* Room utility */
+
+	/** Deactivates every other room except for this one and it's children. */
+	public void focus() {
+		for (Room toCheck : Registry.DEFAULT_VIEW.getHierarchy()) {
+			if (!toCheck.alwaysActive)
+				toCheck.setActive(false);
+		}
+		active = true;
+		setActive(true);
+	}
+
+	@Deprecated
 	public static class UIPane extends Room {
 		private List<Component> components = new ArrayList<Component>();
 

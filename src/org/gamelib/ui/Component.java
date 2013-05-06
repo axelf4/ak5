@@ -6,7 +6,7 @@ package org.gamelib.ui;
 import java.awt.Rectangle;
 
 import org.gamelib.Handler;
-import org.gamelib.HandlerRegistry;
+import org.gamelib.Registry;
 import org.gamelib.Room;
 
 /**
@@ -25,7 +25,7 @@ public abstract class Component implements Handler {
 	 */
 	public Component(Room room) {
 		this.room = room;
-		HandlerRegistry.instance().register(this, room);
+		Registry.instance().register(this, room);
 	}
 	
 	public void setRectangle(Rectangle rectangle) {
