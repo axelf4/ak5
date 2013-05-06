@@ -5,4 +5,5 @@ in graphics add drawPoint
 add Sound and Model interface in org.gamelib.backend
 avoid WOP
 check deprecated stuff in Game and see if everything is move into Java2D classes
-multiply with delta time in spritesheet (!)
+add bitmap fonts (!)
+make thread wait for resources to be loaded

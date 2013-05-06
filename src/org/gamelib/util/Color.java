@@ -13,6 +13,8 @@ import java.io.Serializable;
  * @see java.awt.Color
  */
 public class Color implements Serializable {
+	private static final long serialVersionUID = 4649728280397747213L;
+	
 	/** The color white. */
 	public static final Color WHITE = new Color(255, 255, 255);
 	/** The color light gray. */
