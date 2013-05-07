@@ -7,3 +7,5 @@ avoid WOP
 check deprecated stuff in Game and see if everything is move into Java2D classes
 add bitmap fonts (!)
 make thread wait for resources to be loaded
+add interfaces such as Active, Visible, Blended, Colored, Dimensioned, Located,
+Rotated, Scaled..
