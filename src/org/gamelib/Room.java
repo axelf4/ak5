@@ -13,10 +13,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.gamelib.Handler.Event;
 import org.gamelib.ui.Component;
+import org.gamelib.ui.Referenced;
 
 /**
  * possible names: View, Scene, Room,
- * 
  * @author Axel
  */
 public class Room {
@@ -31,10 +31,8 @@ public class Room {
 	// private List<Scene> rooms = Registry.instance().views;
 
 	public Room() {
-		if (parent == null)
-			parent = Registry.DEFAULT_VIEW;
-		if (parent == null)
-			return; // this is the default
+		if (parent == null && (parent = Registry.DEFAULT_VIEW) == null)
+			return;
 		parent.children.add(this);
 	}
 
@@ -52,7 +50,6 @@ public class Room {
 
 	/**
 	 * Sets the rectangle to the specified.
-	 * 
 	 * @param rectangle
 	 * @return the existing rectangle if the given is null
 	 */
@@ -81,13 +78,18 @@ public class Room {
 
 	/**
 	 * Registers an handler
-	 * 
 	 * @param handler {@link Handler} instance
 	 */
+	@SuppressWarnings("unchecked")
 	public void register(Handler handler) {
-		List<Room> rooms = Registry.instance().rooms;
-		if (!rooms.contains(this))
-			rooms.add(this);
+		/*
+		 * List<Room> rooms = Registry.instance().rooms; if (!rooms.contains(this)) rooms.add(this);
+		 */
+
+		if (handler instanceof Referenced<?>)
+			((Referenced<Room>) handler).setReference(this);
+		if (handler instanceof Createable)
+			((Createable) handler).create();
 
 		ArrayList<Class<? extends Event>> list = new ArrayList<Class<? extends Event>>();
 		handler.handlers(list);
@@ -106,20 +108,6 @@ public class Room {
 			list.addAll(children.get(i).getHierarchy());
 		return list;
 	}
-	
-	String getHierarchy2() {
-		String s = "";
-		List<Room> list = new ArrayList<>();
-		list.add(this);
-		s += ", " + getClass();
-		for (int i = 0; i < children.size(); i++) {
-			if (i <= 0) s += "{";
-			list.addAll(children.get(i).getHierarchy());
-			s += children.get(i).getHierarchy2();
-			if (i < children.size()) s += "}";
-		}
-		return s;
-	}
 
 	/* Room utility */
 
@@ -131,21 +119,5 @@ public class Room {
 		}
 		active = true;
 		setActive(true);
-	}
-
-	@Deprecated
-	public static class UIPane extends Room {
-		private List<Component> components = new ArrayList<Component>();
-
-		/**
-		 * 
-		 */
-		public UIPane() {
-			// TODO Auto-generated constructor stub
-		}
-
-		public void add(Component component) {
-			components.add(component);
-		}
 	}
 }
