@@ -9,6 +9,7 @@ import java.io.InputStream;
 
 import org.gamelib.backend.Image;
 import org.gamelib.backend.ResourceFactory;
+import org.gamelib.backend.Sound;
 
 /**
  * @author pwnedary
@@ -35,6 +36,15 @@ public class LWJGLResourceFactory implements ResourceFactory {
 	 */
 	@Override
 	public Image createImage(int width, int height) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.backend.ResourceFactory#getSound(java.io.File)
+	 */
+	@Override
+	public Sound getSound(File file) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}

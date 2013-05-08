@@ -21,6 +21,7 @@ public interface ResourceFactory {
 	/** @return an empty image */
 	public Image createImage(int width, int height);
 
-	// public Sound getSound(File file) throws IOException;
+	/** @return the sound from the file */
+	public Sound getSound(File file) throws IOException;
 
 }
