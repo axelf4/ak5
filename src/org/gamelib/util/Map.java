@@ -3,6 +3,8 @@
  */
 package org.gamelib.util;
 
+import java.io.Serializable;
+
 import org.gamelib.backend.Graphics;
 
 /**
@@ -11,7 +13,7 @@ import org.gamelib.backend.Graphics;
  * @see TileED TileED map editor <a href="http://mapeditor.org/">http://mapeditor.org/</a>
  * @author pwnedary
  */
-public interface Map {
+public interface Map extends Serializable {
 	/** Indicates a orthogonal map */
 	public static final int ORTHOGONAL = 0;
 	/** Indicates an isometric map */

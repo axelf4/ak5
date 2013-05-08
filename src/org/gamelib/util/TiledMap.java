@@ -33,6 +33,7 @@ import org.xml.sax.SAXException;
  */
 public class TiledMap implements Map {
 
+	private static final long serialVersionUID = 3403715541913955133L;
 	/** Indicates a orthogonal map */
 	public static final int ORTHOGONAL = 0;
 	/** Indicates an isometric map */
@@ -43,21 +44,21 @@ public class TiledMap implements Map {
 	/** The height of the map */
 	private int height;
 	/** The width of the tiles used on the map */
-	public int tileWidth;
+	public final int tileWidth;
 	/** The height of the tiles used on the map */
-	public int tileHeight;
+	public final int tileHeight;
 	/** The orientation of this map */
-	private int orientation;
+	private final int orientation;
 
 	/** the properties of the map */
-	public Properties properties;
+	public final Properties properties;
 
 	/** The list of tilesets defined in the map */
-	private List<TileSet> tileSets = new ArrayList<TileSet>();
+	private final List<TileSet> tileSets = new ArrayList<TileSet>();
 	/** The list of layers defined in the map */
-	public List<Layer> layers = new ArrayList<Layer>();
+	public final List<Layer> layers = new ArrayList<Layer>();
 	/** The list of object-groups defined in the map */
-	public List<ObjectGroup> objectGroups = new ArrayList<ObjectGroup>();
+	public final List<ObjectGroup> objectGroups = new ArrayList<ObjectGroup>();
 
 	public TiledMap(int tileWidth, int tileHeight, List<TileSet> tileSets, List<Layer> layers, List<ObjectGroup> objectGroups, int orientation, Properties properties) {
 		for (Layer layer : layers) {
@@ -67,9 +68,9 @@ public class TiledMap implements Map {
 		}
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
-		this.tileSets = tileSets;
-		this.layers = layers;
-		this.objectGroups = objectGroups;
+		this.tileSets.addAll(tileSets);
+		this.layers.addAll(layers);
+		this.objectGroups.addAll(objectGroups);
 		this.orientation = orientation;
 		this.properties = properties;
 	}
