@@ -28,6 +28,7 @@ public class LWJGLInput extends Input {
 		while (org.lwjgl.input.Mouse.next()) {
 			boolean pressed = org.lwjgl.input.Mouse.getEventButtonState();
 			int button = org.lwjgl.input.Mouse.getEventButton();
+			button = button == 1 ? Mouse.BUTTON3 : button;
 			if (org.lwjgl.input.Mouse.getEventDX() != 0 || org.lwjgl.input.Mouse.getEventDY() != 0) // moved
 				mouseEvent(pressed ? MOUSE_DRAGGED : MOUSE_MOVED, button, p);
 			else {

@@ -3,6 +3,12 @@
  */
 package org.gamelib.backend.lwjgl;
 
+import static org.gamelib.backend.lwjgl.LWJGLSound.bufferIndex;
+import static org.gamelib.backend.lwjgl.LWJGLSound.buffers;
+import static org.gamelib.backend.lwjgl.LWJGLSound.scratchBuffer;
+import static org.gamelib.backend.lwjgl.LWJGLSound.soundOutput;
+import static org.gamelib.backend.lwjgl.LWJGLSound.sources;
+import static org.gamelib.backend.lwjgl.LWJGLSound.*;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_RGB;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
@@ -42,7 +48,11 @@ import org.gamelib.backend.Image;
 import org.gamelib.backend.ResourceFactory;
 import org.gamelib.backend.Sound;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.AL10;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.util.WaveData;
 
 /**
  * @author pwnedary
@@ -188,6 +198,26 @@ public class LWJGLResourceFactory implements ResourceFactory {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	static {
+		int channels = 8;
+		try {
+			AL.create();
+
+			// Load wav data into a buffers.
+			AL10.alGenBuffers(buffer);
+			// Bind buffers into audio sources.
+			AL10.alGenSources(source);
+
+			// could we allocate all channels?
+			if (AL10.alGetError() != AL10.AL_NO_ERROR) {
+				throw new LWJGLException("Unable to allocate " + channels + " sources");
+			}
+		} catch (LWJGLException le) {
+			le.printStackTrace();
+			System.out.println("Sound disabled");
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -195,8 +225,11 @@ public class LWJGLResourceFactory implements ResourceFactory {
 	 */
 	@Override
 	public Sound getSound(File file) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		WaveData waveFile = WaveData.create(getResourceAsStream(file.getPath()));
+		AL10.alBufferData(buffer.get(bufferIndex), waveFile.format, waveFile.data, waveFile.samplerate);
+		waveFile.dispose();
+
+		return new LWJGLSound(bufferIndex++);
 	}
 
 	/** 4 for RGBA, 3 for RGB */
