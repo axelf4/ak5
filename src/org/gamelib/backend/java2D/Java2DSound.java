@@ -60,6 +60,14 @@ public class Java2DSound implements Sound, LineListener {
 		clip.stop();
 		clip.setFramePosition(0);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.gamelib.backend.Sound#loop(int)
+	 */
+	@Override
+	public void loop(int count) {
+		clip.loop(count);
+	}
 
 	/*
 	 * (non-Javadoc)

@@ -20,8 +20,8 @@ public interface Sound {
 	/** Stops this sound being played. */
 	public void stop();
 	
-	/*/** Starts looping playback from the current position. * /
-	public void loop(int count);*/
+	/** Starts looping playback from the current position. */
+	public void loop(int count);
 
 	/** @return if the sound is playing */
 	public boolean playing();
