@@ -39,23 +39,20 @@ public class LWJGLBackend implements Backend {
 	@Override
 	public void start(Game instance, Resolution resolution) {
 		try {
-			/*if (resolution.isFullscreen())
-				Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
-			else
-				Display.setDisplayMode(new DisplayMode(resolution.getWidth(), resolution.getHeight()));*/
+			/*
+			 * if (resolution.isFullscreen()) Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode()); else Display.setDisplayMode(new DisplayMode(resolution.getWidth(), resolution.getHeight()));
+			 */
 			Display.setDisplayMode(new DisplayMode(800, 600));
 			Display.create();
 
-			/*// glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-			glEnable(GL_TEXTURE_2D);
-			// disable the OpenGL depth test since we're rendering 2D graphics
-			glDisable(GL_DEPTH_TEST);*/
+			/*
+			 * // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE); glEnable(GL_TEXTURE_2D); // disable the OpenGL depth test since we're rendering 2D graphics glDisable(GL_DEPTH_TEST);
+			 */
 
 			GL11.glMatrixMode(GL11.GL_PROJECTION); // Resets any previous projection matrices
 			GL11.glLoadIdentity();
-			// GL11.glOrtho(0, mode.getWidth(), 0, mode.getHeight(), 1, -1);
-			// GL11.glOrtho(0, resolution.getWidth(), resolution.getHeight(), 0, 1, -1);
-			GL11.glOrtho(0, resolution.getWidth(), 0, resolution.getHeight(), 1, -1);
+			GL11.glOrtho(0, resolution.getWidth(), resolution.getHeight(), 0, 1, -1);
+			// GL11.glOrtho(0, resolution.getWidth(), 0, resolution.getHeight(), 1, -1);
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
 			// glViewport(0, 0, resolution.getWidth(), resolution.getHeight());
 		} catch (LWJGLException e) {
@@ -91,9 +88,9 @@ public class LWJGLBackend implements Backend {
 		glClearColor(1, 1, 1, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 		// GL11.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 3d
-		// glEnable(GL_BLEND);
-        // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		// GL11.glEnable(GL11.GL_BLEND);
 		// GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		Game.getInstance().screen.drawHandlers(getGraphics(), delta);

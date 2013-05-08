@@ -59,16 +59,11 @@ public class LWJGLGraphics implements Graphics {
 	@Override
 	public void drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
 		LWJGLImage image = (LWJGLImage) img;
-
-		// store the current model matrix
-		// glPushMatrix();
-		/*glEnable(GL_TEXTURE_2D);
-
+		glEnable(GL_TEXTURE_2D);
+		setColor(Color.WHITE);
 		// bind to the appropriate texture for this sprite
 		// image.bind();
 		GL11.glBindTexture(image.target, image.textureID);
-		// glTranslatef(dx1, dy1, 0); translate to the right location and prepare to draw
-
 		GL11.glBegin(GL11.GL_QUADS);
 		{
 			GL11.glTexCoord2f(0f, 0f);
@@ -81,40 +76,7 @@ public class LWJGLGraphics implements Graphics {
 			GL11.glVertex2f(dx1, dy2);
 		}
 		GL11.glEnd();
-		glBindTexture(GL_TEXTURE_2D, 0);*/
-		
-		
-		// restore the model room matrix to prevent contamination
-		// glPopMatrix();
-		
-		// store the current model matrix
-				glPushMatrix();
-
-				// bind to the appropriate texture for this sprite
-				glBindTexture(GL_TEXTURE_2D, image.getTextureID());
-
-				// translate to the right location and prepare to draw
-				glTranslatef(dx1, dy1, 0);
-
-				// draw a quad textured to match the sprite
-				glBegin(GL_QUADS);
-				{
-					glTexCoord2f(0, 0);
-					glVertex2f(0, 0);
-
-					glTexCoord2f(0, sy2);
-					glVertex2f(0, dy2);
-
-					glTexCoord2f(sx2, sy2);
-					glVertex2f(dx2, dy2);
-
-					glTexCoord2f(sx2, 0);
-					glVertex2f(dx2, 0);
-				}
-				glEnd();
-
-				// restore the model view matrix to prevent contamination
-				glPopMatrix();
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	/*

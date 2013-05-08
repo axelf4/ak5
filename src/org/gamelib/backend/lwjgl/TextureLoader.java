@@ -78,6 +78,7 @@ import org.lwjgl.BufferUtils;
  *
  * @author Kevin Glass
  * @author Brian Matzon
+ * @deprecated in favor of {@link LWJGLResourceFactory}
  */
 public class TextureLoader {
     /** The table of textures that have been loaded in this loader */
