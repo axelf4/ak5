@@ -50,14 +50,12 @@ public abstract class Game {
 		this.backend = backend;
 		backend.setTitle(instance.toString());
 
-		screen = new Screen(getDisplayMode());
+		// screen = new Screen(getResolution());
 		registry = Registry.instance();
 		input = backend.getInput();
 		FileLoader.container = container;
 
 		// instance.initialize();
-		Game.getBackend().start(this, getDisplayMode());
-		this.initialize();
 		info("Initialized " + instance.toString());
 		(thread = new Thread(getLoop(), this.toString() + "_main")).start();
 	}
@@ -74,8 +72,13 @@ public abstract class Game {
 
 	public abstract String toString();
 
+	/** @deprecated in favor of {@link #getResolution}*/
 	public DisplayMode getDisplayMode() {
 		return DisplayMode.r800x600;
+	}
+	
+	public Resolution getResolution() {
+		return Resolution.r800x600;
 	}
 
 	public static Game getInstance() {
@@ -103,8 +106,9 @@ public abstract class Game {
 		 */
 		@Override
 		public void start() {
-			/*Game.getBackend().start(game, game.getDisplayMode());
-			game.initialize();*/
+			Game.getBackend().start(game, game.getResolution());
+			game.screen = new Screen(game.getResolution());
+			game.initialize();
 		}
 
 		/*

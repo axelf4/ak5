@@ -5,6 +5,7 @@ package org.gamelib.backend.java2D;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.Transparency;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,6 +71,14 @@ public class Java2DResourceFactory implements ResourceFactory {
 			e.printStackTrace();
 		}
 		return sound;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.backend.ResourceFactory#getImage(java.awt.image.BufferedImage)
+	 */
+	@Override
+	public Image getImage(BufferedImage img) {
+		return new Java2DImage(img);
 	}
 
 }

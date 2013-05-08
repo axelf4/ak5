@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.gamelib.Game;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.java2D.Java2DImage;
@@ -139,7 +140,6 @@ public class TrueTypeFont implements Font {
 		// size should be calculated dynamicaly by looking at character sizes.
 
 		try {
-
 			BufferedImage imgTemp = new BufferedImage(textureWidth, textureHeight, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g = (Graphics2D) imgTemp.getGraphics();
 
@@ -153,7 +153,6 @@ public class TrueTypeFont implements Font {
 			int customCharsLength = (customCharsArray != null) ? customCharsArray.length : 0;
 
 			for (int i = 0; i < 256 + customCharsLength; i++) {
-
 				// get 0-255 characters and then custom characters
 				char ch = (i < 256) ? (char) i : customCharsArray[i - 256];
 
@@ -173,13 +172,10 @@ public class TrueTypeFont implements Font {
 				newIntObject.storedX = positionX;
 				newIntObject.storedY = positionY;
 
-				if (newIntObject.height > fontHeight) {
+				if (newIntObject.height > fontHeight)
 					fontHeight = newIntObject.height;
-				}
-
-				if (newIntObject.height > rowHeight) {
+				if (newIntObject.height > rowHeight)
 					rowHeight = newIntObject.height;
-				}
 
 				// Draw it here
 				g.drawImage(fontImage, positionX, positionY, null);
@@ -196,7 +192,8 @@ public class TrueTypeFont implements Font {
 			}
 
 			// fontTextureID = loadImage(imgTemp);
-			fontImage = new Java2DImage(imgTemp);
+			// fontImage = new Java2DImage(imgTemp);
+			fontImage = Game.getBackend().getResourceFactory().getImage(imgTemp);
 
 			// .getTexture(font.toString(), imgTemp);
 

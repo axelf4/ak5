@@ -61,7 +61,8 @@ public class LWJGLGraphics implements Graphics {
 		LWJGLImage image = (LWJGLImage) img;
 
 		// store the current model matrix
-		glPushMatrix();
+		// glPushMatrix();
+		/*glEnable(GL_TEXTURE_2D);
 
 		// bind to the appropriate texture for this sprite
 		// image.bind();
@@ -70,25 +71,50 @@ public class LWJGLGraphics implements Graphics {
 
 		GL11.glBegin(GL11.GL_QUADS);
 		{
-			// GL11.glTexCoord2f(sx1, sy1);
 			GL11.glTexCoord2f(0f, 0f);
 			GL11.glVertex2f(dx1, dx1);
-
-			// GL11.glTexCoord2f(sx2, sy1);
 			GL11.glTexCoord2f(1f, 0f);
 			GL11.glVertex2f(dx2, dy1);
-
-			// GL11.glTexCoord2f(sx2, sy2);
 			GL11.glTexCoord2f(1f, 1f);
 			GL11.glVertex2f(dx2, dy2);
-
-			// GL11.glTexCoord2f(sx1, sy2);
 			GL11.glTexCoord2f(0f, 1f);
 			GL11.glVertex2f(dx1, dy2);
 		}
 		GL11.glEnd();
+		glBindTexture(GL_TEXTURE_2D, 0);*/
+		
+		
 		// restore the model room matrix to prevent contamination
-		glPopMatrix();
+		// glPopMatrix();
+		
+		// store the current model matrix
+				glPushMatrix();
+
+				// bind to the appropriate texture for this sprite
+				glBindTexture(GL_TEXTURE_2D, image.getTextureID());
+
+				// translate to the right location and prepare to draw
+				glTranslatef(dx1, dy1, 0);
+
+				// draw a quad textured to match the sprite
+				glBegin(GL_QUADS);
+				{
+					glTexCoord2f(0, 0);
+					glVertex2f(0, 0);
+
+					glTexCoord2f(0, sy2);
+					glVertex2f(0, dy2);
+
+					glTexCoord2f(sx2, sy2);
+					glVertex2f(dx2, dy2);
+
+					glTexCoord2f(sx2, 0);
+					glVertex2f(dx2, 0);
+				}
+				glEnd();
+
+				// restore the model view matrix to prevent contamination
+				glPopMatrix();
 	}
 
 	/*
@@ -98,9 +124,10 @@ public class LWJGLGraphics implements Graphics {
 	@Override
 	public void drawLine(int x1, int y1, int x2, int y2) {
 		GL11.glBegin(GL11.GL_LINE_STRIP);
-
-		GL11.glVertex2d(x1, y1);
-		GL11.glVertex2d(x2, y2);
+		{
+			GL11.glVertex2d(x1, y1);
+			GL11.glVertex2d(x2, y2);
+		}
 		GL11.glEnd();
 	}
 
@@ -130,20 +157,22 @@ public class LWJGLGraphics implements Graphics {
 		GL11.glEnd();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.backend.Graphics#dispose()
 	 */
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void clear() {
 		// clear the screen and depth buffer
 		// GL11.glClearColor(0, 0, 0, 0);
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+		// GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // 3d
 	}
 
 }

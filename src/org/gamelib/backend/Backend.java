@@ -6,9 +6,9 @@ package org.gamelib.backend;
 import java.io.File;
 import java.io.IOException;
 
-import org.gamelib.DisplayMode;
 import org.gamelib.Game;
 import org.gamelib.Input;
+import org.gamelib.Resolution;
 
 /**
  * The class responsible for collecting input and processing it.
@@ -16,7 +16,7 @@ import org.gamelib.Input;
  * @author pwnedary
  */
 public interface Backend {
-	public void start(Game instance, DisplayMode mode);
+	public void start(Game instance, Resolution resolution);
 
 	/**
 	 * better with singleton

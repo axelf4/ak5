@@ -47,7 +47,8 @@ public class Java2dPanel extends JPanel {
 				AffineTransform affineTransform = g2d.getTransform();
 				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 
-				Game.getInstance().screen.drawHandlers(new Java2DGraphics(g2d, getWidth(), getHeight()), delta);
+				if (Game.getInstance().screen != null)
+					Game.getInstance().screen.drawHandlers(new Java2DGraphics(g2d, getWidth(), getHeight()), delta);
 				// Game.getInstance().screen.drawHandlers(new Java2DGraphics(g2d), g2d);
 
 				g2d.setTransform(affineTransform);
