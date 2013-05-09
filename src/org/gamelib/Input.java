@@ -3,7 +3,9 @@
  */
 package org.gamelib;
 
+import java.awt.AWTException;
 import java.awt.Point;
+import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Timer;
@@ -61,7 +63,22 @@ public abstract class Input {
 		return b;
 	}
 	
-	public abstract void mouseMove(int x, int y);
+	public void simulateKey(int id, int keyCode)  { // abstract
+		try {
+			Robot r = new Robot();
+			switch (id) {
+			case KEY_PRESSED:
+				r.keyPress(keyCode);
+				break;
+			case KEY_RELEASED:
+				r.keyRelease(keyCode);
+				break;
+			}
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
+	}
+	public abstract void mouseMove(int x, int y); // simulateMouse
 
 	/** Checks for queued input states. */
 	public abstract void poll();
