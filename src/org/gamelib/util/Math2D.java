@@ -39,7 +39,18 @@ public class Math2D {
 		return i < min ? min : i > max ? max : i;
 	}
 
+	/** @deprecated in favor of {@link Range}*/
+	@Deprecated
 	public static boolean inRange(int i, int min, int max) {
 		return i <= max && i >= min;
+	}
+	
+	public static int log2(int i) {
+		return i == 0 ? 0 : 32 - Integer.numberOfLeadingZeros(i - 1);
+	}
+	
+	/** @return the nearest power of 2*/
+	public static int npow2(int i) {
+		return i == 0 ? 0 : (int) Math.pow(2, 32 - Integer.numberOfLeadingZeros(i - 1));
 	}
 }
