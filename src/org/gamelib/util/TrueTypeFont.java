@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.gamelib.Game;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.java2D.Java2DImage;
@@ -76,12 +77,15 @@ public class TrueTypeFont implements Font {
 		createSet(additionalChars);
 
 		fontHeight -= 1;
-		if (fontHeight <= 0)
-			fontHeight = 1;
+		if (fontHeight <= 0) fontHeight = 1;
 	}
 
 	public TrueTypeFont(java.awt.Font font, boolean antiAlias) {
 		this(font, antiAlias, null);
+	}
+	
+	public TrueTypeFont() {
+		this(new java.awt.Font(null, Font.PLAIN, 12), true);
 	}
 
 	public void setCorrection(boolean on) {
@@ -94,35 +98,29 @@ public class TrueTypeFont implements Font {
 		}
 	}
 
-	private BufferedImage getFontImage(char ch) {
+	private BufferedImage getFontImage(char ch) { // private
 		// Create a temporary image to extract the character's size
 		BufferedImage tempfontImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D) tempfontImage.getGraphics();
-		if (antiAlias == true) {
+		if (antiAlias == true)
 			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		}
 		g.setFont(font);
 		fontMetrics = g.getFontMetrics();
 		int charwidth = fontMetrics.charWidth(ch) + 8;
 
-		if (charwidth <= 0) {
-			charwidth = 7;
-		}
+		if (charwidth <= 0) charwidth = 7;
 		int charheight = fontMetrics.getHeight() + 3;
-		if (charheight <= 0) {
-			charheight = fontSize;
-		}
+		if (charheight <= 0) charheight = fontSize;
 
 		// Create another image holding the character we are creating
 		BufferedImage fontImage;
 		fontImage = new BufferedImage(charwidth, charheight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D gt = (Graphics2D) fontImage.getGraphics();
-		if (antiAlias == true) {
+		if (antiAlias == true)
 			gt.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		}
 		gt.setFont(font);
 
-		gt.setColor(Color.WHITE);
+		gt.setColor(Color.BLACK);
 		int charx = 3;
 		int chary = 1;
 		gt.drawString(String.valueOf(ch), (charx), (chary) + fontMetrics.getAscent());
@@ -142,7 +140,6 @@ public class TrueTypeFont implements Font {
 		// size should be calculated dynamicaly by looking at character sizes.
 
 		try {
-
 			BufferedImage imgTemp = new BufferedImage(textureWidth, textureHeight, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g = (Graphics2D) imgTemp.getGraphics();
 
@@ -156,7 +153,6 @@ public class TrueTypeFont implements Font {
 			int customCharsLength = (customCharsArray != null) ? customCharsArray.length : 0;
 
 			for (int i = 0; i < 256 + customCharsLength; i++) {
-
 				// get 0-255 characters and then custom characters
 				char ch = (i < 256) ? (char) i : customCharsArray[i - 256];
 
@@ -176,13 +172,10 @@ public class TrueTypeFont implements Font {
 				newIntObject.storedX = positionX;
 				newIntObject.storedY = positionY;
 
-				if (newIntObject.height > fontHeight) {
+				if (newIntObject.height > fontHeight)
 					fontHeight = newIntObject.height;
-				}
-
-				if (newIntObject.height > rowHeight) {
+				if (newIntObject.height > rowHeight)
 					rowHeight = newIntObject.height;
-				}
 
 				// Draw it here
 				g.drawImage(fontImage, positionX, positionY, null);
@@ -199,7 +192,8 @@ public class TrueTypeFont implements Font {
 			}
 
 			// fontTextureID = loadImage(imgTemp);
-			fontImage = new Java2DImage(imgTemp);
+			// fontImage = new Java2DImage(imgTemp);
+			fontImage = Game.getBackend().getResourceFactory().getImage(imgTemp);
 
 			// .getTexture(font.toString(), imgTemp);
 
@@ -231,8 +225,7 @@ public class TrueTypeFont implements Font {
 			c = correctR;
 
 			while (i < endIndex) {
-				if (str.charAt(i) == '\n')
-					startY -= fontHeight;
+				if (str.charAt(i) == '\n') startY -= fontHeight;
 				i++;
 			}
 			break;
@@ -240,8 +233,7 @@ public class TrueTypeFont implements Font {
 		case ALIGN_CENTER: {
 			for (int l = startIndex; l <= endIndex; l++) {
 				charCurrent = str.charAt(l);
-				if (charCurrent == '\n')
-					break;
+				if (charCurrent == '\n') break;
 				if (charCurrent < 256) {
 					intObject = charArray[charCurrent];
 				} else {
@@ -261,7 +253,7 @@ public class TrueTypeFont implements Font {
 
 		while (i >= startIndex && i <= endIndex) {
 			charCurrent = str.charAt(i);
-			System.out.println(Character.toString(str.toCharArray()[i]));
+			// System.out.println(Character.toString(str.toCharArray()[i]));
 			if (charCurrent < 256) {
 				intObject = charArray[charCurrent];
 			} else {
@@ -269,16 +261,14 @@ public class TrueTypeFont implements Font {
 			}
 
 			if (intObject != null) {
-				if (d < 0)
-					totalwidth += (intObject.width - c) * d;
+				if (d < 0) totalwidth += (intObject.width - c) * d;
 				if (charCurrent == '\n') {
 					startY -= fontHeight * d;
 					totalwidth = 0;
 					if (format == ALIGN_CENTER) {
 						for (int l = i + 1; l <= endIndex; l++) {
 							charCurrent = str.charAt(l);
-							if (charCurrent == '\n')
-								break;
+							if (charCurrent == '\n') break;
 							if (charCurrent < 256) {
 								intObject = charArray[charCurrent];
 							} else {
@@ -290,17 +280,8 @@ public class TrueTypeFont implements Font {
 					}
 					// if center get next lines total width/2;
 				} else {
-					// void org.gamelib.util.TrueTypeFont2.drawQuad(float drawX, float drawY, float drawX2, float drawY2, float srcX, float srcY, float srcX2, float srcY2)
-					g.drawImage(fontImage, (int) ((totalwidth + intObject.width) * scaleX + x), (int) (startY * scaleY + y), (int) (totalwidth * scaleX + x), (int) ((startY + intObject.height) * scaleY + y), intObject.storedX + intObject.width, intObject.storedY + intObject.height, intObject.storedX, intObject.storedY);
-					// g.setColor(org.gamelib.util.Color.BLACK);
-					// g.drawRect((int) ((totalwidth + intObject.width) * scaleX + x), (int) (startY * scaleY + y), (int) (totalwidth * scaleX + x), (int) ((startY + intObject.height) * scaleY + y));
-					g.setColor(org.gamelib.util.Color.BLUE);
-					g.drawRect((int) (totalwidth * scaleX + x), (int)(startY * scaleY + y), (int)((totalwidth + intObject.width) * scaleX + x), (int)((startY + intObject.height) * scaleY + y));
-					/*
-					 * drawQuad((totalwidth + intObject.width) * scaleX + x, startY * scaleY + y, totalwidth * scaleX + x, (startY + intObject.height) * scaleY + y, intObject.storedX + intObject.width, intObject.storedY + intObject.height,intObject.storedX, intObject.storedY);
-					 */
-					if (d > 0)
-						totalwidth += (intObject.width - c) * d;
+					g.drawImage(fontImage, (int) (totalwidth * scaleX + x), (int) (startY * scaleY + y), (int) ((totalwidth + intObject.width) * scaleX + x), (int) ((startY + intObject.height) * scaleY + y), intObject.storedX, intObject.storedY, intObject.storedX + intObject.width, intObject.storedY + intObject.height);
+					if (d > 0) totalwidth += (intObject.width - c) * d;
 				}
 				i += d;
 
@@ -325,8 +306,7 @@ public class TrueTypeFont implements Font {
 				intObject = (IntObject) customChars.get(new Character((char) currentChar));
 			}
 
-			if (intObject != null)
-				totalwidth += intObject.width;
+			if (intObject != null) totalwidth += intObject.width;
 		}
 		return totalwidth;
 	}
@@ -343,8 +323,7 @@ public class TrueTypeFont implements Font {
 	public static boolean isSupported(String fontname) {
 		java.awt.Font font[] = getFonts();
 		for (int i = font.length - 1; i >= 0; i--) {
-			if (font[i].getName().equalsIgnoreCase(fontname))
-				return true;
+			if (font[i].getName().equalsIgnoreCase(fontname)) return true;
 		}
 		return false;
 	}

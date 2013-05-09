@@ -3,6 +3,7 @@
  */
 package org.gamelib.backend;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +21,10 @@ public interface ResourceFactory {
 
 	/** @return an empty image */
 	public Image createImage(int width, int height);
+	
+	public Image getImage(BufferedImage img);
 
-	// public Sound getSound(File file) throws IOException;
+	/** @return the sound from the file */
+	public Sound getSound(File file) throws IOException;
 
 }

@@ -74,7 +74,7 @@ public class Sprite {
 			step_counter = 0;
 			if (++frame >= subImages.length)
 				frame = 0;
-			System.out.println("frame: " + frame);
+			// System.out.println("frame: " + frame);
 		}
 	}
 

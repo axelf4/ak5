@@ -17,9 +17,6 @@ import org.gamelib.backend.Image;
  */
 public class SpriteSheet {
 
-	/**
-	 * 
-	 */
 	private Image image;
 	/**
 	 * All sprites

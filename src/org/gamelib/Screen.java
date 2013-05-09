@@ -12,6 +12,7 @@ import org.gamelib.Handler.Event;
 import org.gamelib.backend.java2D.AWTFont;
 import org.gamelib.util.Color;
 import org.gamelib.util.Font;
+import org.gamelib.util.TrueTypeFont;
 
 /**
  * @author Axel
@@ -27,17 +28,18 @@ public class Screen { // JPanel Canvas
 	public VolatileImage volatileImage;
 
 	public int fps;
-	private Font f;
+	private Font font;
 
 	public Screen() {
 		// setIgnoreRepaint(true);
 	}
 	
-	public Screen(DisplayMode mode) {
-		this.width = mode.getWidth();
-		this.height = mode.getHeight();
+	public Screen(Resolution resolution) {
+		this.width = resolution.getWidth();
+		this.height = resolution.getHeight();
 		
-		f = new AWTFont(new java.awt.Font(null, Font.PLAIN, 12));
+		// font = new AWTFont(new java.awt.Font(null, Font.PLAIN, 12));
+		font = new TrueTypeFont();
 	}
 
 	/**
@@ -101,7 +103,7 @@ public class Screen { // JPanel Canvas
 		// g.drawString("FPS: " + fps, 500, 10); // 5 10
 		fps = Game.getInstance().getLoop().getFPS();
 		String str = "FPS: " + fps;
-		f.drawString(g, str, getWidth() - f.getWidth(str) - 20, 10);
+		// font.drawString(g, str, getWidth() - font.getWidth(str) - 20, 10);
 	}
 
 	/**

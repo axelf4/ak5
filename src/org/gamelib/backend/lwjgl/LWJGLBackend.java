@@ -3,30 +3,14 @@
  */
 package org.gamelib.backend.lwjgl;
 
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_REPEAT;
-import static org.lwjgl.opengl.GL11.GL_RGBA;
-import static org.lwjgl.opengl.GL11.GL_RGBA8;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glGenTextures;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glTexImage2D;
-import static org.lwjgl.opengl.GL11.glTexParameteri;
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.gamelib.DisplayMode;
 import org.gamelib.Game;
 import org.gamelib.Input;
+import org.gamelib.Resolution;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
@@ -36,6 +20,7 @@ import org.gamelib.util.Log;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.Pbuffer;
@@ -52,24 +37,24 @@ public class LWJGLBackend implements Backend {
 	 * @see org.gamelib.backends.Backend#start(org.gamelib.Game, org.gamelib.DisplayMode)
 	 */
 	@Override
-	public void start(Game instance, DisplayMode mode) {
+	public void start(Game instance, Resolution resolution) {
 		try {
-			// Display.setDisplayModeAndFullscreen(convertModes(mode));
-			Display.setDisplayMode(new org.lwjgl.opengl.DisplayMode(800, 600));
+			/*
+			 * if (resolution.isFullscreen()) Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode()); else Display.setDisplayMode(new DisplayMode(resolution.getWidth(), resolution.getHeight()));
+			 */
+			Display.setDisplayMode(new DisplayMode(800, 600));
 			Display.create();
 
-			// glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-			glEnable(GL_TEXTURE_2D);
-			// disable the OpenGL depth test since we're rendering 2D graphics
-			// glDisable(GL_DEPTH_TEST);
+			/*
+			 * // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE); glEnable(GL_TEXTURE_2D); // disable the OpenGL depth test since we're rendering 2D graphics glDisable(GL_DEPTH_TEST);
+			 */
 
-			GL11.glMatrixMode(GL11.GL_PROJECTION);
+			GL11.glMatrixMode(GL11.GL_PROJECTION); // Resets any previous projection matrices
 			GL11.glLoadIdentity();
-			// GL11.glOrtho(0, mode.getWidth(), 0, mode.getHeight(), 1, -1);
-			GL11.glOrtho(0, mode.getWidth(), mode.getHeight(), 0, -1, 1);
+			GL11.glOrtho(0, resolution.getWidth(), resolution.getHeight(), 0, 1, -1);
+			// GL11.glOrtho(0, resolution.getWidth(), 0, resolution.getHeight(), 1, -1);
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
-			GL11.glLoadIdentity();
-			glViewport(0, 0, mode.getWidth(), mode.getHeight());
+			// glViewport(0, 0, resolution.getWidth(), resolution.getHeight());
 		} catch (LWJGLException e) {
 			Log.error("", e);
 		}
@@ -100,9 +85,12 @@ public class LWJGLBackend implements Backend {
 	@Override
 	public void screenUpdate(float delta) {
 		// Clear the screen and depth buffer
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+		glClearColor(1, 1, 1, 1);
+		glClear(GL_COLOR_BUFFER_BIT);
+		// GL11.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 3d
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		// GL11.glEnable(GL11.GL_BLEND);
 		// GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		Game.getInstance().screen.drawHandlers(getGraphics(), delta);
@@ -154,6 +142,7 @@ public class LWJGLBackend implements Backend {
 	 * (non-Javadoc)
 	 * @see org.gamelib.backends.Backend#getGraphics(org.gamelib.graphics.Image)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public Graphics getGraphics(Image image) {
 		if (GLContext.getCapabilities().GL_EXT_framebuffer_object)
@@ -174,11 +163,11 @@ public class LWJGLBackend implements Backend {
 		// initialize texture
 		glBindTexture(GL_TEXTURE_2D, textureID);
 		// {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // make it linear filtered
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL11.GL_UNSIGNED_BYTE, (java.nio.ByteBuffer) null); // create the texture data
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // make it linear filtered
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL11.GL_UNSIGNED_BYTE, (java.nio.ByteBuffer) null); // create the texture data
 		// }
 		glBindTexture(GL_TEXTURE_2D, 0);
 		Image image = new LWJGLImage(GL_TEXTURE_2D, textureID);
@@ -207,7 +196,8 @@ public class LWJGLBackend implements Backend {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.backend.Backend#getResourceFactory()
 	 */
 	@Override

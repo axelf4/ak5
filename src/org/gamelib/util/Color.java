@@ -43,7 +43,7 @@ public class Color implements Serializable {
 	public static final Color BLUE = new Color(0, 0, 255);
 
 	/** The color value. */
-	int value;
+	final int value;
 
 	/**
 	 * Creates an sRGB color with the specified red, green, blue, and alpha values in the range (0 - 255).

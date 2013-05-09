@@ -19,6 +19,7 @@ import javax.swing.JFrame;
 import org.gamelib.DisplayMode;
 import org.gamelib.Game;
 import org.gamelib.Input;
+import org.gamelib.Resolution;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
@@ -44,16 +45,16 @@ public class Java2DBackend implements Backend {
 		(this.container = container).add(panel = new Java2dPanel());
 	}
 
-	public void start(Game instance, DisplayMode mode) {
+	public void start(Game instance, Resolution resolution) {
 		if (container instanceof JFrame) {
 			((JFrame) container).setTitle(instance.toString());
 			((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setFullscreen((JFrame) container, mode.isFullscreen());
-			if (!mode.isFullscreen())
-				container.setSize(new Dimension(mode.getWidth(), mode.getHeight()));
+			setFullscreen((JFrame) container, resolution.isFullscreen());
+			if (!resolution.isFullscreen())
+				container.setSize(new Dimension(resolution.getWidth(), resolution.getHeight()));
 		}
 		if (container instanceof JApplet)
-			((JApplet) container).resize(new Dimension(mode.getWidth(), mode.getHeight()));
+			((JApplet) container).resize(new Dimension(resolution.getWidth(), resolution.getHeight()));
 	}
 
 	private void setFullscreen(JFrame frame, boolean fullscreen) {
