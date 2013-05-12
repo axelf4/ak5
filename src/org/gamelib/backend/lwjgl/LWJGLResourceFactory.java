@@ -47,6 +47,7 @@ import javax.imageio.ImageIO;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.ResourceFactory;
 import org.gamelib.backend.Sound;
+import org.gamelib.util.Math2D;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
@@ -88,11 +89,7 @@ public class LWJGLResourceFactory implements ResourceFactory {
 	 * @return The power of 2
 	 */
 	private static int get2Fold(int fold) {
-		int ret = 2;
-		while (ret < fold) {
-			ret *= 2;
-		}
-		return ret;
+		return Math2D.npow2(fold);
 	}
 
 	/**
@@ -101,22 +98,22 @@ public class LWJGLResourceFactory implements ResourceFactory {
 	 * @param texture The texture to store the data into
 	 * @return A buffer containing the data
 	 */
-	private ByteBuffer convertImageData(BufferedImage bufferedImage, Image texture) {
+	private ByteBuffer convertImageData(BufferedImage bufferedImage, LWJGLImage texture) {
 		ByteBuffer imageBuffer;
 		WritableRaster raster;
 		BufferedImage texImage;
 
-		int texWidth = 2;
-		int texHeight = 2;
+		int texWidth = get2Fold(bufferedImage.getWidth());
+		int texHeight = get2Fold(bufferedImage.getHeight());
 
 		// find the closest power of 2 for the width and height
 		// of the produced texture
-		while (texWidth < bufferedImage.getWidth()) {
-			texWidth *= 2;
+		/*while (texWidth < bufferedImage.getWidth()) {
+		texWidth *= 2;
 		}
 		while (texHeight < bufferedImage.getHeight()) {
-			texHeight *= 2;
-		}
+		texHeight *= 2;
+		}*/
 
 		// texture.setTextureHeight(texHeight);
 		// texture.setTextureWidth(texWidth);
@@ -124,11 +121,11 @@ public class LWJGLResourceFactory implements ResourceFactory {
 		// create a raster that can be used by OpenGL as a source
 		// for a texture
 		if (bufferedImage.getColorModel().hasAlpha()) {
-			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 4, null);
-			texImage = new BufferedImage(glAlphaColorModel, raster, false, new Hashtable());
+		raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 4, null);
+		texImage = new BufferedImage(glAlphaColorModel, raster, false, new Hashtable());
 		} else {
-			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 3, null);
-			texImage = new BufferedImage(glColorModel, raster, false, new Hashtable());
+		raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 3, null);
+		texImage = new BufferedImage(glColorModel, raster, false, new Hashtable());
 		}
 
 		// copy the source image into the produced image
@@ -160,7 +157,7 @@ public class LWJGLResourceFactory implements ResourceFactory {
 		// create the texture ID for this texture
 		int textureID = createTextureID();
 		int target = GL_TEXTURE_2D;
-		Image image = new LWJGLImage(target, textureID);
+		LWJGLImage image = new LWJGLImage(target, textureID);
 
 		// bind this texture
 		glBindTexture(target, textureID);
@@ -171,17 +168,17 @@ public class LWJGLResourceFactory implements ResourceFactory {
 		image.setHeight(bufferedImage.getHeight());
 
 		if (bufferedImage.getColorModel().hasAlpha()) {
-			srcPixelFormat = GL_RGBA;
+		srcPixelFormat = GL_RGBA;
 		} else {
-			srcPixelFormat = GL_RGB;
+		srcPixelFormat = GL_RGB;
 		}
 
 		// convert that image into a byte buffer of texture data
 		ByteBuffer textureBuffer = convertImageData(bufferedImage, image);
 
 		if (target == GL_TEXTURE_2D) {
-			glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
 
 		// produce a texture from the byte buffer
@@ -234,13 +231,46 @@ public class LWJGLResourceFactory implements ResourceFactory {
 
 	/** 4 for RGBA, 3 for RGB */
 	private static final int BYTES_PER_PIXEL = 4;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.backend.ResourceFactory#getImage(java.awt.image.BufferedImage)
+	 */
+	public Image getImage(BufferedImage bufferedImage) {
+		int srcPixelFormat;
+
+		// create the texture ID for this texture
+		int textureID = createTextureID();
+		int target = GL_TEXTURE_2D;
+		LWJGLImage image = new LWJGLImage(target, textureID);
+		
+		image.setWidth(bufferedImage.getWidth());
+		image.setHeight(bufferedImage.getHeight());
+
+		if (bufferedImage.getColorModel().hasAlpha()) {
+			srcPixelFormat = GL_RGBA;
+		} else {
+			srcPixelFormat = GL_RGB;
+		}
+
+		// convert that image into a byte buffer of texture data
+		ByteBuffer textureBuffer = convertImageData(bufferedImage, image);
+
+		if (target == GL_TEXTURE_2D) {
+			glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
+
+		// produce a texture from the byte buffer
+		glTexImage2D(target, 0, GL_RGBA, get2Fold(bufferedImage.getWidth()), get2Fold(bufferedImage.getHeight()), 0, srcPixelFormat, GL_UNSIGNED_BYTE, textureBuffer);
+		return image;
+	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.gamelib.backend.ResourceFactory#getImage(java.awt.image.BufferedImage)
 	 */
-	@Override
-	public Image getImage(BufferedImage img) {
+	public Image getImage2(BufferedImage img) {
 		int[] pixels = new int[img.getWidth() * img.getHeight()];
 		img.getRGB(0, 0, img.getWidth(), img.getHeight(), pixels, 0, img.getWidth());
 

@@ -170,17 +170,38 @@ public class Registry {
 		// Log.stopProfiling("invoke"));
 	}
 
+	@SuppressWarnings("unchecked")
 	public synchronized void dispatch(Event event, Room room) {
 		if (room == null || !room.isActive())
 			return;
-		/*Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = room.handlers;
+		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = room.handlers;
 
-		if (!handlers.containsKey(event.getClass()))
+		/*if (!handlers.containsKey(event.getClass()))
 			return;
 		for (Iterator<Handler> iterator = handlers.get(event.getClass()).iterator(); iterator.hasNext();) {
 			Handler handler = (Handler) iterator.next();
 			handler.handle(event);
 		}*/
+
+		/*if (!handlers.containsKey(event.getClass()))
+			continue;
+		for (Iterator<Handler> iterator = handlers.get(event.getClass()).iterator(); iterator.hasNext();) {
+			Handler handler = (Handler) iterator.next();
+			handler.handle(event);
+		}*/
+		
+		Class<? extends Event> class1 = event.getClass();
+		CopyOnWriteArrayList<Handler>[] values = (CopyOnWriteArrayList[]) handlers.values().toArray(new CopyOnWriteArrayList[handlers.values().size()]);
+		Class<? extends Event>[] keys = (Class<? extends Event>[]) handlers.keySet().toArray(new Class[handlers.keySet().size()]);
+		for (int i = 0; i < keys.length; i++) {
+			Class<? extends Event> class2 = keys[i];
+			if (class2.isAssignableFrom(class1)) {
+				for (Iterator<Handler> iterator = values[i].iterator(); iterator.hasNext();) {
+					Handler handler = (Handler) iterator.next();
+					handler.handle(event);
+				}
+			}
+		}
 	}
 	
 	public void calculateViews() {

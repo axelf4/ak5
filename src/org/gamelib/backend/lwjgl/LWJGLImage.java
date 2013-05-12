@@ -14,10 +14,12 @@ public class LWJGLImage implements Image {
 	public int target;
 	/** The GL texture */
 	public int textureID;
-	/** The height of the image */
-	private int height;
 	/** The width of the image */
 	private int width;
+	/** The height of the image */
+	private int height;
+	public int texWidth;
+	public int texHeight;
 
 	/**
 	 * 
@@ -79,4 +81,32 @@ public class LWJGLImage implements Image {
 		return textureID;
 	}
 
+	/**
+	 * @return the texWidth
+	 */
+	public int getTexWidth() {
+		return texWidth;
+	}
+
+	/**
+	 * @param texWidth the texWidth to set
+	 */
+	public void setTexWidth(int texWidth) {
+		this.texWidth = texWidth;
+	}
+
+	/**
+	 * @return the texHeight
+	 */
+	public int getTexHeight() {
+		return texHeight;
+	}
+
+	/**
+	 * @param texHeight the texHeight to set
+	 */
+	public void setTexHeight(int texHeight) {
+		this.texHeight = texHeight;
+	}
+	
 }

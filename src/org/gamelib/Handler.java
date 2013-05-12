@@ -4,6 +4,7 @@
 package org.gamelib;
 
 import java.awt.Graphics2D;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -71,7 +72,7 @@ public interface Handler {
 		}
 
 		/** Abstract event for input actions. */
-		public abstract static class Control<T> extends Event {
+		public abstract static class Control<T extends InputEvent> extends Event {
 			public T event;
 			public Input input;
 
@@ -86,12 +87,15 @@ public interface Handler {
 		}
 
 		public static final class Key extends Control<KeyEvent> {
+			public int id, keyCode;
 			public Key(KeyEvent event, Input input) {
 				super(event, input);
 			}
 
-			public Key(Input input) {
+			public Key(Input input, int id, int keyCode) {
 				super(input);
+				this.id = id;
+				this.keyCode = keyCode;
 			}
 		}
 

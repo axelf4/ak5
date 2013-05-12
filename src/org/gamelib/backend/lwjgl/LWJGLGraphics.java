@@ -63,20 +63,21 @@ public class LWJGLGraphics implements Graphics {
 		setColor(Color.WHITE);
 		// bind to the appropriate texture for this sprite
 		// image.bind();
-		GL11.glBindTexture(image.target, image.textureID);
-		GL11.glBegin(GL11.GL_QUADS);
+		glBindTexture(image.target, image.textureID);
+		glBegin(GL11.GL_QUADS);
 		{
-			GL11.glTexCoord2f(0f, 0f);
-			GL11.glVertex2f(dx1, dx1);
-			GL11.glTexCoord2f(1f, 0f);
-			GL11.glVertex2f(dx2, dy1);
-			GL11.glTexCoord2f(1f, 1f);
-			GL11.glVertex2f(dx2, dy2);
-			GL11.glTexCoord2f(0f, 1f);
-			GL11.glVertex2f(dx1, dy2);
+			glTexCoord2f(0f, 0f);
+			glVertex2f(dx1, dx1);
+			glTexCoord2f(1f, 0f);
+			glVertex2f(dx2, dy1);
+			glTexCoord2f(1f, 1f);
+			glVertex2f(dx2, dy2);
+			glTexCoord2f(0f, 1f);
+			glVertex2f(dx1, dy2);
 		}
-		GL11.glEnd();
+		glEnd();
 		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_TEXTURE_2D);
 	}
 
 	/*

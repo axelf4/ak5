@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author pwnedary
+ * An element with a {@link #parent} and {@link #children}s.
+ * @author pwnedary List
  */
-public class Node<E> {
+public class Node<E> implements Cloneable {
 
 	private E element;
 	private Node<E> parent = null;
@@ -26,7 +27,7 @@ public class Node<E> {
 	 * 
 	 */
 	public Node() {
-		// TODO Auto-generated constructor stub
+		this(null);
 	}
 
 	public void add(Node<E> node) {
@@ -45,17 +46,15 @@ public class Node<E> {
 		return list;
 	}
 
-	/**
-	 * @deprecated only use asList()
-	 */
-	@Deprecated
-	public boolean contains(Object o) {
-		return asList().contains(o);
+	@Override
+	public boolean equals(Object obj) {
+		return element.equals(((Node<?>) obj).element) && (parent == null && ((Node<?>) obj).parent == null) || parent.equals(((Node<?>) obj).parent) && children.equals(((Node<?>) obj).children);
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString() */
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return element + (children.size() > 0 ? ", " + children : "");

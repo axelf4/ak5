@@ -225,7 +225,7 @@ public class TrueTypeFont implements Font {
 			c = correctR;
 
 			while (i < endIndex) {
-				if (str.charAt(i) == '\n') startY -= fontHeight;
+				if (str.charAt(i) == '\n') startY += fontHeight;
 				i++;
 			}
 			break;
@@ -263,7 +263,7 @@ public class TrueTypeFont implements Font {
 			if (intObject != null) {
 				if (d < 0) totalwidth += (intObject.width - c) * d;
 				if (charCurrent == '\n') {
-					startY -= fontHeight * d;
+					startY += fontHeight * d;
 					totalwidth = 0;
 					if (format == ALIGN_CENTER) {
 						for (int l = i + 1; l <= endIndex; l++) {
