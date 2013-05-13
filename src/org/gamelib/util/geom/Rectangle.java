@@ -6,10 +6,7 @@ package org.gamelib.util.geom;
 import org.gamelib.backend.Graphics;
 
 /**
- * A <code>Rectangle</code> specifies an area in a coordinate space that is
- * enclosed by the <code>Rectangle</code> object's upper-left point
- * {@code (x,y)} in the coordinate space, its width, and its height.
- * 
+ * A <code>Rectangle</code> specifies an area in a coordinate space that is enclosed by the <code>Rectangle</code> object's upper-left point {@code (x,y)} in the coordinate space, its width, and its height.
  * @author pwnedary
  * @see java.awt.Rectangle
  */
@@ -41,9 +38,10 @@ public class Rectangle implements Shape {
 		this.height = height;
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see org.gamelib.util.Shape#collides(org.gamelib.util.Shape) */
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.util.Shape#collides(org.gamelib.util.Shape)
+	 */
 	@Override
 	public boolean collides(Shape shape) {
 		if (shape instanceof Rectangle) {
@@ -57,46 +55,60 @@ public class Rectangle implements Shape {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see org.gamelib.util.Shape#draw(java.awt.Graphics2D) */
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.util.Shape#draw(java.awt.Graphics2D)
+	 */
 	@Override
 	public void draw(Graphics g) {
 		g.drawRect(x, y, width, height);
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see org.gamelib.util.Shape#translate(int, int) */
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.util.Shape#translate(int, int)
+	 */
 	@Override
 	public void translate(int deltaX, int deltaY) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see org.gamelib.util.Shape#getBounds() */
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.util.Shape#getBounds()
+	 */
 	@Override
 	public Rectangle getBounds() {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see org.gamelib.util.Shape#rotate(double) */
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.util.Shape#rotate(double)
+	 */
 	@Override
 	public void rotate(double theta) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.util.geom.Shape#toAWT()
 	 */
 	@Override
 	public java.awt.Shape toAWT() {
 		return new java.awt.Rectangle(x, y, width, height);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.util.geom.Shape#getPoints()
+	 */
+	@Override
+	public int[][] getPoints() {
+		return new int[][] { { x, x + width }, { y, y + height } };
 	}
 
 }

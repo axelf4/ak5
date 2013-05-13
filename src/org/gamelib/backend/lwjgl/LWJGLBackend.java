@@ -31,6 +31,7 @@ import org.lwjgl.opengl.Pbuffer;
 public class LWJGLBackend implements Backend {
 
 	private LWJGLGraphics graphics;
+	LWJGLResourceFactory resourceFactory;
 
 	/*
 	 * (non-Javadoc)
@@ -126,7 +127,8 @@ public class LWJGLBackend implements Backend {
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-		Display.destroy();
+		
+		if (resourceFactory != null) resourceFactory.destroy();Display.destroy();
 	}
 
 	/*
@@ -202,7 +204,7 @@ public class LWJGLBackend implements Backend {
 	 */
 	@Override
 	public ResourceFactory getResourceFactory() {
-		return new LWJGLResourceFactory();
+		return resourceFactory == null ? resourceFactory = new LWJGLResourceFactory() : resourceFactory;
 	}
 
 }

@@ -3,59 +3,36 @@
  */
 package org.gamelib.backend.lwjgl;
 
-import static org.lwjgl.openal.AL10.*;
 import java.nio.IntBuffer;
 
 import org.gamelib.backend.Sound;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
-import org.lwjgl.openal.AL11;
-import org.lwjgl.util.WaveData;
 
 /**
  * TODO: move static fields to {@link LWJGLResourceFactory}
  * @author pwnedary
  */
 public class LWJGLSound implements Sound {
-
-	/** We support at most 256 buffers */
-	static int[] buffers = new int[256];
-
-	/** Number of sources is limited the user (and hardware) */
-	static int[] sources;
-
-	/** Our internal scratch buffer */
-	static IntBuffer scratchBuffer = BufferUtils.createIntBuffer(256);
-
-	/** Whether we're running in no sound mode */
-	static boolean soundOutput;
-
-	/** Current index in our buffers *ny */
-	static int bufferIndex;
-
-	/** Current index in our source list */
-	static int sourceIndex;
-
 	/** Maximum data buffers we will need. */
 	public static final int NUM_BUFFERS = 3;
-
 	/** Maximum emissions we will need. */
 	public static final int NUM_SOURCES = 3;
 
-	/** Index of battle sound */
-	public static final int BATTLE = 0;
-
-	/** Index of gun 1 sound */
-	public static final int GUN1 = 1;
-
-	/** Index of gun 2 sound */
-	public static final int GUN2 = 2;
-
+	/** We support at most 256 buffers */
+	static int[] buffers = new int[256];
+	/** Number of sources is limited the user (and hardware) */
+	static int[] sources;
+	/** Our internal scratch buffer */
+	static IntBuffer scratchBuffer = BufferUtils.createIntBuffer(256);
+	/** Whether we're running in no sound mode */
+	static boolean soundOutput;
+	/** Current index in our buffers *ny */
+	static int bufferIndex;
+	/** Current index in our source list */
+	static int sourceIndex;
 	/** Buffers hold sound data. */
 	static IntBuffer buffer = BufferUtils.createIntBuffer(NUM_BUFFERS);
-
 	/** Sources are points emitting sound. */
 	static IntBuffer source = BufferUtils.createIntBuffer(NUM_BUFFERS);
 

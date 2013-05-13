@@ -233,4 +233,13 @@ public class Polygon implements Shape {
 		return new java.awt.Polygon(xpoints, ypoints, npoints);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gamelib.util.geom.Shape#getPoints()
+	 */
+	@Override
+	public int[][] getPoints() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
