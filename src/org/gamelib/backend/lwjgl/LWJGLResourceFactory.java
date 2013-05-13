@@ -311,7 +311,7 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 	public void destroy() {
 		AL10.alDeleteSources(source);
 		AL10.alDeleteBuffers(buffer);
-		if (AL.isCreated()) {AL.destroy(); System.out.println("destroy");}
+		if (AL.isCreated()) {AL.destroy();}
 	}
 
 }

@@ -92,6 +92,7 @@ public class FixedTimestepLoop implements Loop {
 				now = System.nanoTime();
 			}
 		}
+		listener.stop();
 	}
 
 	/*

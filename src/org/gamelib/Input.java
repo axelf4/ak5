@@ -100,7 +100,7 @@ public abstract class Input {
 		switch (id) {
 		case MOUSE_PRESSED:
 			pressedMouseButtons[button] = true;
-			System.out.println("x: " + p.getX() + " y: " + p.getY());
+			// System.out.println("x: " + p.getX() + " y: " + p.getY());
 			break;
 		case MOUSE_RELEASED:
 			pressedMouseButtons[button] = false;

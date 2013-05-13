@@ -110,6 +110,14 @@ public abstract class Game {
 			game.screen = new Screen(game.getResolution());
 			game.initialize();
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.gamelib.Loop.LoopListener#stop()
+		 */
+		@Override
+		public void stop() {
+			game.backend.destroy();
+		}
 
 		/*
 		 * (non-Javadoc)

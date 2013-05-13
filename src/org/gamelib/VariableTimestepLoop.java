@@ -72,6 +72,7 @@ public class VariableTimestepLoop implements Loop {
 				Thread.sleep((lastLoopTime - System.nanoTime() + OPTIMAL_TIME) / 1000000);
 			} catch (InterruptedException e) {}
 		}
+		listener.stop();
 	}
 
 	/*

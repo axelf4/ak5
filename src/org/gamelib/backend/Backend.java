@@ -6,6 +6,7 @@ package org.gamelib.backend;
 import java.io.File;
 import java.io.IOException;
 
+import org.gamelib.Destroyable;
 import org.gamelib.Game;
 import org.gamelib.Input;
 import org.gamelib.Resolution;
@@ -15,7 +16,7 @@ import org.gamelib.Resolution;
  * 
  * @author pwnedary
  */
-public interface Backend {
+public interface Backend extends Destroyable {
 	public void start(Game instance, Resolution resolution);
 
 	/**

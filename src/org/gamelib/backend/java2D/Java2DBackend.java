@@ -181,4 +181,13 @@ public class Java2DBackend implements Backend {
 	public ResourceFactory getResourceFactory() {
 		return new Java2DResourceFactory();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.Destroyable#destroy()
+	 */
+	@Override
+	public void destroy() {
+		// TODO Auto-generated method stub
+		
+	}
 }
