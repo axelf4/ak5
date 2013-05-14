@@ -6,20 +6,7 @@ package org.gamelib.backend.lwjgl;
 import static org.gamelib.backend.lwjgl.LWJGLSound.buffer;
 import static org.gamelib.backend.lwjgl.LWJGLSound.bufferIndex;
 import static org.gamelib.backend.lwjgl.LWJGLSound.source;
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
-import static org.lwjgl.opengl.GL11.GL_RGB;
-import static org.lwjgl.opengl.GL11.GL_RGBA;
-import static org.lwjgl.opengl.GL11.GL_RGBA8;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glGenTextures;
-import static org.lwjgl.opengl.GL11.glTexImage2D;
-import static org.lwjgl.opengl.GL11.glTexParameteri;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -84,34 +71,27 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 	/**
 	 * Convert the buffered image to a texture
 	 * @param bufferedImage The image to convert to a texture
-	 * @param texture The texture to store the data into
+	 * @param image The texture to store the data into
 	 * @return A buffer containing the data
 	 */
-	private ByteBuffer convertImageData(BufferedImage bufferedImage, LWJGLImage texture) {
+	private ByteBuffer convertImageData(BufferedImage bufferedImage, LWJGLImage image) {
 		ByteBuffer imageBuffer;
 		WritableRaster raster;
 		BufferedImage texImage;
 
+		// find the closest power of 2 for the width and height of the produced texture
 		int texWidth = Math2.pot(bufferedImage.getWidth());
 		int texHeight = Math2.pot(bufferedImage.getHeight());
+		image.setTexWidth(texWidth);
+		image.setTexHeight(texHeight);
 
-		// find the closest power of 2 for the width and height
-		// of the produced texture
-		/*
-		 * while (texWidth < bufferedImage.getWidth()) { texWidth *= 2; } while (texHeight < bufferedImage.getHeight()) { texHeight *= 2; }
-		 */
-
-		// texture.setTextureHeight(texHeight);
-		// texture.setTextureWidth(texWidth);
-
-		// create a raster that can be used by OpenGL as a source
-		// for a texture
+		// create a raster that can be used by OpenGL as a source for a texture
 		if (bufferedImage.getColorModel().hasAlpha()) {
 			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 4, null);
-			texImage = new BufferedImage(glAlphaColorModel, raster, false, new Hashtable());
+			texImage = new BufferedImage(glAlphaColorModel, raster, false, new Hashtable<>());
 		} else {
 			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 3, null);
-			texImage = new BufferedImage(glColorModel, raster, false, new Hashtable());
+			texImage = new BufferedImage(glColorModel, raster, false, new Hashtable<>());
 		}
 
 		// copy the source image into the produced image
@@ -163,8 +143,8 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 		ByteBuffer textureBuffer = convertImageData(bufferedImage, image);
 
 		if (target == GL_TEXTURE_2D) {
-			glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		}
 
 		// produce a texture from the byte buffer
@@ -245,8 +225,8 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 
 		glBindTexture(target, textureID);
 		if (target == GL_TEXTURE_2D) {
-			glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		}
 
 		// produce a texture from the byte buffer
@@ -304,14 +284,17 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 		return new LWJGLImage(GL_TEXTURE_2D, textureID);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.Destroyable#destroy()
 	 */
 	@Override
 	public void destroy() {
 		AL10.alDeleteSources(source);
 		AL10.alDeleteBuffers(buffer);
-		if (AL.isCreated()) {AL.destroy();}
+		if (AL.isCreated()) {
+			AL.destroy();
+		}
 	}
 
 }
