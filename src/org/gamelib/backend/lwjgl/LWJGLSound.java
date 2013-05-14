@@ -3,6 +3,8 @@
  */
 package org.gamelib.backend.lwjgl;
 
+import static org.lwjgl.openal.AL10.*;
+
 import java.nio.IntBuffer;
 
 import org.gamelib.backend.Sound;
@@ -23,11 +25,7 @@ public class LWJGLSound implements Sound {
 	static int[] buffers = new int[256];
 	/** Number of sources is limited the user (and hardware) */
 	static int[] sources;
-	/** Our internal scratch buffer */
-	static IntBuffer scratchBuffer = BufferUtils.createIntBuffer(256);
-	/** Whether we're running in no sound mode */
-	static boolean soundOutput;
-	/** Current index in our buffers *ny */
+	/** Current index in our buffers */
 	static int bufferIndex;
 	/** Current index in our source list */
 	static int sourceIndex;
@@ -53,9 +51,9 @@ public class LWJGLSound implements Sound {
 	@Override
 	public void play() {
 		// int channel = source.get(index);
-		AL10.alSourcei(source.get(index), AL10.AL_BUFFER, buffer.get(index)); // link buffer and source
-		AL10.alSourcei(source.get(index), AL10.AL_LOOPING, AL10.AL_FALSE);
-		AL10.alSourcePlay(source.get(index));
+		alSourcei(source.get(index), AL_BUFFER, buffer.get(index)); // link buffer and source
+		alSourcei(source.get(index), AL_LOOPING, AL_FALSE);
+		alSourcePlay(source.get(index));
 	}
 
 	/*
@@ -82,7 +80,12 @@ public class LWJGLSound implements Sound {
 	 */
 	@Override
 	public void loop(int count) {
-		AL10.alSourcei(source.get(index), AL10.AL_LOOPING, AL10.AL_TRUE);
+		alSourcei(source.get(index), AL_LOOPING, count <= -1 ? AL_TRUE : AL_FALSE);
+		if (count <= -1)
+			alSourcei(source.get(index), AL_BUFFER, buffer.get(index)); // link buffer and source
+		else
+			for (int i = 0; i < count; i++)
+				AL10.alSourceQueueBuffers(source.get(index), buffer.get(index));
 		AL10.alSourcePlay(source.get(index));
 	}
 
@@ -92,8 +95,7 @@ public class LWJGLSound implements Sound {
 	 */
 	@Override
 	public boolean playing() {
-		return AL10.alGetSourcei(source.get(index), AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING;
-		// return AL10.alGetSourcei(sources[buffer], AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING;
+		return alGetSourcei(source.get(index), AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING;
 	}
 
 }
