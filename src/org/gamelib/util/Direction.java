@@ -25,16 +25,16 @@ public enum Direction {
 	}
 
 	public int toX() {
-		return Math2.sign((int) Math.cos(Math.toRadians(degrees)));
+		return Math2D.sign((int) Math.cos(Math.toRadians(degrees)));
 	}
 
 	public int toY() {
-		return Math2.sign((int) Math.sin(Math.toRadians(degrees)));
+		return Math2D.sign((int) Math.sin(Math.toRadians(degrees)));
 	}
 
 	public static Direction getDirection(int x, int y) {
-		x = Math2.sign(x);
-		y = Math2.sign(y);
+		x = Math2D.sign(x);
+		y = Math2D.sign(y);
 		System.out.println("x: " + x + " y: " + y);
 		for (Direction direction : values()) {
 			System.out.print(direction.name());

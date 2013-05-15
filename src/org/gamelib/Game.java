@@ -110,14 +110,6 @@ public abstract class Game {
 			game.screen = new Screen(game.getResolution());
 			game.initialize();
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.gamelib.Loop.LoopListener#stop()
-		 */
-		@Override
-		public void stop() {
-			game.backend.destroy();
-		}
 
 		/*
 		 * (non-Javadoc)
@@ -125,7 +117,6 @@ public abstract class Game {
 		 */
 		@Override
 		public void tick(float delta) {
-			game.input.poll();
 			// Registry.instance().dispatch(new Event.Tick(delta));
 			Registry.instance().dispatch(new Event.AdvancedTick(delta));
 		}

@@ -3,10 +3,20 @@
  */
 package org.gamelib.backend.lwjgl;
 
-import static org.gamelib.backend.lwjgl.LWJGLSound.buffer;
-import static org.gamelib.backend.lwjgl.LWJGLSound.bufferIndex;
-import static org.gamelib.backend.lwjgl.LWJGLSound.source;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_RGB;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_RGBA8;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glGenTextures;
+import static org.lwjgl.opengl.GL11.glTexImage2D;
+import static org.lwjgl.opengl.GL11.glTexParameteri;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -28,22 +38,17 @@ import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 
-import org.gamelib.Destroyable;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.ResourceFactory;
 import org.gamelib.backend.Sound;
-import org.gamelib.util.Math2;
+import org.gamelib.util.Math2D;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.openal.AL;
-import org.lwjgl.openal.AL10;
 import org.lwjgl.opengl.GL12;
-import org.lwjgl.util.WaveData;
 
 /**
  * @author pwnedary
  */
-public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
+public class LWJGLResourceFactory implements ResourceFactory {
 
 	@Override
 	public InputStream getResourceAsStream(String name) {
@@ -69,29 +74,48 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 	}
 
 	/**
+	 * Get the closest greater power of 2 to the fold number
+	 * @param fold The target number
+	 * @return The power of 2
+	 */
+	private static int get2Fold(int fold) {
+		return Math2D.npow2(fold);
+	}
+
+	/**
 	 * Convert the buffered image to a texture
 	 * @param bufferedImage The image to convert to a texture
-	 * @param image The texture to store the data into
+	 * @param texture The texture to store the data into
 	 * @return A buffer containing the data
 	 */
-	private ByteBuffer convertImageData(BufferedImage bufferedImage, LWJGLImage image) {
+	private ByteBuffer convertImageData(BufferedImage bufferedImage, LWJGLImage texture) {
 		ByteBuffer imageBuffer;
 		WritableRaster raster;
 		BufferedImage texImage;
 
-		// find the closest power of 2 for the width and height of the produced texture
-		int texWidth = Math2.pot(bufferedImage.getWidth());
-		int texHeight = Math2.pot(bufferedImage.getHeight());
-		image.setTexWidth(texWidth);
-		image.setTexHeight(texHeight);
+		int texWidth = get2Fold(bufferedImage.getWidth());
+		int texHeight = get2Fold(bufferedImage.getHeight());
 
-		// create a raster that can be used by OpenGL as a source for a texture
+		// find the closest power of 2 for the width and height
+		// of the produced texture
+		/*while (texWidth < bufferedImage.getWidth()) {
+		texWidth *= 2;
+		}
+		while (texHeight < bufferedImage.getHeight()) {
+		texHeight *= 2;
+		}*/
+
+		// texture.setTextureHeight(texHeight);
+		// texture.setTextureWidth(texWidth);
+
+		// create a raster that can be used by OpenGL as a source
+		// for a texture
 		if (bufferedImage.getColorModel().hasAlpha()) {
-			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 4, null);
-			texImage = new BufferedImage(glAlphaColorModel, raster, false, new Hashtable<>());
+		raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 4, null);
+		texImage = new BufferedImage(glAlphaColorModel, raster, false, new Hashtable());
 		} else {
-			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 3, null);
-			texImage = new BufferedImage(glColorModel, raster, false, new Hashtable<>());
+		raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 3, null);
+		texImage = new BufferedImage(glColorModel, raster, false, new Hashtable());
 		}
 
 		// copy the source image into the produced image
@@ -134,21 +158,21 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 		image.setHeight(bufferedImage.getHeight());
 
 		if (bufferedImage.getColorModel().hasAlpha()) {
-			srcPixelFormat = GL_RGBA;
+		srcPixelFormat = GL_RGBA;
 		} else {
-			srcPixelFormat = GL_RGB;
+		srcPixelFormat = GL_RGB;
 		}
 
 		// convert that image into a byte buffer of texture data
 		ByteBuffer textureBuffer = convertImageData(bufferedImage, image);
 
 		if (target == GL_TEXTURE_2D) {
-			glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
 
 		// produce a texture from the byte buffer
-		glTexImage2D(target, 0, GL_RGBA, Math2.pot(bufferedImage.getWidth()), Math2.pot(bufferedImage.getHeight()), 0, srcPixelFormat, GL_UNSIGNED_BYTE, textureBuffer);
+		glTexImage2D(target, 0, GL_RGBA, get2Fold(bufferedImage.getWidth()), get2Fold(bufferedImage.getHeight()), 0, srcPixelFormat, GL_UNSIGNED_BYTE, textureBuffer);
 		return image;
 	}
 
@@ -162,55 +186,31 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 		return null;
 	}
 
-	static {
-		int channels = 8;
-		try {
-			AL.create();
-
-			// Load wav data into a buffers.
-			AL10.alGenBuffers(buffer);
-			// Bind buffers into audio sources.
-			AL10.alGenSources(source);
-
-			// could we allocate all channels?
-			if (AL10.alGetError() != AL10.AL_NO_ERROR) {
-				throw new LWJGLException("Unable to allocate " + channels + " sources");
-			}
-		} catch (LWJGLException le) {
-			le.printStackTrace();
-			System.out.println("Sound disabled");
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see org.gamelib.backend.ResourceFactory#getSound(java.io.File)
 	 */
 	@Override
 	public Sound getSound(File file) throws IOException {
-		WaveData waveFile = WaveData.create(getResourceAsStream(file.getPath()));
-		AL10.alBufferData(buffer.get(bufferIndex), waveFile.format, waveFile.data, waveFile.samplerate);
-		waveFile.dispose();
-
-		return new LWJGLSound(bufferIndex++);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/** 4 for RGBA, 3 for RGB */
 	private static final int BYTES_PER_PIXEL = 4;
-
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.gamelib.backend.ResourceFactory#getImage(java.awt.image.BufferedImage)
 	 */
 	public Image getImage(BufferedImage bufferedImage) {
-		// TODO resolve problem with drawing lwjgl images
 		int srcPixelFormat;
 
 		// create the texture ID for this texture
 		int textureID = createTextureID();
 		int target = GL_TEXTURE_2D;
 		LWJGLImage image = new LWJGLImage(target, textureID);
-
+		
 		image.setWidth(bufferedImage.getWidth());
 		image.setHeight(bufferedImage.getHeight());
 
@@ -223,15 +223,13 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 		// convert that image into a byte buffer of texture data
 		ByteBuffer textureBuffer = convertImageData(bufferedImage, image);
 
-		glBindTexture(target, textureID);
 		if (target == GL_TEXTURE_2D) {
-			glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
 
 		// produce a texture from the byte buffer
-		glTexImage2D(target, 0, GL_RGBA, Math2.pot(bufferedImage.getWidth()), Math2.pot(bufferedImage.getHeight()), 0, srcPixelFormat, GL_UNSIGNED_BYTE, textureBuffer);
-		glBindTexture(target, 0);
+		glTexImage2D(target, 0, GL_RGBA, get2Fold(bufferedImage.getWidth()), get2Fold(bufferedImage.getHeight()), 0, srcPixelFormat, GL_UNSIGNED_BYTE, textureBuffer);
 		return image;
 	}
 
@@ -282,19 +280,6 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 
 		// Return the texture ID so we can bind it later again
 		return new LWJGLImage(GL_TEXTURE_2D, textureID);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Destroyable#destroy()
-	 */
-	@Override
-	public void destroy() {
-		AL10.alDeleteSources(source);
-		AL10.alDeleteBuffers(buffer);
-		if (AL.isCreated()) {
-			AL.destroy();
-		}
 	}
 
 }

@@ -101,16 +101,14 @@ public interface Handler {
 
 		public static final class Mouse extends Control<MouseEvent> {
 			public int id;
-			public int button;
 
 			public Mouse(MouseEvent event, Input input) {
 				super(event, input);
 			}
 
-			public Mouse(Input input, int id, int button) {
+			public Mouse(Input input, int id) {
 				super(input);
 				this.id = id;
-				this.button = button;
 			}
 		}
 

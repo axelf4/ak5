@@ -14,11 +14,8 @@ public interface Loop extends Runnable {
 	/** @param listener the {@link LoopListener} to use */
 	public void setLoopListener(LoopListener listener);
 
-	/** TODO comment */
 	public interface LoopListener {
 		public void start();
-
-		public void stop();
 
 		public void tick(float delta);
 
