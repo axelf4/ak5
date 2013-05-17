@@ -7,15 +7,14 @@ import org.gamelib.backend.Graphics;
 
 /**
  * @author pwnedary
- *
  */
 public class Point implements Shape {
-	
+
 	/** The X coordinate. */
 	private int x;
 	/** The Y coordinate. */
 	private int y;
-	
+
 	private int deltaX, deltaY;
 
 	/**
@@ -25,7 +24,7 @@ public class Point implements Shape {
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -33,7 +32,8 @@ public class Point implements Shape {
 		this(0, 0);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.util.geom.Shape#collides(org.gamelib.util.geom.Shape)
 	 */
 	@Override
@@ -42,7 +42,8 @@ public class Point implements Shape {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.util.geom.Shape#translate(int, int)
 	 */
 	@Override
@@ -51,14 +52,16 @@ public class Point implements Shape {
 		this.deltaY = deltaY;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.util.geom.Shape#rotate(double)
 	 */
 	@Override
 	public void rotate(double theta) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.util.geom.Shape#getBounds()
 	 */
 	@Override
@@ -66,7 +69,8 @@ public class Point implements Shape {
 		return new Rectangle(getX(), getY(), 1, 1);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.util.geom.Shape#draw(org.gamelib.Graphics)
 	 */
 	@Override
@@ -103,12 +107,22 @@ public class Point implements Shape {
 		this.y = y;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.util.geom.Shape#toAWT()
 	 */
 	@Override
 	public java.awt.Shape toAWT() {
 		return new java.awt.Rectangle(getX(), getY(), 1, 1);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.util.geom.Shape#getPoints()
+	 */
+	@Override
+	public int[][] getPoints() {
+		return new int[][] { { x }, { y } };
 	}
 
 }

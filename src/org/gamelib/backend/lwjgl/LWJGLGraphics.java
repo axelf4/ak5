@@ -61,28 +61,44 @@ public class LWJGLGraphics implements Graphics {
 		LWJGLImage image = (LWJGLImage) img;
 		glEnable(GL_TEXTURE_2D);
 		setColor(Color.WHITE);
-		
-		// dx2 = image.getTexWidth();
-		// dy2 = image.getTexHeight();
-		System.out.println(dx2 + " " + dy2);
-		
+
+		/*float u = (float) sx1 / image.getWidth();
+		float v = (float) sy1 / image.getHeight();
+		float u2 = (float) sx2 / image.getWidth();
+		float v2 = (float) sy2 / image.getHeight();*/
+		float u = (float) sx1 / image.getTexWidth();
+		float v = (float) sy1 / image.getTexHeight();
+		float u2 = (float) sx2 / image.getTexWidth();
+		float v2 = (float) sy2 / image.getTexHeight();
+		/*u = (float) sy1 / image.getTexHeight();
+		v = (float) sx1 / image.getTexWidth();
+		u2 = (float) sy2 / image.getTexHeight();
+		v2 = (float) sx2 / image.getTexWidth();*/
+
 		// bind to the appropriate texture for this sprite
 		// image.bind();
 		glBindTexture(image.target, image.textureID);
 		glBegin(GL11.GL_QUADS);
 		{
-			/*glTexCoord2f(0f, 0f);
+			/*
+			 * glTexCoord2f(0f, 0f); glVertex2f(dx1, dx1); glTexCoord2f(1f, 0f); glVertex2f(dx2, dy1); glTexCoord2f(1f, 1f); glVertex2f(dx2, dy2); glTexCoord2f(0f, 1f); glVertex2f(dx1, dy2);
+			 */
+
+			glTexCoord2f(u, v);
 			glVertex2f(dx1, dx1);
-			glTexCoord2f(1f, 0f);
+			glTexCoord2f(u2, v);
 			glVertex2f(dx2, dy1);
-			glTexCoord2f(1f, 1f);
+			glTexCoord2f(u2, v2);
 			glVertex2f(dx2, dy2);
-			glTexCoord2f(0f, 1f);
-			glVertex2f(dx1, dy2);*/
+			glTexCoord2f(u, v2);
+			glVertex2f(dx1, dy2);
 		}
 		glEnd();
-		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindTexture(image.target, 0);
 		glDisable(GL_TEXTURE_2D);
+		
+		setColor(Color.GREEN);
+		drawRect(dx1, dy1, dx2 - dx1, dy2-dy1);
 	}
 
 	/*

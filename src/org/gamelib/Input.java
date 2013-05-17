@@ -100,7 +100,7 @@ public abstract class Input {
 		switch (id) {
 		case MOUSE_PRESSED:
 			pressedMouseButtons[button] = true;
-			System.out.println("x: " + p.getX() + " y: " + p.getY());
+			// System.out.println("x: " + p.getX() + " y: " + p.getY());
 			break;
 		case MOUSE_RELEASED:
 			pressedMouseButtons[button] = false;
@@ -108,7 +108,7 @@ public abstract class Input {
 		default:
 			break;
 		}
-		Registry.instance().dispatch(new Event.Mouse(this, id));
+		Registry.instance().dispatch(new Event.Mouse(this, id, button));
 	}
 
 	protected void mouseWheelEvent(double scrollAmount) {
@@ -264,12 +264,12 @@ public abstract class Input {
 	 */
 	public static final class Mouse {
 		/** Indicates no mouse buttons; used by {@link #getButton}. */
-		public static final int NOBUTTON = 0;
+		public static final int NOBUTTON = -1;
 		/** Indicates mouse button #1; used by {@link #getButton}. */
-		public static final int BUTTON1 = 1;
+		public static final int BUTTON1 = 0;
 		/** Indicates mouse button #2; used by {@link #getButton}. */
-		public static final int BUTTON2 = 2;
+		public static final int BUTTON2 = 1;
 		/** Indicates mouse button #3; used by {@link #getButton}. */
-		public static final int BUTTON3 = 3;
+		public static final int BUTTON3 = 2;
 	}
 }

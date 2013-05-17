@@ -6,11 +6,11 @@ package org.gamelib.util;
 import static java.lang.Math.*;
 
 /**
- * rename to MathUtils
+ * rename to MathUtils or Math2
  * @author pwnedary
  * 
  */
-public class Math2D {
+public class Math2 {
 
 	public static final float radiansToDegrees = 180f / (float) PI;
 	public static final float degreesToRadians = (float) PI / 180;
@@ -50,6 +50,12 @@ public class Math2D {
 	}
 	
 	/** @return the nearest power of 2*/
+	public static int pot(int i) {
+		return i == 0 ? 0 : (int) Math.pow(2, 32 - Integer.numberOfLeadingZeros(i - 1));
+	}
+	
+	/** @return the nearest power of 2
+	 * @deprecated replaced by {@link #pot(int)}*/
 	public static int npow2(int i) {
 		return i == 0 ? 0 : (int) Math.pow(2, 32 - Integer.numberOfLeadingZeros(i - 1));
 	}
