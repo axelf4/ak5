@@ -13,10 +13,9 @@ import java.util.Iterator;
 
 /**
  * @author Axel
- *
  */
-public class Client extends Connection {
-	
+public class Client extends ConnectionImpl implements Connection {
+
 	private Socket socket;
 
 	/**
@@ -25,12 +24,16 @@ public class Client extends Connection {
 	public Client() {
 		// TODO Auto-generated constructor stub
 	}
-	
-	public Connection open(InetAddress address, short port) throws IOException {
+
+	public void open(InetAddress address, short port) throws IOException {
 		socket = new Socket(address, port);
 		System.out.println("Client connected to server running at: " + socket.getLocalSocketAddress() + ":" + socket.getPort());
 		(thread = new Thread(this)).start();
-		return this;
+	}
+
+	@Override
+	public void close() throws IOException {
+		socket.close();
 	}
 
 	@Override
@@ -39,10 +42,10 @@ public class Client extends Connection {
 		ObjectInputStream in = null;
 		BufferedInputStream bin = null;
 		try {
-			(out = new ObjectOutputStream(socket.getOutputStream())).flush();
 			in = new ObjectInputStream(socket.getInputStream());
+			(out = new ObjectOutputStream(socket.getOutputStream())).flush();
 			bin = new BufferedInputStream(socket.getInputStream());
-			
+
 			while (!socket.isClosed()) {
 				// Read operations
 				if (bin.available() > 0) {
@@ -51,32 +54,33 @@ public class Client extends Connection {
 						listener.received(object);
 				}
 				// Write operations
-				for (Iterator<Object> iterator = buffer.iterator(); iterator.hasNext();) {
-					Object object = (Object) iterator.next();
-					System.out.println("Client sent object: " + object);
-					out.writeObject(object);
-					out.flush();
-					iterator.remove();
+				{
+					Object object = null;
+					while (!buffer.isEmpty()) {
+						object = buffer.poll();
+						out.writeObject(object);
+					}
+					if (object != null) out.flush();
 				}
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				Thread.sleep(1000);
 			}
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (IOException | ClassNotFoundException
+				| InterruptedException e) {
 			e.printStackTrace();
 		} finally {
 			try {
+				out.close();
 				in.close();
 				bin.close();
-				out.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@Override
+	public boolean closed() {
+		return socket.isClosed();
 	}
 
 }

@@ -3,45 +3,31 @@
  */
 package org.gamelib.network;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.net.InetAddress;
 
 /**
  * @author Axel
- * 
  */
-public abstract class Connection implements Runnable {
-
+public interface Connection {
+	
+	/** The port that is used if passed an invalid port. */
 	public static final short DEFAULT_PORT = 2222;
 
-	protected List<SocketListener> listeners = new ArrayList<SocketListener>();
-	public final List<Object> buffer = new ArrayList<Object>();
-	protected Thread thread;
-
 	/**
-	 * 
+	 * Opens this connection at the specified address and port.
+	 * @param address the address to connect at
+	 * @param port the port to connect at
 	 */
-	public Connection() {
-		// TODO Auto-generated constructor stub
-	}
+	public void open(InetAddress address, short port) throws IOException;
 
-	public Connection addSocketListener(SocketListener listener) {
-		listeners.add(listener);
-		return this;
-	}
+	/** Closes this connection. */
+	public void close() throws IOException;
 	
-	public void send(Object object) {
-		// TODO Check if socket is closed.
-		buffer.add(object);
-	}
+	public void send(Object obj);
 	
-	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		Thread moribund = thread;
-		thread = null;
-		// Thread.currentThread().interrupt();
-		moribund.interrupt();
-	}
+	public void addSocketListener(SocketListener listener);
+	
+	public boolean closed();
 
 }
