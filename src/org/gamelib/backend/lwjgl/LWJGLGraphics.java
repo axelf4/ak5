@@ -74,6 +74,10 @@ public class LWJGLGraphics implements Graphics {
 		v = (float) sx1 / image.getTexWidth();
 		u2 = (float) sy2 / image.getTexHeight();
 		v2 = (float) sx2 / image.getTexWidth();*/
+		
+		// dy2 = (dy2 - dy1) / 2 + dy1;
+		//dx2 = dx1 + 60;
+		// System.out.println(dy2 - dy1);
 
 		// bind to the appropriate texture for this sprite
 		// image.bind();
@@ -83,7 +87,6 @@ public class LWJGLGraphics implements Graphics {
 			/*
 			 * glTexCoord2f(0f, 0f); glVertex2f(dx1, dx1); glTexCoord2f(1f, 0f); glVertex2f(dx2, dy1); glTexCoord2f(1f, 1f); glVertex2f(dx2, dy2); glTexCoord2f(0f, 1f); glVertex2f(dx1, dy2);
 			 */
-
 			glTexCoord2f(u, v);
 			glVertex2f(dx1, dx1);
 			glTexCoord2f(u2, v);
@@ -99,6 +102,7 @@ public class LWJGLGraphics implements Graphics {
 		
 		setColor(Color.GREEN);
 		drawRect(dx1, dy1, dx2 - dx1, dy2-dy1);
+		// drawLine(dx1, dy1, dx2, dy2);
 	}
 
 	/*

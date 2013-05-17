@@ -278,10 +278,6 @@ public class TrueTypeFont implements Font {
 				} else {
 					// g.drawImage(fontImage, (int) (totalwidth * scaleX + x), (int) (startY * scaleY + y), (int) ((totalwidth + intObject.width) * scaleX + x), (int) ((startY + intObject.height) * scaleY + y), intObject.storedX, intObject.storedY, intObject.storedX + intObject.width, intObject.storedY + intObject.height);
 					g.drawImage(fontImage, (int) (totalwidth * scaleX + x), (int) (startY * scaleY + y), (int) ((totalwidth + intObject.width) * scaleX + x), (int) ((startY + intObject.height) * scaleY + y), intObject.storedX, intObject.storedY, intObject.storedX + intObject.width, intObject.storedY + intObject.height);
-					// System.out.println((int) ((startY + intObject.height) * scaleY + y) - (int) (startY * scaleY + y));
-					g.setColor(org.gamelib.util.Color.YELLOW);
-					// g.drawRect((int) (totalwidth * scaleX + x), (int) (startY * scaleY + y), (int) ((totalwidth + intObject.width) * scaleX), (int) ((startY + intObject.height) * scaleY));
-					// g.drawLine((int) (totalwidth * scaleX + x), (int) (startY * scaleY + y), (int) (totalwidth * scaleX + x), (int) ((startY + intObject.height) * scaleY + y));
 					if (d > 0) totalwidth += (intObject.width - c) * d;
 				}
 				i += d;
