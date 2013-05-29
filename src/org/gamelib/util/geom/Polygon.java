@@ -242,4 +242,13 @@ public class Polygon implements Shape {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gamelib.util.geom.Shape#fill(org.gamelib.backend.Graphics)
+	 */
+	@Override
+	public void fill(Graphics g) {
+		// TODO Auto-generated method stub
+		throw new RuntimeException("method unfinished");
+	}
+
 }

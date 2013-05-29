@@ -125,4 +125,12 @@ public class Point implements Shape {
 		return new int[][] { { x }, { y } };
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gamelib.util.geom.Shape#fill(org.gamelib.backend.Graphics)
+	 */
+	@Override
+	public void fill(Graphics g) {
+		draw(g);
+	}
+
 }

@@ -31,6 +31,15 @@ public abstract class Input {
 	public static final int MOUSE_PRESSED = 2;
 	public static final int MOUSE_RELEASED = 3;
 	public static final int MOUSE_CLICKED = 4;
+	
+	/** Indicates no mouse buttons; used by {@link #getButton}. */
+	public static final int NOBUTTON = -1;
+	/** Indicates mouse button #1; used by {@link #getButton}. */
+	public static final int BUTTON1 = 0;
+	/** Indicates mouse button #2; used by {@link #getButton}. */
+	public static final int BUTTON2 = 1;
+	/** Indicates mouse button #3; used by {@link #getButton}. */
+	public static final int BUTTON3 = 2;
 
 	protected HashMap<Integer, Boolean> pressedKeys;
 	Timer keyRepeatTimer;
@@ -262,6 +271,7 @@ public abstract class Input {
 	 * @author Axel
 	 * @see java.awt.event.MouseEvent
 	 */
+	@Deprecated
 	public static final class Mouse {
 		/** Indicates no mouse buttons; used by {@link #getButton}. */
 		public static final int NOBUTTON = -1;

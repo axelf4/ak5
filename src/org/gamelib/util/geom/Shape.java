@@ -41,10 +41,16 @@ public interface Shape {
 	public Rectangle getBounds();
 
 	/**
-	 * Draws the shape.
+	 * Draws the outline of this {@link Shape}.
 	 * @param g the {@link Graphics} reference
 	 */
 	public void draw(Graphics g);
+
+	/**
+	 * Fills this {@link Shape}.
+	 * @param g the {@link Graphics} reference
+	 */
+	public void fill(Graphics g);
 
 	/** @return AWT's representation of this shape. */
 	public java.awt.Shape toAWT();

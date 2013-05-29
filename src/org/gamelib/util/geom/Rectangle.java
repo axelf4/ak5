@@ -111,4 +111,12 @@ public class Rectangle implements Shape {
 		return new int[][] { { x, x + width }, { y, y + height } };
 	}
 
+	/* (non-Javadoc)
+	 * @see org.gamelib.util.geom.Shape#fill(org.gamelib.backend.Graphics)
+	 */
+	@Override
+	public void fill(Graphics g) {
+		g.fillRect(x, y, width, height);
+	}
+
 }
