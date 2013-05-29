@@ -3,32 +3,41 @@
  */
 package org.gamelib.network;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Iterator;
+
+import org.gamelib.network.protocol.TCPClient;
+import org.gamelib.network.protocol.TCPServer;
 
 /**
  * @author Axel
  */
-public class Client extends ConnectionImpl implements Connection {
+public class Client extends EndPointImpl implements EndPoint {
 
 	private Socket socket;
+	Protocol protocol;
 
 	/**
 	 * 
 	 */
 	public Client() {
-		// TODO Auto-generated constructor stub
+		Class<? extends Protocol> preffered = getPrefferedProtocol();
+		if (preffered.equals(TCP.class)) {
+			protocol = new TCPClient();
+		}
 	}
 
+	@Override
 	public void open(InetAddress address, short port) throws IOException {
-		socket = new Socket(address, port);
+		/*socket = new Socket(address, port);
 		System.out.println("Client connected to server running at: " + socket.getLocalSocketAddress() + ":" + socket.getPort());
-		(thread = new Thread(this)).start();
+		// (thread = new Thread(this)).start();
+		Connection connection = new TCPConnection(socket);
+		connection.setListener(listener);
+		notifyConnected(connection);*/
+		
+		protocol.open(address, port);
 	}
 
 	@Override
@@ -36,7 +45,7 @@ public class Client extends ConnectionImpl implements Connection {
 		socket.close();
 	}
 
-	@Override
+	/*@Override
 	public void run() {
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
@@ -76,11 +85,6 @@ public class Client extends ConnectionImpl implements Connection {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	@Override
-	public boolean closed() {
-		return socket.isClosed();
-	}
+	}*/
 
 }

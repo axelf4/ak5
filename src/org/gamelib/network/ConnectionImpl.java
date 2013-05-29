@@ -3,36 +3,45 @@
  */
 package org.gamelib.network;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
+
 
 /**
  * @author Axel
- * 
+ *
  */
-public abstract class ConnectionImpl implements Runnable {
+public abstract class ConnectionImpl implements Connection {
 
-	protected List<SocketListener> listeners = new ArrayList<SocketListener>();
 	public final Queue<Object> buffer = new LinkedList<>();
-	public Thread thread;
-
-	public void addSocketListener(SocketListener listener) {
-		listeners.add(listener);
+	SocketListener listener;
+	
+	@Override
+	public void setListener(SocketListener listener) {
+		this.listener = listener;
 	}
 	
-	public void send(Object object) {
-		buffer.add(object);
+	protected void notifyConnected(Connection connection) {
+		if (listener != null) listener.connected(connection);
+	}
+	
+	protected void notifyDisconnected(Connection connection) {
+		if (listener != null) listener.disconnected(connection);
+	}
+	
+	protected void notifyReceived(Object object) {
+		if (listener != null) listener.received(object);
+	}
+	
+	protected void notifySent(Object object) {
+		if (listener != null) listener.sent(object);
 	}
 	
 	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		/*Thread moribund = thread;
-		thread = null;
-		// Thread.currentThread().interrupt();
-		moribund.interrupt();*/
+	public void send(Serializable obj) {
+		if (obj == null) throw new IllegalArgumentException("object can't be null");
+		buffer.add(obj);
 	}
-
+	
 }

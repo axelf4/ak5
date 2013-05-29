@@ -3,25 +3,30 @@
  */
 package org.gamelib.network;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.gamelib.network.protocol.TCPConnection;
+import org.gamelib.network.protocol.TCPServer;
+
 /**
  * @author Axel
  */
-public class Server extends ConnectionImpl implements Connection {
+public class Server extends EndPointImpl implements EndPoint, Runnable {
 
+	Protocol protocol;
 	private ServerSocket server;
 
 	/**
 	 * @throws IOException
 	 */
 	public Server() throws IOException {
+		Class<? extends Protocol> preffered = getPrefferedProtocol();
+		if (preffered.equals(TCP.class)) {
+			protocol = new TCPServer();
+		}
 	}
 
 	/** @param address must always localhost for server */
@@ -29,25 +34,29 @@ public class Server extends ConnectionImpl implements Connection {
 	public void open(InetAddress address, short port) throws IOException {
 		if (address != null)
 			throw new IllegalArgumentException("parameter: address must be null");
-
-		server = new ServerSocket(port);
+		// server = new ServerSocket(port);
 		// System.out.println("Server opened at: " + server.getLocalSocketAddress());
-		(thread = new Thread(this)).start();
+		//  (thread = new Thread(this)).start();
+		// protocol = getPrefferedProtocol();
+		
+		protocol.open(address, port);
 	}
 
 	@Override
 	public void close() throws IOException {
-		server.close();
+		// server.close();
+		protocol.close();
 	}
 
 	@Override
 	public void run() {
-		while (true) {
+		while (!server.isClosed()) {
 			try {
 				final Socket socket = server.accept();
-				for (SocketListener listener : listeners)
-					listener.connected(socket);
-				final Thread thread = new Thread(new Runnable() {
+				Connection connection = new TCPConnection(socket);
+				connection.setListener(listener);
+				// notifyConnected(connection);
+				/*final Thread thread = new Thread(new Runnable() {
 					@Override
 					public void run() {
 						ObjectOutputStream out = null;
@@ -95,16 +104,11 @@ public class Server extends ConnectionImpl implements Connection {
 					}
 				});
 
-				thread.start();
+				thread.start();*/
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 		}
-	}
-
-	@Override
-	public boolean closed() {
-		return server.isClosed();
 	}
 
 }

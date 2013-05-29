@@ -9,3 +9,4 @@ add bitmap fonts (!)
 make thread wait for resources to be loaded
 add interfaces such as Active, Visible, Blended, Colored, Dimensioned, Located,
 Rotated, Scaled..
+add rmi to networking api, such as Remote interface
