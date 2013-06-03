@@ -5,18 +5,13 @@ package org.gamelib.backend.java2D;
 
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Transparency;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 
-import org.gamelib.DisplayMode;
+import org.gamelib.Drawable;
 import org.gamelib.Game;
 import org.gamelib.Input;
 import org.gamelib.Resolution;
@@ -24,17 +19,17 @@ import org.gamelib.backend.Backend;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.ResourceFactory;
-import org.gamelib.backend.Sound;
+import org.gamelib.util.geom.Rectangle;
 
 /**
  * change to AWTBackend
- * 
  * @author pwnedary
  */
 public class Java2DBackend implements Backend {
 
 	private Container container;
 	private Java2dPanel panel;
+	Java2DResourceFactory resourceFactory;
 
 	private Java2DGraphics graphics;
 
@@ -58,24 +53,19 @@ public class Java2DBackend implements Backend {
 	}
 
 	private void setFullscreen(JFrame frame, boolean fullscreen) {
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice graphicsDevice = ge.getDefaultScreenDevice();
+		GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		frame.setUndecorated(fullscreen);
 		frame.setResizable(!fullscreen);
 		if (fullscreen) {
 			// Determine if full-screen mode is supported directly
-			if (graphicsDevice.isFullScreenSupported()) {
-				// Full-screen mode is supported
-			} else {
-				// Full-screen mode will be simulated
-			}
-
+			/*
+			 * if (graphicsDevice.isFullScreenSupported()) { // Full-screen mode is supported } else { // Full-screen mode will be simulated }
+			 */
 			try {
 				// Enter full-screen mode
 				// gs.setFullScreenWindow(win);
 				graphicsDevice.setFullScreenWindow(frame);
 				frame.validate();
-				// ...
 			} finally {
 				// Exit full-screen mode
 				// graphicsDevice.setFullScreenWindow(null);
@@ -92,7 +82,7 @@ public class Java2DBackend implements Backend {
 	 */
 	@Override
 	public Graphics getGraphics() {
-		return graphics == null ? graphics = new Java2DGraphics(panel.g2d, panel.getWidth(), panel.getHeight()) : graphics;
+		return graphics == null && true ? graphics = new Java2DGraphics(panel.g2d, panel.getWidth(), panel.getHeight()) : graphics;
 	}
 
 	public Input getInput() {
@@ -104,8 +94,9 @@ public class Java2DBackend implements Backend {
 	 * @see org.gamelib.backends.Backend#screenUpdate()
 	 */
 	@Override
-	public void screenUpdate(float delta) {
+	public void screenUpdate(Drawable callback, float delta) {
 		panel.delta = delta;
+		panel.callback = callback;
 		panel.repaint();
 	}
 
@@ -133,8 +124,7 @@ public class Java2DBackend implements Backend {
 	 */
 	@Override
 	public void setTitle(String s) {
-		if (container instanceof JFrame)
-			((JFrame) container).setTitle(s);
+		if (container instanceof JFrame) ((JFrame) container).setTitle(s);
 	}
 
 	/*
@@ -148,46 +138,25 @@ public class Java2DBackend implements Backend {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#createImage(int, int)
-	 */
-	@Override
-	public Image createImage(int width, int height) {
-		// return new Java2DImage(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
-		GraphicsConfiguration config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-		return new Java2DImage(config.createCompatibleImage(width, height, Transparency.TRANSLUCENT));
-	}
-
-	/* (non-Javadoc)
-	 * @see org.gamelib.backend.Backend#getImage(java.io.File)
-	 */
-	@Override
-	public Image getImage(File file) throws IOException {
-		return new Java2DImage(ImageIO.read(file));
-	}
-
-	/* (non-Javadoc)
-	 * @see org.gamelib.backend.Backend#getSound(java.io.File)
-	 */
-	@Override
-	public Sound getSound(File file) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.gamelib.backend.Backend#getResourceFactory()
 	 */
 	@Override
 	public ResourceFactory getResourceFactory() {
-		return new Java2DResourceFactory();
+		return resourceFactory == null ? resourceFactory = new Java2DResourceFactory() : resourceFactory;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.Destroyable#destroy()
 	 */
 	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public Rectangle getSize() {
+		return new Rectangle(panel.getX(), panel.getY(), panel.getWidth(), panel.getHeight());
 	}
 }

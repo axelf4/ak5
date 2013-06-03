@@ -15,11 +15,13 @@ import org.gamelib.util.Color;
  */
 public class Java2DGraphics implements Graphics {
 
-	private java.awt.Graphics g;
+	java.awt.Graphics g;
 	int width, height;
 
 	public Java2DGraphics(java.awt.Graphics g, int width, int height) {
 		this.g = g;
+		this.width = width;
+		this.height = height;
 	}
 
 	/*

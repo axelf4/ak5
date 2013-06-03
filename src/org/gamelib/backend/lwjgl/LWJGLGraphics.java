@@ -99,10 +99,6 @@ public class LWJGLGraphics implements Graphics {
 		glEnd();
 		glBindTexture(image.target, 0);
 		glDisable(GL_TEXTURE_2D);
-		
-		setColor(Color.GREEN);
-		drawRect(dx1, dy1, dx2 - dx1, dy2-dy1);
-		// drawLine(dx1, dy1, dx2, dy2);
 	}
 
 	/*

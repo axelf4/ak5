@@ -9,15 +9,16 @@ import java.awt.image.VolatileImage;
 import java.io.IOException;
 
 import org.gamelib.Handler.Event;
-import org.gamelib.backend.java2D.AWTFont;
+import org.gamelib.backend.Backend;
 import org.gamelib.util.Color;
 import org.gamelib.util.Font;
 import org.gamelib.util.TrueTypeFont;
 
 /**
  * @author Axel
- * 
+ * @deprecated methods fully replaced by {@link Backend}.
  */
+@Deprecated
 public class Screen { // JPanel Canvas
 
 	private AffineTransform affineTransform;
@@ -100,10 +101,9 @@ public class Screen { // JPanel Canvas
 		// graphics2d, interpolation);
 		Registry.instance().dispatch(new Event.Draw(g, delta));
 		g.setColor(Color.RED);
-		// g.drawString("FPS: " + fps, 500, 10); // 5 10
 		fps = Game.getInstance().getLoop().getFPS();
 		String str = "FPS: " + fps;
-		// font.drawString(g, str, getWidth() - font.getWidth(str) - 20, 10);
+		font.drawString(g, str, getWidth() - font.getWidth(str) - 20, 10);
 	}
 
 	/**

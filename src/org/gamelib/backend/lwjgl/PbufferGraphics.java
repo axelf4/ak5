@@ -14,7 +14,6 @@ import org.lwjgl.opengl.PixelFormat;
 /**
  * @author Axel
  */
-@Deprecated
 public class PbufferGraphics extends LWJGLGraphics {
 
 	private Pbuffer pbuffer;

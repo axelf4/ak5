@@ -3,9 +3,7 @@
  */
 package org.gamelib.backend.lwjgl;
 
-import static org.gamelib.backend.lwjgl.LWJGLSound.buffer;
-import static org.gamelib.backend.lwjgl.LWJGLSound.bufferIndex;
-import static org.gamelib.backend.lwjgl.LWJGLSound.source;
+import static org.gamelib.backend.lwjgl.LWJGLSound.*;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Color;
@@ -37,7 +35,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
-import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.WaveData;
 
 /**
@@ -119,7 +117,6 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 	@Override
 	public Image getImage(File file) throws IOException {
 		int srcPixelFormat;
-
 		// create the texture ID for this texture
 		int textureID = createTextureID();
 		int target = GL_TEXTURE_2D;
@@ -158,8 +155,22 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 	 */
 	@Override
 	public Image createImage(int width, int height) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO
+		int textureID = glGenTextures();
+		// initialize texture
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		// {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // make it linear filtered
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL11.GL_UNSIGNED_BYTE, (java.nio.ByteBuffer) null); // create the texture data
+		// }
+		glBindTexture(GL_TEXTURE_2D, 0);
+		Image image = new LWJGLImage(GL_TEXTURE_2D, textureID);
+		image.setWidth(width);
+		image.setHeight(height);
+		return image;
 	}
 
 	// /** 4 for RGBA, 3 for RGB */
@@ -180,11 +191,7 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 		image.setWidth(bufferedImage.getWidth());
 		image.setHeight(bufferedImage.getHeight());
 
-		if (bufferedImage.getColorModel().hasAlpha()) {
-			srcPixelFormat = GL_RGBA;
-		} else {
-			srcPixelFormat = GL_RGB;
-		}
+		srcPixelFormat = bufferedImage.getColorModel().hasAlpha() ? GL_RGBA : GL_RGB;
 
 		// convert that image into a byte buffer of texture data
 		ByteBuffer textureBuffer = convertImageData(bufferedImage, image);

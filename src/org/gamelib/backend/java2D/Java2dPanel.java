@@ -13,18 +13,18 @@ import java.awt.image.VolatileImage;
 
 import javax.swing.JPanel;
 
-import org.gamelib.Game;
+import org.gamelib.Drawable;
 
 /**
  * @author pwnedary
- *
  */
 @SuppressWarnings("serial")
 public class Java2dPanel extends JPanel {
-	
+
 	private VolatileImage volatileImage;
 	public Graphics2D g2d; // graphics2d
 	public float delta;
+	Drawable callback;
 
 	/**
 	 * 
@@ -32,8 +32,10 @@ public class Java2dPanel extends JPanel {
 	public Java2dPanel() {
 		setIgnoreRepaint(true);
 		setRequestFocusEnabled(true);
+
+		// g2d = (Graphics2D) new BufferedImage(1, 1, BufferedImage.TYPE_BYTE_GRAY).getGraphics();
 	}
-	
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -47,9 +49,8 @@ public class Java2dPanel extends JPanel {
 				AffineTransform affineTransform = g2d.getTransform();
 				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 
-				if (Game.getInstance().screen != null)
-					Game.getInstance().screen.drawHandlers(new Java2DGraphics(g2d, getWidth(), getHeight()), delta);
-				// Game.getInstance().screen.drawHandlers(new Java2DGraphics(g2d), g2d);
+				if (callback != null)
+					callback.draw(new Java2DGraphics(g2d, getWidth(), getHeight()), delta);
 
 				g2d.setTransform(affineTransform);
 				g2d.dispose();

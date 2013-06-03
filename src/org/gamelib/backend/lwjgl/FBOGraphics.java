@@ -3,12 +3,11 @@
  */
 package org.gamelib.backend.lwjgl;
 
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glCopyTexSubImage2D;
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.EXTFramebufferObject.*;
+import static org.lwjgl.opengl.GL11.*;
 
 import org.gamelib.Game;
+import org.gamelib.util.geom.Rectangle;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
@@ -38,7 +37,7 @@ public class FBOGraphics extends LWJGLGraphics {
 		 */
 
 		// FBOs wont work if texture isn't just created
-		LWJGLImage tmp = (LWJGLImage) ((LWJGLBackend) Game.getBackend()).createImage(image.getWidth(), image.getHeight());
+		LWJGLImage tmp = (LWJGLImage) ((LWJGLBackend) Game.getBackend()).getResourceFactory().createImage(image.getWidth(), image.getHeight());
 		image.textureID = tmp.textureID;
 
 		// initialize frame buffer
@@ -108,7 +107,8 @@ public class FBOGraphics extends LWJGLGraphics {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		GL11.glViewport(0, 0, Game.getInstance().screen.getWidth(), Game.getInstance().screen.getHeight());
+		Rectangle size = Game.getBackend().getSize();
+		GL11.glViewport(0, 0, size.getWidth(), size.getHeight());
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 
@@ -121,7 +121,8 @@ public class FBOGraphics extends LWJGLGraphics {
 	protected void enterOrtho() {
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, Game.getInstance().screen.getWidth(), 0, Game.getInstance().screen.getHeight(), 1, -1);
+		Rectangle size = Game.getBackend().getSize();
+		GL11.glOrtho(0, size.getWidth(), 0, size.getHeight(), 1, -1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 	}
 
