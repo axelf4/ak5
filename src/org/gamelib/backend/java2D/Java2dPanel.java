@@ -4,6 +4,7 @@
 package org.gamelib.backend.java2D;
 
 import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -48,6 +49,9 @@ public class Java2dPanel extends JPanel {
 				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 				AffineTransform affineTransform = g2d.getTransform();
 				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+				
+				g2d.setColor(Color.WHITE); // clear screen
+				g2d.fillRect(0, 0, getWidth(), getHeight());
 
 				if (callback != null)
 					callback.draw(new Java2DGraphics(g2d, getWidth(), getHeight()), delta);

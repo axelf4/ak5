@@ -60,13 +60,14 @@ public class Java2DSound implements Sound, LineListener {
 		clip.stop();
 		clip.setFramePosition(0);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.backend.Sound#loop(int)
 	 */
 	@Override
 	public void loop(int count) {
-		clip.loop(count);
+		clip.loop(count - 1); // without -1 looping one extra time
 	}
 
 	/*
@@ -78,25 +79,8 @@ public class Java2DSound implements Sound, LineListener {
 		return clip.isRunning();
 	}
 
-	/** @deprecated in favor for factory. */
-	public static Sound load(File file) throws IOException {
-		Clip clip = null;
-		Java2DSound sound = null;
-		try {
-			AudioInputStream stream = AudioSystem.getAudioInputStream(Game.getBackend().getResourceFactory().getResourceAsStream(file.getPath()));
-
-			// load the sound into memory (a Clip)
-			DataLine.Info info = new DataLine.Info(Clip.class, stream.getFormat());
-			clip = (Clip) AudioSystem.getLine(info);
-			sound = new Java2DSound(clip);
-			clip.open(stream);
-		} catch (UnsupportedAudioFileException | LineUnavailableException e) {
-			e.printStackTrace();
-		}
-		return sound;
-	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see javax.sound.sampled.LineListener#update(javax.sound.sampled.LineEvent)
 	 */
 	@Override
