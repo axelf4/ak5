@@ -66,14 +66,14 @@ public class LWJGLGraphics implements Graphics {
 		float v = (float) sy1 / image.getHeight();
 		float u2 = (float) sx2 / image.getWidth();
 		float v2 = (float) sy2 / image.getHeight();*/
-		float u = (float) sx1 / image.getTexWidth();
+		/*float u = (float) sx1 / image.getTexWidth();
 		float v = (float) sy1 / image.getTexHeight();
 		float u2 = (float) sx2 / image.getTexWidth();
-		float v2 = (float) sy2 / image.getTexHeight();
-		/*u = (float) sy1 / image.getTexHeight();
-		v = (float) sx1 / image.getTexWidth();
-		u2 = (float) sy2 / image.getTexHeight();
-		v2 = (float) sx2 / image.getTexWidth();*/
+		float v2 = (float) sy2 / image.getTexHeight();*/
+		float u = 0;
+		float v = 0;
+		float u2 = 1;
+		float v2 = 1;
 		
 		// dy2 = (dy2 - dy1) / 2 + dy1;
 		//dx2 = dx1 + 60;
@@ -84,9 +84,6 @@ public class LWJGLGraphics implements Graphics {
 		glBindTexture(image.target, image.textureID);
 		glBegin(GL11.GL_QUADS);
 		{
-			/*
-			 * glTexCoord2f(0f, 0f); glVertex2f(dx1, dx1); glTexCoord2f(1f, 0f); glVertex2f(dx2, dy1); glTexCoord2f(1f, 1f); glVertex2f(dx2, dy2); glTexCoord2f(0f, 1f); glVertex2f(dx1, dy2);
-			 */
 			glTexCoord2f(u, v);
 			glVertex2f(dx1, dx1);
 			glTexCoord2f(u2, v);
@@ -99,6 +96,9 @@ public class LWJGLGraphics implements Graphics {
 		glEnd();
 		glBindTexture(image.target, 0);
 		glDisable(GL_TEXTURE_2D);
+		
+		setColor(Color.CYAN);
+		drawRect(dx1, dy1, dx2-dx1, dy2-dy1);
 	}
 
 	/*

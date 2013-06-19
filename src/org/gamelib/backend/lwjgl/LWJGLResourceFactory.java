@@ -203,7 +203,7 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 		}
 
 		// produce a texture from the byte buffer
-		glTexImage2D(target, 0, GL_RGBA, Math2.pot(bufferedImage.getWidth()), Math2.pot(bufferedImage.getHeight()), 0, srcPixelFormat, GL_UNSIGNED_BYTE, textureBuffer);
+		glTexImage2D(target, 0, GL_RGBA, image.getWidth(), image.getHeight(), 0, srcPixelFormat, GL_UNSIGNED_BYTE, textureBuffer);
 		glBindTexture(target, 0);
 		return image;
 	}
