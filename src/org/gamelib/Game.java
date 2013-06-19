@@ -39,6 +39,7 @@ public abstract class Game {
 	protected void start(Backend backend) {
 		// (this.backend = backend).start(this, getDisplayMode());
 		this.backend = backend;
+		if (instance.toString() == null) throw new Error("toString can't be null");
 		backend.setTitle(instance.toString());
 
 		registry = Registry.instance();
