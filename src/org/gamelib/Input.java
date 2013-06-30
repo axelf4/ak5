@@ -14,7 +14,6 @@ import org.gamelib.Handler.Event;
 
 /**
  * @author Axel
- * 
  */
 public abstract class Input {
 
@@ -31,7 +30,7 @@ public abstract class Input {
 	public static final int MOUSE_PRESSED = 2;
 	public static final int MOUSE_RELEASED = 3;
 	public static final int MOUSE_CLICKED = 4;
-	
+
 	/** Indicates no mouse buttons; used by {@link #getButton}. */
 	public static final int NOBUTTON = -1;
 	/** Indicates mouse button #1; used by {@link #getButton}. */
@@ -57,22 +56,19 @@ public abstract class Input {
 
 	/**
 	 * Returns whether the key is pressed.
-	 * 
-	 * @param key The key code as found in {@link Input.Key}.
-	 * @return true or false.
+	 * @param key The key code as found in {@link Input.Key}
+	 * @return whether the key is pressed
 	 */
-	public boolean isKeyPressed(int key) {
+	public boolean keyPressed(int key) {
 		return pressedKeys.containsKey(key) && pressedKeys.get(key);
 	}
 
-	public boolean isMouseButtonPressed(int button, boolean repetive) {
+	public boolean mousePressed(int button) {
 		boolean b = pressedMouseButtons[button - 1];
-		// if (!repetive)
-		// pressedMouseButtons[button - 1] = false;
 		return b;
 	}
-	
-	public void simulateKey(int id, int keyCode)  { // abstract
+
+	public void simulateKey(int id, int keyCode) { // abstract
 		try {
 			Robot r = new Robot();
 			switch (id) {
@@ -87,6 +83,7 @@ public abstract class Input {
 			e.printStackTrace();
 		}
 	}
+
 	public abstract void mouseMove(int x, int y); // simulateMouse
 
 	/** Checks for queued input states. */
@@ -96,10 +93,8 @@ public abstract class Input {
 		keyCode = translateKeyCode(keyCode);
 		if (id == KeyEvent.KEY_PRESSED) {
 			pressedKeys.put(keyCode, true);
-			if (keyCode == Key.KEY_ESCAPE)
-				System.exit(0);
-		} else if (id == KeyEvent.KEY_RELEASED)
-			pressedKeys.put(keyCode, false);
+			if (keyCode == Key.KEY_ESCAPE) System.exit(0);
+		} else if (id == KeyEvent.KEY_RELEASED) pressedKeys.put(keyCode, false);
 		// pressedKeys.put(e.getKeyCode(), e.getID() == KeyEvent.KEY_PRESSED);
 		Registry.instance().dispatch(new Event.Key(this, id, keyCode));
 	}
@@ -124,14 +119,13 @@ public abstract class Input {
 		Registry.instance().dispatch(new Event.MouseWheel(this, scrollAmount));
 	}
 
-	/*5* Constants for keyboard hardware. */
-	/* public static final class Keyboard {
-	 * 
-	 * } */
+	/* 5* Constants for keyboard hardware. */
+	/*
+	 * public static final class Keyboard { }
+	 */
 
 	/**
 	 * Constants for keyboard hardware. Virtual key codes.
-	 * 
 	 * @see java.awt.event.KeyEvent
 	 */
 	public static final class Key {
@@ -257,9 +251,7 @@ public abstract class Input {
 	}
 
 	/**
-	 * Translates the keyCode to match the ones in {@link Input.Key}. The normal
-	 * user should never need to use this method.
-	 * 
+	 * Translates the keyCode to match the ones in {@link Input.Key}. The normal user should never need to use this method.
 	 * @param keyCode the key to translate
 	 * @return the translated key
 	 */
@@ -267,7 +259,6 @@ public abstract class Input {
 
 	/**
 	 * Constants for mouse hardware.
-	 * 
 	 * @author Axel
 	 * @see java.awt.event.MouseEvent
 	 */
