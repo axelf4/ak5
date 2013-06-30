@@ -4,11 +4,8 @@
 package org.gamelib.util.geom;
 
 /**
- * Encapsulates a 2D vector. Allows chaining operations by returning a reference
- * to itself in all modification methods.
- * 
+ * A 2D vector. Allows chaining operations by returning a reference to itself in all modification methods.
  * @author pwnedary
- * 
  */
 public class Vector2 implements Vector<Vector2> {
 
@@ -19,7 +16,6 @@ public class Vector2 implements Vector<Vector2> {
 
 	/**
 	 * Constructs a vector with the given coordinates
-	 * 
 	 * @param x The X coordinate
 	 * @param y The Y coordinate
 	 */
@@ -28,25 +24,28 @@ public class Vector2 implements Vector<Vector2> {
 		this.y = y;
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see org.gamelib.util.geom.Vector#length() */
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.util.geom.Vector#length()
+	 */
 	@Override
 	public float length() {
 		return (float) Math.sqrt(x * x + y * y);
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see org.gamelib.util.geom.Vector#lengthSquared() */
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.util.geom.Vector#lengthSquared()
+	 */
 	@Override
 	public float lengthSquared() {
 		return x * x + y * y;
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see org.gamelib.util.geom.Vector#normalize() */
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.util.geom.Vector#normalize()
+	 */
 	@Override
 	public Vector2 normalize() {
 		float length = length();
@@ -57,52 +56,62 @@ public class Vector2 implements Vector<Vector2> {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see org.gamelib.util.geom.Vector#dot(org.gamelib.util.geom.Vector) */
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.util.geom.Vector#dot(org.gamelib.util.geom.Vector)
+	 */
 	@Override
 	public float dot(Vector2 v) {
 		return x * v.x + y * v.y;
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString() */
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.util.geom.Vector#add(org.gamelib.util.geom.Vector)
+	 */
+	public Vector2 add(Vector2 v) {
+		x += v.x;
+		y += v.y;
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.util.geom.Vector#sub(org.gamelib.util.geom.Vector)
+	 */
+	@Override
+	public Vector2 sub(Vector2 v) {
+		x -= v.x;
+		y -= v.y;
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
 		return "[" + x + ":" + y + "]";
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#clone() */
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return new Vector2(x, y);
 	}
 
 	/**
-	 * @return the angle in degrees of this vector (point) relative to the
-	 *         x-axis. Angles are counter-clockwise and between 0 and 360.
+	 * @return the angle in degrees of this vector (point) relative to the x-axis. Angles are counter-clockwise and between 0 and 360.
 	 */
 	public float angle() {
 		float angle = (float) Math.toDegrees(Math.atan2(y, x));
 		if (angle < 0) angle += 360;
 		return angle;
-	}
-
-	/**
-	 * Add a vector to this vector
-	 * 
-	 * @param v The vector to add
-	 * @return This vector - useful for chaning operations
-	 */
-	public Vector2 add(Vector2 v) {
-		x += v.x;
-		y += v.y;
-
-		return this;
 	}
 
 }
