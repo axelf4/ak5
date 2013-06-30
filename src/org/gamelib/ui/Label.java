@@ -6,7 +6,7 @@ package org.gamelib.ui;
 import java.awt.Graphics2D;
 import java.util.List;
 
-import org.gamelib.Room;
+import org.gamelib.Group;
 import org.gamelib.Handler.Event;
 
 /**
@@ -18,10 +18,10 @@ public class Label extends Component {
 	private String s;
 
 	/**
-	 * @param room
+	 * @param group
 	 */
-	public Label(Room room, String s) {
-		super(room);
+	public Label(Group group, String s) {
+		super(group);
 		this.s = s;
 	}
 

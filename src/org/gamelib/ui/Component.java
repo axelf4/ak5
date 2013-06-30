@@ -6,26 +6,26 @@ package org.gamelib.ui;
 import org.gamelib.Createable;
 import org.gamelib.Handler;
 import org.gamelib.Registry;
-import org.gamelib.Room;
+import org.gamelib.Group;
 import org.gamelib.util.geom.Rectangle;
 
 /**
  * @author Axel
  */
-public abstract class Component implements Handler, Createable, Referenced<Room> {
+public abstract class Component implements Handler, Createable, Referenced<Group> {
 
 	// public int x, y, width, height;
 	public Rectangle rectangle;
 
-	protected Room room;
+	protected Group group;
 
 	/**
 	 * 
 	 */
 	@Deprecated
-	public Component(Room room) {
-		this.room = room;
-		Registry.instance().register(this, room);
+	public Component(Group group) {
+		this.group = group;
+		Registry.instance().register(this, group);
 	}
 
 	public Component() {
@@ -33,7 +33,7 @@ public abstract class Component implements Handler, Createable, Referenced<Room>
 
 	@Override
 	public void create() {
-		Registry.instance().register(this, room);
+		Registry.instance().register(this, group);
 	}
 
 	public void setRectangle(Rectangle rectangle) {
@@ -41,13 +41,13 @@ public abstract class Component implements Handler, Createable, Referenced<Room>
 	}
 
 	@Override
-	public Room getReference() {
-		return room;
+	public Group getReference() {
+		return group;
 	}
 
 	@Override
-	public void setReference(Room reference) {
-		this.room = reference;
+	public void setReference(Group reference) {
+		this.group = reference;
 	}
 
 }
