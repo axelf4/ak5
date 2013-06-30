@@ -142,6 +142,8 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 		if (target == GL_TEXTURE_2D) {
 			glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		}
 
 		// produce a texture from the byte buffer
@@ -162,7 +164,7 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 		// {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // make it linear filtered
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL11.GL_UNSIGNED_BYTE, (java.nio.ByteBuffer) null); // create the texture data
 		// }

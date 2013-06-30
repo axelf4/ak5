@@ -14,8 +14,16 @@ public interface Graphics {
 
 	/** Releases any system resources that is used. */
 	public void dispose();
-
+	
+	/** Sets the current color. */
 	public void setColor(Color c);
+	
+	/** Translates the origin to <i>x</i>,&nbsp;<i>y</i>. */
+	public void translate(float x, float y);
+	/** Translates the origin to <i>x</i>,&nbsp;<i>y</i>,&nbsp;<i>z</i>. */
+	public void translate(float x, float y, float z);
+	
+	// public void rotate(int theta);
 
 	/**
 	 * Draws the specified image to the backend.
@@ -37,6 +45,8 @@ public interface Graphics {
 	public void drawRect(int x, int y, int width, int height);
 
 	public void fillRect(int x, int y, int width, int height);
+	
+	public void drawCube(int x, int y, int z, int width, int height, int depth);
 
 	/** Clears the screen in the desired color. */
 	public void clear();

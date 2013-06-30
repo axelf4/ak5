@@ -20,22 +20,23 @@ public class LWJGLInput extends Input {
 	 */
 	@Override
 	public void poll() {
-		while (Keyboard.next())
-			// pressedKeys.put(Keyboard.getEventKey(), Keyboard.getEventKeyState());
+		while (Keyboard.next()) // poll key events
 			keyEvent(Keyboard.getEventKeyState() ? KEY_PRESSED : KEY_RELEASED, translateKeyCode(Keyboard.getEventKey()));
+		
 		// Point p = new Point(org.lwjgl.input.Mouse.getX(), Display.getHeight() - org.lwjgl.input.Mouse.getY());
-		Point p = translateMouse(org.lwjgl.input.Mouse.getX(), org.lwjgl.input.Mouse.getY());
-		while (org.lwjgl.input.Mouse.next()) {
+		Point p = mousePosition;
+		if (!org.lwjgl.input.Mouse.isGrabbed())
+			p = translateMouse(org.lwjgl.input.Mouse.getX(), org.lwjgl.input.Mouse.getY());
+		while (org.lwjgl.input.Mouse.next()) { // poll mouse events
 			boolean pressed = org.lwjgl.input.Mouse.getEventButtonState();
 			int button = org.lwjgl.input.Mouse.getEventButton();
-			button = button == 1 ? Mouse.BUTTON3 : button;
+			button = button == 1 ? BUTTON3 : button;
 			if (org.lwjgl.input.Mouse.getEventDX() != 0 || org.lwjgl.input.Mouse.getEventDY() != 0) // moved
 				mouseEvent(pressed ? MOUSE_DRAGGED : MOUSE_MOVED, button, p);
 			else {
 				mouseEvent(pressed ? MOUSE_PRESSED : MOUSE_RELEASED, button, p);
-				if (!pressed) {
+				if (!pressed)
 					mouseEvent(MOUSE_CLICKED, button, p);
-				}
 			}
 		}
 	}

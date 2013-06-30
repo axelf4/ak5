@@ -13,6 +13,7 @@ import org.gamelib.backend.Backend;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.ResourceFactory;
+import org.gamelib.util.Color;
 import org.gamelib.util.Log;
 import org.gamelib.util.geom.Rectangle;
 import org.lwjgl.LWJGLException;
@@ -22,6 +23,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.Pbuffer;
+import org.lwjgl.util.glu.GLU;
 
 /**
  * @author pwnedary
@@ -38,21 +40,70 @@ public class LWJGLBackend implements Backend {
 	@Override
 	public void start(Game instance, Resolution resolution) {
 		try {
+			org.lwjgl.opengl.DisplayMode targetDisplayMode = null;
+			if (resolution.fullscreen()) {
+				org.lwjgl.opengl.DisplayMode[] modes = Display.getAvailableDisplayModes();
+				int freq = 0;
+
+				for (int i = 0; i < modes.length; i++) {
+					org.lwjgl.opengl.DisplayMode current = modes[i];
+
+					if ((current.getWidth() == resolution.getWidth()) && (current.getHeight() == resolution.getHeight())) {
+						if ((targetDisplayMode == null) || (current.getFrequency() >= freq)) {
+							if ((targetDisplayMode == null) || (current.getBitsPerPixel() > targetDisplayMode.getBitsPerPixel())) {
+								targetDisplayMode = current;
+								freq = targetDisplayMode.getFrequency();
+							}
+						}
+						// if we've found a match for bpp and frequency against the original display mode then it's probably best to go for this one since it's most likely compatible with the monitor
+						if ((current.getBitsPerPixel() == Display.getDesktopDisplayMode().getBitsPerPixel()) && (current.getFrequency() == Display.getDesktopDisplayMode().getFrequency())) {
+							targetDisplayMode = current;
+							break;
+						}
+					}
+				}
+			} else targetDisplayMode = new org.lwjgl.opengl.DisplayMode(resolution.getWidth(), resolution.getHeight());
 			/*
-			 * if (resolution.isFullscreen()) Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode()); else Display.setDisplayMode(new DisplayMode(resolution.getWidth(), resolution.getHeight()));
+			 * if (targetDisplayMode == null) return false;
 			 */
-			Display.setDisplayMode(new DisplayMode(800, 600));
+
+			Display.setDisplayMode(targetDisplayMode);
+			Display.setFullscreen(resolution.fullscreen());
+			// Display.setDisplayMode(new DisplayMode(800, 600));
+			Display.setVSyncEnabled(true);
 			Display.create();
 
-			GL11.glMatrixMode(GL11.GL_PROJECTION); // Resets any previous projection matrices
-			GL11.glLoadIdentity();
-			GL11.glOrtho(0, resolution.getWidth(), resolution.getHeight(), 0, 1, -1);
-			// GL11.glOrtho(0, resolution.getWidth(), 0, resolution.getHeight(), 1, -1);
-			GL11.glMatrixMode(GL11.GL_MODELVIEW);
-			// glViewport(0, 0, resolution.getWidth(), resolution.getHeight());
+			/*
+			 * GL11.glMatrixMode(GL11.GL_PROJECTION); // Resets any previous projection matrices GL11.glLoadIdentity(); GL11.glOrtho(0, resolution.getWidth(), resolution.getHeight(), 0, 1, -1); // 0,0-top-left // GL11.glOrtho(0, resolution.getWidth(), 0, resolution.getHeight(), 1, -1); // 0,0-bottom-left GL11.glMatrixMode(GL11.GL_MODELVIEW); // glViewport(0, 0, resolution.getWidth(), resolution.getHeight());
+			 */
+			// init2d(resolution.getWidth(), resolution.getHeight());
 		} catch (LWJGLException e) {
 			Log.error("", e);
 		}
+	}
+
+	static void init2d(int width, int height) {
+		GL11.glMatrixMode(GL11.GL_PROJECTION); // resets any previous projection matrices
+		GL11.glLoadIdentity();
+		GL11.glOrtho(0, width, height, 0, 1, -1); // 0,0:top-left
+		// GL11.glOrtho(0, resolution.getWidth(), 0, resolution.getHeight(), 1, -1); // 0,0:bottom-left
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glLoadIdentity();
+		// GL11.glDisable(GL11.GL_DEPTH_TEST);
+		// glViewport(0, 0, width, height);
+	}
+
+	static void init3d(int width, int height) {
+		GL11.glMatrixMode(GL11.GL_PROJECTION); // resets any previous projection matrices
+		GL11.glLoadIdentity();
+		GLU.gluPerspective(45.0f, (float) width / (float) height, 0.1f, 100.0f);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+
+		GL11.glShadeModel(GL11.GL_SMOOTH);
+		GL11.glClearDepth(1.0f);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glDepthFunc(GL11.GL_LEQUAL);
+		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 	}
 
 	/*
@@ -79,17 +130,13 @@ public class LWJGLBackend implements Backend {
 	 */
 	@Override
 	public void screenUpdate(Drawable callback, float delta) {
-		// Clear the screen and depth buffer
-		glClearColor(1, 1, 1, 1);
-		glClear(GL_COLOR_BUFFER_BIT);
-		// GL11.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 3d
+		Graphics g = getGraphics();
+		g.setColor(Color.WHITE);
+		g.clear();
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		// GL11.glEnable(GL11.GL_BLEND);
-		// GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		// Game.getInstance().screen.drawHandlers(getGraphics(), delta);
-		callback.draw(getGraphics(), delta);
+		callback.draw(g, delta);
 		Display.update();
 	}
 
@@ -130,12 +177,9 @@ public class LWJGLBackend implements Backend {
 	 */
 	@Override
 	public Graphics getGraphics(Image image) {
-		if (GLContext.getCapabilities().GL_EXT_framebuffer_object)
-			return new FBOGraphics((LWJGLImage) image);
-		else if ((Pbuffer.getCapabilities() & Pbuffer.PBUFFER_SUPPORTED) != 0)
-			return new PbufferGraphics((LWJGLImage) image);
-		else
-			throw new Error("Your OpenGL card doesn't support offscreen buffers.");
+		if (GLContext.getCapabilities().GL_EXT_framebuffer_object) return new FBOGraphics((LWJGLImage) image);
+		else if ((Pbuffer.getCapabilities() & Pbuffer.PBUFFER_SUPPORTED) != 0) return new PbufferGraphics((LWJGLImage) image);
+		else throw new Error("Your OpenGL card doesn't support offscreen buffers.");
 	}
 
 	/*

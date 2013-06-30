@@ -165,7 +165,7 @@ public class FBOGraphics extends LWJGLGraphics {
 		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, frameBufferID);
 		// GL11.glReadBuffer(EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT);
 
-		// Save room port information
+		// Save group port information
 		// GL11.glPushAttrib(GL11.GL_VIEWPORT_BIT);
 		// GL11.glViewport(0, 0, image.getWidth(), image.getHeight());
 		initGL();

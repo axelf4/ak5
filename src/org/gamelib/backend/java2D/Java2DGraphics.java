@@ -12,6 +12,7 @@ import org.gamelib.util.Color;
 
 /**
  * @author pwnedary
+ * @see java.awt.Graphics
  */
 public class Java2DGraphics implements Graphics {
 
@@ -94,5 +95,33 @@ public class Java2DGraphics implements Graphics {
 	public void clear() {
 		// TODO Auto-generated method stub
 		g.fillRect(0, 0, width, height);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.backend.Graphics#drawCube(int, int, int, int, int, int)
+	 */
+	@Override
+	public void drawCube(int x, int y, int z, int width, int height, int depth) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.backend.Graphics#translate(float, float)
+	 */
+	@Override
+	public void translate(float x, float y) {
+		g.translate((int) Math.floor(x), (int) Math.floor(y));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.backend.Graphics#translate(float, float, float)
+	 */
+	@Override
+	public void translate(float x, float y, float z) {
+		translate(x, y);
 	}
 }

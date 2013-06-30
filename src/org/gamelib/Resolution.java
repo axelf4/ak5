@@ -12,6 +12,7 @@ import java.beans.ConstructorProperties;
 public class Resolution {
 	
 	public static final Resolution r800x600 = new Resolution(800, 600);
+	public static final Resolution r800x600F = new Resolution(800, 600, true);
 	public static final Resolution FULLSCREEN = new Resolution(true);
 	
 	/** The width of the screen. */
@@ -21,15 +22,22 @@ public class Resolution {
 
 	/** Whether fullscreen. */
 	final boolean fullscreen;
-
+	
 	/**
 	 * 
 	 */
 	@ConstructorProperties({ "width", "height" })
-	public Resolution(int width, int height) {
+	public Resolution(int width, int height, boolean fullscreen) {
 		this.width = width;
 		this.height = height;
-		this.fullscreen = false;
+		this.fullscreen = fullscreen;
+	}
+
+	/**
+	 * 
+	 */
+	public Resolution(int width, int height) {
+		this(width, height, false);
 	}
 	
 	/**
@@ -41,7 +49,7 @@ public class Resolution {
 		this.fullscreen = true;
 	}
 	
-	public boolean isFullscreen() {
+	public boolean fullscreen() {
 		return fullscreen;
 	}
 	

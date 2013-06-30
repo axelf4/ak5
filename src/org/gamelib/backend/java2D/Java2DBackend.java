@@ -44,8 +44,8 @@ public class Java2DBackend implements Backend {
 		if (container instanceof JFrame) {
 			((JFrame) container).setTitle(instance.toString());
 			((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setFullscreen((JFrame) container, resolution.isFullscreen());
-			if (!resolution.isFullscreen())
+			setFullscreen((JFrame) container, resolution.fullscreen());
+			if (!resolution.fullscreen())
 				container.setSize(new Dimension(resolution.getWidth(), resolution.getHeight()));
 		}
 		if (container instanceof JApplet)
