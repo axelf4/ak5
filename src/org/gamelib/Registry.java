@@ -5,10 +5,10 @@ package org.gamelib;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.gamelib.Handler.Event;
@@ -24,20 +24,20 @@ import org.gamelib.Handler.Event;
 public class Registry {
 
 	/** Used of all undefined handlers. */
-	public static final Room DEFAULT_VIEW = new Room().setAlwaysActive(true);
+	public static final Group DEFAULT_VIEW = new Group().setAlwaysActive(true);
 
 	private static Registry instance;
 	private Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers;
-	public List<Room> rooms;
+	public List<Group> groups;
 
 	/**
 	 * 
 	 */
 	private Registry() {
 		// instance = this; // remove this line
-		handlers = new HashMap<Class<? extends Event>, CopyOnWriteArrayList<Handler>>(1);
-		(rooms = new ArrayList<Room>()).add(DEFAULT_VIEW);
-		// (rooms = new Node<Room>(null)).add(new Node<Room>(DEFAULT_VIEW));
+		handlers = new WeakHashMap<Class<? extends Event>, CopyOnWriteArrayList<Handler>>(1);
+		(groups = new ArrayList<Group>()).add(DEFAULT_VIEW);
+		// (groups = new Node<Group>(null)).add(new Node<Group>(DEFAULT_VIEW));
 	}
 
 	/**
@@ -52,14 +52,14 @@ public class Registry {
 	 * 
 	 * @param handler {@link Handler} instance
 	 */
-	/*public void register(Handler handler, Room room) {
-		if (room == null)
-			throw new IllegalArgumentException("room cannot be null");
-		/* if (!rooms.contains(room)) throw new
-		 * RuntimeException("must add the room first"); *3/
-		if (!rooms.contains(room))
-			rooms.add(room);
-		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = room.handlers;
+	/*public void register(Handler handler, Group group) {
+		if (group == null)
+			throw new IllegalArgumentException("group cannot be null");
+		/* if (!groups.contains(group)) throw new
+		 * RuntimeException("must add the group first"); *3/
+		if (!groups.contains(group))
+			groups.add(group);
+		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = group.handlers;
 		ArrayList<Class<? extends Event>> list = new ArrayList<Class<? extends Event>>();
 		handler.handlers(list);
 		for (Iterator<Class<? extends Event>> iterator = list.iterator(); iterator.hasNext();) {
@@ -69,18 +69,18 @@ public class Registry {
 			handlers.get(type).add(handler);
 		}
 	}*/
-	public void register(Handler handler, Room room) {
-		if (room == null)
-			throw new IllegalArgumentException("room cannot be null");
-		/* if (!rooms.contains(room)) throw new
-		 * RuntimeException("must add the room first"); */
-		// register room
-		/*if (!rooms.contains(room)) {
-			rooms.add(room);
-			/*Node<Room> node = new Node<Room>(room);
-			rooms.add(node);*2/
+	public void register(Handler handler, Group group) {
+		if (group == null)
+			throw new IllegalArgumentException("group cannot be null");
+		/* if (!groups.contains(group)) throw new
+		 * RuntimeException("must add the group first"); */
+		// register group
+		/*if (!groups.contains(group)) {
+			groups.add(group);
+			/*Node<Group> node = new Node<Group>(group);
+			groups.add(node);*2/
 		}*/
-		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = room.handlers;
+		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = group.handlers;
 		ArrayList<Class<? extends Event>> list = new ArrayList<Class<? extends Event>>(); // get events to register to
 		handler.handlers(list);
 		for (Iterator<Class<? extends Event>> iterator = list.iterator(); iterator.hasNext();) {
@@ -114,8 +114,8 @@ public class Registry {
 	 */
 	public void unregister(Handler handler, Class<? extends Event> type) {
 		if (type == null) {
-			for (Room room : rooms) {
-				for (CopyOnWriteArrayList<Handler> list : room.handlers.values()) {
+			for (Group group : groups) {
+				for (CopyOnWriteArrayList<Handler> list : group.handlers.values()) {
 					list.remove(handler);
 				}
 			}
@@ -126,11 +126,11 @@ public class Registry {
 	@SuppressWarnings("unchecked")
 	public synchronized void dispatch(Event event) {
 		// Log.startProfiling("invoke");
-		/*for (int i = 0; i < rooms.size(); i++) {
-			Room room = rooms.get(i);
-			if (room == null || !room.active)
+		/*for (int i = 0; i < groups.size(); i++) {
+			Group group = groups.get(i);
+			if (group == null || !group.active)
 				continue;
-			Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = room.handlers;
+			Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = group.handlers;
 
 			if (!handlers.containsKey(event.getClass()))
 				continue;
@@ -139,12 +139,12 @@ public class Registry {
 				handler.handle(event);
 			}
 		}*/
-		/*for (int i = 0; i < rooms.size(); i++) {
-			Room room = rooms.get(i);*/
-		for (Room room : DEFAULT_VIEW.getHierarchy()) { // rooms
-			if (room == null || !room.isActive())
+		/*for (int i = 0; i < groups.size(); i++) {
+			Group group = groups.get(i);*/
+		for (Group group : DEFAULT_VIEW.getHierarchy()) { // groups
+			if (group == null || !group.isActive())
 				continue;
-			Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = room.handlers;
+			Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = group.handlers;
 
 			/*if (!handlers.containsKey(event.getClass()))
 				continue;
@@ -171,10 +171,10 @@ public class Registry {
 	}
 
 	@SuppressWarnings("unchecked")
-	public synchronized void dispatch(Event event, Room room) {
-		if (room == null || !room.isActive())
+	public synchronized void dispatch(Event event, Group group) {
+		if (group == null || !group.isActive())
 			return;
-		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = room.handlers;
+		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = group.handlers;
 
 		/*if (!handlers.containsKey(event.getClass()))
 			return;
@@ -205,14 +205,14 @@ public class Registry {
 	}
 	
 	public void calculateViews() {
-		List<Room> list = rooms;
+		List<Group> list = groups;
 		for (int i = 0; i < list.size(); i++) {
-			Room view1 = list.get(i);
+			Group view1 = list.get(i);
 			Rectangle rectangle1 = view1.getRectangle();
 			if (rectangle1 == null)
 				continue;
 			for (int j = i - 1; j > 0; j--) {
-				Room view2 = list.get(j);
+				Group view2 = list.get(j);
 				Rectangle rectangle2 = view2.getRectangle();
 				if (rectangle2 == null)
 					continue;

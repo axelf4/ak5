@@ -5,38 +5,37 @@ package org.gamelib;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.gamelib.Handler.Event;
-import org.gamelib.ui.Component;
 import org.gamelib.ui.Referenced;
 
 /**
- * possible names: View, Scene, Room,
+ * possible names: View, Scene, Group,
  * @author Axel
  */
-public class Room {
-	public Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = new HashMap<Class<? extends Event>, CopyOnWriteArrayList<Handler>>(1);
+public class Group {
+	public Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = new WeakHashMap<Class<? extends Event>, CopyOnWriteArrayList<Handler>>(1);
 	private Rectangle size = null;
 	/** Whether the handler should receive events */
 	boolean active = true;
 	private boolean alwaysActive = false;
-	Room parent;
-	List<Room> children = new ArrayList<Room>();
+	Group parent;
+	List<Group> children = new ArrayList<Group>();
 
-	// private List<Scene> rooms = Registry.instance().views;
+	// private List<Scene> groups = Registry.instance().views;
 
-	public Room() {
+	public Group() {
 		if (parent == null && (parent = Registry.DEFAULT_VIEW) == null)
 			return;
 		parent.children.add(this);
 	}
 
-	public Room(Room parent) {
+	public Group(Group parent) {
 		this.parent = parent;
 		parent.children.add(this);
 	}
@@ -57,7 +56,7 @@ public class Room {
 		this.size = size;
 	}
 
-	public Room setAlwaysActive(boolean b) {
+	public Group setAlwaysActive(boolean b) {
 		this.alwaysActive = b;
 		return this;
 	}
@@ -67,12 +66,12 @@ public class Room {
 		return active;
 	}
 
-	/** Sets if this and every underlying room is active. */
+	/** Sets if this and every underlying group is active. */
 	public void setActive(boolean active) {
 		this.active = active;
-		for (Iterator<Room> iterator = children.iterator(); iterator.hasNext();) {
-			Room room = (Room) iterator.next();
-			room.setActive(active);
+		for (Iterator<Group> iterator = children.iterator(); iterator.hasNext();) {
+			Group group = (Group) iterator.next();
+			group.setActive(active);
 		}
 	}
 
@@ -83,11 +82,11 @@ public class Room {
 	@SuppressWarnings("unchecked")
 	public void register(Handler handler) {
 		/*
-		 * List<Room> rooms = Registry.instance().rooms; if (!rooms.contains(this)) rooms.add(this);
+		 * List<Group> groups = Registry.instance().rooms; if (!groups.contains(this)) groups.add(this);
 		 */
 
 		if (handler instanceof Referenced<?>)
-			((Referenced<Room>) handler).setReference(this);
+			((Referenced<Group>) handler).setReference(this);
 		if (handler instanceof Createable)
 			((Createable) handler).create();
 
@@ -101,19 +100,19 @@ public class Room {
 		}
 	}
 
-	List<Room> getHierarchy() {
-		List<Room> list = new ArrayList<>();
+	List<Group> getHierarchy() {
+		List<Group> list = new ArrayList<>();
 		list.add(this);
 		for (int i = 0; i < children.size(); i++)
 			list.addAll(children.get(i).getHierarchy());
 		return list;
 	}
 
-	/* Room utility */
+	/* Group utility */
 
-	/** Deactivates every other room except for this one and it's children. */
+	/** Deactivates every other group except for this one and it's children. */
 	public void focus() {
-		for (Room toCheck : Registry.DEFAULT_VIEW.getHierarchy()) {
+		for (Group toCheck : Registry.DEFAULT_VIEW.getHierarchy()) {
 			if (!toCheck.alwaysActive)
 				toCheck.setActive(false);
 		}
