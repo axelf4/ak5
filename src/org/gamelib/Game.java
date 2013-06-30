@@ -28,6 +28,7 @@ public abstract class Game {
 	public Input input;
 	protected Thread thread;
 	protected Loop loop;
+	boolean requestedStop;
 
 	/**
 	 * 
@@ -54,6 +55,10 @@ public abstract class Game {
 	protected void start() {
 		// (container = new JFrame()).add(screen = new Screen());
 		start(new Java2DBackend(new JFrame()));
+	}
+	
+	public void stop() {
+		requestedStop = true;
 	}
 
 	/**
@@ -143,7 +148,7 @@ public abstract class Game {
 		 */
 		@Override
 		public boolean shouldStop() {
-			return Game.getBackend().shouldClose();
+			return Game.getBackend().shouldClose() || game.requestedStop;
 		}
 	}
 }
