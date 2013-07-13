@@ -47,6 +47,9 @@ public class LWJGLInput extends Input {
 	 */
 	@Override
 	public int translateKeyCode(int keyCode) {
+		if (keyCode == Keyboard.KEY_LSHIFT || keyCode == Keyboard.KEY_RSHIFT) return Key.KEY_SHIFT;
+		if (keyCode == Keyboard.KEY_LCONTROL || keyCode == Keyboard.KEY_RCONTROL) return Key.KEY_CONTROL;
+		if (keyCode == Keyboard.KEY_LMENU || keyCode == Keyboard.KEY_RMENU) return Key.KEY_MENU;
 		return keyCode;
 	}
 

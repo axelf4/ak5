@@ -248,6 +248,9 @@ public abstract class Input {
 		public static final int KEY_NEXT = 209;
 		public static final int KEY_INSERT = 210;
 		public static final int KEY_DELETE = 211;
+		public static final int KEY_SHIFT = 212;
+		public static final int KEY_CONTROL = 213;
+		public static final int KEY_MENU = 214;
 	}
 
 	/**
