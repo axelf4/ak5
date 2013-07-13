@@ -72,28 +72,31 @@ public class LWJGLGraphics implements Graphics {
 		float v = (float) sy1 / image.getTexHeight();
 		float u2 = (float) sx2 / image.getTexWidth();
 		float v2 = (float) sy2 / image.getTexHeight();
-		
+		int width = dx2 - dx1;
+		int height = dy2 - dy1;
+		Color previous = currentColor;
+
 		setColor(Color.WHITE);
+		translate(dx1, dy1);
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(image.target, image.textureID); // bind the appropriate texture for this image
-		// image.bind();
 		glBegin(GL11.GL_QUADS);
 		{
 			glTexCoord2f(u, v);
-			glVertex2f(dx1, dx1);
+			glVertex2f(0, 0);
 			glTexCoord2f(u2, v);
-			glVertex2f(dx2, dy1);
+			glVertex2f(width, 0);
 			glTexCoord2f(u2, v2);
-			glVertex2f(dx2, dy2);
+			glVertex2f(width, height);
 			glTexCoord2f(u, v2);
-			glVertex2f(dx1, dy2);
+			glVertex2f(0, height);
+			// glTexCoord2f(u, v); glVertex2f(dx1, dx1); glTexCoord2f(u2, v); glVertex2f(dx2, dy1); glTexCoord2f(u2, v2); glVertex2f(dx2, dy2); glTexCoord2f(u, v2); glVertex2f(dx1, dy2);
 		}
 		glEnd();
 		glBindTexture(image.target, 0);
 		glDisable(GL_TEXTURE_2D);
-
-		// setColor(Color.CYAN);
-		// drawRect(dx1, dy1, dx2 - dx1, dy2 - dy1);
+		translate(-dx1, -dy1);
+		setColor(previous);
 	}
 
 	/*
@@ -204,7 +207,8 @@ public class LWJGLGraphics implements Graphics {
 		GL11.glEnd();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.backend.Graphics#translate(int, int)
 	 */
 	@Override
@@ -212,7 +216,8 @@ public class LWJGLGraphics implements Graphics {
 		translate(x, y, 0.0f);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.backend.Graphics#translate(float, float, float)
 	 */
 	@Override

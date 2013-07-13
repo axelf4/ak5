@@ -35,7 +35,6 @@ public class LWJGLImage implements Image {
 
 	/**
 	 * Binds the specified GL context to a texture.
-	 * 
 	 * @param gl The GL context to bind to
 	 */
 	public void bind() {
@@ -76,7 +75,7 @@ public class LWJGLImage implements Image {
 	public void setHeight(int height) {
 		this.height = height;
 	}
-	
+
 	public int getTextureID() {
 		return textureID;
 	}
@@ -108,5 +107,5 @@ public class LWJGLImage implements Image {
 	public void setTexHeight(int texHeight) {
 		this.texHeight = texHeight;
 	}
-	
+
 }
