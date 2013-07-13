@@ -15,13 +15,13 @@ import org.gamelib.Handler.Event;
 import org.gamelib.ui.Referenced;
 
 /**
- * possible names: View, Scene, Group,
+ * An aggregate of handlers. TODO: change CopyOnWriteArrayList to a LinkedHashSet.
  * @author Axel
  */
 public class Group {
 	public Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = new WeakHashMap<Class<? extends Event>, CopyOnWriteArrayList<Handler>>(1);
 	private Rectangle size = null;
-	/** Whether the handler should receive events */
+	/** Whether the handlers should receive events. */
 	boolean active = true;
 	private boolean alwaysActive = false;
 	Group parent;
@@ -29,20 +29,18 @@ public class Group {
 
 	// private List<Scene> groups = Registry.instance().views;
 
-	public Group() {
-		if (parent == null && (parent = Registry.DEFAULT_VIEW) == null)
-			return;
-		parent.children.add(this);
-	}
-
 	public Group(Group parent) {
-		this.parent = parent;
+		if ((this.parent = parent) == null && (parent = Registry.DEFAULT_VIEW) == null) return;
+		if (this instanceof Handler) register((Handler) this);
 		parent.children.add(this);
 	}
 
-	/**
-	 * @return the rectangle
-	 */
+	/** Creates a new {@link Group} at top-level. */
+	public Group() {
+		this(null);
+	}
+
+	/** @return the size */
 	public Rectangle getRectangle() {
 		return size;
 	}
@@ -66,7 +64,7 @@ public class Group {
 		return active;
 	}
 
-	/** Sets if this and every underlying group is active. */
+	/** Sets this and every underlying group to <code>active</code>. */
 	public void setActive(boolean active) {
 		this.active = active;
 		for (Iterator<Group> iterator = children.iterator(); iterator.hasNext();) {
@@ -76,8 +74,8 @@ public class Group {
 	}
 
 	/**
-	 * Registers an handler
-	 * @param handler {@link Handler} instance
+	 * Registers an {@link Handler}.
+	 * @param handler an {@link Handler} instance
 	 */
 	@SuppressWarnings("unchecked")
 	public void register(Handler handler) {
@@ -85,17 +83,14 @@ public class Group {
 		 * List<Group> groups = Registry.instance().rooms; if (!groups.contains(this)) groups.add(this);
 		 */
 
-		if (handler instanceof Referenced<?>)
-			((Referenced<Group>) handler).setReference(this);
-		if (handler instanceof Createable)
-			((Createable) handler).create();
+		if (handler instanceof Referenced<?>) ((Referenced<Group>) handler).setReference(this);
+		if (handler instanceof Createable) ((Createable) handler).create();
 
 		ArrayList<Class<? extends Event>> list = new ArrayList<Class<? extends Event>>();
 		handler.handlers(list);
 		for (Iterator<Class<? extends Event>> iterator = list.iterator(); iterator.hasNext();) {
 			Class<? extends Event> type = iterator.next();
-			if (!handlers.containsKey(type))
-				handlers.put(type, new CopyOnWriteArrayList<Handler>());
+			if (!handlers.containsKey(type)) handlers.put(type, new CopyOnWriteArrayList<Handler>());
 			handlers.get(type).add(handler);
 		}
 	}
@@ -112,11 +107,8 @@ public class Group {
 
 	/** Deactivates every other group except for this one and it's children. */
 	public void focus() {
-		for (Group toCheck : Registry.DEFAULT_VIEW.getHierarchy()) {
-			if (!toCheck.alwaysActive)
-				toCheck.setActive(false);
-		}
-		active = true;
+		for (Group toCheck : Registry.DEFAULT_VIEW.getHierarchy())
+			if (!toCheck.alwaysActive) toCheck.setActive(false);
 		setActive(true);
 	}
 }
