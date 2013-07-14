@@ -24,18 +24,18 @@ public class Rectangle implements Shape {
 	/**
 	 * 
 	 */
-	public Rectangle() {
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * 
-	 */
 	public Rectangle(int x, int y, int width, int height) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
+	}
+	
+	/**
+	 * 
+	 */
+	public Rectangle() {
+		this(0, 0, 0, 0);
 	}
 
 	/*
