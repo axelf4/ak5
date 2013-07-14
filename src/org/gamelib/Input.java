@@ -11,8 +11,10 @@ import java.util.HashMap;
 import java.util.Timer;
 
 import org.gamelib.Handler.Event;
+import org.gamelib.backend.Backend;
 
 /**
+ * An instance is derived by the {@link Backend}, for checking user input.
  * @author Axel
  */
 public abstract class Input {
@@ -55,7 +57,7 @@ public abstract class Input {
 	}
 
 	/**
-	 * Returns whether the key is pressed.
+	 * Returns whether the <code>key</code> is pressed.
 	 * @param key The key code as found in {@link Input.Key}
 	 * @return whether the key is pressed
 	 */
@@ -63,11 +65,18 @@ public abstract class Input {
 		return pressedKeys.containsKey(key) && pressedKeys.get(key);
 	}
 
+	/**
+	 * Returns whether the mouse <code>button</code> is pressed.<br />
+	 * {@link #BUTTON1}, {@link #BUTTON2}, {@link #BUTTON3} or {@link #NOBUTTON} if none.
+	 * @param button which button to check for
+	 * @return whether the mouse button is pressed
+	 */
 	public boolean mousePressed(int button) {
 		boolean b = pressedMouseButtons[button - 1];
 		return b;
 	}
 
+	/** Simulates a key press. */
 	public void simulateKey(int id, int keyCode) { // abstract
 		try {
 			Robot r = new Robot();
@@ -86,9 +95,11 @@ public abstract class Input {
 
 	/** Checks for queued input states. */
 	public abstract void poll();
-	
+
+	/** Moves the mouse to the given coordinates, (<code>x</code>,<code>y</code>). */
 	public abstract void mouseMove(int x, int y); // simulateMouse
-	
+
+	/** Hides and holds the mouse at it's position. */
 	public abstract void setGrabbed(boolean grabbed);
 
 	protected void keyEvent(int id, int keyCode) {
