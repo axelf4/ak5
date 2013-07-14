@@ -27,8 +27,6 @@ public class Group {
 	Group parent;
 	List<Group> children = new ArrayList<Group>();
 
-	// private List<Scene> groups = Registry.instance().views;
-
 	public Group(Group parent) {
 		if ((this.parent = parent) == null && (parent = Registry.DEFAULT_VIEW) == null) return;
 		if (this instanceof Handler) register((Handler) this);
