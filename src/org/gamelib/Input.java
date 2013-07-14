@@ -84,10 +84,12 @@ public abstract class Input {
 		}
 	}
 
-	public abstract void mouseMove(int x, int y); // simulateMouse
-
 	/** Checks for queued input states. */
 	public abstract void poll();
+	
+	public abstract void mouseMove(int x, int y); // simulateMouse
+	
+	public abstract void setGrabbed(boolean grabbed);
 
 	protected void keyEvent(int id, int keyCode) {
 		keyCode = translateKeyCode(keyCode);
@@ -254,26 +256,9 @@ public abstract class Input {
 	}
 
 	/**
-	 * Translates the keyCode to match the ones in {@link Input.Key}. The normal user should never need to use this method.
+	 * Translates the keyCode to match the ones in {@link Input.Key}. The normal user should never have to use this method.
 	 * @param keyCode the key to translate
 	 * @return the translated key
 	 */
 	public abstract int translateKeyCode(int keyCode);
-
-	/**
-	 * Constants for mouse hardware.
-	 * @author Axel
-	 * @see java.awt.event.MouseEvent
-	 */
-	@Deprecated
-	public static final class Mouse {
-		/** Indicates no mouse buttons; used by {@link #getButton}. */
-		public static final int NOBUTTON = -1;
-		/** Indicates mouse button #1; used by {@link #getButton}. */
-		public static final int BUTTON1 = 0;
-		/** Indicates mouse button #2; used by {@link #getButton}. */
-		public static final int BUTTON2 = 1;
-		/** Indicates mouse button #3; used by {@link #getButton}. */
-		public static final int BUTTON3 = 2;
-	}
 }

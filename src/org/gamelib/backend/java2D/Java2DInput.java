@@ -193,4 +193,12 @@ public class Java2DInput extends Input implements KeyEventDispatcher, MouseListe
 		}
 		throw new RuntimeException("couldn't move mouse"); // Couldn't move to the point, it may be off screen.
 	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.Input#setGrabbed(boolean)
+	 */
+	@Override
+	public void setGrabbed(boolean grabbed) {
+		// TODO Auto-generated method stub
+	}
 }

@@ -6,6 +6,7 @@ package org.gamelib.backend.lwjgl;
 import java.awt.Point;
 
 import org.gamelib.Input;
+import org.gamelib.Input.Key;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
@@ -65,6 +66,14 @@ public class LWJGLInput extends Input {
 	public void mouseMove(int x, int y) {
 		Point p = translateMouse(x, y);
 		org.lwjgl.input.Mouse.setCursorPosition(p.x, p.y);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.gamelib.Input#setGrabbed(boolean)
+	 */
+	@Override
+	public void setGrabbed(boolean grabbed) {
+		org.lwjgl.input.Mouse.setGrabbed(true);
 	}
 
 }
