@@ -22,9 +22,7 @@ public class Sprite {
 	float step_counter;
 	boolean flipped = false;
 	public double rotation;
-	@Deprecated
-	public String name;
-	
+
 	public Sprite(int duration, Rectangle... subImages) {
 		this.subImages = subImages;
 		this.duration = duration;
@@ -76,41 +74,9 @@ public class Sprite {
 	public void setFrame(int frame) {
 		this.frame = frame;
 	}
-	
+
 	public void setHorizontalFlip(boolean flipped) {
 		this.flipped = flipped;
-	}
-	
-	/* OLD DEPRECATED METHODS */
-	
-	@Deprecated
-	public Sprite(String name, int duration, Rectangle... subImages) {
-		this.name = name;
-		this.subImages = subImages;
-		this.duration = duration;
-	}
-
-	@Deprecated
-	public Sprite(String name, Rectangle... subImages) {
-		this(name, 5, subImages);
-	}
-	
-	@Deprecated
-	public void draw(Graphics g, Image image, int x, int y, int flip) {
-		Rectangle rectangle = subImages[frame];
-		int sx = rectangle.x;
-		int sy = rectangle.y;
-		int width = rectangle.width;
-		int height = rectangle.height;
-
-		// g.rotate(rotation, x + width / 2, y + height / 2);
-		g.drawImage(image, x + flip, y, x + width - flip, y + height, sx, sy, sx + width, sy + height);
-		// g.rotate(-rotation, x + width / 2, y + height / 2);
-
-		if (++step_counter > duration) {
-			step_counter = 0;
-			if (++frame >= subImages.length) frame = 0;
-		}
 	}
 
 }
