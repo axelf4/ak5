@@ -199,6 +199,6 @@ public class Java2DInput extends Input implements KeyEventDispatcher, MouseListe
 	 */
 	@Override
 	public void setGrabbed(boolean grabbed) {
-		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("mouse grabbing not supported yet in java2d");
 	}
 }
