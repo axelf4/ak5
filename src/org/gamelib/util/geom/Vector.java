@@ -16,6 +16,12 @@ public interface Vector<T extends Vector<?>> extends Cloneable {
 	float lengthSquared();
 
 	/**
+	 * @param vector The other vector
+	 * @return The euclidian distance between this and the other vector
+	 */
+	public float dst(Vector3 v);
+
+	/**
 	 * Normalizes this vector
 	 * @return This vector for chaining
 	 */

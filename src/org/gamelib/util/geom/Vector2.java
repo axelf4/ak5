@@ -44,6 +44,17 @@ public class Vector2 implements Vector<Vector2> {
 
 	/*
 	 * (non-Javadoc)
+	 * @see org.gamelib.util.geom.Vector#dst(org.gamelib.util.geom.Vector3)
+	 */
+	@Override
+	public float dst(Vector3 v) {
+		final float x_d = v.x - x;
+		final float y_d = v.y - y;
+		return (float) Math.sqrt(x_d * x_d + y_d * y_d);
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.util.geom.Vector#normalize()
 	 */
 	@Override
@@ -54,6 +65,15 @@ public class Vector2 implements Vector<Vector2> {
 			y /= length;
 		}
 		return this;
+	}
+
+	/**
+	 * Calculates the 2D cross product between this and the given vector.
+	 * @param v the other vector
+	 * @return the cross product
+	 */
+	public float crs(Vector2 v) {
+		return this.x * v.y - this.y * v.x;
 	}
 
 	/*
@@ -92,8 +112,24 @@ public class Vector2 implements Vector<Vector2> {
 	 */
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return "[" + x + ":" + y + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Float.floatToIntBits(x);
+		result = prime * result + Float.floatToIntBits(y);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null || getClass() != obj.getClass()) return false;
+		Vector2 other = (Vector2) obj;
+		return Float.floatToIntBits(x) == Float.floatToIntBits(other.x) && Float.floatToIntBits(y) == Float.floatToIntBits(other.y);
 	}
 
 	/*
