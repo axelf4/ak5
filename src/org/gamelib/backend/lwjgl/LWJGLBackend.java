@@ -86,7 +86,7 @@ public class LWJGLBackend implements Backend {
 		GL11.glMatrixMode(GL11.GL_PROJECTION); // resets any previous projection matrices
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, width, height, 0, 1, -1); // 0,0:top-left
-		// GL11.glOrtho(0, resolution.getWidth(), 0, resolution.getHeight(), 1, -1); // 0,0:bottom-left
+		// GL11.glOrtho(0, width, 0, height, 1, -1); // 0,0:bottom-left
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 		// GL11.glDisable(GL11.GL_DEPTH_TEST);

@@ -63,4 +63,11 @@ public class SpriteSheet {
 		return getSprite(sprite);
 	}
 
+	/**
+	 * @param flippedHorizontal if flipped
+	 */
+	public void setHorizontalFlip(boolean flippedHorizontal) {
+		this.flippedHorizontal = flippedHorizontal;
+	}
+
 }
