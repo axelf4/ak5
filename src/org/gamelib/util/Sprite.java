@@ -3,10 +3,10 @@
  */
 package org.gamelib.util;
 
-import java.awt.Rectangle;
 
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
+import org.gamelib.util.geom.Rectangle;
 
 /**
  * A two-dimensional animation integrated into an larger image.
@@ -14,11 +14,12 @@ import org.gamelib.backend.Image;
  */
 public class Sprite {
 
-	public Rectangle[] subImages;
+	public Image image;
+	Rectangle[] subImages;
 	/** the current frame */
 	int frame;
 	/** the duration of each frame */
-	public int duration;
+	int duration;
 	float step_counter;
 	boolean flipped = false;
 	public double rotation;
@@ -27,13 +28,18 @@ public class Sprite {
 		this.subImages = subImages;
 		this.duration = duration;
 	}
+	
+	public Sprite(Image image, int duration, Rectangle... subImages) {
+		this(duration, subImages);
+		this.image = image;
+	}
 
 	public Sprite(Rectangle... subImages) {
 		this(5, subImages);
 	}
 
 	/** Draws the current sprite. */
-	public void draw(Graphics g, float delta, Image image, int x, int y) {
+	public void draw(Graphics g, float delta, int x, int y) {
 		Rectangle rectangle = subImages[frame];
 		int sx = rectangle.x;
 		int sy = rectangle.y;

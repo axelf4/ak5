@@ -31,7 +31,7 @@ public class SpriteSheet {
 		Sprite sprite2 = spriteSheet[sprite];
 		sprite2.setHorizontalFlip(flippedHorizontal);
 
-		spriteSheet[sprite].draw(g, delta, image, x, y);
+		spriteSheet[sprite].draw(g, delta, x, y);
 	}
 
 	/**
@@ -44,6 +44,7 @@ public class SpriteSheet {
 		int i;
 		for (i = 0; i < tmp.length; i++)
 			spriteSheet[i] = tmp[i];
+		sprite.image = image;
 		spriteSheet[i] = sprite;
 		return i;
 	}
