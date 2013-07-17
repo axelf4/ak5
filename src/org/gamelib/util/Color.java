@@ -8,13 +8,12 @@ import java.io.Serializable;
 
 /**
  * Colors in the sRGB color space. TODO add color spaces use {@link Float#floatToRawIntBits(float)}.
- * 
  * @author pwnedary
  * @see java.awt.Color
  */
 public class Color implements Serializable {
 	private static final long serialVersionUID = 4649728280397747213L;
-	
+
 	/** The color white. */
 	public static final Color WHITE = new Color(255, 255, 255);
 	/** The color light gray. */
@@ -47,7 +46,6 @@ public class Color implements Serializable {
 
 	/**
 	 * Creates an sRGB color with the specified red, green, blue, and alpha values in the range (0 - 255).
-	 * 
 	 * @param r the red component
 	 * @param g the green component
 	 * @param b the blue component
@@ -72,7 +70,6 @@ public class Color implements Serializable {
 
 	/**
 	 * Checks the color integer components supplied for validity. Throws an {@link IllegalArgumentException} if the value is out of range.
-	 * 
 	 * @param r the Red component
 	 * @param g the Green component
 	 * @param b the Blue component
@@ -104,7 +101,6 @@ public class Color implements Serializable {
 
 	/**
 	 * Returns the red component in the range 0-255 in the default sRGB space.
-	 * 
 	 * @return the red component.
 	 * @see #getRGB
 	 */
@@ -114,7 +110,6 @@ public class Color implements Serializable {
 
 	/**
 	 * Returns the green component in the range 0-255 in the default sRGB space.
-	 * 
 	 * @return the green component.
 	 * @see #getRGB
 	 */
@@ -124,7 +119,6 @@ public class Color implements Serializable {
 
 	/**
 	 * Returns the blue component in the range 0-255 in the default sRGB space.
-	 * 
 	 * @return the blue component.
 	 * @see #getRGB
 	 */
@@ -134,12 +128,20 @@ public class Color implements Serializable {
 
 	/**
 	 * Returns the alpha component in the range 0-255.
-	 * 
 	 * @return the alpha component.
 	 * @see #getRGB
 	 */
 	public int getAlpha() {
 		return (value >> 24) & 0xff;
+	}
+
+	/**
+	 * Returns the AWT version of this color.
+	 * @return the AWT version
+	 * @see java.awt.Color
+	 */
+	public java.awt.Color toAWT() {
+		return new java.awt.Color(getRed(), getGreen(), getBlue(), getAlpha());
 	}
 
 }

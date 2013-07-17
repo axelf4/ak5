@@ -121,7 +121,7 @@ public class TrueTypeFont implements Font {
 		if (antiAlias == true) gt.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		gt.setFont(font);
 
-		gt.setColor(new java.awt.Color(fontColor.getRed(), fontColor.getGreen(), fontColor.getBlue(), fontColor.getAlpha()));
+		gt.setColor(fontColor.toAWT());
 		int charx = 3;
 		int chary = 1;
 		gt.drawString(String.valueOf(ch), (charx), (chary) + fontMetrics.getAscent());
