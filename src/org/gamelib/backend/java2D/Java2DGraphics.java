@@ -18,6 +18,7 @@ public class Java2DGraphics implements Graphics {
 
 	java.awt.Graphics g;
 	int width, height;
+	protected float deltaX, deltaY, deltaZ;
 
 	public Java2DGraphics(java.awt.Graphics g, int width, int height) {
 		this.g = g;
@@ -40,10 +41,8 @@ public class Java2DGraphics implements Graphics {
 	 */
 	@Override
 	public void drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
-		// panel.graphics2d.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
 		BufferedImage bufferedImage = ((Java2DImage) img).bufferedImage;
 		g.drawImage(bufferedImage, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
-		// bufferedImage.flush();
 	}
 
 	/*
@@ -93,7 +92,7 @@ public class Java2DGraphics implements Graphics {
 	 */
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
+		// g.clearRect(0, 0, width, height);
 		g.fillRect(0, 0, width, height);
 	}
 
@@ -104,16 +103,6 @@ public class Java2DGraphics implements Graphics {
 	@Override
 	public void drawCube(int x, int y, int z, int width, int height, int depth) {
 		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backend.Graphics#translate(float, float)
-	 */
-	@Override
-	public void translate(float x, float y) {
-		g.translate((int) Math.floor(x), (int) Math.floor(y));
 	}
 
 	/*
@@ -122,6 +111,15 @@ public class Java2DGraphics implements Graphics {
 	 */
 	@Override
 	public void translate(float x, float y, float z) {
-		translate(x, y);
+		g.translate((int) Math.floor(x), (int) Math.floor(y));
+		this.deltaX += x;
+		this.deltaY += y;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void translate(float x, float y, float z, int flag) {
+		if ((flag & ADD) == ADD) translate(x, y, z);
+		else if ((flag & SET) == SET) translate(-deltaX + x, -deltaY + y, -deltaZ + z);
 	}
 }

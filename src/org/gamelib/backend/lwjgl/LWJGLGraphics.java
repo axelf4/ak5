@@ -19,6 +19,7 @@ public class LWJGLGraphics implements Graphics {
 	/** the current color */
 	private Color currentColor = Color.BLACK;
 	protected LWJGLImage image;
+	protected float deltaX, deltaY, deltaZ;
 
 	/**
 	 * 
@@ -77,25 +78,32 @@ public class LWJGLGraphics implements Graphics {
 		Color previous = currentColor;
 
 		setColor(Color.WHITE);
-		translate(dx1, dy1);
+		translate(dx1, dy1, 0.0f);
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(image.target, image.textureID); // bind the appropriate texture for this image
-		glBegin(GL11.GL_QUADS);
+		/*
+		 * glBegin(GL11.GL_QUADS); // GL_QUADS { glTexCoord2f(u, v); glVertex2f(0, 0); glTexCoord2f(u2, v); glVertex2f(width, 0); glTexCoord2f(u2, v2); glVertex2f(width, height); glTexCoord2f(u, v2); glVertex2f(0, height); // glTexCoord2f(u, v); glVertex2f(dx1, dx1); glTexCoord2f(u2, v); glVertex2f(dx2, dy1); glTexCoord2f(u2, v2); glVertex2f(dx2, dy2); glTexCoord2f(u, v2); glVertex2f(dx1, dy2); }
+		 */
+		glBegin(GL11.GL_TRIANGLE_STRIP); // GL_QUADS
 		{
 			glTexCoord2f(u, v);
 			glVertex2f(0, 0);
-			glTexCoord2f(u2, v);
-			glVertex2f(width, 0);
-			glTexCoord2f(u2, v2);
-			glVertex2f(width, height);
+
 			glTexCoord2f(u, v2);
 			glVertex2f(0, height);
+
+			glTexCoord2f(u2, v);
+			glVertex2f(width, 0);
+
+			glTexCoord2f(u2, v2);
+			glVertex2f(width, height);
+
 			// glTexCoord2f(u, v); glVertex2f(dx1, dx1); glTexCoord2f(u2, v); glVertex2f(dx2, dy1); glTexCoord2f(u2, v2); glVertex2f(dx2, dy2); glTexCoord2f(u, v2); glVertex2f(dx1, dy2);
 		}
 		glEnd();
 		glBindTexture(image.target, 0);
 		glDisable(GL_TEXTURE_2D);
-		translate(-dx1, -dy1);
+		translate(-dx1, -dy1, 0.0f);
 		setColor(previous);
 	}
 
@@ -209,20 +217,20 @@ public class LWJGLGraphics implements Graphics {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.gamelib.backend.Graphics#translate(int, int)
-	 */
-	@Override
-	public void translate(float x, float y) {
-		translate(x, y, 0.0f);
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see org.gamelib.backend.Graphics#translate(float, float, float)
 	 */
 	@Override
 	public void translate(float x, float y, float z) {
 		glTranslatef(x, y, z);
+		this.deltaX += x;
+		this.deltaY += y;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void translate(float x, float y, float z, int flag) {
+		if ((flag & ADD) == ADD) translate(x, y, z);
+		else if ((flag & SET) == SET) translate(-deltaX + x, -deltaY + y, -deltaZ + z);
 	}
 
 }

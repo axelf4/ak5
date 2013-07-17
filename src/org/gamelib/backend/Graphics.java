@@ -7,28 +7,35 @@ import org.gamelib.util.Color;
 
 /**
  * TODO add methods for starting and stopping drawing
- * 
  * @author pwnedary
  */
 public interface Graphics {
 
 	/** Releases any system resources that is used. */
 	public void dispose();
-	
+
 	/** Sets the current color. */
 	public void setColor(Color c);
-	
-	/** Translates the origin to <i>x</i>,&nbsp;<i>y</i>. */
-	public void translate(float x, float y);
-	/** Translates the origin to <i>x</i>,&nbsp;<i>y</i>,&nbsp;<i>z</i>. */
+
+	/** Increments the current. */
+	public static final int ADD = 0x01;
+	/** Sets the current. */
+	public static final int SET = 0x02;
+
+	/** Translates the origin to <i>x</i>,&nbsp;<i>y</i>,&nbsp;<i>z</i>. Always {@link #ADD} */
 	public void translate(float x, float y, float z);
-	
+
+	/**
+	 * Translates the origin to <i>x</i>,&nbsp;<i>y</i>,&nbsp;<i>z</i>.
+	 * @param flag can be {@link #ADD} or {@link #SET}
+	 */
+	public void translate(float x, float y, float z, int flag);
+
 	// public void rotate(int theta);
 
 	/**
 	 * Draws the specified image to the backend.
-	 * 
-	 * @param img the image to be drawn
+	 * @param img the image to draw
 	 * @param dx1
 	 * @param dy1
 	 * @param dx2
@@ -45,7 +52,7 @@ public interface Graphics {
 	public void drawRect(int x, int y, int width, int height);
 
 	public void fillRect(int x, int y, int width, int height);
-	
+
 	public void drawCube(int x, int y, int z, int width, int height, int depth);
 
 	/** Clears the screen in the desired color. */
