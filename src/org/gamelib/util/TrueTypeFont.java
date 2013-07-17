@@ -51,9 +51,12 @@ public class TrueTypeFont implements Font {
 	/** The font metrics for our Java AWT font */
 	private FontMetrics fontMetrics;
 
+	private org.gamelib.util.Color fontColor;
+
 	private int correctL = 9, correctR = 8;
 	int format = ALIGN_LEFT;
 
+	// TODO just use rectangles
 	private class IntObject {
 		/** Character's width */
 		public int width;
@@ -68,10 +71,11 @@ public class TrueTypeFont implements Font {
 		public int storedY;
 	}
 
-	public TrueTypeFont(java.awt.Font font, boolean antiAlias, char[] additionalChars) {
+	public TrueTypeFont(java.awt.Font font, boolean antiAlias, char[] additionalChars, org.gamelib.util.Color fontColor) {
 		this.font = font;
 		this.fontSize = font.getSize() + 3;
 		this.antiAlias = antiAlias;
+		this.fontColor = fontColor;
 
 		createSet(additionalChars);
 
@@ -80,7 +84,7 @@ public class TrueTypeFont implements Font {
 	}
 
 	public TrueTypeFont(java.awt.Font font, boolean antiAlias) {
-		this(font, antiAlias, null);
+		this(font, antiAlias, null, org.gamelib.util.Color.WHITE);
 	}
 
 	public TrueTypeFont() {
@@ -117,7 +121,7 @@ public class TrueTypeFont implements Font {
 		if (antiAlias == true) gt.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		gt.setFont(font);
 
-		gt.setColor(Color.BLACK);
+		gt.setColor(new java.awt.Color(fontColor.getRed(), fontColor.getGreen(), fontColor.getBlue(), fontColor.getAlpha()));
 		int charx = 3;
 		int chary = 1;
 		gt.drawString(String.valueOf(ch), (charx), (chary) + fontMetrics.getAscent());
@@ -128,9 +132,7 @@ public class TrueTypeFont implements Font {
 
 	private void createSet(char[] customCharsArray) {
 		// If there are custom chars then I expand the font texture twice
-		if (customCharsArray != null && customCharsArray.length > 0) {
-			textureWidth *= 2;
-		}
+		if (customCharsArray != null && customCharsArray.length > 0) textureWidth *= 2;
 
 		// In any case this should be done in other way. Texture with size 512x512
 		// can maintain only 256 characters with resolution of 32x32. The texture
@@ -142,9 +144,7 @@ public class TrueTypeFont implements Font {
 			g.setColor(new Color(0, 0, 0, 1));
 			g.fillRect(0, 0, textureWidth, textureHeight);
 
-			int rowHeight = 0;
-			int positionX = 0;
-			int positionY = 0;
+			int rowHeight = 0, positionX = 0, positionY = 0;
 
 			int customCharsLength = (customCharsArray != null) ? customCharsArray.length : 0;
 
@@ -176,20 +176,13 @@ public class TrueTypeFont implements Font {
 
 				positionX += newIntObject.width;
 
-				if (i < 256) { // standard characters
-					charArray[i] = newIntObject;
-				} else { // custom characters
-					customChars.put(new Character(ch), newIntObject);
-				}
+				if (i < 256) charArray[i] = newIntObject;// standard characters
+				else customChars.put(new Character(ch), newIntObject); // custom characters
 
 				fontImage = null;
 			}
 
-			// fontTextureID = loadImage(imgTemp);
 			fontImage = Game.getBackend().getResourceFactory().getImage(imgTemp);
-
-			// .getTexture(font.toString(), imgTemp);
-
 		} catch (Exception e) {
 			System.err.println("Failed to create font.");
 			e.printStackTrace();
@@ -227,11 +220,8 @@ public class TrueTypeFont implements Font {
 			for (int l = startIndex; l <= endIndex; l++) {
 				charCurrent = str.charAt(l);
 				if (charCurrent == '\n') break;
-				if (charCurrent < 256) {
-					intObject = charArray[charCurrent];
-				} else {
-					intObject = (IntObject) customChars.get(new Character((char) charCurrent));
-				}
+				if (charCurrent < 256) intObject = charArray[charCurrent];
+				else intObject = (IntObject) customChars.get(new Character((char) charCurrent));
 				totalwidth += intObject.width - correctL;
 			}
 			totalwidth /= -2;
@@ -298,11 +288,8 @@ public class TrueTypeFont implements Font {
 		int currentChar = 0;
 		for (int i = 0; i < str.length(); i++) {
 			currentChar = str.charAt(i);
-			if (currentChar < 256) {
-				intObject = charArray[currentChar];
-			} else {
-				intObject = (IntObject) customChars.get(new Character((char) currentChar));
-			}
+			if (currentChar < 256) intObject = charArray[currentChar];
+			else intObject = (IntObject) customChars.get(new Character((char) currentChar));
 
 			if (intObject != null) totalwidth += intObject.width;
 		}
@@ -320,9 +307,8 @@ public class TrueTypeFont implements Font {
 
 	public static boolean isSupported(String fontname) {
 		java.awt.Font font[] = getFonts();
-		for (int i = font.length - 1; i >= 0; i--) {
+		for (int i = font.length - 1; i >= 0; i--)
 			if (font[i].getName().equalsIgnoreCase(fontname)) return true;
-		}
 		return false;
 	}
 
