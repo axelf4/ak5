@@ -20,7 +20,7 @@ import org.gamelib.Drawable;
  * @author pwnedary
  */
 @SuppressWarnings("serial")
-public class Java2dPanel extends JPanel {
+public class Java2DPanel extends JPanel {
 
 	private VolatileImage volatileImage;
 	public Graphics2D g2d; // graphics2d
@@ -30,7 +30,7 @@ public class Java2dPanel extends JPanel {
 	/**
 	 * 
 	 */
-	public Java2dPanel() {
+	public Java2DPanel() {
 		setIgnoreRepaint(true);
 		setRequestFocusEnabled(true);
 
