@@ -35,11 +35,8 @@ public class Button extends Component {
 		} else if (event instanceof Event.Mouse) {
 			Input input = ((Event.Control<?>) event).input;
 			int id = ((Event.Mouse) event).id;
-			if (id != Input.MOUSE_RELEASED) { return; }
-			java.awt.Point mouse = input.mousePosition;
-			if (rectangle.collides(new Point(mouse.x, mouse.y))) {
-				Registry.instance().dispatch(new Event.Layout(this, event), group);
-			}
+			if (id != Input.MOUSE_RELEASED) return;
+			if (rectangle.collides(new Point(input.getMouseX(), input.getMouseY()))) Registry.instance().dispatch(new Event.Layout(this, event), group);
 		}
 	}
 

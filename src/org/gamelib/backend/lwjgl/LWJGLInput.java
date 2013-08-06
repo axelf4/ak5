@@ -6,8 +6,8 @@ package org.gamelib.backend.lwjgl;
 import java.awt.Point;
 
 import org.gamelib.Input;
-import org.gamelib.Input.Key;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 /**
@@ -15,37 +15,30 @@ import org.lwjgl.opengl.Display;
  */
 public class LWJGLInput extends Input {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Input#poll()
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void poll() {
-		while (Keyboard.next()) // poll key events
+		while (Keyboard.next())
+			// poll key events
 			keyEvent(Keyboard.getEventKeyState() ? KEY_PRESSED : KEY_RELEASED, translateKeyCode(Keyboard.getEventKey()));
-		
+
 		// Point p = new Point(org.lwjgl.input.Mouse.getX(), Display.getHeight() - org.lwjgl.input.Mouse.getY());
-		Point p = mousePosition;
-		if (!org.lwjgl.input.Mouse.isGrabbed())
-			p = translateMouse(org.lwjgl.input.Mouse.getX(), org.lwjgl.input.Mouse.getY());
+		int mouseX = 0, mouseY = 0; // mouse position
+		if (!Mouse.isGrabbed()) {
+			mouseX = Mouse.getX();
+			mouseY = Display.getHeight() - Mouse.getY();
+		}
 		while (org.lwjgl.input.Mouse.next()) { // poll mouse events
-			boolean pressed = org.lwjgl.input.Mouse.getEventButtonState();
-			int button = org.lwjgl.input.Mouse.getEventButton();
+			boolean pressed = Mouse.getEventButtonState();
+			int button = Mouse.getEventButton();
 			button = button == 1 ? BUTTON3 : button;
-			if (org.lwjgl.input.Mouse.getEventDX() != 0 || org.lwjgl.input.Mouse.getEventDY() != 0) // moved
-				mouseEvent(pressed ? MOUSE_DRAGGED : MOUSE_MOVED, button, p);
-			else {
-				mouseEvent(pressed ? MOUSE_PRESSED : MOUSE_RELEASED, button, p);
-				if (!pressed)
-					mouseEvent(MOUSE_CLICKED, button, p);
-			}
+			if (Mouse.getEventDX() != 0 || Mouse.getEventDY() != 0) mouseEvent(pressed ? MOUSE_DRAGGED : MOUSE_MOVED, button, mouseX, mouseY); // mouse moved
+			mouseEvent(pressed ? MOUSE_PRESSED : MOUSE_RELEASED, button, mouseX, mouseY); // pressed or released
+			if (!pressed) mouseEvent(MOUSE_CLICKED, button, mouseX, mouseY); // stupid clicked event
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Input#translateBackendKeyCode(int)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int translateKeyCode(int keyCode) {
 		if (keyCode == Keyboard.KEY_LSHIFT || keyCode == Keyboard.KEY_RSHIFT) return Key.KEY_SHIFT;
@@ -54,23 +47,19 @@ public class LWJGLInput extends Input {
 		return keyCode;
 	}
 
-	public Point translateMouse(int x, int y) {
+	@Deprecated
+	Point translateMouse(int x, int y) {
 		return new Point(x, Display.getHeight() - y);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Input#mouseMove(java.awt.Point)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void mouseMove(int x, int y) {
 		Point p = translateMouse(x, y);
 		org.lwjgl.input.Mouse.setCursorPosition(p.x, p.y);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.gamelib.Input#setGrabbed(boolean)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void setGrabbed(boolean grabbed) {
 		org.lwjgl.input.Mouse.setGrabbed(true);
