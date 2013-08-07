@@ -32,6 +32,7 @@ import org.lwjgl.util.glu.GLU;
 public class LWJGLBackend extends BackendImpl implements Backend {
 
 	private LWJGLGraphics graphics;
+	LWJGLInput input;
 	LWJGLResourceFactory resourceFactory;
 
 	static void init2d(int width, int height) {
@@ -73,7 +74,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	 */
 	@Override
 	public Input getInput() {
-		return new LWJGLInput();
+		return input == null ? input = new LWJGLInput() : input;
 	}
 
 	/*
