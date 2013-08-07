@@ -5,135 +5,76 @@ package org.gamelib;
 
 import static org.gamelib.util.Log.*;
 
-import javax.swing.JFrame;
-
 import org.gamelib.Handler.Event;
 import org.gamelib.Loop.LoopListener;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Graphics;
-import org.gamelib.backend.java2D.Java2DBackend;
-import org.gamelib.resource.FileLoader;
+import org.gamelib.util.Instance;
+import org.gamelib.util.Instance.CreationalPattern;
+
+import com.sun.istack.internal.NotNull;
 
 /**
- * TODO distribute backend better
- * @author Axel
+ * TODO: rename to Game2 TODO: add BasicGame impl
+ * @author pwnedary
  */
 public abstract class Game {
+	@Instance(type = Game.class, pattern = CreationalPattern.SINGLETON)
+	static Game instance;
+	protected Backend backend;
+	Thread thread;
 
-	protected static Game instance;
-
-	Backend backend;
-	@SuppressWarnings("unused")
-	private Registry registry;
-	public Input input;
-	protected Thread thread;
-	protected Loop loop;
-	boolean requestedStop;
-
-	/**
-	 * 
-	 */
+	protected Input input;
+	
 	protected Game() {
 		instance = instance == null ? this : instance;
 	}
 
-	protected void start(Backend backend) {
-		// (this.backend = backend).start(this, getDisplayMode());
+	protected void start(@NotNull Backend backend) {
 		this.backend = backend;
-		if (instance.toString() == null) throw new Error("toString can't be null");
-		backend.setTitle(instance.toString());
+		this.input = backend.getInput();
 
-		registry = Registry.instance();
-		input = backend.getInput();
-		FileLoader.container = null;
-
-		// instance.initialize();
-		info("Initialized " + instance.toString());
+		info("Initialized " + this.toString());
 		(thread = new Thread(getLoop(), this.toString())).start();
 	}
 
-	protected void start() {
-		// (container = new JFrame()).add(screen = new Screen());
-		start(new Java2DBackend(new JFrame()));
-	}
-	
-	public void stop() {
-		requestedStop = true;
-	}
+	public abstract void initialize();
 
-	/**
-	 * TODO add java-doc
-	 */
-	protected abstract void initialize();
-
+	/** {@inheritDoc} */
+	@NotNull
+	@Override
 	public abstract String toString();
 
-	/** @deprecated in favor of {@link #getResolution} */
-	public DisplayMode getDisplayMode() {
-		return DisplayMode.r800x600;
-	}
-
-	public Resolution getResolution() {
-		return Resolution.r800x600;
-	}
-
-	public static Game getInstance() {
-		return instance;
-	}
-
-	public static Backend getBackend() {
-		return instance.backend;
-	}
+	public abstract Resolution getResolution();
 
 	public Loop getLoop() {
-		return loop == null ? loop = new FixedTimestepLoop(new DefaultLoopListener(this)) : loop;
+		return new FixedTimestepLoop(new DefaultLoopListener());
 	}
 
-	public static class DefaultLoopListener implements LoopListener {
-		private Game game;
-
-		public DefaultLoopListener(Game game) {
-			this.game = game;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see org.gamelib.Loop.LoopListener#start()
-		 */
+	class DefaultLoopListener implements LoopListener {
+		/** {@inheritDoc} */
 		@Override
 		public void start() {
-			Game.getBackend().start(game, game.getResolution());
-			// game.screen = new Screen(game.getResolution());
-			game.initialize();
+			backend.start(Game.this);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.gamelib.Loop.LoopListener#stop()
-		 */
+		/** {@inheritDoc} */
 		@Override
 		public void stop() {
-			game.backend.destroy();
+			backend.destroy();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.gamelib.Loop.LoopListener#tick(float)
-		 */
+		/** {@inheritDoc} */
 		@Override
 		public void tick(float delta) {
-			game.input.poll();
-			// Registry.instance().dispatch(new Event.Tick(delta));
-			Registry.instance().dispatch(new Event.AdvancedTick(delta));
+			backend.getInput().poll();
+			Registry.instance().dispatch(new Event.Tick(delta));
+			// Registry.instance().dispatch(new Event.AdvancedTick(delta));
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.gamelib.Loop.LoopListener#draw(float)
-		 */
+		/** {@inheritDoc} */
 		@Override
 		public void draw(float delta) {
-			final Backend backend = Game.getBackend();
 			backend.screenUpdate(new Drawable() {
 				@Override
 				public void draw(Graphics g, float delta) {
@@ -142,13 +83,19 @@ public abstract class Game {
 			}, delta);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.gamelib.Loop.LoopListener#shouldStop()
-		 */
+		/** {@inheritDoc} */
 		@Override
 		public boolean shouldStop() {
-			return Game.getBackend().shouldClose() || game.requestedStop;
+			return backend.shouldClose();
 		}
 	}
+	
+	public static final Game instance() {
+		return instance;
+	}
+
+	public Backend getBackend() {
+		return backend;
+	}
+
 }

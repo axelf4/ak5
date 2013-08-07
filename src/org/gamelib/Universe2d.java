@@ -14,7 +14,7 @@ import org.gamelib.backend.Graphics;
  */
 public class Universe2d implements Handler {
 
-	static final int MAX_ENTITIES = 100;
+	static final int MAX_ENTITIES = 10000000;
 
 	// public final CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<Entity>();
 	final Entity[] entities = new Entity[MAX_ENTITIES];
@@ -34,20 +34,27 @@ public class Universe2d implements Handler {
 		Registry.instance().register(this, group);
 	}
 
-	public void spawn(Entity entity) {
+	/**
+	 * @return the entity id
+	 */
+	public int spawn(Entity entity) {
 		entities[living++] = entity;
+		return living - 1;
 	}
 
-	@Deprecated
 	public void kill(Entity entity) {
-		for (int i = 0; i < entities.length; i++)
-			if (entities[i].equals(entity)) remove(i);
+		for (int i = 0; i < living; i++)
+			if (entities[i].equals(entity)) kill(i);
 	}
 
 	public void kill(int i) {
 		if (living <= 0) return;
 		living--;
 		entities[i] = entities[living];
+	}
+
+	public void clear() {
+		this.living = 0;
 	}
 
 	@Deprecated
@@ -60,7 +67,7 @@ public class Universe2d implements Handler {
 	@Deprecated
 	public void remove(Entity entity) {
 		// entities.remove(entity);
-		for (int i = 0; i < entities.length; i++)
+		for (int i = 0; i < getNrEntities(); i++)
 			if (entities[i].equals(entity)) remove(i);
 	}
 
@@ -115,7 +122,7 @@ public class Universe2d implements Handler {
 	public int getNrEntities() {
 		return living;
 	}
-	
+
 	public int getNextEntityId() {
 		return living;
 	}

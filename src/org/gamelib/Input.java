@@ -98,7 +98,7 @@ public abstract class Input {
 	protected void keyEvent(int id, int keycode) {
 		keycode = translateKeyCode(keycode);
 		pressed[keycode] = id == KEY_PRESSED;
-		if (keycode == Key.KEY_ESCAPE) System.exit(0); // debugging
+		if (keycode == Key.KEY_ESCAPE) Game.instance().getBackend().stop(); // debugging
 		Registry.instance().dispatch(new Event.Key(this, id, keycode));
 	}
 

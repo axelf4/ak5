@@ -16,6 +16,7 @@ import org.gamelib.Game;
 import org.gamelib.Input;
 import org.gamelib.Resolution;
 import org.gamelib.backend.Backend;
+import org.gamelib.backend.BackendImpl;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.ResourceFactory;
@@ -25,10 +26,10 @@ import org.gamelib.util.geom.Rectangle;
  * change to AWTBackend
  * @author pwnedary
  */
-public class Java2DBackend implements Backend {
+public class Java2DBackend extends BackendImpl implements Backend {
 
 	private Container container;
-	private Java2dPanel panel;
+	private Java2DPanel panel;
 	Java2DResourceFactory resourceFactory;
 
 	private Java2DGraphics graphics;
@@ -37,22 +38,10 @@ public class Java2DBackend implements Backend {
 	 * 
 	 */
 	public Java2DBackend(Container container) {
-		(this.container = container).add(panel = new Java2dPanel());
+		(this.container = container).add(panel = new Java2DPanel());
 	}
 
-	public void start(Game instance, Resolution resolution) {
-		if (container instanceof JFrame) {
-			((JFrame) container).setTitle(instance.toString());
-			((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setFullscreen((JFrame) container, resolution.fullscreen());
-			if (!resolution.fullscreen())
-				container.setSize(new Dimension(resolution.getWidth(), resolution.getHeight()));
-		}
-		if (container instanceof JApplet)
-			((JApplet) container).resize(new Dimension(resolution.getWidth(), resolution.getHeight()));
-	}
-
-	private void setFullscreen(JFrame frame, boolean fullscreen) {
+	void setFullscreen(JFrame frame, boolean fullscreen) {
 		GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		frame.setUndecorated(fullscreen);
 		frame.setResizable(!fullscreen);
@@ -115,7 +104,7 @@ public class Java2DBackend implements Backend {
 	 */
 	@Override
 	public boolean shouldClose() {
-		return false;
+		return false || super.shouldClose();
 	}
 
 	/*
@@ -142,7 +131,7 @@ public class Java2DBackend implements Backend {
 	 */
 	@Override
 	public ResourceFactory getResourceFactory() {
-		return resourceFactory == null ? resourceFactory = new Java2DResourceFactory() : resourceFactory;
+		return resourceFactory == null ? resourceFactory = new Java2DResourceFactory(panel) : resourceFactory;
 	}
 
 	/*
@@ -150,13 +139,41 @@ public class Java2DBackend implements Backend {
 	 * @see org.gamelib.Destroyable#destroy()
 	 */
 	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-
-	}
+	public void destroy() {}
 
 	@Override
 	public Rectangle getSize() {
 		return new Rectangle(panel.getX(), panel.getY(), panel.getWidth(), panel.getHeight());
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void start(Game game) {
+		Resolution resolution = game.getResolution();
+		if (container instanceof JFrame) {
+			((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			setFullscreen((JFrame) container, resolution.fullscreen());
+			if (!resolution.fullscreen()) container.setSize(new Dimension(resolution.getWidth(), resolution.getHeight()));
+		} else if (container instanceof JApplet) ((JApplet) container).resize(new Dimension(resolution.getWidth(), resolution.getHeight()));
+		
+		super.start(game); // let BackendImpl init Game
+		
+		try {
+			((Java2DResourceFactory) getResourceFactory()).tracker.waitForAll(); // wait for loading files
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public int getWidth() {
+		return panel.getWidth();
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public int getHeight() {
+		return panel.getHeight();
 	}
 }

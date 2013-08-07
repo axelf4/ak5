@@ -7,7 +7,6 @@ import org.gamelib.Destroyable;
 import org.gamelib.Drawable;
 import org.gamelib.Game;
 import org.gamelib.Input;
-import org.gamelib.Resolution;
 import org.gamelib.util.geom.Rectangle;
 
 /**
@@ -15,31 +14,39 @@ import org.gamelib.util.geom.Rectangle;
  * @author pwnedary
  */
 public interface Backend extends Destroyable {
-	public void start(Game instance, Resolution resolution);
+	void start(Game game);
 
-	/** @return a {@link Graphics} context to draw on. */
-	public Graphics getGraphics();
+	void stop();
 
-	/** @return a {@link Graphics} context to draw on the specified image. */
-	public Graphics getGraphics(Image image);
-
-	/** @return the processor for input */
-	public Input getInput();
-
-	public void screenUpdate(Drawable callback, float delta);
+	void screenUpdate(Drawable callback, float delta);
 
 	/** @return system time in milliseconds */
-	public long getTime();
+	long getTime();
 
 	/** temporary name */
-	public boolean shouldClose();
+	boolean shouldClose();
 
 	/** @param s the new window title */
-	public void setTitle(String s);
+	void setTitle(String s);
 
 	/** @return the size of the canvas drawn on. */
-	public Rectangle getSize();
+	Rectangle getSize();
+
+	/** @return the width of the canvas */
+	int getWidth();
+
+	/** @return the width of the canvas */
+	int getHeight();
+
+	/** @return a {@link Graphics} context to draw on. */
+	Graphics getGraphics();
+
+	/** @return a {@link Graphics} context to draw on the specified image. */
+	Graphics getGraphics(Image image);
+
+	/** @return the processor for input */
+	Input getInput();
 
 	/** @return factory for parsing files */
-	public ResourceFactory getResourceFactory();
+	ResourceFactory getResourceFactory();
 }

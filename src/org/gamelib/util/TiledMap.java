@@ -294,7 +294,7 @@ public class TiledMap implements Map {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setValidating(false);
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(Game.getBackend().getResourceFactory().getResourceAsStream(file.getPath()));
+			Document doc = builder.parse(Game.instance().getBackend().getResourceFactory().getResourceAsStream(file.getPath()));
 			Element root = doc.getDocumentElement();
 
 			int orientation = root.getAttribute("orientation").equals("orthogonal") ? TiledMap.ORTHOGONAL : TiledMap.ISOMETRIC;

@@ -84,7 +84,7 @@ public class TrueTypeFont implements Font {
 	}
 
 	public TrueTypeFont(java.awt.Font font, boolean antiAlias) {
-		this(font, antiAlias, null, org.gamelib.util.Color.WHITE);
+		this(font, antiAlias, null, org.gamelib.util.Color.BLACK);
 	}
 
 	public TrueTypeFont() {
@@ -182,7 +182,7 @@ public class TrueTypeFont implements Font {
 				fontImage = null;
 			}
 
-			fontImage = Game.getBackend().getResourceFactory().getImage(imgTemp);
+			fontImage = Game.instance().getBackend().getResourceFactory().getImage(imgTemp);
 		} catch (Exception e) {
 			System.err.println("Failed to create font.");
 			e.printStackTrace();

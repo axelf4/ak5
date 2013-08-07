@@ -101,7 +101,7 @@ public class Screen { // JPanel Canvas
 		// graphics2d, interpolation);
 		Registry.instance().dispatch(new Event.Draw(g, delta));
 		g.setColor(Color.RED);
-		fps = Game.getInstance().getLoop().getFPS();
+		fps = Game.instance().getLoop().getFPS();
 		String str = "FPS: " + fps;
 		font.drawString(g, str, getWidth() - font.getWidth(str) - 20, 10);
 	}
