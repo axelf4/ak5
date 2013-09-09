@@ -4,7 +4,7 @@
 package org.gamelib.backend;
 
 import org.gamelib.Game;
-import org.gamelib.Resolution;
+import org.gamelib.VideoMode;
 import org.gamelib.util.geom.Rectangle;
 
 /**
@@ -13,14 +13,14 @@ import org.gamelib.util.geom.Rectangle;
 public abstract class BackendImpl implements Backend {
 
 	protected Game game;
-	protected Resolution resolution;
+	protected VideoMode videoMode;
 	boolean shouldClose = false;
 
 	/** Initializes getters from Game, and initializes Game. */
 	@Override
 	public void start(Game game) {
 		this.game = game;
-		this.resolution = game.getResolution();
+		this.videoMode = game.getResolution();
 		if (game.toString().equals(game.getClass().toString())) throw new Error();
 		else setTitle(game.toString());
 		game.initialize();
@@ -36,12 +36,6 @@ public abstract class BackendImpl implements Backend {
 	@Override
 	public boolean shouldClose() {
 		return shouldClose;
-	}
-
-	/** {@inheritDoc} is deprecated and is going to ve removed */
-	@Override
-	public Rectangle getSize() {
-		return null;
 	}
 
 }

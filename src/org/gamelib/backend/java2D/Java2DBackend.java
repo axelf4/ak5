@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 import org.gamelib.Drawable;
 import org.gamelib.Game;
 import org.gamelib.Input;
-import org.gamelib.Resolution;
+import org.gamelib.VideoMode;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.BackendImpl;
 import org.gamelib.backend.Graphics;
@@ -149,12 +149,12 @@ public class Java2DBackend extends BackendImpl implements Backend {
 	/** {@inheritDoc} */
 	@Override
 	public void start(Game game) {
-		Resolution resolution = game.getResolution();
+		VideoMode videoMode = game.getResolution();
 		if (container instanceof JFrame) {
 			((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setFullscreen((JFrame) container, resolution.fullscreen());
-			if (!resolution.fullscreen()) container.setSize(new Dimension(resolution.getWidth(), resolution.getHeight()));
-		} else if (container instanceof JApplet) ((JApplet) container).resize(new Dimension(resolution.getWidth(), resolution.getHeight()));
+			setFullscreen((JFrame) container, videoMode.fullscreen());
+			if (!videoMode.fullscreen()) container.setSize(new Dimension(videoMode.getWidth(), videoMode.getHeight()));
+		} else if (container instanceof JApplet) ((JApplet) container).resize(new Dimension(videoMode.getWidth(), videoMode.getHeight()));
 		
 		super.start(game); // let BackendImpl init Game
 		

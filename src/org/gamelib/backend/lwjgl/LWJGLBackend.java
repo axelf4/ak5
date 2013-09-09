@@ -8,14 +8,13 @@ import static org.lwjgl.opengl.GL11.*;
 import org.gamelib.Drawable;
 import org.gamelib.Game;
 import org.gamelib.Input;
-import org.gamelib.Resolution;
+import org.gamelib.VideoMode;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.BackendImpl;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.ResourceFactory;
 import org.gamelib.util.Color;
-import org.gamelib.util.Log;
 import org.gamelib.util.geom.Rectangle;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
@@ -24,6 +23,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.Pbuffer;
+import org.lwjgl.opengl.Util;
 import org.lwjgl.util.glu.GLU;
 
 /**
@@ -31,19 +31,22 @@ import org.lwjgl.util.glu.GLU;
  */
 public class LWJGLBackend extends BackendImpl implements Backend {
 
-	private LWJGLGraphics graphics;
+	LWJGLGraphics graphics;
 	LWJGLInput input;
 	LWJGLResourceFactory resourceFactory;
 
 	static void init2d(int width, int height) {
-		GL11.glMatrixMode(GL11.GL_PROJECTION); // resets any previous projection matrices
-		GL11.glLoadIdentity();
-		GL11.glOrtho(0, width, height, 0, 1, -1); // 0,0:top-left
-		// GL11.glOrtho(0, width, 0, height, 1, -1); // 0,0:bottom-left
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		GL11.glLoadIdentity();
-		// GL11.glDisable(GL11.GL_DEPTH_TEST);
+		glMatrixMode(GL_PROJECTION); // resets any previous projection matrices
+		glLoadIdentity();
+		// glOrtho(0, width, height, 0, 1, -1); // 0,0 : top-left
+		glOrtho(0, width, 0, height, 1, -1); // 0,0 : bottom-left
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glDisable(GL_DEPTH_TEST);
 		glViewport(0, 0, width, height);
+		glEnable(GL_TEXTURE_2D);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	static void init3d(int width, int height) {
@@ -57,6 +60,47 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthFunc(GL11.GL_LEQUAL);
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public void start(Game game) {
+		try {
+			VideoMode videoMode = game.getResolution();
+			DisplayMode targetDisplayMode = null;
+			if (videoMode.fullscreen()) {
+				DisplayMode[] modes = Display.getAvailableDisplayModes();
+				int freq = 0;
+
+				for (int i = 0; i < modes.length; i++) {
+					DisplayMode current = modes[i];
+
+					if ((current.getWidth() == videoMode.getWidth()) && (current.getHeight() == videoMode.getHeight())) {
+						if ((targetDisplayMode == null) || (current.getFrequency() >= freq)) {
+							if ((targetDisplayMode == null) || (current.getBitsPerPixel() > targetDisplayMode.getBitsPerPixel())) {
+								targetDisplayMode = current;
+								freq = targetDisplayMode.getFrequency();
+							}
+						}
+						// if we've found a match for bpp and frequency against the original display mode then it's probably best to go for this one since it's most likely compatible with the monitor
+						if ((current.getBitsPerPixel() == Display.getDesktopDisplayMode().getBitsPerPixel()) && (current.getFrequency() == Display.getDesktopDisplayMode().getFrequency())) {
+							targetDisplayMode = current;
+							break;
+						}
+					}
+				}
+			} else targetDisplayMode = new DisplayMode(videoMode.getWidth(), videoMode.getHeight());
+
+			Display.setDisplayMode(targetDisplayMode);
+			Display.setFullscreen(videoMode.fullscreen());
+			// Display.setDisplayMode(new DisplayMode(800, 600));
+			// Display.setVSyncEnabled(true);
+			Display.create();
+
+			super.start(game);
+		} catch (LWJGLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -91,6 +135,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		// Game2.getInstance().screen.drawHandlers(getGraphics(), delta);
 		callback.draw(g, delta);
 		Display.update();
+		Util.checkGLError();
 	}
 
 	public org.lwjgl.opengl.DisplayMode convertModes(DisplayMode mode) {
@@ -157,54 +202,6 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	@Override
 	public Rectangle getSize() {
 		return new Rectangle(Display.getX(), Display.getY(), Display.getWidth(), Display.getHeight());
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void start(Game game) {
-		try {
-			Resolution resolution = game.getResolution();
-			org.lwjgl.opengl.DisplayMode targetDisplayMode = null;
-			if (resolution.fullscreen()) {
-				org.lwjgl.opengl.DisplayMode[] modes = Display.getAvailableDisplayModes();
-				int freq = 0;
-
-				for (int i = 0; i < modes.length; i++) {
-					org.lwjgl.opengl.DisplayMode current = modes[i];
-
-					if ((current.getWidth() == resolution.getWidth()) && (current.getHeight() == resolution.getHeight())) {
-						if ((targetDisplayMode == null) || (current.getFrequency() >= freq)) {
-							if ((targetDisplayMode == null) || (current.getBitsPerPixel() > targetDisplayMode.getBitsPerPixel())) {
-								targetDisplayMode = current;
-								freq = targetDisplayMode.getFrequency();
-							}
-						}
-						// if we've found a match for bpp and frequency against the original display mode then it's probably best to go for this one since it's most likely compatible with the monitor
-						if ((current.getBitsPerPixel() == Display.getDesktopDisplayMode().getBitsPerPixel()) && (current.getFrequency() == Display.getDesktopDisplayMode().getFrequency())) {
-							targetDisplayMode = current;
-							break;
-						}
-					}
-				}
-			} else targetDisplayMode = new org.lwjgl.opengl.DisplayMode(resolution.getWidth(), resolution.getHeight());
-			/*
-			 * if (targetDisplayMode == null) return false;
-			 */
-
-			Display.setDisplayMode(targetDisplayMode);
-			Display.setFullscreen(resolution.fullscreen());
-			// Display.setDisplayMode(new DisplayMode(800, 600));
-			Display.setVSyncEnabled(true);
-			Display.create();
-
-			/*
-			 * GL11.glMatrixMode(GL11.GL_PROJECTION); // Resets any previous projection matrices GL11.glLoadIdentity(); GL11.glOrtho(0, resolution.getWidth(), resolution.getHeight(), 0, 1, -1); // 0,0-top-left // GL11.glOrtho(0, resolution.getWidth(), 0, resolution.getHeight(), 1, -1); // 0,0-bottom-left GL11.glMatrixMode(GL11.GL_MODELVIEW); // glViewport(0, 0, resolution.getWidth(), resolution.getHeight());
-			 */
-			
-			super.start(game);
-		} catch (LWJGLException e) {
-			Log.error("", e);
-		}
 	}
 
 	/** {@inheritDoc} */

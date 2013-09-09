@@ -45,7 +45,7 @@ public abstract class Game {
 	@Override
 	public abstract String toString();
 
-	public abstract Resolution getResolution();
+	public abstract VideoMode getResolution();
 
 	public Loop getLoop() {
 		return new FixedTimestepLoop(new DefaultLoopListener());
@@ -61,6 +61,7 @@ public abstract class Game {
 		/** {@inheritDoc} */
 		@Override
 		public void stop() {
+			backend.stop();
 			backend.destroy();
 		}
 

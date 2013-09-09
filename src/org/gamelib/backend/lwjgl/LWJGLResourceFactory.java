@@ -8,6 +8,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -138,14 +139,14 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 		ByteBuffer textureBuffer = convertImageData(bufferedImage, image);
 
 		if (target == GL_TEXTURE_2D) {
-			glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
 
 		// produce a texture from the byte buffer
-		glTexImage2D(target, 0, GL_RGBA, Math2.pot(bufferedImage.getWidth()), Math2.pot(bufferedImage.getHeight()), 0, srcPixelFormat, GL_UNSIGNED_BYTE, textureBuffer);
+		glTexImage2D(target, 0, GL_RGBA, image.getTexWidth(), image.getTexHeight(), 0, srcPixelFormat, GL_UNSIGNED_BYTE, textureBuffer);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		return image;
 	}
@@ -162,21 +163,24 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 		LWJGLImage image = new LWJGLImage(GL_TEXTURE_2D, textureID);
 		image.setWidth(width);
 		image.setHeight(height);
-		int texWidth = Math2.pot(width);
-		int texHeight = Math2.pot(height);
-		image.setTexWidth(texWidth);
-		image.setTexHeight(texHeight);
+//		image.setTexWidth(Math2.pot(width));
+//		image.setTexHeight(Math2.pot(height));
 		// ByteBuffer textureBuffer = convertImageData(new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR), image);
+		BufferedImage image1 = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g2d = (Graphics2D) image1.getGraphics();
+		g2d.setColor(org.gamelib.util.Color.CYAN.toAWT());
+		g2d.fillRect(10, 10, 50, 50);
+		ByteBuffer textureBuffer = convertImageData(image1, image);
 		// initialize texture
-		glBindTexture(GL_TEXTURE_2D, textureID);
+		image.bind();
 		{
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // make it linear filtered
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, texWidth, texHeight, 0, GL_RGBA, GL11.GL_UNSIGNED_BYTE, (java.nio.ByteBuffer) null); // create the texture data
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, image.getTexWidth(), image.getTexHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, (java.nio.ByteBuffer) null); // create the texture data
 		}
-		glBindTexture(GL_TEXTURE_2D, 0);
+		image.unbind();
 		return image;
 	}
 
@@ -210,7 +214,7 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 		}
 
 		// produce a texture from the byte buffer
-		glTexImage2D(target, 0, GL_RGBA, image.getWidth(), image.getHeight(), 0, srcPixelFormat, GL_UNSIGNED_BYTE, textureBuffer);
+		glTexImage2D(target, 0, GL_RGBA, image.getTexWidth(), image.getTexHeight(), 0, srcPixelFormat, GL_UNSIGNED_BYTE, textureBuffer);
 		glBindTexture(target, 0);
 		return image;
 	}
@@ -226,9 +230,7 @@ public class LWJGLResourceFactory implements ResourceFactory, Destroyable {
 			AL10.alGenSources(source);
 
 			// could we allocate all channels?
-			if (AL10.alGetError() != AL10.AL_NO_ERROR) {
-				throw new LWJGLException("Unable to allocate " + channels + " sources");
-			}
+			if (AL10.alGetError() != AL10.AL_NO_ERROR) { throw new LWJGLException("Unable to allocate " + channels + " sources"); }
 		} catch (LWJGLException le) {
 			le.printStackTrace();
 			System.out.println("Sound disabled");

@@ -35,9 +35,9 @@ public class Screen { // JPanel Canvas
 		// setIgnoreRepaint(true);
 	}
 	
-	public Screen(Resolution resolution) {
-		this.width = resolution.getWidth();
-		this.height = resolution.getHeight();
+	public Screen(VideoMode videoMode) {
+		this.width = videoMode.getWidth();
+		this.height = videoMode.getHeight();
 		
 		// font = new AWTFont(new java.awt.Font(null, Font.PLAIN, 12));
 		font = new TrueTypeFont();
