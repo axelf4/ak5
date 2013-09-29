@@ -4,87 +4,68 @@
 package org.gamelib.network;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
-
-import org.gamelib.network.protocol.TCPClient;
-import org.gamelib.network.protocol.TCPServer;
+import java.net.InetSocketAddress;
+import java.nio.channels.CancelledKeyException;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.SocketChannel;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
- * @author Axel
+ * @author pwnedary
  */
-public class Client extends EndPointImpl implements EndPoint {
+public class Client extends Connection {
+	Selector selector;
 
-	private Socket socket;
-	Protocol protocol;
-
-	/**
-	 * 
-	 */
-	public Client() {
-		Class<? extends Protocol> preffered = getPrefferedProtocol();
-		if (preffered.equals(TCP.class)) {
-			protocol = new TCPClient();
-		}
+	public Client() throws IOException {
+		selector = Selector.open();
 	}
 
-	@Override
-	public void open(InetAddress address, short port) throws IOException {
-		/*socket = new Socket(address, port);
-		System.out.println("Client connected to server running at: " + socket.getLocalSocketAddress() + ":" + socket.getPort());
-		// (thread = new Thread(this)).start();
-		Connection connection = new TCPConnection(socket);
-		connection.setListener(listener);
-		notifyConnected(connection);*/
-		
-		protocol.open(address, port);
-	}
-
-	@Override
-	public void close() throws IOException {
-		socket.close();
-	}
-
-	/*@Override
-	public void run() {
-		ObjectOutputStream out = null;
-		ObjectInputStream in = null;
-		BufferedInputStream bin = null;
+	public void open(InetSocketAddress address) throws IOException {
 		try {
-			in = new ObjectInputStream(socket.getInputStream());
-			(out = new ObjectOutputStream(socket.getOutputStream())).flush();
-			bin = new BufferedInputStream(socket.getInputStream());
-
-			while (!socket.isClosed()) {
-				// Read operations
-				if (bin.available() > 0) {
-					Object object = in.readObject();
-					for (SocketListener listener : listeners)
-						listener.received(object);
-				}
-				// Write operations
-				{
-					Object object = null;
-					while (!buffer.isEmpty()) {
-						object = buffer.poll();
-						out.writeObject(object);
-					}
-					if (object != null) out.flush();
-				}
-				Thread.sleep(1000);
-			}
-		} catch (IOException | ClassNotFoundException
-				| InterruptedException e) {
+			System.out.println("Client connecting..");
+			selector.wakeup();
+			tcp.connect(selector, address);
+		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				out.close();
-				in.close();
-				bin.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+		}
+	}
+
+	public void update() throws IOException {
+		int select = selector.selectNow();
+		if (select != 0) {
+			Set<SelectionKey> keys = selector.selectedKeys();
+			for (Iterator<SelectionKey> iterator = keys.iterator(); iterator.hasNext();) {
+				SelectionKey selectionKey = iterator.next();
+				iterator.remove();
+				try {
+					int ops = selectionKey.readyOps();
+					if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
+						if (selectionKey.attachment() == tcp) {
+							Object object;
+							while ((object = tcp.readObject()) != null) {
+								System.out.println("Client received tcp: " + object);
+								notifyReceived(object);
+							}
+						}
+					} else if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE) tcp.writeOperation();
+					else if ((ops & SelectionKey.OP_CONNECT) == SelectionKey.OP_CONNECT) {
+						((SocketChannel) selectionKey.channel()).finishConnect();
+						selectionKey.interestOps(SelectionKey.OP_READ);
+						Object attachment = selectionKey.attachment();
+						System.out.println("Client connected to Server, attachment: " + attachment);
+						notifyConnected(this);
+					}
+				} catch (CancelledKeyException e) {} // connection is closed
 			}
 		}
-	}*/
+	}
 
+	public void close() throws IOException {
+		super.close();
+
+		selector.wakeup();
+		selector.selectNow(); // Select one last time to complete closing the socket.
+	}
 }

@@ -9,7 +9,7 @@ package org.gamelib.network;
  */
 public interface SocketListener {
 	/**
-	 * Called when the remote end has been connected. This will be invoked before any objects are received by {@link #received(Connection, Object)}. This method should not block for long periods as other network activity will not be processed until it returns.
+	 * Called when the remote end has been connected. This will be invoked before any objects are received by {@link #received(Connection2, Object)}. This method should not block for long periods as other network activity will not be processed until it returns.
 	 */
 	public void connected(Connection connection);
 
