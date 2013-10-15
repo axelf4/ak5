@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.util;
+package org.gamelib.util.slow;
 
 import java.beans.ConstructorProperties;
 
