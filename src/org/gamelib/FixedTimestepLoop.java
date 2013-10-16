@@ -23,17 +23,11 @@ public class FixedTimestepLoop implements Loop {
 	public int fps = 60;
 	private int frameCount = 0;
 
-	/**
-	 * 
-	 */
 	public FixedTimestepLoop(LoopListener listener) {
 		this.listener = listener;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Runnable#run()
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void run() {
 		// We will need the last update time.
