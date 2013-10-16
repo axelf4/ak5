@@ -4,27 +4,32 @@
 package org.gamelib.util;
 
 import java.awt.Color;
+import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.gamelib.Game;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
+import org.gamelib.util.geom.Rectangle;
 
 /**
  * @author Axel
  */
 public class TrueTypeFont implements Font {
 
-	/** Array that holds necessary information about the font characters */
-	private IntObject[] charArray = new IntObject[256];
-	/** Map of user defined font characters (Character <-> IntObject) */
-	private Map<Character, IntObject> customChars = new HashMap<>();
+	/** Array that holds necessary information about the font characters positions */
+	private Rectangle[] charArray = new Rectangle[256];
+	/** Map of user defined font characters (Character <-> Rectangle) */
+	private Map<Character, Rectangle> customChars = new HashMap<>();
 
 	/** Boolean flag on whether AntiAliasing is enabled or not */
 	private boolean antiAlias;
@@ -37,6 +42,7 @@ public class TrueTypeFont implements Font {
 
 	/** Texture used to cache the font 0-255 characters */
 	// private int fontTextureID;
+	/** Image to cache the font image */
 	public Image fontImage;
 
 	/** Default font texture width */
@@ -56,21 +62,6 @@ public class TrueTypeFont implements Font {
 	private int correctL = 9, correctR = 8;
 	int format = ALIGN_LEFT;
 
-	// TODO just use rectangles
-	private class IntObject {
-		/** Character's width */
-		public int width;
-
-		/** Character's height */
-		public int height;
-
-		/** Character's stored x position */
-		public int storedX;
-
-		/** Character's stored y position */
-		public int storedY;
-	}
-
 	public TrueTypeFont(java.awt.Font font, boolean antiAlias, char[] additionalChars, org.gamelib.util.Color fontColor) {
 		this.font = font;
 		this.fontSize = font.getSize() + 3;
@@ -88,7 +79,8 @@ public class TrueTypeFont implements Font {
 	}
 
 	public TrueTypeFont() {
-		this(new java.awt.Font(null, Font.PLAIN, 12), true);
+		// this(new java.awt.Font(null, Font.PLAIN, 15), true);
+		this(getFont(new File("org/gamelib/util/arial.ttf"), PLAIN, DEFAULT_SIZE), true);
 	}
 
 	public void setCorrection(boolean on) {
@@ -101,7 +93,7 @@ public class TrueTypeFont implements Font {
 		}
 	}
 
-	private BufferedImage getFontImage(char ch) { // private
+	private BufferedImage getFontImage(char ch) {
 		// Create a temporary image to extract the character's size
 		BufferedImage tempfontImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D) tempfontImage.getGraphics();
@@ -115,8 +107,7 @@ public class TrueTypeFont implements Font {
 		if (charheight <= 0) charheight = fontSize;
 
 		// Create another image holding the character we are creating
-		BufferedImage fontImage;
-		fontImage = new BufferedImage(charwidth, charheight, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage fontImage = new BufferedImage(charwidth, charheight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D gt = (Graphics2D) fontImage.getGraphics();
 		if (antiAlias == true) gt.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		gt.setFont(font);
@@ -134,9 +125,7 @@ public class TrueTypeFont implements Font {
 		// If there are custom chars then I expand the font texture twice
 		if (customCharsArray != null && customCharsArray.length > 0) textureWidth *= 2;
 
-		// In any case this should be done in other way. Texture with size 512x512
-		// can maintain only 256 characters with resolution of 32x32. The texture
-		// size should be calculated dynamically by looking at character sizes.
+		// In any case this should be done in other way. Texture with size 512x512 can maintain only 256 characters with resolution of 32x32. The texture size should be calculated dynamically by looking at character sizes.
 		try {
 			BufferedImage imgTemp = new BufferedImage(textureWidth, textureHeight, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g = (Graphics2D) imgTemp.getGraphics();
@@ -145,7 +134,6 @@ public class TrueTypeFont implements Font {
 			g.fillRect(0, 0, textureWidth, textureHeight);
 
 			int rowHeight = 0, positionX = 0, positionY = 0;
-
 			int customCharsLength = (customCharsArray != null) ? customCharsArray.length : 0;
 
 			for (int i = 0; i < 256 + customCharsLength; i++) {
@@ -154,7 +142,7 @@ public class TrueTypeFont implements Font {
 
 				BufferedImage fontImage = getFontImage(ch);
 
-				IntObject newIntObject = new IntObject();
+				Rectangle newIntObject = new Rectangle();
 
 				newIntObject.width = fontImage.getWidth();
 				newIntObject.height = fontImage.getHeight();
@@ -165,8 +153,8 @@ public class TrueTypeFont implements Font {
 					rowHeight = 0;
 				}
 
-				newIntObject.storedX = positionX;
-				newIntObject.storedY = positionY;
+				newIntObject.x = positionX;
+				newIntObject.y = positionY;
 
 				if (newIntObject.height > fontHeight) fontHeight = newIntObject.height;
 				if (newIntObject.height > rowHeight) rowHeight = newIntObject.height;
@@ -182,7 +170,7 @@ public class TrueTypeFont implements Font {
 				fontImage = null;
 			}
 
-			fontImage = Game.instance().getBackend().getResourceFactory().getImage(imgTemp);
+			fontImage = Game.getBackend().getResourceFactory().getImage(imgTemp);
 		} catch (Exception e) {
 			System.err.println("Failed to create font.");
 			e.printStackTrace();
@@ -195,7 +183,7 @@ public class TrueTypeFont implements Font {
 	 */
 	@Override
 	public void drawString(Graphics g, String str, int x, int y) {
-		IntObject intObject = null;
+		Rectangle intObject = null;
 		int charCurrent;
 
 		int totalwidth = 0;
@@ -221,7 +209,7 @@ public class TrueTypeFont implements Font {
 				charCurrent = str.charAt(l);
 				if (charCurrent == '\n') break;
 				if (charCurrent < 256) intObject = charArray[charCurrent];
-				else intObject = (IntObject) customChars.get(new Character((char) charCurrent));
+				else intObject = (Rectangle) customChars.get(new Character((char) charCurrent));
 				totalwidth += intObject.width - correctL;
 			}
 			totalwidth /= -2;
@@ -239,7 +227,7 @@ public class TrueTypeFont implements Font {
 			if (charCurrent < 256) {
 				intObject = charArray[charCurrent];
 			} else {
-				intObject = (IntObject) customChars.get(Character.valueOf((char) charCurrent));
+				intObject = (Rectangle) customChars.get(Character.valueOf((char) charCurrent));
 			}
 
 			if (intObject != null) {
@@ -251,30 +239,20 @@ public class TrueTypeFont implements Font {
 						for (int l = i + 1; l <= endIndex; l++) {
 							charCurrent = str.charAt(l);
 							if (charCurrent == '\n') break;
-							if (charCurrent < 256) {
-								intObject = charArray[charCurrent];
-							} else {
-								intObject = (IntObject) customChars.get(new Character((char) charCurrent));
-							}
+							if (charCurrent < 256) intObject = charArray[charCurrent];
+							else intObject = (Rectangle) customChars.get(new Character((char) charCurrent));
 							totalwidth += intObject.width - correctL;
 						}
 						totalwidth /= -2;
 					}
 					// if center get next lines total width/2;
 				} else {
-					// g.drawImage(fontImage, (int) (totalwidth * scaleX + x), (int) (startY * scaleY + y), (int) ((totalwidth + intObject.width) * scaleX + x), (int) ((startY + intObject.height) * scaleY + y), intObject.storedX, intObject.storedY, intObject.storedX + intObject.width, intObject.storedY + intObject.height);
-					g.drawImage(fontImage, (int) (totalwidth * scaleX + x), (int) (startY * scaleY + y), (int) ((totalwidth + intObject.width) * scaleX + x), (int) ((startY + intObject.height) * scaleY + y), intObject.storedX, intObject.storedY, intObject.storedX + intObject.width, intObject.storedY + intObject.height);
+					g.drawImage(fontImage, (int) (totalwidth * scaleX + x), (int) (startY * scaleY + y), (int) ((totalwidth + intObject.width) * scaleX + x), (int) ((startY + intObject.height) * scaleY + y), intObject.x, intObject.y, intObject.x + intObject.width, intObject.y + intObject.height);
 					if (d > 0) totalwidth += (intObject.width - c) * d;
-					// System.out.println("new letter");
-					// System.out.println("x: " + (int) (totalwidth * scaleX + x));
-					// System.out.println("y: " +(int) (startY * scaleY + y));
-					// System.out.println("width: "+(int) ((totalwidth + intObject.width) * scaleX + x));
-					// System.out.println("height: " + (int) ((startY + intObject.height) * scaleY + y));
 				}
 				i += d;
 			}
 		}
-		// System.exit(0);
 	}
 
 	/*
@@ -284,12 +262,12 @@ public class TrueTypeFont implements Font {
 	@Override
 	public int getWidth(String str) {
 		int totalwidth = 0;
-		IntObject intObject = null;
+		Rectangle intObject = null;
 		int currentChar = 0;
 		for (int i = 0; i < str.length(); i++) {
 			currentChar = str.charAt(i);
 			if (currentChar < 256) intObject = charArray[currentChar];
-			else intObject = (IntObject) customChars.get(new Character((char) currentChar));
+			else intObject = (Rectangle) customChars.get(new Character((char) currentChar));
 
 			if (intObject != null) totalwidth += intObject.width;
 		}
@@ -318,6 +296,18 @@ public class TrueTypeFont implements Font {
 
 	public static byte[] intToByteArray(int value) {
 		return new byte[] { (byte) (value >>> 24), (byte) (value >>> 16), (byte) (value >>> 8), (byte) value };
+	}
+
+	public static java.awt.Font getFont(File file, int style, int size) {
+		try {
+			InputStream stream = Game.getBackend().getResourceFactory().getResourceAsStream(file.getPath());
+			java.awt.Font font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, stream).deriveFont(style, size);
+			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
+			return font;
+		} catch (FontFormatException | IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

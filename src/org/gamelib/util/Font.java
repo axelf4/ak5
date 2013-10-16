@@ -19,6 +19,9 @@ public interface Font {
 	/** The underline style constant. */
 	public static final int UNDERLINE = 3;
 
+	/** The size to use if not specified. */
+	public static final int DEFAULT_SIZE = 15;
+
 	public static final int ALIGN_LEFT = 0;
 	public static final int ALIGN_RIGHT = 1;
 	public static final int ALIGN_CENTER = 2;
