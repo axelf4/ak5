@@ -90,7 +90,7 @@ public abstract class Input {
 	public abstract void poll();
 
 	/** Moves the mouse to the given coordinates, (<code>x</code>,<code>y</code>). */
-	public abstract void mouseMove(int x, int y); // simulateMouse
+	public abstract void mouseMove(int x, int y);
 
 	/** Hides and holds the mouse at it's position. */
 	public abstract void setGrabbed(boolean grabbed);
@@ -98,7 +98,7 @@ public abstract class Input {
 	protected void keyEvent(int id, int keycode) {
 		keycode = translateKeyCode(keycode);
 		pressed[keycode] = id == KEY_PRESSED;
-		if (keycode == Key.KEY_ESCAPE) Game.instance().getBackend().stop(); // debugging
+		if (keycode == Key.KEY_ESCAPE) Game.getBackend().stop(); // debugging
 		Registry.instance().dispatch(new Event.Key(this, id, keycode));
 	}
 

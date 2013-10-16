@@ -33,6 +33,8 @@ public interface Handler {
 	public static abstract class Event {
 		protected static final boolean DEFAULT_CANCELABLE = true;
 		public boolean cancelled;
+		/** Optionally the cause of this event */
+		public Object source;
 
 		/** Stops the next handlers from receiving this event. */
 		public void cancel() {

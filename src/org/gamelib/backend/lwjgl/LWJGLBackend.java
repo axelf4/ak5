@@ -61,7 +61,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		GL11.glDepthFunc(GL11.GL_LEQUAL);
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void start(Game game) {
@@ -91,10 +91,10 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 				}
 			} else targetDisplayMode = new DisplayMode(videoMode.getWidth(), videoMode.getHeight());
 
+			// Display.setDisplayMode(new DisplayMode(800, 600));
 			Display.setDisplayMode(targetDisplayMode);
 			Display.setFullscreen(videoMode.fullscreen());
-			// Display.setDisplayMode(new DisplayMode(800, 600));
-			// Display.setVSyncEnabled(true);
+			Display.setVSyncEnabled(videoMode.vsync);
 			Display.create();
 
 			super.start(game);
@@ -103,28 +103,19 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#getGraphics()
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public Graphics getGraphics() {
 		return graphics == null ? graphics = new LWJGLGraphics() : graphics;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#getInput()
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public Input getInput() {
 		return input == null ? input = new LWJGLInput() : input;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#screenUpdate()
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void draw(Drawable callback, float delta) {
 		Graphics g = getGraphics();
@@ -142,37 +133,25 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		return new org.lwjgl.opengl.DisplayMode(mode.getWidth(), mode.getHeight());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#getTime()
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public long getTime() {
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#shouldClose()
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean shouldClose() {
 		return Display.isCloseRequested() || super.shouldClose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#setTitle(java.lang.String)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void setTitle(String s) {
 		Display.setTitle(s);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#getGraphics(org.gamelib.graphics.Image)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public Graphics getGraphics(Image image) {
 		if (GLContext.getCapabilities().GL_EXT_framebuffer_object) return new FBOGraphics((LWJGLImage) image);
@@ -180,25 +159,20 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		else throw new Error("Your OpenGL card doesn't support offscreen buffers.");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backend.Backend#getResourceFactory()
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public ResourceFactory getResourceFactory() {
 		return resourceFactory == null ? resourceFactory = new LWJGLResourceFactory() : resourceFactory;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Destroyable#destroy()
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void destroy() {
 		Display.destroy();
 		if (resourceFactory != null) resourceFactory.destroy();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Rectangle getSize() {
 		return new Rectangle(Display.getX(), Display.getY(), Display.getWidth(), Display.getHeight());

@@ -6,7 +6,7 @@ package org.gamelib;
 import java.beans.ConstructorProperties;
 
 /**
- * The dimensions of the screen and wether fullscreen or not.
+ * The dimensions of the screen and whether fullscreen or not.
  * @author pwnedary
  */
 public class VideoMode {
@@ -14,17 +14,15 @@ public class VideoMode {
 	public static final VideoMode WINDOW_800X600 = new VideoMode(800, 600, false);
 	public static final VideoMode FULLSCREEN_1366X768 = new VideoMode(1366, 768, true);
 
-	/** The width of the screen. */
+	/** The width of the screen */
 	final int width;
-	/** The height of the screen. */
+	/** The height of the screen */
 	final int height;
-
-	/** Whether fullscreen. */
+	/** Whether fullscreen */
 	final boolean fullscreen;
+	/** Whether to use vsync */
+	public boolean vsync = false;
 
-	/**
-	 * 
-	 */
 	@ConstructorProperties({ "width", "height", "fullscreen" })
 	public VideoMode(int width, int height, boolean fullscreen) {
 		this.width = width;
