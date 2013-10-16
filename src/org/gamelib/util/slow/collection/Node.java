@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.util;
+package org.gamelib.util.slow.collection;
 
 import java.util.ArrayList;
 import java.util.List;
