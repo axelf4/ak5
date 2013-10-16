@@ -4,11 +4,10 @@
 package org.gamelib;
 
 /**
- * An object with coordinates in a 2d space.
+ * An object with coordinates and movement in a 2d space.
  * @author pwnedary
  */
 public interface Entity extends Updateable, Drawable {
-
 	/** @return the x-axis coordinate. */
 	public float getX();
 
@@ -44,4 +43,81 @@ public interface Entity extends Updateable, Drawable {
 
 	/** @param the new speed traveling the y-axis coordinate. */
 	public void setDY(float vspeed);
+
+	/** An implementation for Entity with overriden getters and setters. */
+	public static abstract class EntityImpl implements Entity {
+		protected float x, y, lastX, lastY, dx, dy;
+
+		/** {@inheritDoc} */
+		@Override
+		public float getX() {
+			return x;
+		}
+
+		/** {@inheritDoc} */
+		@Override
+		public void setX(float x) {
+			this.x = x;
+		}
+
+		/** {@inheritDoc} */
+		@Override
+		public float getY() {
+			return y;
+		}
+
+		/** {@inheritDoc} */
+		@Override
+		public void setY(float y) {
+			this.y = y;
+		}
+
+		/** {@inheritDoc} */
+		@Override
+		public float getLastX() {
+			return lastX;
+		}
+
+		/** {@inheritDoc} */
+		@Override
+		public void setLastX(float lastX) {
+			this.lastX = lastX;
+		}
+
+		/** {@inheritDoc} */
+		@Override
+		public float getLastY() {
+			return lastY;
+		}
+
+		/** {@inheritDoc} */
+		@Override
+		public void setLastY(float lastY) {
+			this.lastY = lastY;
+		}
+
+		/** {@inheritDoc} */
+		@Override
+		public float getDX() {
+			return dx;
+		}
+
+		/** {@inheritDoc} */
+		@Override
+		public void setDX(float hspeed) {
+			this.dx = hspeed;
+		}
+
+		/** {@inheritDoc} */
+		@Override
+		public float getDY() {
+			return dy;
+		}
+
+		/** {@inheritDoc} */
+		@Override
+		public void setDY(float vspeed) {
+			this.dy = vspeed;
+		}
+	}
 }
