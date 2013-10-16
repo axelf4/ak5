@@ -4,7 +4,7 @@
 package org.gamelib;
 
 /**
- * {@link Runnable} that runs smoothly.
+ * A {@link Runnable} that runs smoothly and takes care of drawing between updates.
  * @author pwnedary
  */
 public interface Loop extends Runnable {
@@ -14,16 +14,21 @@ public interface Loop extends Runnable {
 	/** @param listener the {@link LoopListener} to use */
 	public void setLoopListener(LoopListener listener);
 
-	/** TODO comment */
+	/** The listener to be notified at start and stop, when to update or draw and when to stop. */
 	public interface LoopListener {
+		/** The loop started. */
 		public void start();
 
+		/** The loop stopped. */
 		public void stop();
 
+		/** The game should update it's logic. */
 		public void tick(float delta);
 
+		/** The game should draw onto the canvas. */
 		public void draw(float delta);
 
+		/** @return whether to stop */
 		public boolean shouldStop();
 	}
 

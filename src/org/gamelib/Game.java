@@ -15,21 +15,26 @@ import org.gamelib.util.Instance.CreationalPattern;
 import com.sun.istack.internal.NotNull;
 
 /**
- * TODO: rename to Game2 TODO: add BasicGame impl
+ * An abstraction of a Game which handles the Backend and the Thread.
  * @author pwnedary
  */
 public abstract class Game {
+	/** The instance of the running game */
 	@Instance(type = Game.class, pattern = CreationalPattern.SINGLETON)
 	static Game instance;
+	/** The {@link Backend} handling the technical stuff */
 	protected Backend backend;
+	/** The {@link Thread} running in the background */
 	Thread thread;
 
+	/** An instance of {@link Input} derived by the {@link Backend} */
 	protected Input input;
-	
+
 	protected Game() {
 		instance = instance == null ? this : instance;
 	}
 
+	/** Starts the game by starting the {@link Thread} and {@link Backend}. Calls {@link #initialize()}. */
 	protected void start(@NotNull Backend backend) {
 		this.backend = backend;
 		this.input = backend.getInput();
@@ -38,15 +43,18 @@ public abstract class Game {
 		(thread = new Thread(getLoop(), this.toString())).start();
 	}
 
+	/** Called after the engine is setup. */
 	public abstract void initialize();
 
-	/** {@inheritDoc} */
+	/** Used as the default window title and thread name. */
 	@NotNull
 	@Override
 	public abstract String toString();
 
+	/** @return the {@link VideoMode} to use */
 	public abstract VideoMode getResolution();
 
+	/** @return the {@link Loop} to use */
 	public Loop getLoop() {
 		return new FixedTimestepLoop(new DefaultLoopListener());
 	}
@@ -56,6 +64,7 @@ public abstract class Game {
 		@Override
 		public void start() {
 			backend.start(Game.this);
+			initialize(); // initialize game lastly
 		}
 
 		/** {@inheritDoc} */
@@ -76,7 +85,7 @@ public abstract class Game {
 		/** {@inheritDoc} */
 		@Override
 		public void draw(float delta) {
-			backend.screenUpdate(new Drawable() {
+			backend.draw(new Drawable() {
 				@Override
 				public void draw(Graphics g, float delta) {
 					Registry.instance().dispatch(new Event.Draw(g, delta));
@@ -90,13 +99,15 @@ public abstract class Game {
 			return backend.shouldClose();
 		}
 	}
-	
+
+	/** @return the instance of the running game */
 	public static final Game instance() {
 		return instance;
 	}
 
-	public Backend getBackend() {
-		return backend;
+	/** @return the instance of the running game's {@link Backend} */
+	public static Backend getBackend() {
+		return instance().backend;
 	}
 
 }

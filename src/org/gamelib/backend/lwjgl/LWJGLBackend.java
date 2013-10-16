@@ -38,8 +38,8 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	static void init2d(int width, int height) {
 		glMatrixMode(GL_PROJECTION); // resets any previous projection matrices
 		glLoadIdentity();
-		// glOrtho(0, width, height, 0, 1, -1); // 0,0 : top-left
-		glOrtho(0, width, 0, height, 1, -1); // 0,0 : bottom-left
+		glOrtho(0, width, height, 0, 1, -1); // 0,0 : top-left
+		// glOrtho(0, width, 0, height, 1, -1); // 0,0 : bottom-left
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glDisable(GL_DEPTH_TEST);
@@ -126,7 +126,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	 * @see org.gamelib.backends.Backend#screenUpdate()
 	 */
 	@Override
-	public void screenUpdate(Drawable callback, float delta) {
+	public void draw(Drawable callback, float delta) {
 		Graphics g = getGraphics();
 		g.setColor(Color.WHITE);
 		g.clear();

@@ -5,6 +5,8 @@ package org.gamelib.util;
 
 import static java.lang.Math.*;
 
+import org.gamelib.util.slow.Range;
+
 /**
  * rename to MathUtils or Math2
  * @author pwnedary

@@ -4,16 +4,19 @@
 package org.gamelib.backend;
 
 /**
- * TODO textures need to be p^2
- * 
+ * An generic image, which can be drawed by {@link Graphics#drawImage(Image, int, int, int, int, int, int, int, int)}.
  * @author pwnedary
  */
 public interface Image {
+	/** @return the width of the image */
 	public int getWidth();
 
+	/** Sets the width of the image. */
 	public void setWidth(int width);
 
+	/** @return the height of the image */
 	public int getHeight();
 
+	/** Sets the height of the image. */
 	public void setHeight(int height);
 }

@@ -3,10 +3,9 @@
  */
 package org.gamelib.ui;
 
-import org.gamelib.Createable;
+import org.gamelib.Group;
 import org.gamelib.Handler;
 import org.gamelib.Registry;
-import org.gamelib.Group;
 import org.gamelib.util.geom.Rectangle;
 
 /**

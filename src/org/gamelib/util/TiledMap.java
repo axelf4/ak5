@@ -18,7 +18,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.gamelib.Game;
 import org.gamelib.backend.Graphics;
-import org.gamelib.resource.FileLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

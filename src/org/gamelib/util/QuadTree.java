@@ -7,8 +7,9 @@ import org.gamelib.util.geom.Rectangle;
 
 /**
  * @author pwnedary
- * 
+ * @deprecated
  */
+@Deprecated
 public class QuadTree<E> {
 
 	private Object[] elements;

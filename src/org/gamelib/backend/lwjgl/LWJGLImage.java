@@ -7,6 +7,7 @@ import org.gamelib.backend.Image;
 import org.lwjgl.opengl.GL11;
 
 /**
+ * Textures are automatically made p^2 for speed and compatibility.
  * @author pwnedary
  */
 public class LWJGLImage implements Image {

@@ -23,7 +23,7 @@ import org.gamelib.backend.ResourceFactory;
 import org.gamelib.util.geom.Rectangle;
 
 /**
- * change to AWTBackend
+ * The {@link Backend} using Java2D for rendering and resources.
  * @author pwnedary
  */
 public class Java2DBackend extends BackendImpl implements Backend {
@@ -34,9 +34,6 @@ public class Java2DBackend extends BackendImpl implements Backend {
 
 	private Java2DGraphics graphics;
 
-	/**
-	 * 
-	 */
 	public Java2DBackend(Container container) {
 		(this.container = container).add(panel = new Java2DPanel());
 	}
@@ -45,30 +42,19 @@ public class Java2DBackend extends BackendImpl implements Backend {
 		GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		frame.setUndecorated(fullscreen);
 		frame.setResizable(!fullscreen);
-		if (fullscreen) {
-			// Determine if full-screen mode is supported directly
-			/*
-			 * if (graphicsDevice.isFullScreenSupported()) { // Full-screen mode is supported } else { // Full-screen mode will be simulated }
-			 */
-			try {
-				// Enter full-screen mode
-				// gs.setFullScreenWindow(win);
-				graphicsDevice.setFullScreenWindow(frame);
-				frame.validate();
-			} finally {
-				// Exit full-screen mode
-				// graphicsDevice.setFullScreenWindow(null);
-			}
-		} else {
+		if (fullscreen) try {
+			graphicsDevice.setFullScreenWindow(frame); // Enter full-screen mode
+			frame.validate();
+		} finally {
+			// graphicsDevice.setFullScreenWindow(null); // Exit full-screen mode
+		}
+		else {
 			graphicsDevice.setFullScreenWindow(null);
 			frame.setVisible(true);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#getGraphics()
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public Graphics getGraphics() {
 		return graphics == null && true ? graphics = new Java2DGraphics(panel.g2d, panel.getWidth(), panel.getHeight()) : graphics;
@@ -78,66 +64,45 @@ public class Java2DBackend extends BackendImpl implements Backend {
 		return new Java2DInput(panel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#screenUpdate()
-	 */
+	/** {@inheritDoc} */
 	@Override
-	public void screenUpdate(Drawable callback, float delta) {
+	public void draw(Drawable callback, float delta) {
 		panel.delta = delta;
 		panel.callback = callback;
 		panel.repaint();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#getTime()
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public long getTime() {
 		return System.nanoTime() / 1000000;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#shouldClose()
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean shouldClose() {
 		return false || super.shouldClose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#setTitle(java.lang.String)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void setTitle(String s) {
 		if (container instanceof JFrame) ((JFrame) container).setTitle(s);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backends.Backend#getGraphics(org.gamelib.graphics.Image)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public Graphics getGraphics(Image img) {
 		return new Java2DGraphics(((Java2DImage) img).bufferedImage.getGraphics(), img.getWidth(), img.getHeight());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backend.Backend#getResourceFactory()
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public ResourceFactory getResourceFactory() {
 		return resourceFactory == null ? resourceFactory = new Java2DResourceFactory(panel) : resourceFactory;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Destroyable#destroy()
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void destroy() {}
 
@@ -155,9 +120,9 @@ public class Java2DBackend extends BackendImpl implements Backend {
 			setFullscreen((JFrame) container, videoMode.fullscreen());
 			if (!videoMode.fullscreen()) container.setSize(new Dimension(videoMode.getWidth(), videoMode.getHeight()));
 		} else if (container instanceof JApplet) ((JApplet) container).resize(new Dimension(videoMode.getWidth(), videoMode.getHeight()));
-		
-		super.start(game); // let BackendImpl init Game
-		
+
+		super.start(game); // let BackendImpl initialize Game
+
 		try {
 			((Java2DResourceFactory) getResourceFactory()).tracker.waitForAll(); // wait for loading files
 		} catch (InterruptedException e) {

@@ -10,24 +10,27 @@ import org.gamelib.Input;
 import org.gamelib.util.geom.Rectangle;
 
 /**
- * The class responsible for collecting input and processing it.
+ * The class responsible for the technical stuff, such as collecting input and processing it.
  * @author pwnedary
  */
 public interface Backend extends Destroyable {
+	/** Starts every aspect of this {@link Backend}. */
 	void start(Game game);
 
+	/** Stops every used resource. */
 	void stop();
 
-	void screenUpdate(Drawable callback, float delta);
+	/** Prepares a draw to the canvas, with <code>callback</code> and completes it. */
+	void draw(Drawable callback, float delta);
 
 	/** @return system time in milliseconds */
 	long getTime();
 
-	/** temporary name */
+	/** @return whether the user has clicked the 'X' */
 	boolean shouldClose();
 
-	/** @param s the new window title */
-	void setTitle(String s);
+	/** @param title the new window title */
+	void setTitle(String title);
 
 	/** @return the size of the canvas drawn on. */
 	Rectangle getSize();
