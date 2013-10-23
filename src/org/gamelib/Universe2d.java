@@ -5,11 +5,14 @@ package org.gamelib;
 
 import java.util.List;
 
+import org.gamelib.Entity.EntitySystem;
 import org.gamelib.backend.Graphics;
 
 /**
  * @author Axel
+ * @deprecated use {@link EntitySystem}
  */
+@Deprecated
 public class Universe2d implements Handler {
 
 	static final int INITIAL_SIZE = 10000;

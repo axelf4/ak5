@@ -3,6 +3,11 @@
  */
 package org.gamelib;
 
+import java.util.List;
+
+import org.gamelib.Handler.Event;
+import org.gamelib.backend.Graphics;
+
 /**
  * An object with coordinates and movement in a 2d space.
  * @author pwnedary
@@ -119,5 +124,110 @@ public interface Entity extends Updateable, Drawable {
 		public void setDY(float vspeed) {
 			this.dy = vspeed;
 		}
+	}
+
+	/** System for collecting and updating entities. */
+	public static class EntitySystem implements Handler {
+
+		/** Default size */
+		static final int INITIAL_SIZE = 10000;
+
+		/** Array of entities */
+		final Entity[] entities;
+		/** Number of active entities */
+		int living;
+
+		public EntitySystem(int size) {
+			entities = new Entity[size];
+		}
+
+		public EntitySystem() {
+			this(INITIAL_SIZE);
+			Registry.instance().register(this);
+		}
+
+		public EntitySystem(Group group, int size) {
+			this(size);
+			group.register(this);
+		}
+
+		/**
+		 * Notifies the entity about updates and draws.
+		 * @return the entity id
+		 */
+		public int spawn(Entity entity) {
+			entities[living++] = entity;
+			return living - 1;
+		}
+
+		/** Stops notifying the entity. */
+		public void kill(Entity entity) {
+			for (int i = 0; i < living; i++)
+				if (entities[i].equals(entity)) kill(i);
+		}
+
+		/** Stops notifying the entity with id <code>id</code>. */
+		public void kill(int id) {
+			if (living <= 0) return;
+			entities[id] = entities[--living];
+		}
+
+		/** Stops notifying all entities. */
+		public void clear() {
+			this.living = 0;
+		}
+
+		/** @return the array of entities, values CAN be null */
+		public Entity[] getEntities() {
+			// return Arrays.copyOf(entities, living);
+			return entities;
+		}
+
+		/**
+		 * Amount of actual used identifiers in {@link #getEntities()}.
+		 * @return amount of living entities
+		 */
+		public int getLiving() {
+			return living;
+		}
+
+		/** @return the next entity's id */
+		@Deprecated
+		public int getNextEntityId() {
+			return living;
+		}
+
+		/** {@inheritDoc} */
+		@Override
+		public void handle(Event event) {
+			if (event instanceof Event.Tick) {
+				float delta = ((Event.Tick) event).delta;
+				for (int i = 0; i < living; i++) {
+					Entity entity = entities[i];
+					entity.setLastX(entity.getX());
+					entity.setLastY(entity.getY());
+
+					// entity.setX(entity.getX() + entity.getHSpeed());
+					// entity.setY(entity.getY() + entity.getVSpeed());
+
+					entity.update(delta);
+				}
+			} else if (event instanceof Event.Draw) {
+				Graphics g = ((Event.Draw) event).graphics;
+				float delta = ((Event.Draw) event).delta;
+				for (int i = 0; i < living; i++) {
+					Entity entity = entities[i];
+					entity.draw(g, delta);
+				}
+			}
+		}
+
+		/** {@inheritDoc} */
+		@Override
+		public void handlers(List<Class<? extends Event>> list) {
+			list.add(Event.Tick.class);
+			list.add(Event.Draw.class);
+		}
+
 	}
 }
