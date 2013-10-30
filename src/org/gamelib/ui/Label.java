@@ -3,45 +3,69 @@
  */
 package org.gamelib.ui;
 
-import java.awt.Graphics2D;
 import java.util.List;
 
-import org.gamelib.Group;
-import org.gamelib.Handler.Event;
+import org.gamelib.backend.Graphics;
+import org.gamelib.util.Font;
+import org.gamelib.util.geom.Rectangle;
 
 /**
  * @author pwnedary
- *
  */
-public class Label extends Component {
-	
-	private String s;
+public class Label extends Widget {
 
-	/**
-	 * @param group
-	 */
-	public Label(Group group, String s) {
-		super(group);
-		this.s = s;
+	private String text;
+	private final Rectangle bounds = new Rectangle();
+	private LabelStyle style;
+
+	public Label(String text, LabelStyle style) {
+		this.text = text;
+		this.style = style;
 	}
 
-	/* (non-Javadoc)
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text == null ? "" : text;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.Handler#handle(org.gamelib.Handler.Event)
 	 */
 	@Override
 	public void handle(Event event) {
 		if (event instanceof Event.Draw) {
-			Graphics2D g2d = ((Event.Draw) event).graphics2d;
-			g2d.drawString(s, rectangle.x, rectangle.y);
+			validate();
+			Graphics g = ((Event.Draw) event).graphics;
+			style.font.drawString(g, text, bounds.getX(), bounds.getY());
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.Handler#handlers(java.util.List)
 	 */
 	@Override
 	public void handlers(List<Class<? extends Event>> list) {
 		list.add(Event.Draw.class);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	protected void layout() {
+		bounds.setWidth(style.font.getWidth(text));
+		bounds.setHeight(style.font.getHeight());
+	}
+
+	public static class LabelStyle implements Style {
+		public Font font;
+
+		public LabelStyle(Font font) {
+			this.font = font;
+		}
 	}
 
 }

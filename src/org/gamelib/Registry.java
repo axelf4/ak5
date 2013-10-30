@@ -16,6 +16,7 @@ import org.gamelib.Handler.Event;
 /**
  * The registry holding all of the handlers. An handler should be registered
  * with {@link #register(Object)}.
+ * TODO make handle return boolean, and unregister from event if return false;
  * 
  * @author Axel
  * @since 0.0.1
