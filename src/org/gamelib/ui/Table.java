@@ -3,7 +3,6 @@
  */
 package org.gamelib.ui;
 
-import java.util.List;
 
 /**
  * @author pwnedary
@@ -20,16 +19,9 @@ public class Table extends Widget {
 
 	/** {@inheritDoc} */
 	@Override
-	public void handle(Event event) {
+	public boolean handle(Event event) {
 		// TODO Auto-generated method stub
-
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void handlers(List<Class<? extends Event>> list) {
-		// TODO Auto-generated method stub
-
+		return false;
 	}
 
 	/** {@inheritDoc} */

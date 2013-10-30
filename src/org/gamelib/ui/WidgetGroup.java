@@ -3,11 +3,8 @@
  */
 package org.gamelib.ui;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author pwnedary
@@ -23,24 +20,14 @@ public abstract class WidgetGroup extends Widget {
 
 	/** {@inheritDoc} */
 	@Override
-	public void handle(Event event) {
+	public boolean handle(Event event) {
+		boolean value = false;
 		for (Iterator<Widget> iterator = children.iterator(); iterator.hasNext();) {
 			Widget widget = iterator.next();
 			widget.handle(event);
+			value = true;
 		}
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void handlers(List<Class<? extends Event>> list) {
-		Set<Class<? extends Event>> set = new HashSet<>();
-		for (Iterator<Widget> iterator = children.iterator(); iterator.hasNext();) {
-			Widget widget = (Widget) iterator.next();
-			List<Class<? extends Event>> list2 = new LinkedList<>();
-			widget.handlers(list2);
-			set.addAll(list2);
-		}
-		list.addAll(set);
+		return value;
 	}
 
 	/** {@inheritDoc} */

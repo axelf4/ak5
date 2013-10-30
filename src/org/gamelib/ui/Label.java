@@ -3,8 +3,6 @@
  */
 package org.gamelib.ui;
 
-import java.util.List;
-
 import org.gamelib.backend.Graphics;
 import org.gamelib.util.Font;
 import org.gamelib.util.geom.Rectangle;
@@ -36,21 +34,13 @@ public class Label extends Widget {
 	 * @see org.gamelib.Handler#handle(org.gamelib.Handler.Event)
 	 */
 	@Override
-	public void handle(Event event) {
+	public boolean handle(Event event) {
 		if (event instanceof Event.Draw) {
 			validate();
 			Graphics g = ((Event.Draw) event).graphics;
 			style.font.drawString(g, text, bounds.getX(), bounds.getY());
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Handler#handlers(java.util.List)
-	 */
-	@Override
-	public void handlers(List<Class<? extends Event>> list) {
-		list.add(Event.Draw.class);
+		} else return false;
+		return true;
 	}
 
 	/** {@inheritDoc} */
