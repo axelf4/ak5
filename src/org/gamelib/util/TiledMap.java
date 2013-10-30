@@ -26,7 +26,6 @@ import org.xml.sax.SAXException;
 
 /**
  * A map intended to parse TileED maps. Maps can be loaded with {@link FileLoader#load(String)}.
- * 
  * @see TileED TileED map editor <a href="http://mapeditor.org/">http://mapeditor.org/</a>
  * @author pwnedary
  */
@@ -43,23 +42,115 @@ public class TiledMap implements Map {
 	/** The height of the map */
 	private int height;
 	/** The width of the tiles used on the map */
-	public final int tileWidth;
+	private final int tileWidth;
 	/** The height of the tiles used on the map */
-	public final int tileHeight;
+	private final int tileHeight;
 	/** The orientation of this map */
-	private final int orientation;
+	public final int orientation;
 
 	/** the properties of the map */
 	public final Properties properties;
 
 	/** The list of tilesets defined in the map */
-	private final List<TileSet> tileSets = new ArrayList<TileSet>();
+	private final List<TileSet> tileSets;
 	/** The list of layers defined in the map */
-	public final List<Layer> layers = new ArrayList<Layer>();
+	public final List<Layer> layers;
 	/** The list of object-groups defined in the map */
-	public final List<ObjectGroup> objectGroups = new ArrayList<ObjectGroup>();
+	public final List<ObjectGroup> objectGroups;
 
-	public TiledMap(int tileWidth, int tileHeight, List<TileSet> tileSets, List<Layer> layers, List<ObjectGroup> objectGroups, int orientation, Properties properties) {
+	public TiledMap(File file) {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setValidating(false);
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc = builder.parse(Game.getBackend().getResourceFactory().getResourceAsStream(file.getPath()));
+			Element root = doc.getDocumentElement();
+
+			width = Integer.parseInt(root.getAttribute("width"));
+			height = Integer.parseInt(root.getAttribute("height"));
+			tileWidth = Integer.parseInt(root.getAttribute("tilewidth"));
+			tileHeight = Integer.parseInt(root.getAttribute("tileheight"));
+			orientation = root.getAttribute("orientation").equals("orthogonal") ? TiledMap.ORTHOGONAL : TiledMap.ISOMETRIC;
+			String mapLocation = file.getParent();
+
+			// now read the map properties
+			properties = new Properties();
+			Element propsElement = (Element) root.getElementsByTagName("properties").item(0);
+			if (propsElement != null) {
+				NodeList props = propsElement.getElementsByTagName("property");
+				if (props != null) for (int p = 0; p < props.getLength(); p++) {
+					Element propElement = (Element) props.item(p);
+
+					String name = propElement.getAttribute("name");
+					String value = propElement.getAttribute("value");
+					properties.setProperty(name, value);
+				}
+			}
+
+			// acquire tile-sets
+			tileSets = new ArrayList<TileSet>();
+			TileSet lastSet = null;
+			NodeList setNodes = root.getElementsByTagName("tileset");
+			for (int i = 0; i < setNodes.getLength(); i++) {
+				Element element = (Element) setNodes.item(i);
+				TileSet tileSet = new TileSet(element, mapLocation);
+				tileSet.index = i;
+				if (lastSet != null) lastSet.lastGID = tileSet.firstGID - 1;
+				lastSet = tileSet;
+				tileSets.add(tileSet);
+			}
+
+			// acquire layers
+			layers = new ArrayList<Layer>();
+			NodeList layerNodes = root.getElementsByTagName("layer");
+			for (int i = 0; i < layerNodes.getLength(); i++) {
+				Element element = (Element) layerNodes.item(i);
+				Layer layer = new TiledMap.Layer(element);
+				layer.index = i;
+				Element dataNode = (Element) element.getElementsByTagName("data").item(0);
+
+				String encoding = dataNode.getAttribute("encoding");
+				String compression = dataNode.getAttribute("compression");
+				if (encoding.equals("base64") && compression.equals("gzip")) {
+					try {
+						Node cdata = dataNode.getFirstChild();
+						char[] enc = cdata.getNodeValue().trim().toCharArray();
+						byte[] dec = decodeBase64(enc);
+						GZIPInputStream is = new GZIPInputStream(new ByteArrayInputStream(dec));
+
+						for (int y = 0; y < height; y++) {
+							for (int x = 0; x < width; x++) {
+								int tileId = 0;
+								tileId |= is.read();
+								tileId |= is.read() << 8;
+								tileId |= is.read() << 16;
+								tileId |= is.read() << 24;
+
+								layer.data[x][y] = tileId;
+							}
+						}
+					} catch (IOException e) {
+						throw new RuntimeException("Unable to decode base 64 block");
+					}
+				} else throw new RuntimeException("unsupport tiled map type: " + encoding + "," + compression + " (only gzip base64 supported)");
+				layers.add(layer);
+			}
+
+			// acquire object-groups
+			objectGroups = new ArrayList<ObjectGroup>();
+			NodeList objectGroupNodes = root.getElementsByTagName("objectgroup");
+			for (int i = 0; i < objectGroupNodes.getLength(); i++) {
+				ObjectGroup objectGroup = new TiledMap.ObjectGroup((Element) objectGroupNodes.item(i));
+				objectGroup.index = i;
+
+				objectGroups.add(objectGroup);
+			}
+		} catch (IOException | ParserConfigurationException | SAXException e) {
+			throw new Error("couldn't parse map");
+		}
+	}
+
+	private TiledMap(int tileWidth, int tileHeight, List<TileSet> tileSets, List<Layer> layers, List<ObjectGroup> objectGroups, int orientation, Properties properties) {
 		for (Layer layer : layers) {
 			int[][] data = layer.data;
 			width = data.length > width ? data.length : width;
@@ -67,13 +158,24 @@ public class TiledMap implements Map {
 		}
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
-		this.tileSets.addAll(tileSets);
-		this.layers.addAll(layers);
-		this.objectGroups.addAll(objectGroups);
+		(this.tileSets = new ArrayList<>()).addAll(tileSets);
+		(this.layers = new ArrayList<>()).addAll(layers);
+		(this.objectGroups = new ArrayList<>()).addAll(objectGroups);
 		this.orientation = orientation;
 		this.properties = properties;
 	}
-	
+
+	/** {@inheritDoc} */
+	@Override
+	public void draw(Graphics g, int x, int y, int tile) {
+		for (int tileSet = 0; tileSet < tileSets.size(); tileSet++) {
+			TileSet set = tileSets.get(tileSet);
+			if (tile >= set.firstGID && tile <= set.lastGID) {
+				set.draw(g, tile, x, y);
+			}
+		}
+	}
+
 	@Override
 	public void draw(Graphics g, int rx, int ry, int rw, int rh) {
 		for (int tileSet = 0; tileSet < tileSets.size(); tileSet++) {
@@ -98,26 +200,24 @@ public class TiledMap implements Map {
 	}
 
 	@Override
-	public int getTileID(int layer, int x, int y) {
+	public int getTileID(int x, int y, int layer) {
 		return layers.get(layer).data[x][y];
 	}
 
 	@Override
-	public void setTileID(int layer, int x, int y, int tile) {
+	public void setTileID(int x, int y, int layer, int tile) {
 		layers.get(layer).data[x][y] = tile;
 	}
 
 	/**
 	 * Get a tileset by a given global ID
-	 * 
 	 * @param gid The global ID of the tileset to retrieve
 	 * @return The tileset requested or null if no tileset matches
 	 */
 	public TileSet getTileSetByGID(int gid) {
 		for (int i = 0; i < tileSets.size(); i++) {
 			TileSet set = (TileSet) tileSets.get(i);
-			if (set.contains(gid))
-				return set;
+			if (set.contains(gid)) return set;
 		}
 		return null;
 	}
@@ -143,7 +243,7 @@ public class TiledMap implements Map {
 		/** the properties of this layer */
 		public Properties props;
 
-		public Layer(Element element) {
+		private Layer(Element element) {
 			name = element.getAttribute("name");
 			width = Integer.parseInt(element.getAttribute("width"));
 			height = Integer.parseInt(element.getAttribute("height"));
@@ -169,7 +269,6 @@ public class TiledMap implements Map {
 
 	/**
 	 * A group of objects on the map (objects layer)
-	 * 
 	 * @author kulpae
 	 */
 	public static class ObjectGroup {
@@ -189,11 +288,10 @@ public class TiledMap implements Map {
 
 		/**
 		 * Create a new group based on the XML definition
-		 * 
 		 * @param element The XML element describing the layer
 		 * @throws SlickException Indicates a failure to parse the XML group
 		 */
-		public ObjectGroup(Element element) {
+		private ObjectGroup(Element element) {
 			name = element.getAttribute("name");
 			width = Integer.parseInt(element.getAttribute("width"));
 			height = Integer.parseInt(element.getAttribute("height"));
@@ -227,7 +325,6 @@ public class TiledMap implements Map {
 
 	/**
 	 * An object from a object-group on the map
-	 * 
 	 * @author kulpae
 	 */
 	public static class GroupObject {
@@ -253,11 +350,10 @@ public class TiledMap implements Map {
 
 		/**
 		 * Create a new group based on the XML definition
-		 * 
 		 * @param element The XML element describing the layer
 		 * @throws SlickException Indicates a failure to parse the XML group
 		 */
-		public GroupObject(Element element) {
+		private GroupObject(Element element) {
 			name = element.getAttribute("name");
 			type = element.getAttribute("type");
 			x = Integer.parseInt(element.getAttribute("x"));
@@ -288,12 +384,13 @@ public class TiledMap implements Map {
 		}
 	}
 
-	public static TiledMap load(File file) throws FileNotFoundException, IOException {
+	public static TiledMap load(File file) throws FileNotFoundException,
+			IOException {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setValidating(false);
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(Game.instance().getBackend().getResourceFactory().getResourceAsStream(file.getPath()));
+			Document doc = builder.parse(Game.getBackend().getResourceFactory().getResourceAsStream(file.getPath()));
 			Element root = doc.getDocumentElement();
 
 			int orientation = root.getAttribute("orientation").equals("orthogonal") ? TiledMap.ORTHOGONAL : TiledMap.ISOMETRIC;
@@ -328,8 +425,7 @@ public class TiledMap implements Map {
 				Element element = (Element) setNodes.item(i);
 				tileSet = new TileSet(element, mapLocation);
 				tileSet.index = i;
-				if (lastSet != null)
-					lastSet.lastGID = tileSet.firstGID - 1;
+				if (lastSet != null) lastSet.lastGID = tileSet.firstGID - 1;
 				lastSet = tileSet;
 				tileSets.add(tileSet);
 			}
@@ -390,7 +486,6 @@ public class TiledMap implements Map {
 
 	/**
 	 * Decode a Base64 string as encoded by TilED
-	 * 
 	 * @param data The string of character to decode
 	 * @return The byte array represented by character encoding
 	 */
@@ -403,10 +498,8 @@ public class TiledMap implements Map {
 		}
 
 		int len = (temp / 4) * 3;
-		if ((temp % 4) == 3)
-			len += 2;
-		if ((temp % 4) == 2)
-			len += 1;
+		if ((temp % 4) == 3) len += 2;
+		if ((temp % 4) == 2) len += 1;
 
 		byte[] out = new byte[len];
 
@@ -428,9 +521,7 @@ public class TiledMap implements Map {
 			}
 		}
 
-		if (index != out.length) {
-			throw new RuntimeException("Data length appears to be wrong (wrote " + index + " should be " + out.length + ")");
-		}
+		if (index != out.length) { throw new RuntimeException("Data length appears to be wrong (wrote " + index + " should be " + out.length + ")"); }
 
 		return out;
 	}
@@ -452,5 +543,29 @@ public class TiledMap implements Map {
 			baseCodes[i] = (byte) (52 + i - '0');
 		baseCodes['+'] = 62;
 		baseCodes['/'] = 63;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public int getWidth() {
+		return width;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public int getHeight() {
+		return height;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public int getTileWidth() {
+		return tileWidth;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public int getTileHeight() {
+		return tileHeight;
 	}
 }

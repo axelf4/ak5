@@ -67,7 +67,7 @@ public class TileSet {
 
 		// image = (Image) FileLoader.load(mapLocation + "/" + imageNode.getAttribute("source"));
 		try {
-			image = Game.instance().getBackend().getResourceFactory().getImage(new File(mapLocation + "/" + imageNode.getAttribute("source")));
+			image = Game.getBackend().getResourceFactory().getImage(new File(mapLocation + "/" + imageNode.getAttribute("source")));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
