@@ -3,12 +3,10 @@
  */
 package org.gamelib;
 
-import java.awt.Graphics2D;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.util.List;
 
 import org.gamelib.backend.Graphics;
 import org.gamelib.ui.Component;
@@ -19,32 +17,22 @@ import org.gamelib.ui.Component;
  */
 public interface Handler {
 	/**
-	 * Called when one of the registered events are fired.
+	 * Called when one of the listened events are fired.
 	 * @param event the triggered event
+	 * @return whether this handler is listening for the event
 	 */
-	public void handle(Event event);
-
-	/**
-	 * Used at registration to determine which events to register to.
-	 * @param list which events to capture
-	 */
-	public void handlers(List<Class<? extends Event>> list);
+	public boolean handle(Event event);
 
 	public static abstract class Event {
-		protected static final boolean DEFAULT_CANCELABLE = true;
+		/** If stopped notifying next handlers. */
 		public boolean cancelled;
 		/** Optionally the cause of this event */
 		public Object source;
 
 		/** Stops the next handlers from receiving this event. */
 		public void cancel() {
-			if (!cancelable())
-				throw new UnsupportedOperationException();
+			// if (!cancelable()) throw new UnsupportedOperationException();
 			cancelled = true;
-		}
-
-		protected boolean cancelable() {
-			return DEFAULT_CANCELABLE;
 		}
 
 		/** Event triggered each tick. */
@@ -58,17 +46,11 @@ public interface Handler {
 
 		/** Event triggered when the screen redraws. */
 		public static final class Draw extends Event {
-			public Graphics2D graphics2d;
 			public Graphics graphics;
 			public float delta;
 
 			public Draw(Graphics graphics, float delta) {
 				this.graphics = graphics;
-				this.delta = delta;
-			}
-
-			public Draw(Graphics2D graphics2d, float delta) {
-				this.graphics2d = graphics2d;
 				this.delta = delta;
 			}
 		}
@@ -90,6 +72,7 @@ public interface Handler {
 
 		public static final class Key extends Control<KeyEvent> {
 			public int id, keyCode;
+
 			public Key(KeyEvent event, Input input) {
 				super(event, input);
 			}
@@ -126,15 +109,6 @@ public interface Handler {
 			public MouseWheel(Input input, double scrollAmount) {
 				super(input);
 				this.scrollAmount = scrollAmount;
-			}
-		}
-
-		public static final class AdvancedTick extends Tick {
-			public static long counter = 0;
-
-			public AdvancedTick(float delta) {
-				super(delta);
-				counter = counter >= Long.MAX_VALUE ? 0 : counter + 1;
 			}
 		}
 

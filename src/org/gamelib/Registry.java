@@ -3,43 +3,25 @@
  */
 package org.gamelib;
 
-import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.gamelib.Handler.Event;
 
 /**
- * The registry holding all of the handlers. An handler should be registered
- * with {@link #register(Object)}.
- * TODO make handle return boolean, and unregister from event if return false;
- * 
+ * The registry holding all of the handlers. An handler should be registered with {@link #register(Object)}. TODO make handle return boolean, and unregister from event if return false;
  * @author Axel
  * @since 0.0.1
- * 
  */
 public class Registry {
 
-	/** Used of all undefined handlers. */
-	public static final Group DEFAULT_VIEW = new Group().setAlwaysActive(true);
-
+	/** Root of group hierarchy */
+	public static final Group MAIN_GROUP = new Group().setAlwaysActive(true);
+	/** The singleton instance */
 	private static Registry instance;
-	private Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers;
-	public List<Group> groups;
 
-	/**
-	 * 
-	 */
-	private Registry() {
-		// instance = this; // remove this line
-		handlers = new WeakHashMap<Class<? extends Event>, CopyOnWriteArrayList<Handler>>(1);
-		(groups = new ArrayList<Group>()).add(DEFAULT_VIEW);
-		// (groups = new Node<Group>(null)).add(new Node<Group>(DEFAULT_VIEW));
-	}
+	private Registry() {}
 
 	/**
 	 * @return the singleton instance
@@ -48,176 +30,41 @@ public class Registry {
 		return instance == null ? instance = new Registry() : instance;
 	}
 
-	/**
-	 * Registers an handler
-	 * 
-	 * @param handler {@link Handler} instance
-	 */
-	/*public void register(Handler handler, Group group) {
-		if (group == null)
-			throw new IllegalArgumentException("group cannot be null");
-		/* if (!groups.contains(group)) throw new
-		 * RuntimeException("must add the group first"); *3/
-		if (!groups.contains(group))
-			groups.add(group);
-		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = group.handlers;
-		ArrayList<Class<? extends Event>> list = new ArrayList<Class<? extends Event>>();
-		handler.handlers(list);
-		for (Iterator<Class<? extends Event>> iterator = list.iterator(); iterator.hasNext();) {
-			Class<? extends Event> type = iterator.next();
-			if (!handlers.containsKey(type))
-				handlers.put(type, new CopyOnWriteArrayList<Handler>());
-			handlers.get(type).add(handler);
-		}
-	}*/
-	public void register(Handler handler, Group group) {
-		if (group == null)
-			throw new IllegalArgumentException("group cannot be null");
-		/* if (!groups.contains(group)) throw new
-		 * RuntimeException("must add the group first"); */
-		// register group
-		/*if (!groups.contains(group)) {
-			groups.add(group);
-			/*Node<Group> node = new Node<Group>(group);
-			groups.add(node);*2/
-		}*/
-		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = group.handlers;
-		ArrayList<Class<? extends Event>> list = new ArrayList<Class<? extends Event>>(); // get events to register to
-		handler.handlers(list);
-		for (Iterator<Class<? extends Event>> iterator = list.iterator(); iterator.hasNext();) {
-			Class<? extends Event> type = iterator.next();
-			if (!handlers.containsKey(type))
-				handlers.put(type, new CopyOnWriteArrayList<Handler>());
-			handlers.get(type).add(handler);
-		}
+	/** The *NEW* way of registering handlers. */
+	public void register(Group group, Handler handler) {
+		if (group == null || handler == null) throw new IllegalArgumentException("arguments cannot be null");
+		group.handlers.get(Event.class).add(handler); // wildcard for every handler
 	}
 
-	/**
-	 * Registers an handler.
-	 * 
-	 * @param handler {@link Handler} instance
-	 */
+	/** The *NEW* way of registering handlers. */
 	public void register(Handler handler) {
-		/* ArrayList<Class<? extends Event>> list = new ArrayList<Class<?
-		 * extends Event>>(); handler.handlers(list); for (Iterator<Class<?
-		 * extends Event>> iterator = list.iterator(); iterator.hasNext();) {
-		 * Class<? extends Event> type = iterator.next(); if
-		 * (!handlers.containsKey(type)) handlers.put(type, new
-		 * CopyOnWriteArrayList<Handler>()); handlers.get(type).add(handler); } */
-		register(handler, DEFAULT_VIEW);
+		register(MAIN_GROUP, handler);
+	}
+
+	public void unregister(Group group, Handler handler) {
+		for (Iterator<List<Handler>> iterator = group.handlers.values().iterator(); iterator.hasNext();) {
+			List<Handler> handlers = (List<Handler>) iterator.next();
+			handlers.remove(handler);
+		}
 	}
 
 	/**
-	 * Unregisters an handler. NOTE: for now only works if type == null
-	 * 
-	 * @param handler {@link Handler} instance
-	 * @param type the event to unregister for, if null remove all
+	 * Fires <code>event</code> to every handler listening to it.
+	 * @param event the event to fire
 	 */
-	public void unregister(Handler handler, Class<? extends Event> type) {
-		if (type == null) {
-			for (Group group : groups) {
-				for (CopyOnWriteArrayList<Handler> list : group.handlers.values()) {
-					list.remove(handler);
-				}
-			}
-		} else if (!handlers.get(type).remove(handler))
-			throw new RuntimeException("no handler of type " + type + " in class " + handler.getClass());
-	}
+	public void dispatch(Event event) {
+		for (Group group : MAIN_GROUP.getHierarchy()) {
+			if (group == null || !group.isActive()) continue;
 
-	@SuppressWarnings("unchecked")
-	public synchronized void dispatch(Event event) {
-		// Log.startProfiling("invoke");
-		/*for (int i = 0; i < groups.size(); i++) {
-			Group group = groups.get(i);
-			if (group == null || !group.active)
-				continue;
-			Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = group.handlers;
+			Class<? extends Event> eventType = event.getClass();
+			List<Handler> handlers;
+			if (!group.handlers.containsKey(eventType)) group.handlers.put(eventType, handlers = new LinkedList<>(group.handlers.get(Event.class)));
+			else handlers = group.handlers.get(eventType);
 
-			if (!handlers.containsKey(event.getClass()))
-				continue;
-			for (Iterator<Handler> iterator = handlers.get(event.getClass()).iterator(); iterator.hasNext();) {
+			for (Iterator<Handler> iterator = handlers.iterator(); iterator.hasNext();) {
 				Handler handler = (Handler) iterator.next();
-				handler.handle(event);
-			}
-		}*/
-		/*for (int i = 0; i < groups.size(); i++) {
-			Group group = groups.get(i);*/
-		for (Group group : DEFAULT_VIEW.getHierarchy()) { // groups
-			if (group == null || !group.isActive())
-				continue;
-			Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = group.handlers;
-
-			/*if (!handlers.containsKey(event.getClass()))
-				continue;
-			for (Iterator<Handler> iterator = handlers.get(event.getClass()).iterator(); iterator.hasNext();) {
-				Handler handler = (Handler) iterator.next();
-				handler.handle(event);
-			}*/
-			
-			Class<? extends Event> class1 = event.getClass();
-			CopyOnWriteArrayList<Handler>[] values = (CopyOnWriteArrayList[]) handlers.values().toArray(new CopyOnWriteArrayList[handlers.values().size()]);
-			Class<? extends Event>[] keys = (Class<? extends Event>[]) handlers.keySet().toArray(new Class[handlers.keySet().size()]);
-			for (int i = 0; i < keys.length; i++) {
-				Class<? extends Event> class2 = keys[i];
-				if (class2.isAssignableFrom(class1)) {
-					for (Iterator<Handler> iterator = values[i].iterator(); iterator.hasNext();) {
-						Handler handler = (Handler) iterator.next();
-						handler.handle(event);
-					}
-				}
-			}
-		}
-		// Log.debug("invoked " + event + ": time: " +
-		// Log.stopProfiling("invoke"));
-	}
-
-	@SuppressWarnings("unchecked")
-	public synchronized void dispatch(Event event, Group group) {
-		if (group == null || !group.isActive())
-			return;
-		Map<Class<? extends Event>, CopyOnWriteArrayList<Handler>> handlers = group.handlers;
-
-		/*if (!handlers.containsKey(event.getClass()))
-			return;
-		for (Iterator<Handler> iterator = handlers.get(event.getClass()).iterator(); iterator.hasNext();) {
-			Handler handler = (Handler) iterator.next();
-			handler.handle(event);
-		}*/
-
-		/*if (!handlers.containsKey(event.getClass()))
-			continue;
-		for (Iterator<Handler> iterator = handlers.get(event.getClass()).iterator(); iterator.hasNext();) {
-			Handler handler = (Handler) iterator.next();
-			handler.handle(event);
-		}*/
-		
-		Class<? extends Event> class1 = event.getClass();
-		CopyOnWriteArrayList<Handler>[] values = (CopyOnWriteArrayList[]) handlers.values().toArray(new CopyOnWriteArrayList[handlers.values().size()]);
-		Class<? extends Event>[] keys = (Class<? extends Event>[]) handlers.keySet().toArray(new Class[handlers.keySet().size()]);
-		for (int i = 0; i < keys.length; i++) {
-			Class<? extends Event> class2 = keys[i];
-			if (class2.isAssignableFrom(class1)) {
-				for (Iterator<Handler> iterator = values[i].iterator(); iterator.hasNext();) {
-					Handler handler = (Handler) iterator.next();
-					handler.handle(event);
-				}
-			}
-		}
-	}
-	
-	public void calculateViews() {
-		List<Group> list = groups;
-		for (int i = 0; i < list.size(); i++) {
-			Group view1 = list.get(i);
-			Rectangle rectangle1 = view1.getRectangle();
-			if (rectangle1 == null)
-				continue;
-			for (int j = i - 1; j > 0; j--) {
-				Group view2 = list.get(j);
-				Rectangle rectangle2 = view2.getRectangle();
-				if (rectangle2 == null)
-					continue;
-				view2.setActive(rectangle1.contains(rectangle2));
+				if (!handler.handle(event)) iterator.remove();
+				if (event.cancelled) break;
 			}
 		}
 	}
