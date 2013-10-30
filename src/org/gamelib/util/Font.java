@@ -17,7 +17,9 @@ public interface Font {
 	/** The italicized style constant. */
 	public static final int ITALIC = 2;
 	/** The underline style constant. */
-	public static final int UNDERLINE = 3;
+	public static final int UNDERLINE = 4;
+	/** The strikethrough style constant. */
+	public static final int STRIKETHROUGH = 8;
 
 	/** The size to use if not specified. */
 	public static final int DEFAULT_SIZE = 15;

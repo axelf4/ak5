@@ -9,6 +9,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
+import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -74,13 +75,13 @@ public class TrueTypeFont implements Font {
 		if (fontHeight <= 0) fontHeight = 1;
 	}
 
-	public TrueTypeFont(java.awt.Font font, boolean antiAlias) {
-		this(font, antiAlias, null, org.gamelib.util.Color.BLACK);
+	public TrueTypeFont(java.awt.Font font) {
+		this(font, true, null, org.gamelib.util.Color.BLACK);
 	}
 
 	public TrueTypeFont() {
 		// this(new java.awt.Font(null, Font.PLAIN, 15), true);
-		this(getFont(new File("org/gamelib/util/arial.ttf"), PLAIN, DEFAULT_SIZE), true);
+		this(getFont(new File("org/gamelib/util/arial.ttf"), PLAIN, DEFAULT_SIZE));
 	}
 
 	public void setCorrection(boolean on) {
@@ -101,7 +102,6 @@ public class TrueTypeFont implements Font {
 		g.setFont(font);
 		fontMetrics = g.getFontMetrics();
 		int charwidth = fontMetrics.charWidth(ch) + 8;
-
 		if (charwidth <= 0) charwidth = 7;
 		int charheight = fontMetrics.getHeight() + 3;
 		if (charheight <= 0) charheight = fontSize;
@@ -301,7 +301,13 @@ public class TrueTypeFont implements Font {
 	public static java.awt.Font getFont(File file, int style, int size) {
 		try {
 			InputStream stream = Game.getBackend().getResourceFactory().getResourceAsStream(file.getPath());
-			java.awt.Font font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, stream).deriveFont(style, size);
+			Map<TextAttribute, Object> fontAttributes = new HashMap<>();
+			if ((style & BOLD) == BOLD) fontAttributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+			if ((style & ITALIC) == ITALIC) fontAttributes.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+			if ((style & UNDERLINE) == UNDERLINE) fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+			if ((style & STRIKETHROUGH) == STRIKETHROUGH) fontAttributes.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
+			fontAttributes.put(TextAttribute.SIZE, new Float(size)); // add size attribute
+			java.awt.Font font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, stream).deriveFont(fontAttributes);
 			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
 			return font;
 		} catch (FontFormatException | IOException e) {
