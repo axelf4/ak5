@@ -3,8 +3,6 @@
  */
 package org.gamelib.ui;
 
-import java.util.List;
-
 import org.gamelib.Input;
 import org.gamelib.Registry;
 import org.gamelib.backend.Graphics;
@@ -28,26 +26,17 @@ public class Button extends Component {
 	 * @see org.gamelib.Handler#handle(org.gamelib.Handler.Event)
 	 */
 	@Override
-	public void handle(Event event) {
+	public boolean handle(Event event) {
 		if (event instanceof Event.Draw) {
 			Graphics g = ((Event.Draw) event).graphics;
 			rectangle.draw(g);
 		} else if (event instanceof Event.Mouse) {
 			Input input = ((Event.Control<?>) event).input;
 			int id = ((Event.Mouse) event).id;
-			if (id != Input.MOUSE_RELEASED) return;
-			if (rectangle.collides(new Point(input.getMouseX(), input.getMouseY()))) Registry.instance().dispatch(new Event.Layout(this, event), group);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Handler#handlers(java.util.List)
-	 */
-	@Override
-	public void handlers(List<Class<? extends Event>> list) {
-		list.add(Event.Draw.class);
-		list.add(Event.Mouse.class);
+			if (id != Input.MOUSE_RELEASED) return true;
+			if (rectangle.collides(new Point(input.getMouseX(), input.getMouseY()))) Registry.instance().dispatch(new Event.Layout(this, event));
+		} else return false;
+		return true;
 	}
 
 }

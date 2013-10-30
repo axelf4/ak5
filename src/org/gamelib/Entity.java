@@ -3,9 +3,6 @@
  */
 package org.gamelib;
 
-import java.util.List;
-
-import org.gamelib.Handler.Event;
 import org.gamelib.backend.Graphics;
 
 /**
@@ -127,7 +124,7 @@ public interface Entity extends Updateable, Drawable {
 	}
 
 	/** System for collecting and updating entities. */
-	public static class EntitySystem implements Handler {
+	public static class EntitySystem implements Updateable, Drawable {
 
 		/** Default size */
 		static final int INITIAL_SIZE = 10000;
@@ -141,21 +138,12 @@ public interface Entity extends Updateable, Drawable {
 			entities = new Entity[size];
 		}
 
-		public EntitySystem() {
-			this(INITIAL_SIZE);
-			Registry.instance().register(this);
-		}
-
-		public EntitySystem(Group group, int size) {
-			this(size);
-			group.register(this);
-		}
-
 		/**
 		 * Notifies the entity about updates and draws.
 		 * @return the entity id
 		 */
 		public int spawn(Entity entity) {
+			if (living >= entities.length) System.arraycopy(entities, 0, entities, 0, entities.length * 2);
 			entities[living++] = entity;
 			return living - 1;
 		}
@@ -196,37 +184,29 @@ public interface Entity extends Updateable, Drawable {
 		public int getNextEntityId() {
 			return living;
 		}
-
+		
 		/** {@inheritDoc} */
 		@Override
-		public void handle(Event event) {
-			if (event instanceof Event.Tick) {
-				float delta = ((Event.Tick) event).delta;
-				for (int i = 0; i < living; i++) {
-					Entity entity = entities[i];
-					entity.setLastX(entity.getX());
-					entity.setLastY(entity.getY());
+		public void update(float delta) {
+			for (int i = 0; i < living; i++) {
+				Entity entity = entities[i];
+				entity.setLastX(entity.getX());
+				entity.setLastY(entity.getY());
 
-					// entity.setX(entity.getX() + entity.getHSpeed());
-					// entity.setY(entity.getY() + entity.getVSpeed());
+				// entity.setX(entity.getX() + entity.getHSpeed());
+				// entity.setY(entity.getY() + entity.getVSpeed());
 
-					entity.update(delta);
-				}
-			} else if (event instanceof Event.Draw) {
-				Graphics g = ((Event.Draw) event).graphics;
-				float delta = ((Event.Draw) event).delta;
-				for (int i = 0; i < living; i++) {
-					Entity entity = entities[i];
-					entity.draw(g, delta);
-				}
+				entity.update(delta);
 			}
 		}
 
 		/** {@inheritDoc} */
 		@Override
-		public void handlers(List<Class<? extends Event>> list) {
-			list.add(Event.Tick.class);
-			list.add(Event.Draw.class);
+		public void draw(Graphics g, float delta) {
+			for (int i = 0; i < living; i++) {
+				Entity entity = entities[i];
+				entity.draw(g, delta);
+			}
 		}
 
 	}
