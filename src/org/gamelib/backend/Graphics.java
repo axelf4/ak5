@@ -31,6 +31,14 @@ public interface Graphics {
 	 */
 	public void translate(float x, float y, float z, int flag);
 
+	/**
+	 * Apply a scaling factor to everything drawn.
+	 * @param sx The scaling factor on the x-axis
+	 * @param sy The scaling factor on the y-axis
+	 * @param sz The scaling factor on the z-axis
+	 */
+	public void scale(float sx, float sy, float sz);
+
 	// public void rotate(int theta);
 
 	/**

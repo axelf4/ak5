@@ -16,12 +16,12 @@ import org.gamelib.util.Color;
  */
 public class Java2DGraphics implements Graphics {
 
-	java.awt.Graphics g;
+	Graphics2D g;
 	int width, height;
 	protected float deltaX, deltaY, deltaZ;
 
 	public Java2DGraphics(java.awt.Graphics g, int width, int height) {
-		this.g = g;
+		this.g = (Graphics2D) g;
 		this.width = width;
 		this.height = height;
 	}
@@ -83,7 +83,7 @@ public class Java2DGraphics implements Graphics {
 
 	/** @return the awt {@link Graphics2D} used to draw */
 	public Graphics2D getGraphics2D() {
-		return (Graphics2D) g;
+		return g;
 	}
 
 	/*
@@ -121,5 +121,11 @@ public class Java2DGraphics implements Graphics {
 	public void translate(float x, float y, float z, int flag) {
 		if ((flag & ADD) == ADD) translate(x, y, z);
 		else if ((flag & SET) == SET) translate(-deltaX + x, -deltaY + y, -deltaZ + z);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void scale(float sx, float sy, float sz) {
+		g.scale(sx, sy);
 	}
 }

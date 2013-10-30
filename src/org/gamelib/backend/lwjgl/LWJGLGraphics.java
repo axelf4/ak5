@@ -233,4 +233,10 @@ public class LWJGLGraphics implements Graphics {
 		else if ((flag & SET) == SET) translate(-deltaX + x, -deltaY + y, -deltaZ + z);
 	}
 
+	/** {@inheritDoc} */
+	@Override
+	public void scale(float sx, float sy, float sz) {
+		glScalef(sx, sy, sz);
+	}
+
 }
