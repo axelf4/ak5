@@ -22,8 +22,9 @@ public class Polygon implements Shape {
 	private int[] ypoints;
 
 	private int deltaX, deltaY;
-	public int xCenter, yCenter;
-	private double angle;
+	public int xCenter;
+	public int yCenter;
+	public double angle;
 	private Polygon rotated;
 
 	/**
@@ -81,7 +82,7 @@ public class Polygon implements Shape {
 
 	float min, max, mina, maxa, minb, maxb;
 
-	public void calculateInterval(Point axis) {
+	void calculateInterval(Point axis) {
 		this.min = this.max = (float) getPointX(0) * axis.x + getPointY(0) * axis.y;
 
 		for (int i = 1; i < npoints; i++) {
@@ -91,11 +92,11 @@ public class Polygon implements Shape {
 		}
 	}
 
-	public boolean intervalsSeparated(float mina, float maxa, float minb, float maxb) {
+	boolean intervalsSeparated(float mina, float maxa, float minb, float maxb) {
 		return (mina > maxb) || (minb > maxa);
 	}
 
-	public boolean separatedByAxis(Point axis, Polygon polygon) {
+	boolean separatedByAxis(Point axis, Polygon polygon) {
 		calculateInterval(axis);
 		mina = min;
 		maxa = max;
@@ -188,8 +189,8 @@ public class Polygon implements Shape {
 		for (int i = 0; i < npoints; i++) {
 			double px = rotated.xpoints[i];
 			double py = rotated.ypoints[i];
-			rotated.xpoints[i] = (int) (rotated.xCenter + ((px - rotated.xCenter) * Math.cos(angle) - (py - rotated.yCenter) * Math.sin(angle)));
-			rotated.ypoints[i] = (int) (rotated.yCenter + ((px - rotated.xCenter) * Math.sin(angle) + (py - rotated.yCenter) * Math.cos(angle)));
+			rotated.xpoints[i] = (int) (rotated.xCenter + ((px - rotated.xCenter) * Math.cos(angle) - (py - rotated.yCenter) * Math.sin(angle)) + 0.5d);
+			rotated.ypoints[i] = (int) (rotated.yCenter + ((px - rotated.xCenter) * Math.sin(angle) + (py - rotated.yCenter) * Math.cos(angle)) + 0.5d);
 		}
 	}
 	
