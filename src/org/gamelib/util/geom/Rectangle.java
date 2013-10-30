@@ -13,13 +13,13 @@ import org.gamelib.backend.Graphics;
 public class Rectangle implements Shape {
 
 	/** The X coordinate of the upper-left corner. */
-	public int x;
+	private int x;
 	/** The Y coordinate of the upper-left corner. */
-	public int y;
+	private int y;
 	/** The width of the <code>Rectangle</code>. */
-	public int width;
+	private int width;
 	/** The width of the <code>Rectangle</code>. */
-	public int height;
+	private int height;
 
 	/**
 	 * 

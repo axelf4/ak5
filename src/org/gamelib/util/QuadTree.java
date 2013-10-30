@@ -53,11 +53,11 @@ public class QuadTree<E> {
 	 */
 	protected boolean subdivide() {
 		if (hasChildren()) { return false; }
-		int hs = bounds.width / 2;
-		topLeft = new QuadTree<E>(bounds.x, bounds.y, hs, maxElem());
-		topRight = new QuadTree<E>(bounds.x + hs, bounds.y, hs, maxElem());
-		botLeft = new QuadTree<E>(bounds.x, bounds.y + hs, hs, maxElem());
-		botRight = new QuadTree<E>(bounds.x + hs, bounds.y + hs, hs, maxElem());
+		int hs = bounds.getWidth() / 2;
+		topLeft = new QuadTree<E>(bounds.getX(), bounds.getY(), hs, maxElem());
+		topRight = new QuadTree<E>(bounds.getX() + hs, bounds.getY(), hs, maxElem());
+		botLeft = new QuadTree<E>(bounds.getX(), bounds.getY() + hs, hs, maxElem());
+		botRight = new QuadTree<E>(bounds.getX() + hs, bounds.getY() + hs, hs, maxElem());
 		return true;
 	}
 

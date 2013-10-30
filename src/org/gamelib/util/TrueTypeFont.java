@@ -144,25 +144,25 @@ public class TrueTypeFont implements Font {
 
 				Rectangle newIntObject = new Rectangle();
 
-				newIntObject.width = fontImage.getWidth();
-				newIntObject.height = fontImage.getHeight();
+				newIntObject.setWidth(fontImage.getWidth());
+				newIntObject.setHeight(fontImage.getHeight());
 
-				if (positionX + newIntObject.width >= textureWidth) {
+				if (positionX + newIntObject.getWidth() >= textureWidth) {
 					positionX = 0;
 					positionY += rowHeight;
 					rowHeight = 0;
 				}
 
-				newIntObject.x = positionX;
-				newIntObject.y = positionY;
+				newIntObject.setX(positionX);
+				newIntObject.setY(positionY);
 
-				if (newIntObject.height > fontHeight) fontHeight = newIntObject.height;
-				if (newIntObject.height > rowHeight) rowHeight = newIntObject.height;
+				if (newIntObject.getHeight() > fontHeight) fontHeight = newIntObject.getHeight();
+				if (newIntObject.getHeight() > rowHeight) rowHeight = newIntObject.getHeight();
 
 				// Draw it here
 				g.drawImage(fontImage, positionX, positionY, null);
 
-				positionX += newIntObject.width;
+				positionX += newIntObject.getWidth();
 
 				if (i < 256) charArray[i] = newIntObject;// standard characters
 				else customChars.put(new Character(ch), newIntObject); // custom characters
@@ -210,7 +210,7 @@ public class TrueTypeFont implements Font {
 				if (charCurrent == '\n') break;
 				if (charCurrent < 256) intObject = charArray[charCurrent];
 				else intObject = (Rectangle) customChars.get(new Character((char) charCurrent));
-				totalwidth += intObject.width - correctL;
+				totalwidth += intObject.getWidth() - correctL;
 			}
 			totalwidth /= -2;
 		}
@@ -231,7 +231,7 @@ public class TrueTypeFont implements Font {
 			}
 
 			if (intObject != null) {
-				if (d < 0) totalwidth += (intObject.width - c) * d;
+				if (d < 0) totalwidth += (intObject.getWidth() - c) * d;
 				if (charCurrent == '\n') {
 					startY += fontHeight * d;
 					totalwidth = 0;
@@ -241,14 +241,14 @@ public class TrueTypeFont implements Font {
 							if (charCurrent == '\n') break;
 							if (charCurrent < 256) intObject = charArray[charCurrent];
 							else intObject = (Rectangle) customChars.get(new Character((char) charCurrent));
-							totalwidth += intObject.width - correctL;
+							totalwidth += intObject.getWidth() - correctL;
 						}
 						totalwidth /= -2;
 					}
 					// if center get next lines total width/2;
 				} else {
-					g.drawImage(fontImage, (int) (totalwidth * scaleX + x), (int) (startY * scaleY + y), (int) ((totalwidth + intObject.width) * scaleX + x), (int) ((startY + intObject.height) * scaleY + y), intObject.x, intObject.y, intObject.x + intObject.width, intObject.y + intObject.height);
-					if (d > 0) totalwidth += (intObject.width - c) * d;
+					g.drawImage(fontImage, (int) (totalwidth * scaleX + x), (int) (startY * scaleY + y), (int) ((totalwidth + intObject.getWidth()) * scaleX + x), (int) ((startY + intObject.getHeight()) * scaleY + y), intObject.getX(), intObject.getY(), intObject.getX() + intObject.getWidth(), intObject.getY() + intObject.getHeight());
+					if (d > 0) totalwidth += (intObject.getWidth() - c) * d;
 				}
 				i += d;
 			}
@@ -269,7 +269,7 @@ public class TrueTypeFont implements Font {
 			if (currentChar < 256) intObject = charArray[currentChar];
 			else intObject = (Rectangle) customChars.get(new Character((char) currentChar));
 
-			if (intObject != null) totalwidth += intObject.width;
+			if (intObject != null) totalwidth += intObject.getWidth();
 		}
 		return totalwidth;
 	}

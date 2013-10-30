@@ -41,10 +41,10 @@ public class Sprite {
 	/** Draws the current sprite. */
 	public void draw(Graphics g, float delta, int x, int y) {
 		Rectangle rectangle = subImages[frame];
-		int sx = rectangle.x;
-		int sy = rectangle.y;
-		int width = rectangle.width;
-		int height = rectangle.height;
+		int sx = rectangle.getX();
+		int sy = rectangle.getY();
+		int width = rectangle.getWidth();
+		int height = rectangle.getHeight();
 		int flip = (flipped ? width : 0);
 
 		// g.rotate(rotation, x + width / 2, y + height / 2);
