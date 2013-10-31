@@ -26,13 +26,17 @@ public interface Handler {
 	public static abstract class Event {
 		/** If stopped notifying next handlers. */
 		public boolean cancelled;
-		/** Optionally the cause of this event */
+		/** Optionally the object on which the Event first occured */
 		public Object source;
 
 		/** Stops the next handlers from receiving this event. */
 		public void cancel() {
 			// if (!cancelable()) throw new UnsupportedOperationException();
 			cancelled = true;
+		}
+		
+		public boolean unregisterAfterNoInterrest() {
+			return true;
 		}
 
 		/** Event triggered each tick. */
@@ -119,6 +123,11 @@ public interface Handler {
 
 			public Layout(Component id, Event event) {
 				this.id = id;
+			}
+			
+			@Override
+			public boolean unregisterAfterNoInterrest() {
+				return false;
 			}
 		}
 	}

@@ -63,7 +63,7 @@ public class Registry {
 
 			for (Iterator<Handler> iterator = handlers.iterator(); iterator.hasNext();) {
 				Handler handler = (Handler) iterator.next();
-				if (!handler.handle(event)) iterator.remove();
+				if (!handler.handle(event) && event.unregisterAfterNoInterrest()) iterator.remove();
 				if (event.cancelled) break;
 			}
 		}
