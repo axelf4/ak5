@@ -269,7 +269,7 @@ public class TrueTypeFont implements Font {
 			if (currentChar < 256) intObject = charArray[currentChar];
 			else intObject = (Rectangle) customChars.get(new Character((char) currentChar));
 
-			if (intObject != null) totalwidth += intObject.getWidth();
+			if (intObject != null) totalwidth += intObject.getWidth() - correctL;
 		}
 		return totalwidth;
 	}
