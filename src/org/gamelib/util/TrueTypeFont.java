@@ -170,7 +170,7 @@ public class TrueTypeFont implements Font {
 				fontImage = null;
 			}
 
-			fontImage = Game.getBackend().getResourceFactory().getImage(imgTemp);
+			fontImage = Game.getBackend().getImage(imgTemp);
 		} catch (Exception e) {
 			System.err.println("Failed to create font.");
 			e.printStackTrace();
@@ -300,7 +300,7 @@ public class TrueTypeFont implements Font {
 
 	public static java.awt.Font getFont(File file, int style, int size) {
 		try {
-			InputStream stream = Game.getBackend().getResourceFactory().getResourceAsStream(file.getPath());
+			InputStream stream = Game.getBackend().getResourceAsStream(file.getPath());
 			Map<TextAttribute, Object> fontAttributes = new HashMap<>();
 			if ((style & BOLD) == BOLD) fontAttributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
 			if ((style & ITALIC) == ITALIC) fontAttributes.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);

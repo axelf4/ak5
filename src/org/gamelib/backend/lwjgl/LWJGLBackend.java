@@ -3,7 +3,26 @@
  */
 package org.gamelib.backend.lwjgl;
 
+import static org.gamelib.backend.lwjgl.LWJGLSound.*;
 import static org.lwjgl.opengl.GL11.*;
+
+import java.awt.Graphics2D;
+import java.awt.color.ColorSpace;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
+import java.util.Hashtable;
+
+import javax.imageio.ImageIO;
 
 import org.gamelib.Drawable;
 import org.gamelib.Game;
@@ -13,27 +32,38 @@ import org.gamelib.backend.Backend;
 import org.gamelib.backend.BackendImpl;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
-import org.gamelib.backend.ResourceFactory;
+import org.gamelib.backend.Sound;
 import org.gamelib.util.Color;
+import org.gamelib.util.Math2;
 import org.gamelib.util.geom.Rectangle;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.AL10;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.Pbuffer;
 import org.lwjgl.opengl.Util;
+import org.lwjgl.util.WaveData;
 import org.lwjgl.util.glu.GLU;
 
 /**
  * @author pwnedary
  */
 public class LWJGLBackend extends BackendImpl implements Backend {
+	
+	/** The colour model including alpha for the GL image */
+	private final ColorModel glAlphaColorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[] { 8, 8, 8, 8 }, true, false, ComponentColorModel.TRANSLUCENT, DataBuffer.TYPE_BYTE);;
+	/** The colour model for the GL image */
+	private final ColorModel glColorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[] { 8, 8, 8, 0 }, false, false, ComponentColorModel.OPAQUE, DataBuffer.TYPE_BYTE);;
+	/** Scratch buffer for texture ID's */
+	private IntBuffer textureIDBuffer = BufferUtils.createIntBuffer(1);
 
 	LWJGLGraphics graphics;
 	LWJGLInput input;
-	LWJGLResourceFactory resourceFactory;
 
 	static void init2d(int width, int height) {
 		glMatrixMode(GL_PROJECTION); // resets any previous projection matrices
@@ -89,7 +119,8 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 						}
 					}
 				}
-			} else targetDisplayMode = new DisplayMode(videoMode.getWidth(), videoMode.getHeight());
+			} else
+				targetDisplayMode = new DisplayMode(videoMode.getWidth(), videoMode.getHeight());
 
 			// Display.setDisplayMode(new DisplayMode(800, 600));
 			Display.setDisplayMode(targetDisplayMode);
@@ -154,22 +185,21 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	/** {@inheritDoc} */
 	@Override
 	public Graphics getGraphics(Image image) {
-		if (GLContext.getCapabilities().GL_EXT_framebuffer_object) return new FBOGraphics((LWJGLImage) image);
-		else if ((Pbuffer.getCapabilities() & Pbuffer.PBUFFER_SUPPORTED) != 0) return new PbufferGraphics((LWJGLImage) image);
-		else throw new Error("Your OpenGL card doesn't support offscreen buffers.");
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public ResourceFactory getResourceFactory() {
-		return resourceFactory == null ? resourceFactory = new LWJGLResourceFactory() : resourceFactory;
+		if (GLContext.getCapabilities().GL_EXT_framebuffer_object)
+			return new FBOGraphics((LWJGLImage) image);
+		else if ((Pbuffer.getCapabilities() & Pbuffer.PBUFFER_SUPPORTED) != 0)
+			return new PbufferGraphics((LWJGLImage) image);
+		else
+			throw new Error("Your OpenGL card doesn't support offscreen buffers.");
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void destroy() {
 		Display.destroy();
-		if (resourceFactory != null) resourceFactory.destroy();
+		AL10.alDeleteSources(source);
+		AL10.alDeleteBuffers(buffer);
+		if (AL.isCreated()) AL.destroy();
 	}
 
 	/** {@inheritDoc} */
@@ -188,6 +218,159 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	@Override
 	public int getHeight() {
 		return Display.getHeight();
+	}
+
+	/**
+	 * Create a new texture ID
+	 * @return a new texture ID
+	 */
+	private int createTextureID() {
+		glGenTextures(textureIDBuffer);
+		return textureIDBuffer.get(0);
+	}
+
+	/**
+	 * Convert the buffered image to a texture
+	 * @param bufferedImage The image to convert to a texture
+	 * @param image The texture to store the data into
+	 * @return a buffer containing the data
+	 */
+	private ByteBuffer convertImageData(BufferedImage bufferedImage, LWJGLImage image) {
+		// find the closest power of 2 for the width and height of the produced texture
+		int texWidth = Math2.pot(bufferedImage.getWidth());
+		int texHeight = Math2.pot(bufferedImage.getHeight());
+		image.setTexWidth(texWidth);
+		image.setTexHeight(texHeight);
+
+		// create a raster that can be used by OpenGL as a source for a texture
+		WritableRaster raster;
+		BufferedImage texImage;
+		if (bufferedImage.getColorModel().hasAlpha()) {
+			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 4, null);
+			texImage = new BufferedImage(glAlphaColorModel, raster, false, new Hashtable<>());
+		} else {
+			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 3, null);
+			texImage = new BufferedImage(glColorModel, raster, false, new Hashtable<>());
+		}
+
+		// copy the source image into the produced image
+		Graphics2D g = (Graphics2D) texImage.getGraphics();
+		g.setColor(new Color(0f, 0f, 0f, 0f).toAWT());
+		g.fillRect(0, 0, texWidth, texHeight);
+		g.drawImage(bufferedImage, 0, 0, null);
+
+		// build a byte buffer from the temporary image that be used by OpenGL to produce a texture.
+		byte[] data = ((DataBufferByte) texImage.getRaster().getDataBuffer()).getData();
+
+		ByteBuffer imageBuffer = ByteBuffer.allocateDirect(data.length);
+		imageBuffer.order(ByteOrder.nativeOrder());
+		imageBuffer.put(data, 0, data.length);
+		imageBuffer.flip();
+
+		return imageBuffer;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Image getImage(File file) throws IOException {
+		BufferedImage bufferedImage = ImageIO.read(getResourceAsStream(file.getPath()));
+		return getImage(bufferedImage);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.backend.ResourceFactory#createImage(int, int)
+	 */
+	@Override
+	public Image createImage(int width, int height) {
+		// TODO
+		int textureID = createTextureID();
+		LWJGLImage image = new LWJGLImage(GL_TEXTURE_2D, textureID);
+		image.setWidth(width);
+		image.setHeight(height);
+		// image.setTexWidth(Math2.pot(width));
+		// image.setTexHeight(Math2.pot(height));
+		// ByteBuffer textureBuffer = convertImageData(new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR), image);
+		BufferedImage image1 = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g2d = (Graphics2D) image1.getGraphics();
+		g2d.setColor(org.gamelib.util.Color.CYAN.toAWT());
+		g2d.fillRect(10, 10, 50, 50);
+		ByteBuffer textureBuffer = convertImageData(image1, image);
+		// initialize texture
+		image.bind();
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // make it linear filtered
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, image.getTexWidth(), image.getTexHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, (java.nio.ByteBuffer) null); // create the texture data
+		}
+		image.unbind();
+		return image;
+	}
+
+	// /** 4 for RGBA, 3 for RGB */
+	// private static final int BYTES_PER_PIXEL = 4;
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.backend.ResourceFactory#getImage(java.awt.image.BufferedImage)
+	 */
+	public Image getImage(BufferedImage bufferedImage) {
+		int textureID = createTextureID(); // create the texture ID for this texture
+		int target = GL_TEXTURE_2D;
+		LWJGLImage image = new LWJGLImage(target, textureID);
+
+		image.setWidth(bufferedImage.getWidth());
+		image.setHeight(bufferedImage.getHeight());
+
+		int srcPixelFormat = bufferedImage.getColorModel().hasAlpha() ? GL_RGBA : GL_RGB;
+
+		// convert that image into a byte buffer of texture data
+		ByteBuffer textureBuffer = convertImageData(bufferedImage, image);
+
+		glBindTexture(target, textureID);
+		if (target == GL_TEXTURE_2D) {
+			/*
+			 * glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT); glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT); glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR); glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			 */
+			glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		}
+
+		glTexImage2D(target, 0, GL_RGBA, image.getTexWidth(), image.getTexHeight(), 0, srcPixelFormat, GL_UNSIGNED_BYTE, textureBuffer); // produce a texture from the byte buffer
+		glBindTexture(target, 0);
+		return image;
+	}
+
+	static {
+		int channels = 8;
+		try {
+			AL.create();
+
+			AL10.alGenBuffers(buffer); // Load wav data into a buffers.
+			AL10.alGenSources(source); // Bind buffers into audio sources.
+
+			// could we allocate all channels?
+			if (AL10.alGetError() != AL10.AL_NO_ERROR)
+				throw new LWJGLException("Unable to allocate " + channels + " sources");
+		} catch (LWJGLException e) {
+			e.printStackTrace();
+			System.out.println("Sound disabled");
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.gamelib.backend.ResourceFactory#getSound(java.io.File)
+	 */
+	@Override
+	public Sound getSound(File file) throws IOException {
+		WaveData waveFile = WaveData.create(getResourceAsStream(file.getPath()));
+		AL10.alBufferData(buffer.get(bufferIndex), waveFile.format, waveFile.data, waveFile.samplerate);
+		waveFile.dispose();
+
+		return new LWJGLSound(bufferIndex++);
 	}
 
 }

@@ -7,7 +7,20 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.MediaTracker;
+import java.awt.Transparency;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
+import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 
@@ -19,7 +32,7 @@ import org.gamelib.backend.Backend;
 import org.gamelib.backend.BackendImpl;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
-import org.gamelib.backend.ResourceFactory;
+import org.gamelib.backend.Sound;
 import org.gamelib.util.geom.Rectangle;
 
 /**
@@ -30,12 +43,15 @@ public class Java2DBackend extends BackendImpl implements Backend {
 
 	private Container container;
 	private Java2DPanel panel;
-	Java2DResourceFactory resourceFactory;
+	MediaTracker tracker;
+	/** The ids used by {@link #tracker} */
+	int nextAvailableId = 0;
 
 	private Java2DGraphics graphics;
 
 	public Java2DBackend(Container container) {
 		(this.container = container).add(panel = new Java2DPanel());
+		tracker = new MediaTracker(panel);
 	}
 
 	void setFullscreen(JFrame frame, boolean fullscreen) {
@@ -98,12 +114,6 @@ public class Java2DBackend extends BackendImpl implements Backend {
 
 	/** {@inheritDoc} */
 	@Override
-	public ResourceFactory getResourceFactory() {
-		return resourceFactory == null ? resourceFactory = new Java2DResourceFactory(panel) : resourceFactory;
-	}
-
-	/** {@inheritDoc} */
-	@Override
 	public void destroy() {}
 
 	@Override
@@ -124,7 +134,7 @@ public class Java2DBackend extends BackendImpl implements Backend {
 		super.start(game); // let BackendImpl initialize Game
 
 		try {
-			((Java2DResourceFactory) getResourceFactory()).tracker.waitForAll(); // wait for loading files
+			tracker.waitForAll(); // wait for loading files
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -140,5 +150,49 @@ public class Java2DBackend extends BackendImpl implements Backend {
 	@Override
 	public int getHeight() {
 		return panel.getHeight();
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public InputStream getResourceAsStream(String name) {
+		return Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Image getImage(File file) throws IOException {
+		// return new Java2DImage(ImageIO.read(file));
+		// return new Java2DImage(ImageIO.read(getResourceAsStream(file.getPath())));
+		BufferedImage image = ImageIO.read(getResourceAsStream(file.getPath()));
+		tracker.addImage(image, nextAvailableId++);
+		return new Java2DImage(image);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Image createImage(int width, int height) {
+		// return new Java2DImage(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
+		return new Java2DImage(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(width, height, Transparency.TRANSLUCENT));
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Sound getSound(File file) throws IOException {
+		Java2DSound sound = null;
+		try {
+			AudioInputStream stream = AudioSystem.getAudioInputStream(getResourceAsStream(file.getPath()));
+			Clip clip = (Clip) AudioSystem.getLine(new DataLine.Info(Clip.class, stream.getFormat())); // load the sound into memory (a Clip)
+			sound = new Java2DSound(clip);
+			clip.open(stream);
+		} catch (UnsupportedAudioFileException | LineUnavailableException e) {
+			e.printStackTrace();
+		}
+		return sound;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Image getImage(BufferedImage img) {
+		return new Java2DImage(img);
 	}
 }

@@ -23,7 +23,7 @@ public abstract class Game {
 	@Instance(type = Game.class, pattern = CreationalPattern.SINGLETON)
 	static Game instance;
 	/** The {@link Backend} handling the technical stuff */
-	protected Backend backend;
+	public Backend backend;
 	/** The {@link Thread} running in the background */
 	Thread thread;
 

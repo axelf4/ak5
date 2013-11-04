@@ -3,6 +3,8 @@
  */
 package org.gamelib.backend;
 
+import java.io.InputStream;
+
 import org.gamelib.Game;
 import org.gamelib.VideoMode;
 
@@ -34,6 +36,11 @@ public abstract class BackendImpl implements Backend {
 	@Override
 	public boolean shouldClose() {
 		return shouldStop;
+	}
+	
+	@Override
+	public InputStream getResourceAsStream(String name) {
+		return Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
 	}
 
 }
