@@ -26,7 +26,7 @@ public interface Handler {
 	public static abstract class Event {
 		/** If stopped notifying next handlers. */
 		public boolean cancelled;
-		/** Optionally the object on which the Event first occured */
+		/** Optionally the object on which the Event first occurred */
 		public Object source;
 
 		/** Stops the next handlers from receiving this event. */
