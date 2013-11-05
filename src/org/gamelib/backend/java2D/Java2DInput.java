@@ -71,7 +71,7 @@ public class Java2DInput extends Input implements KeyEventDispatcher, MouseListe
 	/** {@inheritDoc} */
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		mouseEvent(MOUSE_CLICKED, e.getButton() - 1, e.getX(), e.getY());
+		// mouseEvent(MOUSE_CLICKED, e.getButton() - 1, e.getX(), e.getY());
 	}
 
 	/** {@inheritDoc} */

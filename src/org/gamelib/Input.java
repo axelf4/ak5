@@ -12,6 +12,7 @@ import org.gamelib.backend.Backend;
 
 /**
  * An instance is derived by the {@link Backend}, for checking user input.
+ * 
  * @author pwnedary
  */
 public abstract class Input {
@@ -33,8 +34,9 @@ public abstract class Input {
 	public static final int MOUSE_PRESSED = 2;
 	/** The "mouse released" event. */
 	public static final int MOUSE_RELEASED = 3;
-	/** The "mouse clicked" event. */
-	public static final int MOUSE_CLICKED = 4;
+	/*
+	 *  * The "mouse clicked" event. * / public static final int MOUSE_CLICKED = 4;
+	 */
 
 	/** Indicates no mouse buttons; used by {@link #getButton}. */
 	public static final int NOBUTTON = -1;
@@ -57,6 +59,7 @@ public abstract class Input {
 
 	/**
 	 * Returns whether the <code>key</code> is pressed.
+	 * 
 	 * @param keycode The key code as found in {@link Input.Key}
 	 * @return whether the key is pressed
 	 */
@@ -67,6 +70,7 @@ public abstract class Input {
 	/**
 	 * Returns whether the mouse <code>button</code> is pressed.<br />
 	 * {@link #BUTTON1}, {@link #BUTTON2}, {@link #BUTTON3} or {@link #NOBUTTON} if none.
+	 * 
 	 * @param button which button to check for
 	 * @return whether the mouse button is pressed
 	 */
@@ -116,6 +120,7 @@ public abstract class Input {
 
 	/**
 	 * Constants for keyboard hardware. Virtual key codes.
+	 * 
 	 * @see java.awt.event.KeyEvent
 	 */
 	public static final class Key {
@@ -245,6 +250,7 @@ public abstract class Input {
 
 	/**
 	 * Translates the keyCode to match the ones in {@link Input.Key}. The normal user should never have to use this method.
+	 * 
 	 * @param keyCode the key to translate
 	 * @return the translated key
 	 */

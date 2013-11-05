@@ -3,8 +3,6 @@
  */
 package org.gamelib.backend.lwjgl;
 
-import java.awt.Point;
-
 import org.gamelib.Input;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -19,8 +17,7 @@ public class LWJGLInput extends Input {
 	@Override
 	public void poll() {
 		while (Keyboard.next())
-			// poll key events
-			keyEvent(Keyboard.getEventKeyState() ? KEY_PRESSED : KEY_RELEASED, translateKeyCode(Keyboard.getEventKey()));
+			keyEvent(Keyboard.getEventKeyState() ? KEY_PRESSED : KEY_RELEASED, translateKeyCode(Keyboard.getEventKey())); // poll key events
 
 		// Point p = new Point(org.lwjgl.input.Mouse.getX(), Display.getHeight() - org.lwjgl.input.Mouse.getY());
 		int mouseX = 0, mouseY = 0; // mouse position
@@ -32,10 +29,30 @@ public class LWJGLInput extends Input {
 			boolean pressed = Mouse.getEventButtonState();
 			int button = Mouse.getEventButton();
 			button = button == 1 ? BUTTON3 : button;
-			if (Mouse.getEventDX() != 0 || Mouse.getEventDY() != 0) mouseEvent(pressed ? MOUSE_DRAGGED : MOUSE_MOVED, button, mouseX, mouseY); // mouse moved
 			mouseEvent(pressed ? MOUSE_PRESSED : MOUSE_RELEASED, button, mouseX, mouseY); // pressed or released
-			if (!pressed) mouseEvent(MOUSE_CLICKED, button, mouseX, mouseY); // stupid clicked event
+			if (Mouse.getEventDX() != 0 || Mouse.getEventDY() != 0) mouseEvent(pressed ? MOUSE_DRAGGED : MOUSE_MOVED, button, mouseX, mouseY); // mouse moved
+			// if (!pressed) mouseEvent(MOUSE_CLICKED, button, mouseX, mouseY); // stupid clicked event
 		}
+	}
+
+	@Override
+	public boolean keyPressed(int keycode) {
+		return Keyboard.isKeyDown(keycode);
+	}
+
+	@Override
+	public boolean mousePressed(int button) {
+		return Mouse.isButtonDown(button);
+	}
+
+	@Override
+	public int getMouseX() {
+		return Mouse.getX();
+	}
+
+	@Override
+	public int getMouseY() {
+		return Display.getHeight() - Mouse.getY();
 	}
 
 	/** {@inheritDoc} */
@@ -47,16 +64,10 @@ public class LWJGLInput extends Input {
 		return keyCode;
 	}
 
-	@Deprecated
-	Point translateMouse(int x, int y) {
-		return new Point(x, Display.getHeight() - y);
-	}
-
 	/** {@inheritDoc} */
 	@Override
 	public void mouseMove(int x, int y) {
-		Point p = translateMouse(x, y);
-		org.lwjgl.input.Mouse.setCursorPosition(p.x, p.y);
+		org.lwjgl.input.Mouse.setCursorPosition(x, Display.getHeight() - y);
 	}
 
 	/** {@inheritDoc} */
