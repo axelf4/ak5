@@ -26,19 +26,13 @@ public interface Shape {
 	 * @param deltaX the amount to translate along the X axis
 	 * @param deltaY the amount to translate along the Y axis
 	 */
-	public void translate(int deltaX, int deltaY);
+	public void translate(int x, int y);
 
 	/**
 	 * Rotates the vertices of this {@link Shape} around the center.
 	 * @param theta amount in radians
 	 */
 	public void rotate(double theta);
-
-	/** @return array of each point */
-	public int[][] getPoints();
-
-	/** @return the bounding box of this {@link Shape}. */
-	public Rectangle getBounds();
 
 	/**
 	 * Draws the outline of this {@link Shape}.
@@ -51,6 +45,12 @@ public interface Shape {
 	 * @param g the {@link Graphics} reference
 	 */
 	public void fill(Graphics g);
+	
+	/** @return array of each point */
+	public int[][] getPoints();
+	
+	/** @return the bounding box of this {@link Shape}. */
+	public Rectangle getBounds();
 
 	/** @return AWT's representation of this shape. */
 	public java.awt.Shape toAWT();

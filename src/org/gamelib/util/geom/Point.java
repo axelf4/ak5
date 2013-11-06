@@ -11,9 +11,9 @@ import org.gamelib.backend.Graphics;
 public class Point implements Shape {
 
 	/** The X coordinate. */
-	private int x;
+	public int x;
 	/** The Y coordinate. */
-	private int y;
+	public int y;
 
 	private int deltaX, deltaY;
 
@@ -32,52 +32,22 @@ public class Point implements Shape {
 		this(0, 0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.util.geom.Shape#collides(org.gamelib.util.geom.Shape)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean collides(Shape shape) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.util.geom.Shape#translate(int, int)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void translate(int deltaX, int deltaY) {
 		this.deltaX = deltaX;
 		this.deltaY = deltaY;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.util.geom.Shape#rotate(double)
-	 */
+	/** {@inheritDoc} */
 	@Override
-	public void rotate(double theta) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.util.geom.Shape#getBounds()
-	 */
-	@Override
-	public Rectangle getBounds() {
-		return new Rectangle(getX(), getY(), 1, 1);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.util.geom.Shape#draw(org.gamelib.Graphics)
-	 */
-	@Override
-	public void draw(Graphics g) {
-		// TODO Auto-generated method stub
-
-	}
+	public void rotate(double theta) {}
 
 	/**
 	 * @return the x
@@ -106,31 +76,35 @@ public class Point implements Shape {
 	public void setY(int y) {
 		this.y = y;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.util.geom.Shape#toAWT()
-	 */
+	
+	/** {@inheritDoc} */
 	@Override
-	public java.awt.Shape toAWT() {
-		return new java.awt.Rectangle(getX(), getY(), 1, 1);
+	public void draw(Graphics g) {
+		g.drawLine(getX(), getY(), getX(), getY());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.util.geom.Shape#getPoints()
-	 */
+	/** {@inheritDoc} */
+	@Override
+	public void fill(Graphics g) {
+		draw(g);
+	}
+	
+	/** {@inheritDoc} */
 	@Override
 	public int[][] getPoints() {
 		return new int[][] { { x }, { y } };
 	}
-
-	/* (non-Javadoc)
-	 * @see org.gamelib.util.geom.Shape#fill(org.gamelib.backend.Graphics)
-	 */
+	
+	/** {@inheritDoc} */
 	@Override
-	public void fill(Graphics g) {
-		draw(g);
+	public Rectangle getBounds() {
+		return new Rectangle(getX(), getY(), 1, 1);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public java.awt.Shape toAWT() {
+		return new java.awt.Rectangle(getX(), getY(), 1, 1);
 	}
 
 }
