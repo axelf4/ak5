@@ -5,7 +5,6 @@ package org.gamelib.ui;
 
 import org.gamelib.backend.Graphics;
 import org.gamelib.util.Font;
-import org.gamelib.util.geom.Rectangle;
 
 /**
  * @author pwnedary
@@ -13,8 +12,9 @@ import org.gamelib.util.geom.Rectangle;
 public class Label extends Widget {
 
 	private String text;
-	private final Rectangle bounds = new Rectangle();
 	private LabelStyle style;
+	// TODO use, shorten text if needed with ...
+	private boolean ellipsis = true;
 
 	public Label(String text, LabelStyle style) {
 		this.text = text;
@@ -26,6 +26,7 @@ public class Label extends Widget {
 	}
 
 	public void setText(String text) {
+		invalidate();
 		this.text = text == null ? "" : text;
 	}
 
@@ -38,16 +39,16 @@ public class Label extends Widget {
 		if (event instanceof Event.Draw) {
 			validate();
 			Graphics g = ((Event.Draw) event).graphics;
-			style.font.drawString(g, text, bounds.getX(), bounds.getY());
+			style.font.drawString(g, text, getX(), getY());
 		} else return false;
 		return true;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	protected void layout() {
-		bounds.setWidth(style.font.getWidth(text));
-		bounds.setHeight(style.font.getHeight());
+	public void layout() {
+		setWidth(style.font.getWidth(text));
+		setHeight(style.font.getHeight());
 	}
 
 	public static class LabelStyle implements Style {
@@ -56,6 +57,21 @@ public class Label extends Widget {
 		public LabelStyle(Font font) {
 			this.font = font;
 		}
+	}
+
+	@Override
+	public int getPrefferedWidth() {
+		return style.font.getWidth(text);
+	}
+
+	@Override
+	public int getPrefferedHeight() {
+		return style.font.getHeight();
+	}
+	
+	@Override
+	public String toString() {
+		return text;
 	}
 
 }

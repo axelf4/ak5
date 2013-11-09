@@ -32,9 +32,13 @@ public abstract class WidgetGroup extends Widget {
 
 	/** {@inheritDoc} */
 	@Override
-	protected void layout() {
+	public void layout() {
 		// TODO Auto-generated method stub
 
+	}
+	
+	protected void addChild(Widget widget) {
+		children.add(widget);
 	}
 
 }
