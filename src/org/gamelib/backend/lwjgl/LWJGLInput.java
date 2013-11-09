@@ -3,6 +3,7 @@
  */
 package org.gamelib.backend.lwjgl;
 
+import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -70,10 +71,14 @@ public class LWJGLInput extends Input {
 		org.lwjgl.input.Mouse.setCursorPosition(x, Display.getHeight() - y);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void setGrabbed(boolean grabbed) {
 		org.lwjgl.input.Mouse.setGrabbed(true);
+	}
+
+	@Override
+	public void setCursor(Image image) {
+		throw new UnsupportedOperationException();
 	}
 
 }

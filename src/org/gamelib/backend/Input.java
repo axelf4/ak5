@@ -8,12 +8,8 @@ import java.awt.Robot;
 import java.awt.event.KeyEvent;
 
 import org.gamelib.Game;
-import org.gamelib.Handler;
-import org.gamelib.Registry;
 import org.gamelib.Handler.Event;
-import org.gamelib.Handler.Event.Key;
-import org.gamelib.Handler.Event.Mouse;
-import org.gamelib.Handler.Event.MouseWheel;
+import org.gamelib.Registry;
 
 /**
  * An instance is derived by the {@link Backend}, for checking user input.
@@ -22,8 +18,8 @@ import org.gamelib.Handler.Event.MouseWheel;
  */
 public abstract class Input {
 
-	@SuppressWarnings("unused")
 	/** The rate at which to repeat key presses, in Hz. */
+	@SuppressWarnings("unused")
 	private final int MAX_REPEAT_RATE = 100;
 
 	/** The "key pressed" event. */
@@ -40,7 +36,7 @@ public abstract class Input {
 	/** The "mouse released" event. */
 	public static final int MOUSE_RELEASED = 3;
 	/*
-	 *  * The "mouse clicked" event. * / public static final int MOUSE_CLICKED = 4;
+	 * * The "mouse clicked" event. * / public static final int MOUSE_CLICKED = 4;
 	 */
 
 	/** Indicates no mouse buttons; used by {@link #getButton}. */
@@ -98,11 +94,23 @@ public abstract class Input {
 	/** Checks for queued input states. */
 	public abstract void poll();
 
-	/** Moves the mouse to the given coordinates, (<code>x</code>,<code>y</code>). */
+	/**
+	 * Moves the mouse to the given coordinates, (<code>x</code>,<code>y</code>).
+	 * 
+	 * @param x the mouse's new x-coordinate
+	 * @param y the mouse's new y-coordinate
+	 */
 	public abstract void mouseMove(int x, int y);
 
-	/** Hides and holds the mouse at it's position. */
+	/** Hides and captures the mouse at it's position. */
 	public abstract void setGrabbed(boolean grabbed);
+
+	/**
+	 * Sets this window's cursor to show the given image.
+	 * 
+	 * @param image the new cursor image, if null the default
+	 */
+	public abstract void setCursor(Image image);
 
 	protected void keyEvent(int id, int keycode) {
 		keycode = translateKeyCode(keycode);

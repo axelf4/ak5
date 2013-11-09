@@ -9,6 +9,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.MediaTracker;
 import java.awt.Transparency;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +38,7 @@ import org.gamelib.util.geom.Rectangle;
 
 /**
  * The {@link Backend} using Java2D for rendering and resources.
+ * 
  * @author pwnedary
  */
 public class Java2DBackend extends BackendImpl implements Backend {
@@ -52,22 +54,6 @@ public class Java2DBackend extends BackendImpl implements Backend {
 	public Java2DBackend(Container container) {
 		(this.container = container).add(panel = new Java2DPanel());
 		tracker = new MediaTracker(panel);
-	}
-
-	void setFullscreen(JFrame frame, boolean fullscreen) {
-		GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-		frame.setUndecorated(fullscreen);
-		frame.setResizable(!fullscreen);
-		if (fullscreen) try {
-			graphicsDevice.setFullScreenWindow(frame); // Enter full-screen mode
-			frame.validate();
-		} finally {
-			// graphicsDevice.setFullScreenWindow(null); // Exit full-screen mode
-		}
-		else {
-			graphicsDevice.setFullScreenWindow(null);
-			frame.setVisible(true);
-		}
 	}
 
 	/** {@inheritDoc} */
@@ -114,7 +100,11 @@ public class Java2DBackend extends BackendImpl implements Backend {
 
 	/** {@inheritDoc} */
 	@Override
-	public void destroy() {}
+	public void destroy() {
+		GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		graphicsDevice.setFullScreenWindow(null);
+		if (container instanceof JFrame) container.dispatchEvent(new WindowEvent((JFrame) container, WindowEvent.WINDOW_CLOSING));
+	}
 
 	@Override
 	public Rectangle getSize() {
@@ -150,6 +140,26 @@ public class Java2DBackend extends BackendImpl implements Backend {
 	@Override
 	public int getHeight() {
 		return panel.getHeight();
+	}
+	
+	void setFullscreen(JFrame frame, boolean fullscreen) {
+		GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		frame.setUndecorated(fullscreen);
+		frame.setResizable(!fullscreen);
+		if (fullscreen) {
+			if (graphicsDevice.isFullScreenSupported()) {
+				// exclusive
+				frame.setVisible(true);
+				graphicsDevice.setFullScreenWindow(frame); // Enter full-screen mode
+				frame.validate();
+			} else {
+				frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // not exclusive
+				frame.setVisible(true);
+			}
+		} else {
+			graphicsDevice.setFullScreenWindow(null); // Exit full-screen mode
+			frame.setVisible(true);
+		}
 	}
 
 	/** {@inheritDoc} */
