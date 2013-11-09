@@ -3,7 +3,7 @@
  */
 package org.gamelib.backend.lwjgl;
 
-import org.gamelib.Input;
+import org.gamelib.backend.Input;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;

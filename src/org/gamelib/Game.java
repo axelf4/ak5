@@ -9,6 +9,7 @@ import org.gamelib.Handler.Event;
 import org.gamelib.Loop.LoopListener;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Graphics;
+import org.gamelib.backend.Input;
 import org.gamelib.util.Instance;
 import org.gamelib.util.Instance.CreationalPattern;
 

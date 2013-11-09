@@ -11,7 +11,6 @@ import java.io.InputStream;
 import org.gamelib.Destroyable;
 import org.gamelib.Drawable;
 import org.gamelib.Game;
-import org.gamelib.Input;
 import org.gamelib.util.geom.Rectangle;
 
 /**

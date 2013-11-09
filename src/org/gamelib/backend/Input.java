@@ -1,14 +1,19 @@
 /**
  * 
  */
-package org.gamelib;
+package org.gamelib.backend;
 
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 
+import org.gamelib.Game;
+import org.gamelib.Handler;
+import org.gamelib.Registry;
 import org.gamelib.Handler.Event;
-import org.gamelib.backend.Backend;
+import org.gamelib.Handler.Event.Key;
+import org.gamelib.Handler.Event.Mouse;
+import org.gamelib.Handler.Event.MouseWheel;
 
 /**
  * An instance is derived by the {@link Backend}, for checking user input.

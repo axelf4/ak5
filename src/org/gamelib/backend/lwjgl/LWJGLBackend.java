@@ -26,12 +26,12 @@ import javax.imageio.ImageIO;
 
 import org.gamelib.Drawable;
 import org.gamelib.Game;
-import org.gamelib.Input;
 import org.gamelib.VideoMode;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.BackendImpl;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
+import org.gamelib.backend.Input;
 import org.gamelib.backend.Sound;
 import org.gamelib.util.Color;
 import org.gamelib.util.Math2;

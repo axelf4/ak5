@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 import org.gamelib.backend.Graphics;
+import org.gamelib.backend.Input;
 import org.gamelib.ui.Component;
 
 /**
