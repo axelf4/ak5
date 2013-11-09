@@ -44,13 +44,10 @@ public class LWJGLGraphics implements Graphics {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Graphics#setColor(java.awt.Color)
-	 */
+	/** {@inheritDoc} */
 	@Override
-	public void setColor(Color c) {
-		this.currentColor = c;
+	public void setColor(Color color) {
+		this.currentColor = color;
 		float r = currentColor.getRed() / 255;
 		float g = currentColor.getGreen() / 255;
 		float b = currentColor.getBlue() / 255;
@@ -60,11 +57,14 @@ public class LWJGLGraphics implements Graphics {
 		GL11.glColor4f(r, g, b, a);
 		GL11.glClearColor(r, g, b, a);
 	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public Color getColor() {
+		return currentColor;
+	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Graphics#drawImage(java.awt.Image, int, int, int, int, int, int, int, int)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
 		initGL(2);
@@ -107,10 +107,7 @@ public class LWJGLGraphics implements Graphics {
 		setColor(previous);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Graphics#drawLine(int, int, int, int)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void drawLine(int x1, int y1, int x2, int y2) {
 		initGL(2);
@@ -122,10 +119,7 @@ public class LWJGLGraphics implements Graphics {
 		GL11.glEnd();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Graphics#drawRect(int, int, int, int)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void drawRect(int x, int y, int width, int height) {
 		initGL(2);
@@ -135,10 +129,7 @@ public class LWJGLGraphics implements Graphics {
 		drawLine(x, y + height, x, y);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Graphics#fillRect(int, int, int, int)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void fillRect(int x, int y, int width, int height) {
 		initGL(2);
@@ -152,22 +143,17 @@ public class LWJGLGraphics implements Graphics {
 		GL11.glEnd();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backend.Graphics#dispose()
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void dispose() {}
 
+	/** {@inheritDoc} */
 	@Override
 	public void clear() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | (GL11.glIsEnabled(GL11.GL_DEPTH_TEST) ? GL11.GL_DEPTH_BUFFER_BIT : 0)); // clear the screen and depth buffer
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backend.Graphics#drawCube(int, int, int, int, int, int)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void drawCube(int x, int y, int z, int width, int height, int depth) {
 		initGL(3);
@@ -215,10 +201,7 @@ public class LWJGLGraphics implements Graphics {
 		GL11.glEnd();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backend.Graphics#translate(float, float, float)
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void translate(float x, float y, float z) {
 		glTranslatef(x, y, z);
@@ -237,6 +220,12 @@ public class LWJGLGraphics implements Graphics {
 	@Override
 	public void scale(float sx, float sy, float sz) {
 		glScalef(sx, sy, sz);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void rotate(double theta) {
+		glRotated(theta, deltaX, deltaY, deltaZ);
 	}
 
 }
