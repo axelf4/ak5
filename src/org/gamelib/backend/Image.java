@@ -4,7 +4,7 @@
 package org.gamelib.backend;
 
 /**
- * An generic image, which can be drawed by {@link Graphics#drawImage(Image, int, int, int, int, int, int, int, int)}.
+ * An generic image, which can be drawn by {@link Graphics#drawImage(Image, int, int, int, int, int, int, int, int)}.
  * @author pwnedary
  */
 public interface Image {
