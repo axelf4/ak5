@@ -3,8 +3,6 @@
  */
 package org.gamelib;
 
-import static org.gamelib.util.Log.*;
-
 import org.gamelib.Handler.Event;
 import org.gamelib.Loop.LoopListener;
 import org.gamelib.backend.Backend;
@@ -12,6 +10,7 @@ import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Input;
 import org.gamelib.util.Instance;
 import org.gamelib.util.Instance.CreationalPattern;
+import org.gamelib.util.Logger.Log;
 
 import com.sun.istack.internal.NotNull;
 
@@ -40,7 +39,7 @@ public abstract class Game {
 		this.backend = backend;
 		this.input = backend.getInput();
 
-		info("Initialized " + this.toString());
+		Log.info("Initialized " + this.toString());
 		(thread = new Thread(getLoop(), this.toString())).start();
 	}
 
