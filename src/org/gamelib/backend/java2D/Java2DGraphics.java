@@ -117,4 +117,16 @@ public class Java2DGraphics implements Graphics {
 	public void rotate(double theta) {
 		g.rotate(theta);
 	}
+
+	@Override
+	public void begin() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void end() {
+		// TODO Auto-generated method stub
+		
+	}
 }

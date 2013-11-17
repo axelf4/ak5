@@ -57,7 +57,7 @@ public class LWJGLGraphics implements Graphics {
 		GL11.glColor4f(r, g, b, a);
 		GL11.glClearColor(r, g, b, a);
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public Color getColor() {
@@ -113,8 +113,8 @@ public class LWJGLGraphics implements Graphics {
 		initGL(2);
 		GL11.glBegin(GL11.GL_LINE_STRIP);
 		{
-			GL11.glVertex2d(x1, y1);
-			GL11.glVertex2d(x2, y2);
+			GL11.glVertex2i(x1, y1);
+			GL11.glVertex2i(x2, y2);
 		}
 		GL11.glEnd();
 	}
@@ -135,10 +135,10 @@ public class LWJGLGraphics implements Graphics {
 		initGL(2);
 		GL11.glBegin(GL11.GL_QUADS);
 		{
-			GL11.glVertex2f(x, y);
-			GL11.glVertex2f(x + width, y);
-			GL11.glVertex2f(x + width, y + height);
-			GL11.glVertex2f(x, y + height);
+			GL11.glVertex2i(x, y);
+			GL11.glVertex2i(x + width, y);
+			GL11.glVertex2i(x + width, y + height);
+			GL11.glVertex2i(x, y + height);
 		}
 		GL11.glEnd();
 	}
@@ -227,5 +227,11 @@ public class LWJGLGraphics implements Graphics {
 	public void rotate(double theta) {
 		glRotated(theta, deltaX, deltaY, deltaZ);
 	}
+
+	@Override
+	public void begin() {}
+
+	@Override
+	public void end() {}
 
 }

@@ -12,9 +12,6 @@ import org.gamelib.util.Color;
  */
 public interface Graphics {
 
-	/** Releases any system resources that are used. */
-	public void dispose();
-
 	/**
 	 * Set the color to use when rendering to this context
 	 * 
@@ -28,6 +25,15 @@ public interface Graphics {
 	 * @return The color in use by this graphics context
 	 */
 	public Color getColor();
+	
+	/** Begins drawing with this graphics context. */
+	public void begin();
+
+	/** Ends drawing with this graphics context. */
+	public void end();
+
+	/** Releases any system resources that are used. */
+	public void dispose();
 
 	/** Increments the current. */
 	public static final int ADD = 0x01;

@@ -54,7 +54,7 @@ import org.lwjgl.util.glu.GLU;
  * @author pwnedary
  */
 public class LWJGLBackend extends BackendImpl implements Backend {
-	
+
 	/** The colour model including alpha for the GL image */
 	private final ColorModel glAlphaColorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[] { 8, 8, 8, 8 }, true, false, ComponentColorModel.TRANSLUCENT, DataBuffer.TYPE_BYTE);;
 	/** The colour model for the GL image */
@@ -65,7 +65,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	LWJGLGraphics graphics;
 	LWJGLInput input;
 
-	static void init2d(int width, int height) {
+	static void init2d_old(int width, int height) {
 		glMatrixMode(GL_PROJECTION); // resets any previous projection matrices
 		glLoadIdentity();
 		glOrtho(0, width, height, 0, 1, -1); // 0,0 : top-left
@@ -77,6 +77,26 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+
+	static void init2d(int width, int height) {
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0, width, height, 0, 1, -1); // 0,0 : top-left
+		// glOrtho(0, width, 0, height, 1, -1); // 0,0 : bottom-left
+		glMatrixMode(GL_MODELVIEW);
+
+		// GL11.glTranslatef((width - xsize) / 2, (height - ysize) / 2, 0);
+		glEnable(GL_TEXTURE_2D);
+		glShadeModel(GL_SMOOTH);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_LIGHTING);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClearDepth(1);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glViewport(0, 0, width, height);
+		glMatrixMode(GL_MODELVIEW);
 	}
 
 	static void init3d(int width, int height) {
@@ -119,8 +139,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 						}
 					}
 				}
-			} else
-				targetDisplayMode = new DisplayMode(videoMode.getWidth(), videoMode.getHeight());
+			} else targetDisplayMode = new DisplayMode(videoMode.getWidth(), videoMode.getHeight());
 
 			// Display.setDisplayMode(new DisplayMode(800, 600));
 			Display.setDisplayMode(targetDisplayMode);
@@ -157,7 +176,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		// Game2.getInstance().screen.drawHandlers(getGraphics(), delta);
 		callback.draw(g, delta);
 		Display.update();
-		Util.checkGLError();
+		// Util.checkGLError();
 	}
 
 	public org.lwjgl.opengl.DisplayMode convertModes(DisplayMode mode) {
@@ -185,12 +204,9 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	/** {@inheritDoc} */
 	@Override
 	public Graphics getGraphics(Image image) {
-		if (GLContext.getCapabilities().GL_EXT_framebuffer_object)
-			return new FBOGraphics((LWJGLImage) image);
-		else if ((Pbuffer.getCapabilities() & Pbuffer.PBUFFER_SUPPORTED) != 0)
-			return new PbufferGraphics((LWJGLImage) image);
-		else
-			throw new Error("Your OpenGL card doesn't support offscreen buffers.");
+		if (GLContext.getCapabilities().GL_EXT_framebuffer_object) return new FBOGraphics((LWJGLImage) image);
+		else if ((Pbuffer.getCapabilities() & Pbuffer.PBUFFER_SUPPORTED) != 0) return new PbufferGraphics((LWJGLImage) image);
+		else throw new Error("Your OpenGL card doesn't support offscreen buffers.");
 	}
 
 	/** {@inheritDoc} */
@@ -222,15 +238,29 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	/**
 	 * Create a new texture ID
+	 * 
 	 * @return a new texture ID
 	 */
 	private int createTextureID() {
-		glGenTextures(textureIDBuffer);
-		return textureIDBuffer.get(0);
+		// glGenTextures(textureIDBuffer); return textureIDBuffer.get(0);
+		IntBuffer tmp = createIntBuffer(1);
+		glGenTextures(tmp);
+		return tmp.get(0);
+	}
+
+	/**
+	 * Creates an integer buffer to hold specified ints - strictly a utility method
+	 * 
+	 * @param size how many int to contain
+	 * @return created IntBuffer
+	 */
+	private static IntBuffer createIntBuffer(int size) {
+		return ByteBuffer.allocateDirect(4 * size).order(ByteOrder.nativeOrder()).asIntBuffer();
 	}
 
 	/**
 	 * Convert the buffered image to a texture
+	 * 
 	 * @param bufferedImage The image to convert to a texture
 	 * @param image The texture to store the data into
 	 * @return a buffer containing the data
@@ -277,12 +307,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		return getImage(bufferedImage);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backend.ResourceFactory#createImage(int, int)
-	 */
-	@Override
-	public Image createImage(int width, int height) {
+	public Image createImage2(int width, int height) {
 		// TODO
 		int textureID = createTextureID();
 		LWJGLImage image = new LWJGLImage(GL_TEXTURE_2D, textureID);
@@ -307,6 +332,11 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		}
 		image.unbind();
 		return image;
+	}
+
+	@Override
+	public Image createImage(int width, int height) {
+		return getImage(new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR));
 	}
 
 	// /** 4 for RGBA, 3 for RGB */
@@ -352,8 +382,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 			AL10.alGenSources(source); // Bind buffers into audio sources.
 
 			// could we allocate all channels?
-			if (AL10.alGetError() != AL10.AL_NO_ERROR)
-				throw new LWJGLException("Unable to allocate " + channels + " sources");
+			if (AL10.alGetError() != AL10.AL_NO_ERROR) throw new LWJGLException("Unable to allocate " + channels + " sources");
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 			System.out.println("Sound disabled");
