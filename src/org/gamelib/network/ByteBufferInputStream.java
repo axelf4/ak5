@@ -24,6 +24,7 @@ public class ByteBufferInputStream extends InputStream {
 	}
 
 	public int read(byte[] bytes, int off, int len) throws IOException {
+		System.out.println(buffer.hasRemaining());
 		if (!buffer.hasRemaining()) return -1;
 
 		len = Math.min(len, buffer.remaining());

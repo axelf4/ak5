@@ -4,6 +4,7 @@
 package org.gamelib.network;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,11 +22,12 @@ public class Serialization {
 		try {
 			Output output = new Output(new ByteBufferOutputStream(buffer));
 			Class<?> type = object.getClass();
+			System.out.println("writing class: " + type.getName());
 			output.writeString(type.getName());
 			
 			Serializer<T> serializer = (Serializer<T>) serializers.get(type);
 			serializer.write(output, object);
-			output.close();
+			output.flush();
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -33,6 +35,7 @@ public class Serialization {
 
 	public <T> T read(ByteBuffer buffer) {
 		try {
+			// System.out.println(Arrays.toString(buffer.array()));
 			Input input = new Input(new ByteBufferInputStream(buffer));
 			String className = input.readString();
 			Class<T> type = (Class<T>) Class.forName(className);

@@ -10,6 +10,13 @@ public class DefaultSerializers {
 	public static void register() {
 		Serialization.serializers.put(Boolean.class, new BooleanSerializer());
 		Serialization.serializers.put(Byte.class, new ByteSerializer());
+		Serialization.serializers.put(Character.class, new CharSerializer());
+		Serialization.serializers.put(Short.class, new ShortSerializer());
+		Serialization.serializers.put(Integer.class, new IntSerializer());
+		Serialization.serializers.put(Long.class, new LongSerializer());
+		Serialization.serializers.put(Float.class, new FloatSerializer());
+		Serialization.serializers.put(Double.class, new DoubleSerializer());
+		Serialization.serializers.put(String.class, new StringSerializer());
 	}
 
 	static class BooleanSerializer implements Serializer<Boolean> {

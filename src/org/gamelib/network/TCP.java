@@ -35,6 +35,7 @@ public class TCP {
 
 	/**
 	 * Server
+	 * 
 	 * @return
 	 */
 	public SelectionKey accept(Selector selector, SocketChannel socketChannel)
@@ -46,7 +47,6 @@ public class TCP {
 
 		this.socketChannel = socketChannel;
 		socketChannel.configureBlocking(false);
-		// Socket socket = socketChannel.socket();
 
 		selectionKey = socketChannel.register(selector, SelectionKey.OP_READ);
 
@@ -55,6 +55,7 @@ public class TCP {
 
 	/**
 	 * Client
+	 * 
 	 * @param address
 	 * @param selector
 	 * @throws IOException
@@ -80,13 +81,9 @@ public class TCP {
 	 * @throws IOException
 	 */
 	public void writeOperation() throws IOException {
-		System.out.println("write operation");
 		if (socketChannel == null) throw new SocketException("Connection is closed.");
 
-		if (writeToSocket()) {
-			selectionKey.interestOps(SelectionKey.OP_READ); // write successful, clear OP_WRITE
-			System.out.println("succesful write");
-		}
+		if (writeToSocket()) selectionKey.interestOps(SelectionKey.OP_READ); // write successful, clear OP_WRITE
 	}
 
 	private boolean writeToSocket() throws IOException {
@@ -100,7 +97,6 @@ public class TCP {
 	}
 
 	public int send(Object object) throws IOException {
-		System.out.println("Sending " + object);
 		// Leave room for length.
 		int start = writeBuffer.position();
 		int lengthLength = serialization.getLengthLength();
@@ -112,19 +108,13 @@ public class TCP {
 
 		// Write data length.
 		writeBuffer.position(start);
-		System.out.println("writing length " + (end - lengthLength - start));
 		serialization.writeLength(writeBuffer, end - lengthLength - start);
 		writeBuffer.position(end);
 
 		// Write to socket if no data was queued.
-		if (start == 0 && !writeToSocket()) {
-			// A partial write, set OP_WRITE to be notified when more writing can occur.
-			selectionKey.interestOps(SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-		} else {
-			// Full write, wake up selector so idle event will be fired.
-			selectionKey.selector().wakeup();
-		}
-		return 0;
+		if (start == 0 && !writeToSocket()) selectionKey.interestOps(SelectionKey.OP_READ | SelectionKey.OP_WRITE); // A partial write, set OP_WRITE to be notified when more writing can occur.
+		else selectionKey.selector().wakeup(); // Full write, wake up selector so idle event will be fired.
+		return end - start;
 	}
 
 	public Object readObject() throws IOException {
@@ -154,18 +144,13 @@ public class TCP {
 
 		int startPosition = readBuffer.position();
 		int oldLimit = readBuffer.limit();
-		
-		System.out.println("length: " + length);
+
 		if (length == 0) return null;
 		readBuffer.limit(startPosition + length);
 		Object object = serialization.read(readBuffer);
-		System.out.println("Received object: " + object);
 		readBuffer.limit(oldLimit);
+		if (readBuffer.position() - startPosition != length) throw new RuntimeException("Incorrect number of bytes (" + (startPosition + length - readBuffer.position()) + " remaining) used to deserialize object: " + object);
 
-		// int bytesRead = socketChannel.read(readBuffer);
-		// System.out.println("read " + bytesRead + " bytes");
-		// System.out.println(Arrays.toString(readBuffer.array()));
-		// return readBuffer.get(0);
 		return object;
 	}
 

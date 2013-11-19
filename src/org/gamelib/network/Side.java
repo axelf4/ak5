@@ -9,8 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author Axel
- * 
+ * @author pwnedary
  */
 public enum Side {
 	CLIENT(), SERVER();
@@ -30,14 +29,11 @@ public enum Side {
 	}
 
 	/**
-	 * 
-	 * @author Axel
-	 *
+	 * @author pwnedary
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 	public @interface SideOnly {
-
 		public Side value();
 	}
 }

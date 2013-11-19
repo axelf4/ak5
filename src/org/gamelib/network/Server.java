@@ -54,20 +54,16 @@ public class Server implements EndPoint {
 
 				if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
 					Object object;
-					while ((object = fromConnection.tcp.readObject()) != null) {
-						System.out.println("Server received tcp: " + object);
+					while ((object = fromConnection.tcp.readObject()) != null)
 						notifyReceived(object);
-					}
 				} else if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE) fromConnection.tcp.writeOperation();
 				else if ((ops & SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT) {
 					try {
-						System.out.println("Server: client accepting...");
 						Connection connection = new Connection();
 						SocketChannel socketChannel = serverChannel.accept();
 						if (socketChannel != null) {
 							SelectionKey key = connection.tcp.accept(selector, socketChannel);
 							key.attach(connection);
-							System.out.println("Server: accepted client");
 							notifyConnected(connection);
 						}
 					} catch (CancelledKeyException e) {} // connection is closed
@@ -83,7 +79,7 @@ public class Server implements EndPoint {
 		selector.wakeup();
 		selector.selectNow(); // Select one last time to complete closing the socket.
 	}
-	
+
 	public void setListener(SocketListener listener) {
 		this.listener = listener;
 	}
