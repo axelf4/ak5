@@ -5,22 +5,23 @@ package org.gamelib.network;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.BufferUnderflowException;
 
 /**
- * @author pwnedary
+ * @author Axel
  */
 public class Input {
+
 	protected byte[] buffer;
 	protected int position;
 	protected int capacity;
 	protected int limit;
 	protected int total;
-	protected char[] chars = new char[32];
 	protected InputStream inputStream;
 
 	/**
 	 * Creates a new Input for reading from a byte array.
+	 * 
 	 * @param bufferSize The size of the buffer. An exception is thrown if more bytes than this are read.
 	 */
 	public Input(int bufferSize) {
@@ -31,60 +32,12 @@ public class Input {
 	/** Creates a new Input for reading from an InputStream with a buffer size of 4096. */
 	public Input(InputStream inputStream) {
 		this(4096);
-		if (inputStream == null) throw new IllegalArgumentException("inputStream cannot be null.");
-		this.inputStream = inputStream;
-	}
-
-	/** Returns the number of bytes read. */
-	public int total() {
-		return total + position;
-	}
-
-	/** Sets the number of bytes read. */
-	public void setTotal(int total) {
-		this.total = total;
-	}
-
-	/** Returns the current position in the buffer. */
-	final public int position() {
-		return position;
-	}
-
-	/** Sets the current position in the buffer. */
-	public void setPosition(int position) {
-		this.position = position;
-	}
-
-	/** Returns the limit for the buffer. */
-	final public int limit() {
-		return limit;
-	}
-
-	/** Sets the limit in the buffer. */
-	public void setLimit(int limit) {
-		this.limit = limit;
-	}
-
-	/** Sets the position and total to zero. */
-	public void rewind() {
-		position = 0;
-		total = 0;
-	}
-
-	/** Discards the specified number of bytes. */
-	public void skip(int count) throws RuntimeException {
-		int skipCount = Math.min(limit - position, count);
-		while (true) {
-			position += skipCount;
-			count -= skipCount;
-			if (count == 0) break;
-			skipCount = Math.min(count, capacity);
-			require(skipCount);
-		}
+		if ((this.inputStream = inputStream) == null) throw new IllegalArgumentException("inputStream cannot be null.");
 	}
 
 	/**
 	 * Fills the buffer with more bytes. Can be overridden to fill the bytes from a source other than the InputStream.
+	 * 
 	 * @return -1 if there are no more bytes.
 	 */
 	protected int fill(byte[] buffer, int offset, int count)
@@ -111,7 +64,7 @@ public class Input {
 		// Try to fill the buffer.
 		if (remaining > 0) {
 			count = fill(buffer, limit, capacity - limit);
-			if (count == -1) throw new RuntimeException("Buffer underflow.");
+			if (count == -1) throw new BufferUnderflowException();
 			remaining += count;
 			if (remaining >= required) {
 				limit += count;
@@ -128,7 +81,7 @@ public class Input {
 			count = fill(buffer, remaining, capacity - remaining);
 			if (count == -1) {
 				if (remaining >= required) break;
-				throw new RuntimeException("Buffer underflow.");
+				throw new BufferUnderflowException();
 			}
 			remaining += count;
 			if (remaining >= required) break; // Enough has been read.
@@ -136,110 +89,6 @@ public class Input {
 
 		limit = remaining;
 		return remaining;
-	}
-
-	/**
-	 * @param optional Try to fill the buffer with this many bytes.
-	 * @return the number of bytes remaining, but not more than optional, or -1 if the EOS was reached and the buffer is empty.
-	 */
-	private int optional(int optional) throws RuntimeException {
-		int remaining = limit - position;
-		if (remaining >= optional) return optional;
-		optional = Math.min(optional, capacity);
-
-		int count;
-
-		// Try to fill the buffer.
-		count = fill(buffer, limit, capacity - limit);
-		if (count == -1) return remaining == 0 ? -1 : Math.min(remaining, optional);
-		remaining += count;
-		if (remaining >= optional) {
-			limit += count;
-			return optional;
-		}
-
-		// Was not enough, compact and try again.
-		System.arraycopy(buffer, position, buffer, 0, remaining);
-		total += position;
-		position = 0;
-
-		while (true) {
-			count = fill(buffer, remaining, capacity - remaining);
-			if (count == -1) break;
-			remaining += count;
-			if (remaining >= optional) break; // Enough has been read.
-		}
-
-		limit = remaining;
-		return remaining == 0 ? -1 : Math.min(remaining, optional);
-	}
-
-	public boolean eof() {
-		return optional(1) <= 0;
-	}
-
-	// InputStream
-
-	public int available() throws IOException {
-		return limit - position + ((null != inputStream) ? inputStream.available() : 0);
-	}
-
-	/** Reads a single byte as an int from 0 to 255, or -1 if there are no more bytes are available. */
-	public int read() throws RuntimeException {
-		if (optional(1) <= 0) return -1;
-		return buffer[position++] & 0xFF;
-	}
-
-	/**
-	 * Reads bytes.length bytes or less and writes them to the specified byte[], starting at 0, and returns the number of bytes read.
-	 */
-	public int read(byte[] bytes) throws RuntimeException {
-		return read(bytes, 0, bytes.length);
-	}
-
-	/**
-	 * Reads count bytes or less and writes them to the specified byte[], starting at offset, and returns the number of bytes read or -1 if no more bytes are available.
-	 */
-	public int read(byte[] bytes, int offset, int count)
-			throws RuntimeException {
-		if (bytes == null) throw new IllegalArgumentException("bytes cannot be null.");
-		int startingCount = count;
-		int copyCount = Math.min(limit - position, count);
-		while (true) {
-			System.arraycopy(buffer, position, bytes, offset, copyCount);
-			position += copyCount;
-			count -= copyCount;
-			if (count == 0) break;
-			offset += copyCount;
-			copyCount = optional(count);
-			if (copyCount == -1) {
-				// End of data.
-				if (startingCount == count) return -1;
-				break;
-			}
-			if (position == limit) break;
-		}
-		return startingCount - count;
-	}
-
-	/** Discards the specified number of bytes. */
-	public long skip(long count) throws RuntimeException {
-		long remaining = count;
-		while (remaining > 0) {
-			int skip = Math.min(Integer.MAX_VALUE, (int) remaining);
-			skip(skip);
-			remaining -= skip;
-		}
-		return count;
-	}
-
-	/** Closes the underlying InputStream, if any. */
-	public void close() throws RuntimeException {
-		if (inputStream != null) {
-			try {
-				inputStream.close();
-			} catch (IOException ignored) {}
-		}
 	}
 
 	// byte
@@ -287,309 +136,23 @@ public class Input {
 	// int
 
 	/** Reads a 4 byte int. */
-	public int readInt() throws RuntimeException {
+	public int readInt() {
 		require(4);
-		byte[] buffer = this.buffer;
-		int position = this.position;
-		this.position = position + 4;
-		return (buffer[position] & 0xFF) << 24 //
-				| (buffer[position + 1] & 0xFF) << 16 //
-				| (buffer[position + 2] & 0xFF) << 8 //
-				| buffer[position + 3] & 0xFF;
-	}
-
-	/**
-	 * Reads a 1-5 byte int. This stream may consider such a variable length encoding request as a hint. It is not guaranteed that a variable length encoding will be really used. The stream may decide to use native-sized integer representation for efficiency reasons.
-	 **/
-	public int readInt(boolean optimizePositive) throws RuntimeException {
-		return readVarInt(optimizePositive);
-	}
-
-	/** Reads a 1-5 byte int. It is guaranteed that a varible length encoding will be used. */
-	public int readVarInt(boolean optimizePositive) throws RuntimeException {
-		if (require(1) < 5) return readInt_slow(optimizePositive);
-		int b = buffer[position++];
-		int result = b & 0x7F;
-		if ((b & 0x80) != 0) {
-			byte[] buffer = this.buffer;
-			b = buffer[position++];
-			result |= (b & 0x7F) << 7;
-			if ((b & 0x80) != 0) {
-				b = buffer[position++];
-				result |= (b & 0x7F) << 14;
-				if ((b & 0x80) != 0) {
-					b = buffer[position++];
-					result |= (b & 0x7F) << 21;
-					if ((b & 0x80) != 0) {
-						b = buffer[position++];
-						result |= (b & 0x7F) << 28;
-					}
-				}
-			}
-		}
-		return optimizePositive ? result : ((result >>> 1) ^ -(result & 1));
-	}
-
-	private int readInt_slow(boolean optimizePositive) {
-		// The buffer is guaranteed to have at least 1 byte.
-		int b = buffer[position++];
-		int result = b & 0x7F;
-		if ((b & 0x80) != 0) {
-			require(1);
-			byte[] buffer = this.buffer;
-			b = buffer[position++];
-			result |= (b & 0x7F) << 7;
-			if ((b & 0x80) != 0) {
-				require(1);
-				b = buffer[position++];
-				result |= (b & 0x7F) << 14;
-				if ((b & 0x80) != 0) {
-					require(1);
-					b = buffer[position++];
-					result |= (b & 0x7F) << 21;
-					if ((b & 0x80) != 0) {
-						require(1);
-						b = buffer[position++];
-						result |= (b & 0x7F) << 28;
-					}
-				}
-			}
-		}
-		return optimizePositive ? result : ((result >>> 1) ^ -(result & 1));
-	}
-
-	/** Returns true if enough bytes are available to read an int with {@link #readInt(boolean)}. */
-	public boolean canReadInt() throws RuntimeException {
-		if (limit - position >= 5) return true;
-		if (optional(5) <= 0) return false;
-		int p = position;
-		if ((buffer[p++] & 0x80) == 0) return true;
-		if (p == limit) return false;
-		if ((buffer[p++] & 0x80) == 0) return true;
-		if (p == limit) return false;
-		if ((buffer[p++] & 0x80) == 0) return true;
-		if (p == limit) return false;
-		if ((buffer[p++] & 0x80) == 0) return true;
-		if (p == limit) return false;
-		return true;
-	}
-
-	/** Returns true if enough bytes are available to read a long with {@link #readLong(boolean)}. */
-	public boolean canReadLong() throws RuntimeException {
-		if (limit - position >= 9) return true;
-		if (optional(5) <= 0) return false;
-		int p = position;
-		if ((buffer[p++] & 0x80) == 0) return true;
-		if (p == limit) return false;
-		if ((buffer[p++] & 0x80) == 0) return true;
-		if (p == limit) return false;
-		if ((buffer[p++] & 0x80) == 0) return true;
-		if (p == limit) return false;
-		if ((buffer[p++] & 0x80) == 0) return true;
-		if (p == limit) return false;
-		if ((buffer[p++] & 0x80) == 0) return true;
-		if (p == limit) return false;
-		if ((buffer[p++] & 0x80) == 0) return true;
-		if (p == limit) return false;
-		if ((buffer[p++] & 0x80) == 0) return true;
-		if (p == limit) return false;
-		if ((buffer[p++] & 0x80) == 0) return true;
-		if (p == limit) return false;
-		return true;
+		return (buffer[position++] & 0xFF) << 24 | //
+		(buffer[position++] & 0xFF) << 16 | //
+		(buffer[position++] & 0xFF) << 8 | //
+		(buffer[position++] & 0xFF);
 	}
 
 	// string
 
-	/**
-	 * Reads the length and string of UTF8 characters, or null. This can read strings written by {@link Output#writeString(String)} , {@link Output#writeString(CharSequence)}, and {@link Output#writeAscii(String)}.
-	 * @return May be null.
-	 */
 	public String readString() {
-		int available = require(1);
-		int b = buffer[position++];
-		if ((b & 0x80) == 0) return readAscii(); // ASCII.
-		// Null, empty, or UTF8.
-		int charCount = available >= 5 ? readUtf8Length(b) : readUtf8Length_slow(b);
-		switch (charCount) {
-		case 0:
-			return null;
-		case 1:
-			return "";
+		int length = readInt();
+		StringBuilder builder = new StringBuilder(length);
+		for (int i = 0; i < length; i++) {
+			builder.append(readChar());
 		}
-		charCount--;
-		if (chars.length < charCount) chars = new char[charCount];
-		readUtf8(charCount);
-		return new String(chars, 0, charCount);
-	}
-
-	private int readUtf8Length(int b) {
-		int result = b & 0x3F; // Mask all but first 6 bits.
-		if ((b & 0x40) != 0) { // Bit 7 means another byte, bit 8 means UTF8.
-			byte[] buffer = this.buffer;
-			b = buffer[position++];
-			result |= (b & 0x7F) << 6;
-			if ((b & 0x80) != 0) {
-				b = buffer[position++];
-				result |= (b & 0x7F) << 13;
-				if ((b & 0x80) != 0) {
-					b = buffer[position++];
-					result |= (b & 0x7F) << 20;
-					if ((b & 0x80) != 0) {
-						b = buffer[position++];
-						result |= (b & 0x7F) << 27;
-					}
-				}
-			}
-		}
-		return result;
-	}
-
-	private int readUtf8Length_slow(int b) {
-		int result = b & 0x3F; // Mask all but first 6 bits.
-		if ((b & 0x40) != 0) { // Bit 7 means another byte, bit 8 means UTF8.
-			require(1);
-			byte[] buffer = this.buffer;
-			b = buffer[position++];
-			result |= (b & 0x7F) << 6;
-			if ((b & 0x80) != 0) {
-				require(1);
-				b = buffer[position++];
-				result |= (b & 0x7F) << 13;
-				if ((b & 0x80) != 0) {
-					require(1);
-					b = buffer[position++];
-					result |= (b & 0x7F) << 20;
-					if ((b & 0x80) != 0) {
-						require(1);
-						b = buffer[position++];
-						result |= (b & 0x7F) << 27;
-					}
-				}
-			}
-		}
-		return result;
-	}
-
-	private void readUtf8(int charCount) {
-		byte[] buffer = this.buffer;
-		char[] chars = this.chars;
-		// Try to read 7 bit ASCII chars.
-		int charIndex = 0;
-		int count = Math.min(require(1), charCount);
-		int position = this.position;
-		int b;
-		while (charIndex < count) {
-			b = buffer[position++];
-			if (b < 0) {
-				position--;
-				break;
-			}
-			chars[charIndex++] = (char) b;
-		}
-		this.position = position;
-		// If buffer didn't hold all chars or any were not ASCII, use slow path for remainder.
-		if (charIndex < charCount) readUtf8_slow(charCount, charIndex);
-	}
-
-	private void readUtf8_slow(int charCount, int charIndex) {
-		char[] chars = this.chars;
-		byte[] buffer = this.buffer;
-		while (charIndex < charCount) {
-			if (position == limit) require(1);
-			int b = buffer[position++] & 0xFF;
-			switch (b >> 4) {
-			case 0:
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-			case 6:
-			case 7:
-				chars[charIndex] = (char) b;
-				break;
-			case 12:
-			case 13:
-				if (position == limit) require(1);
-				chars[charIndex] = (char) ((b & 0x1F) << 6 | buffer[position++] & 0x3F);
-				break;
-			case 14:
-				require(2);
-				chars[charIndex] = (char) ((b & 0x0F) << 12 | (buffer[position++] & 0x3F) << 6 | buffer[position++] & 0x3F);
-				break;
-			}
-			charIndex++;
-		}
-	}
-
-	private String readAscii() {
-		byte[] buffer = this.buffer;
-		int end = position;
-		int start = end - 1;
-		int limit = this.limit;
-		int b;
-		do {
-			if (end == limit) return readAscii_slow();
-			b = buffer[end++];
-		} while ((b & 0x80) == 0);
-		buffer[end - 1] &= 0x7F; // Mask end of ascii bit.
-		String value = new String(buffer, start, end - start, Charset.defaultCharset());
-		buffer[end - 1] |= 0x80;
-		position = end;
-		return value;
-	}
-
-	private String readAscii_slow() {
-		position--; // Re-read the first byte.
-		// Copy chars currently in buffer.
-		int charCount = limit - position;
-		if (charCount > chars.length) chars = new char[charCount * 2];
-		char[] chars = this.chars;
-		byte[] buffer = this.buffer;
-		for (int i = position, ii = 0, n = limit; i < n; i++, ii++)
-			chars[ii] = (char) buffer[i];
-		position = limit;
-		// Copy additional chars one by one.
-		while (true) {
-			require(1);
-			int b = buffer[position++];
-			if (charCount == chars.length) {
-				char[] newChars = new char[charCount * 2];
-				System.arraycopy(chars, 0, newChars, 0, charCount);
-				chars = newChars;
-				this.chars = newChars;
-			}
-			if ((b & 0x80) == 0x80) {
-				chars[charCount++] = (char) (b & 0x7F);
-				break;
-			}
-			chars[charCount++] = (char) b;
-		}
-		return new String(chars, 0, charCount);
-	}
-
-	/**
-	 * Reads the length and string of UTF8 characters, or null. This can read strings written by {@link Output#writeString(String)} , {@link Output#writeString(CharSequence)}, and {@link Output#writeAscii(String)}.
-	 * @return May be null.
-	 */
-	public StringBuilder readStringBuilder() {
-		int available = require(1);
-		int b = buffer[position++];
-		if ((b & 0x80) == 0) return new StringBuilder(readAscii()); // ASCII.
-		// Null, empty, or UTF8.
-		int charCount = available >= 5 ? readUtf8Length(b) : readUtf8Length_slow(b);
-		switch (charCount) {
-		case 0:
-			return null;
-		case 1:
-			return new StringBuilder("");
-		}
-		charCount--;
-		if (chars.length < charCount) chars = new char[charCount];
-		readUtf8(charCount);
-		StringBuilder builder = new StringBuilder(charCount);
-		builder.append(chars, 0, charCount);
-		return builder;
+		return builder.toString();
 	}
 
 	// float
@@ -599,16 +162,10 @@ public class Input {
 		return Float.intBitsToFloat(readInt());
 	}
 
-	/** Reads a 1-5 byte float with reduced precision. */
-	public float readFloat(float precision, boolean optimizePositive)
-			throws RuntimeException {
-		return readInt(optimizePositive) / (float) precision;
-	}
-
 	// short
 
 	/** Reads a 2 byte short. */
-	public short readShort() throws RuntimeException {
+	public short readShort() {
 		require(2);
 		return (short) (((buffer[position++] & 0xFF) << 8) | (buffer[position++] & 0xFF));
 	}
@@ -633,105 +190,6 @@ public class Input {
 				| (buffer[position++] & 0xFF) << 16 //
 				| (buffer[position++] & 0xFF) << 8 //
 				| buffer[position++] & 0xFF;
-
-	}
-
-	/**
-	 * Reads a 1-9 byte long. This stream may consider such a variable length encoding request as a hint. It is not guaranteed that a variable length encoding will be really used. The stream may decide to use native-sized integer representation for efficiency reasons.
-	 */
-	public long readLong(boolean optimizePositive) throws RuntimeException {
-		return readVarLong(optimizePositive);
-	}
-
-	/** Reads a 1-9 byte long. It is guaranteed that a varible length encoding will be used. */
-	public long readVarLong(boolean optimizePositive) throws RuntimeException {
-		if (require(1) < 9) return readLong_slow(optimizePositive);
-		int b = buffer[position++];
-		long result = b & 0x7F;
-		if ((b & 0x80) != 0) {
-			byte[] buffer = this.buffer;
-			b = buffer[position++];
-			result |= (b & 0x7F) << 7;
-			if ((b & 0x80) != 0) {
-				b = buffer[position++];
-				result |= (b & 0x7F) << 14;
-				if ((b & 0x80) != 0) {
-					b = buffer[position++];
-					result |= (b & 0x7F) << 21;
-					if ((b & 0x80) != 0) {
-						b = buffer[position++];
-						result |= (long) (b & 0x7F) << 28;
-						if ((b & 0x80) != 0) {
-							b = buffer[position++];
-							result |= (long) (b & 0x7F) << 35;
-							if ((b & 0x80) != 0) {
-								b = buffer[position++];
-								result |= (long) (b & 0x7F) << 42;
-								if ((b & 0x80) != 0) {
-									b = buffer[position++];
-									result |= (long) (b & 0x7F) << 49;
-									if ((b & 0x80) != 0) {
-										b = buffer[position++];
-										result |= (long) b << 56;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		if (!optimizePositive) result = (result >>> 1) ^ -(result & 1);
-		return result;
-	}
-
-	private long readLong_slow(boolean optimizePositive) {
-		// The buffer is guaranteed to have at least 1 byte.
-		int b = buffer[position++];
-		long result = b & 0x7F;
-		if ((b & 0x80) != 0) {
-			require(1);
-			byte[] buffer = this.buffer;
-			b = buffer[position++];
-			result |= (b & 0x7F) << 7;
-			if ((b & 0x80) != 0) {
-				require(1);
-				b = buffer[position++];
-				result |= (b & 0x7F) << 14;
-				if ((b & 0x80) != 0) {
-					require(1);
-					b = buffer[position++];
-					result |= (b & 0x7F) << 21;
-					if ((b & 0x80) != 0) {
-						require(1);
-						b = buffer[position++];
-						result |= (long) (b & 0x7F) << 28;
-						if ((b & 0x80) != 0) {
-							require(1);
-							b = buffer[position++];
-							result |= (long) (b & 0x7F) << 35;
-							if ((b & 0x80) != 0) {
-								require(1);
-								b = buffer[position++];
-								result |= (long) (b & 0x7F) << 42;
-								if ((b & 0x80) != 0) {
-									require(1);
-									b = buffer[position++];
-									result |= (long) (b & 0x7F) << 49;
-									if ((b & 0x80) != 0) {
-										require(1);
-										b = buffer[position++];
-										result |= (long) b << 56;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		if (!optimizePositive) result = (result >>> 1) ^ -(result & 1);
-		return result;
 	}
 
 	// boolean
@@ -755,80 +213,6 @@ public class Input {
 	/** Reads an 8 bytes double. */
 	public double readDouble() throws RuntimeException {
 		return Double.longBitsToDouble(readLong());
-	}
-
-	/** Reads a 1-9 byte double with reduced precision. */
-	public double readDouble(double precision, boolean optimizePositive)
-			throws RuntimeException {
-		return readLong(optimizePositive) / (double) precision;
-	}
-
-	// Methods implementing bulk operations on arrays of primitive types
-
-	/** Bulk input of an int array. */
-	public int[] readInts(int length, boolean optimizePositive)
-			throws RuntimeException {
-		int[] array = new int[length];
-		for (int i = 0; i < length; i++)
-			array[i] = readInt(optimizePositive);
-		return array;
-	}
-
-	/** Bulk input of a long array. */
-	public long[] readLongs(int length, boolean optimizePositive)
-			throws RuntimeException {
-		long[] array = new long[length];
-		for (int i = 0; i < length; i++)
-			array[i] = readLong(optimizePositive);
-		return array;
-	}
-
-	/** Bulk input of an int array. */
-	public int[] readInts(int length) throws RuntimeException {
-		int[] array = new int[length];
-		for (int i = 0; i < length; i++)
-			array[i] = readInt();
-		return array;
-	}
-
-	/** Bulk input of a long array. */
-	public long[] readLongs(int length) throws RuntimeException {
-		long[] array = new long[length];
-		for (int i = 0; i < length; i++)
-			array[i] = readLong();
-		return array;
-	}
-
-	/** Bulk input of a float array. */
-	public float[] readFloats(int length) throws RuntimeException {
-		float[] array = new float[length];
-		for (int i = 0; i < length; i++)
-			array[i] = readFloat();
-		return array;
-	}
-
-	/** Bulk input of a short array. */
-	public short[] readShorts(int length) throws RuntimeException {
-		short[] array = new short[length];
-		for (int i = 0; i < length; i++)
-			array[i] = readShort();
-		return array;
-	}
-
-	/** Bulk input of a char array. */
-	public char[] readChars(int length) throws RuntimeException {
-		char[] array = new char[length];
-		for (int i = 0; i < length; i++)
-			array[i] = readChar();
-		return array;
-	}
-
-	/** Bulk input of a double array. */
-	public double[] readDoubles(int length) throws RuntimeException {
-		double[] array = new double[length];
-		for (int i = 0; i < length; i++)
-			array[i] = readDouble();
-		return array;
 	}
 
 }

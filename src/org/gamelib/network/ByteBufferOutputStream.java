@@ -12,18 +12,24 @@ import java.nio.ByteBuffer;
  */
 public class ByteBufferOutputStream extends OutputStream {
 
-	ByteBuffer buf;
+	private ByteBuffer buffer;
 
-	public ByteBufferOutputStream(ByteBuffer buf) {
-		this.buf = buf;
+	public ByteBufferOutputStream(ByteBuffer buffer) {
+		this.buffer = buffer;
+	}
+
+	public ByteBufferOutputStream(int bufferSize) {
+		this(ByteBuffer.allocate(bufferSize));
 	}
 
 	public void write(int b) throws IOException {
-		buf.put((byte) b);
+		if (!buffer.hasRemaining()) flush();
+		buffer.put((byte) b);
 	}
 
 	public void write(byte[] bytes, int off, int len) throws IOException {
-		buf.put(bytes, off, len);
+		if (buffer.remaining() < len) flush();
+		buffer.put(bytes, off, len);
 	}
 
 }

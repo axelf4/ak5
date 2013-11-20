@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 
 /**
  * @author pwnedary
@@ -99,6 +100,7 @@ public class TCP {
 	public int send(Object object) throws IOException {
 		// Leave room for length.
 		int start = writeBuffer.position();
+		System.out.println("start: " + start);
 		int lengthLength = serialization.getLengthLength();
 		writeBuffer.position(writeBuffer.position() + lengthLength);
 
@@ -110,6 +112,7 @@ public class TCP {
 		writeBuffer.position(start);
 		serialization.writeLength(writeBuffer, end - lengthLength - start);
 		writeBuffer.position(end);
+		System.out.println(Arrays.toString(writeBuffer.array()));
 
 		// Write to socket if no data was queued.
 		if (start == 0 && !writeToSocket()) selectionKey.interestOps(SelectionKey.OP_READ | SelectionKey.OP_WRITE); // A partial write, set OP_WRITE to be notified when more writing can occur.
@@ -141,6 +144,7 @@ public class TCP {
 
 			if (readBuffer.remaining() < length) return null;
 		}
+		currentObjectLength = 0;
 
 		int startPosition = readBuffer.position();
 		int oldLimit = readBuffer.limit();

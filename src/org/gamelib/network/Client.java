@@ -24,7 +24,6 @@ public class Client extends Connection {
 
 	public void open(InetSocketAddress address) throws IOException {
 		try {
-			System.out.println("Client connecting..");
 			selector.wakeup();
 			tcp.connect(selector, address);
 		} catch (IOException e) {
@@ -45,7 +44,6 @@ public class Client extends Connection {
 						if (selectionKey.attachment() == tcp) {
 							Object object;
 							while ((object = tcp.readObject()) != null) {
-								System.out.println("Client received tcp: " + object);
 								notifyReceived(object);
 							}
 						}
