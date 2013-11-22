@@ -1,12 +1,6 @@
 add shapemath that handles collisions between shapes
-delete MOUSE_CLICKED event as it is unnecesarry
-maybe change Event.Tick to Event.Update
 in graphics add drawPoint
-add Sound and Model interface in org.gamelib.backend
+add Model interface in org.gamelib.backend
 avoid WOP
-check deprecated stuff in Game and see if everything is move into Java2D classes
-add bitmap fonts (!)
-make thread wait for resources to be loaded
-add interfaces such as Active, Visible, Blended, Colored, Dimensioned, Located,
-Rotated, Scaled..
+add bitmap fonts
 add rmi to networking api, such as Remote interface
