@@ -15,17 +15,25 @@ import java.util.Set;
 /**
  * @author pwnedary
  */
-public class Client extends Connection {
+public class Client extends Connection implements EndPoint {
 	Selector selector;
 
 	public Client() throws IOException {
 		selector = Selector.open();
 	}
 
-	public void open(InetSocketAddress address) throws IOException {
+	public void open(InetSocketAddress tcpPort, InetSocketAddress udpPort)
+			throws IOException {
+		selector.wakeup();
 		try {
-			selector.wakeup();
-			tcp.connect(selector, address);
+			if (tcpPort != null) {
+				tcp.connect(selector, tcpPort);
+			}
+			if (udpPort != null) {
+				(udp = new UDP(tcp.readBuffer.capacity())).connectedAddress = udpPort;
+				selector.wakeup();
+				udp.connect(selector, udpPort);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -4,9 +4,11 @@
 package org.gamelib.network;
 
 import java.io.IOException;
+import java.net.SocketException;
 
 /**
  * A connection between a {@link Client} and a {@link Server}.
+ * 
  * @author pwnedary
  */
 public class Connection {
@@ -14,26 +16,33 @@ public class Connection {
 	SocketListener listener;
 	TCP tcp;
 	UDP udp;
-	boolean isConnected;
+	volatile boolean isConnected;
 
 	public Connection() {
 		tcp = new TCP();
 	}
 
 	public void sendTCP(Object object) throws IOException {
+		if (object == null) throw new IllegalArgumentException("object cannot be null");
 		tcp.send(object);
+	}
+
+	public void sendUDP(Object object) throws IOException {
+		if (object == null) throw new IllegalArgumentException("object cannot be null");
+		if (udp.connectedAddress == null) throw new SocketException("Connection is closed.");
+		udp.send(object, udp.connectedAddress);
 	}
 
 	public void close() throws IOException {
 		boolean wasConnected = isConnected;
 		isConnected = false;
 		tcp.close();
-		// close udp
+		udp.close();
 		if (wasConnected) {
-			// notify disconnected
+			notifyDisconnected(null); // notify disconnected
 		}
 	}
-	
+
 	public boolean closed() {
 		return !isConnected;
 	}

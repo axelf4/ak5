@@ -8,6 +8,7 @@ import java.net.InetSocketAddress;
 
 /**
  * The local end point of a connection.
+ * 
  * @author Axel
  */
 public interface EndPoint {
@@ -17,9 +18,12 @@ public interface EndPoint {
 
 	/**
 	 * Opens this connection at the specified address and port.
-	 * @param address the address to open at
+	 * 
+	 * @param tcpPort the port to open TCP at
+	 * @param udpPort the port to open UDP at
 	 */
-	public void open(InetSocketAddress address) throws IOException;
+	public void open(InetSocketAddress tcpPort, InetSocketAddress udpPort)
+			throws IOException;
 
 	public void update() throws IOException;
 

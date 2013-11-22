@@ -25,18 +25,26 @@ public class Server implements EndPoint {
 	SelectionKey selectionKey;
 	SocketChannel socketChannel;
 	TCP tcp;
+	UDP udp;
 
 	public Server() throws IOException {
 		selector = Selector.open();
 	}
 
-	public void open(InetSocketAddress tcpPort) throws IOException {
+	public void open(InetSocketAddress tcpPort, InetSocketAddress udpPort)
+			throws IOException {
 		selector.wakeup();
 		try {
-			serverChannel = selector.provider().openServerSocketChannel();
-			serverChannel.bind(tcpPort);
-			serverChannel.configureBlocking(false);
-			serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+			if (tcpPort != null) {
+				serverChannel = selector.provider().openServerSocketChannel();
+				serverChannel.bind(tcpPort);
+				serverChannel.configureBlocking(false);
+				serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+			}
+			if (udpPort != null) {
+				(udp = new UDP()).connectedAddress = udpPort;
+				udp.bind(selector, udpPort);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -52,12 +60,14 @@ public class Server implements EndPoint {
 				Connection fromConnection = (Connection) selectionKey.attachment();
 				int ops = selectionKey.readyOps();
 
-				if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
-					Object object;
-					while ((object = fromConnection.tcp.readObject()) != null)
-						notifyReceived(object);
-				} else if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE) fromConnection.tcp.writeOperation();
-				else if ((ops & SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT) {
+				if (fromConnection != null) {
+					if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
+						Object object;
+						while ((object = fromConnection.tcp.readObject()) != null)
+							notifyReceived(object);
+					} else if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE) fromConnection.tcp.writeOperation();
+					// continue;
+				} else if ((ops & SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT) {
 					try {
 						Connection connection = new Connection();
 						SocketChannel socketChannel = serverChannel.accept();
@@ -67,6 +77,14 @@ public class Server implements EndPoint {
 							notifyConnected(connection);
 						}
 					} catch (CancelledKeyException e) {} // connection is closed
+					// continue;
+				} else if (udp == null) {
+					selectionKey.channel().close();
+					continue;
+				} else {
+					InetSocketAddress fromAddress = udp.readFromAddress();
+					Object object = udp.readObject();
+					notifyReceived(object);
 				}
 			}
 		}

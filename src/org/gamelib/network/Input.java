@@ -55,7 +55,7 @@ public class Input {
 	 * @return the number of bytes remaining.
 	 * @throws RuntimeException if EOS is reached before required bytes are read (buffer underflow).
 	 */
-	protected int require(int required) throws RuntimeException {
+	protected int require(int required) {
 		int remaining = limit - position;
 		if (remaining >= required) return remaining;
 		if (required > capacity) throw new RuntimeException("Buffer too small: capacity: " + capacity + ", required: " + required);
@@ -94,32 +94,31 @@ public class Input {
 	// byte
 
 	/** Reads a single byte. */
-	public byte readByte() throws RuntimeException {
+	public byte readByte() {
 		require(1);
 		return buffer[position++];
 	}
 
 	/** Reads a byte as an int from 0 to 255. */
-	public int readByteUnsigned() throws RuntimeException {
+	public int readByteUnsigned() {
 		require(1);
 		return buffer[position++] & 0xFF;
 	}
 
 	/** Reads the specified number of bytes into a new byte[]. */
-	public byte[] readBytes(int length) throws RuntimeException {
+	public byte[] readBytes(int length) {
 		byte[] bytes = new byte[length];
 		readBytes(bytes, 0, length);
 		return bytes;
 	}
 
 	/** Reads bytes.length bytes and writes them to the specified byte[], starting at index 0. */
-	public void readBytes(byte[] bytes) throws RuntimeException {
+	public void readBytes(byte[] bytes) {
 		readBytes(bytes, 0, bytes.length);
 	}
 
 	/** Reads count bytes and writes them to the specified byte[], starting at offset. */
-	public void readBytes(byte[] bytes, int offset, int count)
-			throws RuntimeException {
+	public void readBytes(byte[] bytes, int offset, int count) {
 		if (bytes == null) throw new IllegalArgumentException("bytes cannot be null.");
 		int copyCount = Math.min(limit - position, count);
 		while (true) {
@@ -158,7 +157,7 @@ public class Input {
 	// float
 
 	/** Reads a 4 byte float. */
-	public float readFloat() throws RuntimeException {
+	public float readFloat() {
 		return Float.intBitsToFloat(readInt());
 	}
 
@@ -171,7 +170,7 @@ public class Input {
 	}
 
 	/** Reads a 2 byte short as an int from 0 to 65535. */
-	public int readShortUnsigned() throws RuntimeException {
+	public int readShortUnsigned() {
 		require(2);
 		return ((buffer[position++] & 0xFF) << 8) | (buffer[position++] & 0xFF);
 	}
@@ -179,7 +178,7 @@ public class Input {
 	// long
 
 	/** Reads an 8 byte long. */
-	public long readLong() throws RuntimeException {
+	public long readLong() {
 		require(8);
 		byte[] buffer = this.buffer;
 		return (long) buffer[position++] << 56 //
@@ -195,7 +194,7 @@ public class Input {
 	// boolean
 
 	/** Reads a 1 byte boolean. */
-	public boolean readBoolean() throws RuntimeException {
+	public boolean readBoolean() {
 		require(1);
 		return buffer[position++] == 1;
 	}
@@ -203,7 +202,7 @@ public class Input {
 	// char
 
 	/** Reads a 2 byte char. */
-	public char readChar() throws RuntimeException {
+	public char readChar() {
 		require(2);
 		return (char) (((buffer[position++] & 0xFF) << 8) | (buffer[position++] & 0xFF));
 	}
@@ -211,7 +210,7 @@ public class Input {
 	// double
 
 	/** Reads an 8 bytes double. */
-	public double readDouble() throws RuntimeException {
+	public double readDouble() {
 		return Double.longBitsToDouble(readLong());
 	}
 

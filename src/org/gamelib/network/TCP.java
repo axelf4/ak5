@@ -100,7 +100,6 @@ public class TCP {
 	public int send(Object object) throws IOException {
 		// Leave room for length.
 		int start = writeBuffer.position();
-		System.out.println("start: " + start);
 		int lengthLength = serialization.getLengthLength();
 		writeBuffer.position(writeBuffer.position() + lengthLength);
 
@@ -112,7 +111,7 @@ public class TCP {
 		writeBuffer.position(start);
 		serialization.writeLength(writeBuffer, end - lengthLength - start);
 		writeBuffer.position(end);
-		System.out.println(Arrays.toString(writeBuffer.array()));
+		System.out.println(Arrays.toString(writeBuffer.array())); // Debugging
 
 		// Write to socket if no data was queued.
 		if (start == 0 && !writeToSocket()) selectionKey.interestOps(SelectionKey.OP_READ | SelectionKey.OP_WRITE); // A partial write, set OP_WRITE to be notified when more writing can occur.

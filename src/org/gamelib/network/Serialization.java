@@ -16,12 +16,12 @@ public class Serialization {
 
 	public <T> void write(ByteBuffer buffer, T object) {
 		Output output = new Output(new ByteBufferOutputStream(buffer));
+
 		Class<T> type = (Class<T>) object.getClass();
 		output.writeString(type.getName());
 
 		if (object instanceof Serializer<?>) ((Serializer<T>) object).write(output, object);
 		else ((Serializer<T>) serializers.get(type)).write(output, object);
-		output.writeInt(42);
 
 		output.flush();
 	}
@@ -36,7 +36,6 @@ public class Serialization {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		System.out.println("***********************: " + input.readInt());
 
 		return (T) value;
 	}
