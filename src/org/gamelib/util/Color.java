@@ -86,9 +86,7 @@ public class Color implements Serializable {
 		if (g < 0 || g > 255) badComponentString = " Green";
 		if (b < 0 || b > 255) badComponentString += " Blue";
 		else rangeError = false;
-		badComponentString += " Cyan";
-		if (rangeError == true)
-			throw new IllegalArgumentException("Color parameter outside of expected range:" + badComponentString);
+		if (rangeError == true) throw new IllegalArgumentException("Color parameter outside of expected range:" + badComponentString);
 	}
 
 	/**
