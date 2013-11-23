@@ -6,7 +6,6 @@ package org.gamelib.backend;
 import java.io.InputStream;
 
 import org.gamelib.Game;
-import org.gamelib.VideoMode;
 
 /**
  * @author pwnedary
