@@ -6,7 +6,8 @@ package org.gamelib.util.slow;
 import java.beans.ConstructorProperties;
 
 /**
- * Interval between the {@link #smallest} and the {@link #largest} values. 
+ * Interval between the {@link #smallest} and the {@link #largest} values.
+ * 
  * @author pwnedary
  */
 public class Range<N extends Number & Comparable<N>> {
@@ -32,62 +33,42 @@ public class Range<N extends Number & Comparable<N>> {
 
 	/** @return the number inside of this range */
 	public N clamp(N n) {
-		n = smallest.compareTo(n) < 0 ? n : smallest;
-		n = largest.compareTo(n) > 0 ? n: largest;
+		if (n.compareTo(smallest) < 0) return smallest;
+		if (n.compareTo(largest) > 0) return largest;
 		return n;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return smallest.hashCode() * largest.hashCode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
-		return getClass() == obj.getClass() && smallest.equals(((Range<N>) obj).smallest) && largest.equals(((Range<N>) obj).largest);
+		return getClass() == obj.getClass() && smallest.equals(((Range<?>) obj).smallest) && largest.equals(((Range<?>) obj).largest);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return smallest + "-" + largest;
 	}
 
-	/**
-	 * @return the smallest
-	 */
+	/** @return the smallest */
 	public N getSmallest() {
 		return smallest;
 	}
 
-	/**
-	 * @param smallest the smallest to set
-	 */
+	/** @param smallest the smallest to set */
 	public void setSmallest(N smallest) {
 		this.smallest = smallest;
 	}
 
-	/**
-	 * @return the largest
-	 */
+	/** @return the largest */
 	public N getLargest() {
 		return largest;
 	}
 
-	/**
-	 * @param largest the largest to set
-	 */
+	/** @param largest the largest to set */
 	public void setLargest(N largest) {
 		this.largest = largest;
 	}
