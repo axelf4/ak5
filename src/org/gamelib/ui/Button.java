@@ -3,7 +3,6 @@
  */
 package org.gamelib.ui;
 
-import org.gamelib.Registry;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Input;
 import org.gamelib.util.Color;
@@ -31,7 +30,7 @@ public class Button extends Widget {
 			g.setColor(Color.BLACK);
 			g.drawRect(x, y, width, height);
 		} else if (event instanceof Event.Mouse) {
-			Input input = ((Event.Control<?>) event).input;
+			Input input = ((Event.Mouse) event).input;
 			int id = ((Event.Mouse) event).id;
 			int button = ((Event.Mouse) event).button;
 			if (id == Input.MOUSE_RELEASED && button == Input.BUTTON1) {

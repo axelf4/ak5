@@ -14,11 +14,13 @@ import org.gamelib.ui.Component;
 
 /**
  * Captures registered {@link Event}s.
+ * 
  * @author Axel
  */
 public interface Handler {
 	/**
 	 * Called when one of the listened events are fired.
+	 * 
 	 * @param event the triggered event
 	 * @return whether this handler is listening for the event
 	 */
@@ -35,7 +37,7 @@ public interface Handler {
 			// if (!cancelable()) throw new UnsupportedOperationException();
 			cancelled = true;
 		}
-		
+
 		public boolean unregisterAfterNoInterrest() {
 			return true;
 		}
@@ -61,14 +63,8 @@ public interface Handler {
 		}
 
 		/** Abstract event for input actions. */
-		public abstract static class Control<T extends InputEvent> extends Event {
-			public T event;
+		protected abstract static class Control<T extends InputEvent> extends Event {
 			public Input input;
-
-			public Control(T event, Input input) {
-				this.event = event;
-				this.input = input;
-			}
 
 			public Control(Input input) {
 				this.input = input;
@@ -76,11 +72,8 @@ public interface Handler {
 		}
 
 		public static final class Key extends Control<KeyEvent> {
-			public int id, keyCode;
-
-			public Key(KeyEvent event, Input input) {
-				super(event, input);
-			}
+			public int id;
+			public int keyCode;
 
 			public Key(Input input, int id, int keyCode) {
 				super(input);
@@ -93,10 +86,6 @@ public interface Handler {
 			public int id;
 			public int button;
 
-			public Mouse(MouseEvent event, Input input) {
-				super(event, input);
-			}
-
 			public Mouse(Input input, int id, int button) {
 				super(input);
 				this.id = id;
@@ -106,10 +95,6 @@ public interface Handler {
 
 		public static final class MouseWheel extends Control<MouseWheelEvent> {
 			public double scrollAmount;
-
-			public MouseWheel(MouseWheelEvent event, Input input) {
-				super(event, input);
-			}
 
 			public MouseWheel(Input input, double scrollAmount) {
 				super(input);
@@ -125,7 +110,7 @@ public interface Handler {
 			public Layout(Component id, Event event) {
 				this.id = id;
 			}
-			
+
 			@Override
 			public boolean unregisterAfterNoInterrest() {
 				return false;
