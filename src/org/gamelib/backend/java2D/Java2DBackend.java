@@ -42,18 +42,23 @@ import org.gamelib.util.geom.Rectangle;
  * @author pwnedary
  */
 public class Java2DBackend extends BackendImpl implements Backend {
-
-	private Container container;
-	private Java2DPanel panel;
-	MediaTracker tracker;
+	/** AWT {@link Container} for {@link #panel} */
+	private final Container container;
+	/** The canvas drawn upon */
+	private final Java2DPanel panel;
+	/** The {@link Input} instance to use */
+	private final Java2DInput input;
+	/** Tracker for waiting for loading resources */
+	private final MediaTracker tracker;
 	/** The ids used by {@link #tracker} */
-	int nextAvailableId = 0;
+	private int nextAvailableId = 0;
 
 	private Java2DGraphics graphics;
 
 	public Java2DBackend(Container container) {
 		(this.container = container).add(panel = new Java2DPanel());
 		tracker = new MediaTracker(panel);
+		input = new Java2DInput(panel);
 	}
 
 	/** {@inheritDoc} */
@@ -63,7 +68,7 @@ public class Java2DBackend extends BackendImpl implements Backend {
 	}
 
 	public Input getInput() {
-		return new Java2DInput(panel);
+		return input;
 	}
 
 	/** {@inheritDoc} */
@@ -141,7 +146,7 @@ public class Java2DBackend extends BackendImpl implements Backend {
 	public int getHeight() {
 		return panel.getHeight();
 	}
-	
+
 	void setFullscreen(JFrame frame, boolean fullscreen) {
 		GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		frame.setUndecorated(fullscreen);
