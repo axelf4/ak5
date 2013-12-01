@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.network;
+package org.gamelib.net;
 
 /**
  * Used to be notified about connection events.

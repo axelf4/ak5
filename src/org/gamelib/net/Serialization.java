@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.network;
+package org.gamelib.net;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;

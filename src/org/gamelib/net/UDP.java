@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.network;
+package org.gamelib.net;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -53,7 +53,7 @@ public class UDP {
 		try {
 			datagramChannel = selector.provider().openDatagramChannel();
 			datagramChannel.socket().bind(null);
-			datagramChannel.socket().connect(remoteAddress);
+			datagramChannel.socket().connect(this.connectedAddress = remoteAddress);
 			datagramChannel.configureBlocking(false);
 
 			selectionKey = datagramChannel.register(selector, SelectionKey.OP_READ);

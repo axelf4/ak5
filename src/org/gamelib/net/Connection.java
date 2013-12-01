@@ -1,9 +1,10 @@
 /**
  * 
  */
-package org.gamelib.network;
+package org.gamelib.net;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.SocketException;
 
 /**
@@ -13,13 +14,19 @@ import java.net.SocketException;
  */
 public class Connection {
 
-	SocketListener listener;
+	final SocketListener listener;
 	TCP tcp;
 	UDP udp;
 	volatile boolean isConnected;
+	InetSocketAddress tcpHost, udpHost;
+	
+	public Connection(final SocketListener listener) {
+		this.tcp = new TCP();
+		this.listener = listener;
+	}
 
 	public Connection() {
-		tcp = new TCP();
+		this(null);
 	}
 
 	public void sendTCP(Object object) throws IOException {
@@ -36,10 +43,10 @@ public class Connection {
 	public void close() throws IOException {
 		boolean wasConnected = isConnected;
 		isConnected = false;
-		tcp.close();
-		udp.close();
+		if (tcp != null) tcp.close();
+		if (udp != null && udp.connectedAddress != null) udp.close();
 		if (wasConnected) {
-			notifyDisconnected(null); // notify disconnected
+			notifyDisconnected(null);
 		}
 	}
 
@@ -47,11 +54,8 @@ public class Connection {
 		return !isConnected;
 	}
 
-	public void setListener(SocketListener listener) {
-		this.listener = listener;
-	}
-
 	protected void notifyConnected(Connection connection) {
+		isConnected = true;
 		if (listener != null) listener.connected(connection);
 	}
 

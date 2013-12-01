@@ -1,17 +1,15 @@
 /**
  * 
  */
-package org.gamelib.network;
+package org.gamelib.net;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.Arrays;
 
 /**
  * @author pwnedary
@@ -41,17 +39,17 @@ public class TCP {
 	 */
 	public SelectionKey accept(Selector selector, SocketChannel socketChannel)
 			throws IOException {
-		writeBuffer.clear();
-		readBuffer.clear();
-		readBuffer.flip();
-		currentObjectLength = 0;
+		close();
+		try {
+			this.socketChannel = socketChannel;
+			socketChannel.configureBlocking(false);
+			socketChannel.socket().setTcpNoDelay(true);
 
-		this.socketChannel = socketChannel;
-		socketChannel.configureBlocking(false);
-
-		selectionKey = socketChannel.register(selector, SelectionKey.OP_READ);
-
-		return selectionKey;
+			return selectionKey = socketChannel.register(selector, SelectionKey.OP_READ); // Return selection key
+		} catch (IOException e) {
+			close();
+			throw e;
+		}
 	}
 
 	/**
@@ -63,19 +61,18 @@ public class TCP {
 	 */
 	public void connect(Selector selector, SocketAddress address)
 			throws IOException {
-		writeBuffer.clear();
-		readBuffer.clear();
-		readBuffer.flip();
-		currentObjectLength = 0;
+		close();
+		try {
+			this.socketChannel = selector.provider().openSocketChannel();
+			socketChannel.socket().setTcpNoDelay(true);
+			socketChannel.configureBlocking(false);
 
-		this.socketChannel = selector.provider().openSocketChannel();
-		Socket socket = socketChannel.socket();
-		socket.setTcpNoDelay(true);
-		socket.connect(address);
-		socketChannel.configureBlocking(false);
-
-		selectionKey = socketChannel.register(selector, SelectionKey.OP_READ);
-		selectionKey.attach(this);
+			selectionKey = socketChannel.register(selector, SelectionKey.OP_CONNECT, this);
+			socketChannel.connect(address);
+		} catch (IOException e) {
+			close();
+			throw new IOException("Unable to connect to: " + address, e);
+		}
 	}
 
 	/**
@@ -83,35 +80,32 @@ public class TCP {
 	 */
 	public void writeOperation() throws IOException {
 		if (socketChannel == null) throw new SocketException("Connection is closed.");
-
-		if (writeToSocket()) selectionKey.interestOps(SelectionKey.OP_READ); // write successful, clear OP_WRITE
+		if (writeToSocket()) selectionKey.interestOps(SelectionKey.OP_READ); // Write successful, clear OP_WRITE
 	}
 
 	private boolean writeToSocket() throws IOException {
 		writeBuffer.flip();
-		while (writeBuffer.hasRemaining()) {
+		while (writeBuffer.hasRemaining())
 			if (socketChannel.write(writeBuffer) == 0) break;
-		}
 		writeBuffer.compact();
 
 		return writeBuffer.position() == 0;
 	}
 
 	public int send(Object object) throws IOException {
+		if (socketChannel == null) throw new SocketException("Connection is closed.");
 		// Leave room for length.
 		int start = writeBuffer.position();
 		int lengthLength = serialization.getLengthLength();
 		writeBuffer.position(writeBuffer.position() + lengthLength);
 
-		// Write data.
-		serialization.write(writeBuffer, object);
+		serialization.write(writeBuffer, object); // Write data.
 		int end = writeBuffer.position();
 
 		// Write data length.
 		writeBuffer.position(start);
 		serialization.writeLength(writeBuffer, end - lengthLength - start);
 		writeBuffer.position(end);
-		System.out.println(Arrays.toString(writeBuffer.array())); // Debugging
 
 		// Write to socket if no data was queued.
 		if (start == 0 && !writeToSocket()) selectionKey.interestOps(SelectionKey.OP_READ | SelectionKey.OP_WRITE); // A partial write, set OP_WRITE to be notified when more writing can occur.
@@ -120,14 +114,13 @@ public class TCP {
 	}
 
 	public Object readObject() throws IOException {
+		if (socketChannel == null) throw new SocketException("Connection is closed.");
 		if (currentObjectLength == 0) {
-			// read length of next object
-			int lengthLength = serialization.getLengthLength();
+			int lengthLength = serialization.getLengthLength(); // Read length of next object
 			if (readBuffer.remaining() < lengthLength) {
 				readBuffer.compact();
-				int bytesRead = socketChannel.read(readBuffer);
+				if (socketChannel.read(readBuffer) == -1) throw new SocketException("Connection is closed."); // Read bytes into buffer
 				readBuffer.flip();
-				if (bytesRead == -1) throw new SocketException("Connection is closed.");
 
 				if (readBuffer.remaining() < lengthLength) return null;
 			}
@@ -137,9 +130,8 @@ public class TCP {
 		int length = currentObjectLength;
 		if (readBuffer.remaining() < length) {
 			readBuffer.compact();
-			int bytesRead = socketChannel.read(readBuffer);
+			if (socketChannel.read(readBuffer) == -1) throw new SocketException("Connection is closed."); // Read bytes into buffer
 			readBuffer.flip();
-			if (bytesRead == -1) throw new SocketException("Connection is closed.");
 
 			if (readBuffer.remaining() < length) return null;
 		}
@@ -152,12 +144,16 @@ public class TCP {
 		readBuffer.limit(startPosition + length);
 		Object object = serialization.read(readBuffer);
 		readBuffer.limit(oldLimit);
-		if (readBuffer.position() - startPosition != length) throw new RuntimeException("Incorrect number of bytes (" + (startPosition + length - readBuffer.position()) + " remaining) used to deserialize object: " + object);
+		if (readBuffer.position() - startPosition != length) throw new IOException("Incorrect number of bytes (" + (startPosition + length - readBuffer.position()) + " remaining) used to deserialize object: " + object);
 
 		return object;
 	}
 
 	public void close() throws IOException {
+		writeBuffer.clear();
+		readBuffer.clear();
+		readBuffer.flip();
+		currentObjectLength = 0;
 		if (socketChannel != null) {
 			socketChannel.close();
 			socketChannel = null;

@@ -1,9 +1,10 @@
 /**
  * 
  */
-package org.gamelib.network;
+package org.gamelib.net;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.nio.channels.CancelledKeyException;
 import java.nio.channels.SelectionKey;
@@ -18,7 +19,8 @@ import java.util.Set;
 public class Client extends Connection implements EndPoint {
 	Selector selector;
 
-	public Client() throws IOException {
+	public Client(final SocketListener listener) throws IOException {
+		super(listener);
 		selector = Selector.open();
 	}
 
@@ -27,15 +29,15 @@ public class Client extends Connection implements EndPoint {
 		selector.wakeup();
 		try {
 			if (tcpPort != null) {
-				tcp.connect(selector, tcpPort);
+				(tcp = new TCP()).connect(selector, this.tcpHost = tcpPort);
 			}
 			if (udpPort != null) {
-				(udp = new UDP(tcp.readBuffer.capacity())).connectedAddress = udpPort;
 				selector.wakeup();
-				udp.connect(selector, udpPort);
+				(udp = new UDP()).connect(selector, this.udpHost = udpPort);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			close();
+			throw e;
 		}
 	}
 
@@ -46,24 +48,31 @@ public class Client extends Connection implements EndPoint {
 			for (Iterator<SelectionKey> iterator = keys.iterator(); iterator.hasNext();) {
 				SelectionKey selectionKey = iterator.next();
 				iterator.remove();
+				int ops = selectionKey.readyOps();
 				try {
-					int ops = selectionKey.readyOps();
 					if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
+						Object object;
 						if (selectionKey.attachment() == tcp) {
-							Object object;
-							while ((object = tcp.readObject()) != null) {
+							while ((object = tcp.readObject()) != null)
 								notifyReceived(object);
+						} else {
+							if (udp.readFromAddress() != null) {
+								object = udp.readObject();
+								if (object != null) notifyReceived(object);
 							}
 						}
 					} else if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE) tcp.writeOperation();
 					else if ((ops & SelectionKey.OP_CONNECT) == SelectionKey.OP_CONNECT) {
-						((SocketChannel) selectionKey.channel()).finishConnect();
-						selectionKey.interestOps(SelectionKey.OP_READ);
-						Object attachment = selectionKey.attachment();
-						System.out.println("Client connected to Server, attachment: " + attachment);
-						notifyConnected(this);
+						if (((SocketChannel) selectionKey.channel()).finishConnect()) {
+							selectionKey.interestOps(SelectionKey.OP_READ);
+							notifyConnected(this);
+						}
 					}
-				} catch (CancelledKeyException e) {} // connection is closed
+				} catch (CancelledKeyException e) { // Connection is closed
+				} catch (ConnectException e) {
+					close();
+					throw new IOException("Unable to connect to: " + tcpHost, e);
+				}
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.network;
+package org.gamelib.net;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -22,7 +22,7 @@ public interface EndPoint {
 	 * @param tcpPort the port to open TCP at
 	 * @param udpPort the port to open UDP at
 	 */
-	public void open(InetSocketAddress tcpPort, InetSocketAddress udpPort)
+	public void open(InetSocketAddress tcpHost, InetSocketAddress udpHost)
 			throws IOException;
 
 	public void update() throws IOException;

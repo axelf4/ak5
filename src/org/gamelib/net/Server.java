@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.network;
+package org.gamelib.net;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -14,39 +14,39 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
+ * TODO add unified method/s for sending/sending to all clients using TCP/UDP - design issue
+ * 
  * @author pwnedary
  */
 public class Server implements EndPoint {
+	private final Selector selector;
+	private ServerSocketChannel serverChannel;
+	private final SocketListener listener;
+	private UDP udp;
 
-	Selector selector;
-	ServerSocketChannel serverChannel;
-	SocketListener listener;
-
-	SelectionKey selectionKey;
-	SocketChannel socketChannel;
-	TCP tcp;
-	UDP udp;
-
-	public Server() throws IOException {
+	public Server(final SocketListener listener) throws IOException {
+		this.listener = listener;
 		selector = Selector.open();
 	}
 
-	public void open(InetSocketAddress tcpPort, InetSocketAddress udpPort)
+	public void open(InetSocketAddress tcpHost, InetSocketAddress udpHost)
 			throws IOException {
+		close();
 		selector.wakeup();
 		try {
-			if (tcpPort != null) {
+			if (tcpHost != null) {
 				serverChannel = selector.provider().openServerSocketChannel();
-				serverChannel.bind(tcpPort);
 				serverChannel.configureBlocking(false);
 				serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+				serverChannel.bind(tcpHost);
 			}
-			if (udpPort != null) {
-				(udp = new UDP()).connectedAddress = udpPort;
-				udp.bind(selector, udpPort);
+			if (udpHost != null) {
+				(udp = new UDP()).connectedAddress = udpHost;
+				udp.bind(selector, udpHost);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			close();
+			throw e;
 		}
 	}
 
@@ -59,32 +59,36 @@ public class Server implements EndPoint {
 				iterator.remove();
 				Connection fromConnection = (Connection) selectionKey.attachment();
 				int ops = selectionKey.readyOps();
-
-				if (fromConnection != null) {
-					if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
-						Object object;
-						while ((object = fromConnection.tcp.readObject()) != null)
-							notifyReceived(object);
-					} else if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE) fromConnection.tcp.writeOperation();
-					// continue;
-				} else if ((ops & SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT) {
-					try {
-						Connection connection = new Connection();
+				try {
+					if (fromConnection != null) {
+						if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
+							try {
+								Object object;
+								while ((object = fromConnection.tcp.readObject()) != null)
+									notifyReceived(object);
+							} catch (IOException e) {
+								fromConnection.close();
+							}
+						} else if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE) try {
+							fromConnection.tcp.writeOperation();
+						} catch (IOException e) {
+							fromConnection.close();
+						}
+					} else if ((ops & SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT) {
 						SocketChannel socketChannel = serverChannel.accept();
 						if (socketChannel != null) {
-							SelectionKey key = connection.tcp.accept(selector, socketChannel);
-							key.attach(connection);
+							Connection connection = new Connection();
+							connection.tcp.accept(selector, socketChannel).attach(connection); // Attach connection to accepted key
 							notifyConnected(connection);
 						}
-					} catch (CancelledKeyException e) {} // connection is closed
-					// continue;
-				} else if (udp == null) {
-					selectionKey.channel().close();
-					continue;
-				} else {
-					InetSocketAddress fromAddress = udp.readFromAddress();
-					Object object = udp.readObject();
-					notifyReceived(object);
+					} else if (udp != null) {
+						InetSocketAddress fromAddress = udp.readFromAddress();
+						Object object = udp.readObject();
+						notifyReceived(object);
+					} else if (udp == null) selectionKey.channel().close();
+				} catch (CancelledKeyException e) {
+					if (fromConnection != null) fromConnection.close();
+					else selectionKey.channel().close();
 				}
 			}
 		}
@@ -96,10 +100,6 @@ public class Server implements EndPoint {
 
 		selector.wakeup();
 		selector.selectNow(); // Select one last time to complete closing the socket.
-	}
-
-	public void setListener(SocketListener listener) {
-		this.listener = listener;
 	}
 
 	protected void notifyConnected(Connection connection) {
