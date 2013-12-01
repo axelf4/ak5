@@ -33,7 +33,8 @@ public class Registry {
 	/** The *NEW* way of registering handlers. */
 	public void register(Group group, Handler handler) {
 		if (group == null || handler == null) throw new IllegalArgumentException("arguments cannot be null");
-		group.handlers.get(Event.class).add(handler); // wildcard for every handler
+		// group.handlers.get(Event.class).add(handler); // wildcard for every handler
+		for (Iterator<List<Handler>> iterator = group.handlers.values().iterator(); iterator.hasNext();) iterator.next().add(handler);
 	}
 
 	/** The *NEW* way of registering handlers. */
