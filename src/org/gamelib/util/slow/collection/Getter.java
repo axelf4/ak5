@@ -18,12 +18,12 @@ import org.gamelib.util.slow.reflection.proxy.ProxyUtil;
  */
 public class Getter<T, T3 extends Object> {
 	
-	List<? extends T> list;
+	Iterable<? extends T> list;
 	Class<T> clazz;
 	T3 instance;
 	List<Object> values = new LinkedList<>();
 
-	public Getter(List<? extends T> list, T3 instance, Object argument) {
+	public Getter(Iterable<? extends T> list, T3 instance, Object argument) {
 		this.list = list;
 		this.instance = instance;
 		

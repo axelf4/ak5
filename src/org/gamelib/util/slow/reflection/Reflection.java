@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.gamelib.util.slow.reflection.model.Type;
+import org.gamelib.util.slow.reflection.model.Type.ClassType;
 import org.gamelib.util.slow.reflection.proxy.Invocation;
 import org.gamelib.util.slow.reflection.proxy.ProxyUtil;
 import org.gamelib.util.slow.vfs.Vfs;
@@ -128,8 +130,7 @@ public final class Reflection {
 			modifiersField.setAccessible(true);
 			if (setFinal) modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 			else modifiersField.setInt(field, field.getModifiers() | Modifier.FINAL);
-		} catch (NoSuchFieldException | SecurityException
-				| IllegalArgumentException | IllegalAccessException e) {
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 	}
@@ -163,7 +164,7 @@ public final class Reflection {
 		parameterTypes[0] = String.class;
 		parameterTypes[1] = int.class;
 		System.arraycopy(additionalParameterTypes, 0, parameterTypes, 2, additionalParameterTypes.length);
-		
+
 		Method getReflectionFactory = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("getReflectionFactory");
 		Object reflectionFactory = getReflectionFactory.invoke(null);
 		Method newConstructorAccessor = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("newConstructorAccessor", Constructor.class);
@@ -173,9 +174,7 @@ public final class Reflection {
 	public static <T> T newInstance(Class<T> type, Class<?>[] inittypes, Object[] initargs) {
 		try {
 			return type.cast(type.getConstructor(inittypes).newInstance(initargs));
-		} catch (InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			try {
 				Method newInstance = Class.forName("sun.reflect.ConstructorAccessor").getDeclaredMethod("newInstance", Object[].class);
 				return type.cast(newInstance.invoke(getConstructorAccessor(type, inittypes), new Object[] { initargs }));
@@ -184,6 +183,10 @@ public final class Reflection {
 			}
 		}
 		return null;
+	}
+
+	public static <T> Type<T> type(Class<T> type) {
+		return new ClassType<T>(type);
 	}
 
 }

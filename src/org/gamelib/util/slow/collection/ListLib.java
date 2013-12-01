@@ -72,7 +72,7 @@ public class ListLib {
 		return filtered;
 	}
 
-	public static <T extends Object, T3 extends Object> Getter<T, T3> get(final List<T> list, T3 instance, Object argument) {
+	public static <T extends Object, T3 extends Object> Getter<T, T3> get(final Iterable<T> list, T3 instance, Object argument) {
 		return new Getter<T, T3>(list, instance, argument);
 	}
 
