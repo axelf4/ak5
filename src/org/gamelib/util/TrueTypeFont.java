@@ -80,8 +80,9 @@ public class TrueTypeFont implements Font {
 	}
 
 	public TrueTypeFont() {
-		// this(new java.awt.Font(null, Font.PLAIN, 15), true);
-		this(getFont(new File("org/gamelib/util/arial.ttf"), PLAIN, DEFAULT_SIZE));
+		// this(new java.awt.Font(null, Font.PLAIN, 15), true, null, org.gamelib.util.Color.BLACK);
+		// this(getFont(new File("org/gamelib/util/arial.ttf"), PLAIN, DEFAULT_SIZE));
+		this(getFont(new File("arial.ttf"), PLAIN, DEFAULT_SIZE));
 	}
 
 	public void setCorrection(boolean on) {
@@ -299,8 +300,8 @@ public class TrueTypeFont implements Font {
 	}
 
 	public static java.awt.Font getFont(File file, int style, int size) {
-		try {
-			InputStream stream = Game.getBackend().getResourceAsStream(file.getPath());
+		// try (InputStream stream = Game.getBackend().getResourceAsStream(file.getPath())) {
+		try (InputStream stream = TrueTypeFont.class.getResourceAsStream(file.getPath())) {
 			Map<TextAttribute, Object> fontAttributes = new HashMap<>();
 			if ((style & BOLD) == BOLD) fontAttributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
 			if ((style & ITALIC) == ITALIC) fontAttributes.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
