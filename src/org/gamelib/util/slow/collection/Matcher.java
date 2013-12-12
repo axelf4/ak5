@@ -8,5 +8,5 @@ package org.gamelib.util.slow.collection;
  */
 public interface Matcher<T> {
 	/** @return <code>true</code> if <var>obj</var> matches, otherwise <code>false</code>. */
-	public boolean matches(Object obj);
+	boolean matches(Object obj);
 }

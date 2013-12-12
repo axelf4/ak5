@@ -13,7 +13,7 @@ import org.gamelib.util.slow.reflection.proxy.Invocation;
 import org.gamelib.util.slow.reflection.proxy.IterableProxy;
 import org.gamelib.util.slow.reflection.proxy.ProxyUtil;
 
-import static org.gamelib.util.Util.*;
+import static org.gamelib.util.slow.reflection.TypeToken.*;
 import static org.gamelib.util.slow.reflection.proxy.ProxyUtil.*;
 
 /**

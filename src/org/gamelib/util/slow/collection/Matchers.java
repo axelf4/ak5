@@ -3,7 +3,6 @@
  */
 package org.gamelib.util.slow.collection;
 
-
 /**
  * @author pwnedary
  */
