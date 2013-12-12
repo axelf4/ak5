@@ -64,10 +64,10 @@ public class TCP {
 		close();
 		try {
 			this.socketChannel = selector.provider().openSocketChannel();
-			socketChannel.socket().setTcpNoDelay(true);
 			socketChannel.configureBlocking(false);
+			socketChannel.socket().setTcpNoDelay(true);
 
-			selectionKey = socketChannel.register(selector, SelectionKey.OP_CONNECT, this);
+			selectionKey = socketChannel.register(selector, SelectionKey.OP_CONNECT); // , this
 			socketChannel.connect(address);
 		} catch (IOException e) {
 			close();
@@ -84,6 +84,7 @@ public class TCP {
 	}
 
 	private boolean writeToSocket() throws IOException {
+		if (!socketChannel.isConnected()) return false;
 		writeBuffer.flip();
 		while (writeBuffer.hasRemaining())
 			if (socketChannel.write(writeBuffer) == 0) break;
@@ -160,5 +161,4 @@ public class TCP {
 			if (selectionKey != null) selectionKey.selector().wakeup();
 		}
 	}
-
 }

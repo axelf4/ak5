@@ -3,6 +3,8 @@
  */
 package org.gamelib.net;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +34,13 @@ public class Serialization {
 		T value = null;
 		try {
 			Class<T> type = (Class<T>) Class.forName(input.readString());
-			value = ((Serializer<T>) serializers.get(type)).read(input);
+			Serializer<T> serializer = (Serializer<T>) serializers.get(type);
+			if (serializer == null) try {
+				serializers.put(type, serializer = (Serializer<T>) type.newInstance());
+			} catch (ReflectiveOperationException e) {
+				e.printStackTrace();
+			}
+			value = serializer.read(input);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -64,7 +72,7 @@ public class Serialization {
 		serializers.put(String.class, new StringSerializer());
 	}
 
-	static class BooleanSerializer implements Serializer<Boolean> {
+	private static class BooleanSerializer implements Serializer<Boolean> {
 		/** {@inheritDoc} */
 		@Override
 		public void write(Output NewOutput, Boolean object) {
@@ -78,7 +86,7 @@ public class Serialization {
 		}
 	}
 
-	static public class ByteSerializer implements Serializer<Byte> {
+	private static class ByteSerializer implements Serializer<Byte> {
 		public void write(Output NewOutput, Byte object) {
 			NewOutput.writeByte(object);
 		}
@@ -88,7 +96,7 @@ public class Serialization {
 		}
 	}
 
-	static public class CharSerializer implements Serializer<Character> {
+	private static class CharSerializer implements Serializer<Character> {
 		public void write(Output NewOutput, Character object) {
 			NewOutput.writeChar(object);
 		}
@@ -98,7 +106,7 @@ public class Serialization {
 		}
 	}
 
-	static public class ShortSerializer implements Serializer<Short> {
+	private static class ShortSerializer implements Serializer<Short> {
 		public void write(Output NewOutput, Short object) {
 			NewOutput.writeShort(object);
 		}
@@ -108,7 +116,7 @@ public class Serialization {
 		}
 	}
 
-	static public class IntSerializer implements Serializer<Integer> {
+	private static class IntSerializer implements Serializer<Integer> {
 		public void write(Output NewOutput, Integer object) {
 			NewOutput.writeInt(object);
 		}
@@ -118,7 +126,7 @@ public class Serialization {
 		}
 	}
 
-	static public class LongSerializer implements Serializer<Long> {
+	private static class LongSerializer implements Serializer<Long> {
 		public void write(Output NewOutput, Long object) {
 			NewOutput.writeLong(object);
 		}
@@ -128,7 +136,7 @@ public class Serialization {
 		}
 	}
 
-	static public class FloatSerializer implements Serializer<Float> {
+	private static class FloatSerializer implements Serializer<Float> {
 		public void write(Output NewOutput, Float object) {
 			NewOutput.writeFloat(object);
 		}
@@ -138,7 +146,7 @@ public class Serialization {
 		}
 	}
 
-	static public class DoubleSerializer implements Serializer<Double> {
+	private static class DoubleSerializer implements Serializer<Double> {
 		public void write(Output NewOutput, Double object) {
 			NewOutput.writeDouble(object);
 		}
@@ -148,7 +156,7 @@ public class Serialization {
 		}
 	}
 
-	static public class StringSerializer implements Serializer<String> {
+	private static class StringSerializer implements Serializer<String> {
 		public void write(Output NewOutput, String object) {
 			NewOutput.writeString(object);
 		}

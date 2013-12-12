@@ -11,6 +11,8 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,27 +25,30 @@ public class Server implements EndPoint {
 	private ServerSocketChannel serverChannel;
 	private final SocketListener listener;
 	private UDP udp;
+	// private final Map<Integer, Connection> connections = new HashMap<>();
+	private final List<Connection> connections = new LinkedList<>();
 
 	public Server(final SocketListener listener) throws IOException {
 		this.listener = listener;
 		selector = Selector.open();
 	}
 
-	public void open(InetSocketAddress tcpHost, InetSocketAddress udpHost)
+	public void open(int tcpPort, int udpPort) throws IOException {
+		open(new InetSocketAddress(tcpPort), new InetSocketAddress(udpPort));
+	}
+
+	public void open(InetSocketAddress tcpPort, InetSocketAddress udpPort)
 			throws IOException {
 		close();
 		selector.wakeup();
 		try {
-			if (tcpHost != null) {
+			if (tcpPort != null) {
 				serverChannel = selector.provider().openServerSocketChannel();
 				serverChannel.configureBlocking(false);
 				serverChannel.register(selector, SelectionKey.OP_ACCEPT);
-				serverChannel.bind(tcpHost);
+				serverChannel.bind(tcpPort);
 			}
-			if (udpHost != null) {
-				(udp = new UDP()).connectedAddress = udpHost;
-				udp.bind(selector, udpHost);
-			}
+			if (udpPort != null) (udp = new UDP()).bind(selector, udpPort);
 		} catch (IOException e) {
 			close();
 			throw e;
@@ -60,35 +65,48 @@ public class Server implements EndPoint {
 				Connection fromConnection = (Connection) selectionKey.attachment();
 				int ops = selectionKey.readyOps();
 				try {
-					if (fromConnection != null) {
-						if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
-							try {
-								Object object;
-								while ((object = fromConnection.tcp.readObject()) != null)
-									notifyReceived(object);
-							} catch (IOException e) {
-								fromConnection.close();
-							}
-						} else if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE) try {
-							fromConnection.tcp.writeOperation();
-						} catch (IOException e) {
-							fromConnection.close();
+					if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
+						if (fromConnection != null && selectionKey.channel() == fromConnection.tcp.socketChannel) {
+							Object object;
+							while ((object = fromConnection.tcp.readObject()) != null)
+								notifyReceived(fromConnection, object);
+						} else if (udp == null) selectionKey.channel().close();
+						else if (selectionKey.channel() == udp.datagramChannel) {
+							InetSocketAddress fromAddress = udp.readFromAddress();
+							Object object = udp.readObject();
+							for (Connection connection : connections)
+								if (connection.getRemoteUDPAddress() != null && fromAddress.getHostString().equals(connection.getRemoteUDPAddress().getHostString()) || fromAddress.getHostString().equals(connection.getRemoteTCPAddress().getHostString())) {
+									fromConnection = connection;
+									break;
+								}
+							// System.out.println("fromConnection " + fromConnection + " object: " + object);
+							if (fromConnection == null) connections.add(fromConnection = new Connection());
+							if (object instanceof RegisterUDP) fromConnection.udpRemoteAddress = fromAddress;
+							notifyReceived(fromConnection, object);
 						}
-					} else if ((ops & SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT) {
+					} else if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE && fromConnection != null) fromConnection.tcp.writeOperation();
+					else if ((ops & SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT) {
 						SocketChannel socketChannel = serverChannel.accept();
 						if (socketChannel != null) {
-							Connection connection = new Connection();
-							connection.tcp.accept(selector, socketChannel).attach(connection); // Attach connection to accepted key
-							notifyConnected(connection);
+							System.out.println(socketChannel.getRemoteAddress());
+							for (Connection connection2 : connections)
+								if (connection2.udpRemoteAddress != null && ((InetSocketAddress) socketChannel.getRemoteAddress()).getHostString().equals(connection2.udpRemoteAddress.getHostString())) {
+									fromConnection = connection2;
+									break;
+								}
+							System.out.println(fromConnection);
+							if (fromConnection == null) connections.add(fromConnection = new Connection());
+							(fromConnection.tcp = new TCP()).accept(selector, socketChannel).attach(fromConnection); // Attach connection to accepted key
+							notifyConnected(fromConnection);
 						}
-					} else if (udp != null) {
-						InetSocketAddress fromAddress = udp.readFromAddress();
-						Object object = udp.readObject();
-						notifyReceived(object);
-					} else if (udp == null) selectionKey.channel().close();
+					}
 				} catch (CancelledKeyException e) {
-					if (fromConnection != null) fromConnection.close();
-					else selectionKey.channel().close();
+					if (fromConnection != null) {
+						connections.remove(fromConnection);
+						fromConnection.close();
+					} else selectionKey.channel().close();
+				} catch (IOException e) {
+					fromConnection.close();
 				}
 			}
 		}
@@ -102,19 +120,30 @@ public class Server implements EndPoint {
 		selector.selectNow(); // Select one last time to complete closing the socket.
 	}
 
-	protected void notifyConnected(Connection connection) {
+	protected void notifyConnected(Connection connection) throws IOException {
 		if (listener != null) listener.connected(connection);
 	}
 
-	protected void notifyDisconnected(Connection connection) {
+	protected void notifyDisconnected(Connection connection) throws IOException {
 		if (listener != null) listener.disconnected(connection);
 	}
 
-	protected void notifyReceived(Object object) {
-		if (listener != null) listener.received(object);
+	protected void notifyReceived(Connection connection, Object object)
+			throws IOException {
+		if (!(object instanceof FrameworkMessage)) {
+			if (listener != null) listener.received(object);
+		} else if (object instanceof RegisterUDP) {
+			// InetSocketAddress udpRemoteAddress = ((RegisterUDP) object).udpRemoteAddress;
+			/*
+			 * for (Connection connection2 : connections) { if (connection2.tcpAddress.getHostString() == udpRemoteAddress.getHostString()) { connection = connection2; break; } } if (connection == null) { connections.add(connection = new Connection()); connection.udp = udp; } notifyConnected(connection);
+			 */
+			connection.udp = udp;
+			connection.sendUDP(new RegisterUDP(new InetSocketAddress(9999)));
+			notifyConnected(connection);
+		} else if (object instanceof DiscoverHost) {}
 	}
 
-	protected void notifySent(Object object) {
+	protected void notifySent(Object object) throws IOException {
 		if (listener != null) listener.sent(object);
 	}
 }

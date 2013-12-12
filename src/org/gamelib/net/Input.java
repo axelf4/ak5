@@ -5,6 +5,8 @@ package org.gamelib.net;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.BufferUnderflowException;
 
 /**
@@ -169,12 +171,6 @@ public class Input {
 		return (short) (((buffer[position++] & 0xFF) << 8) | (buffer[position++] & 0xFF));
 	}
 
-	/** Reads a 2 byte short as an int from 0 to 65535. */
-	public int readShortUnsigned() {
-		require(2);
-		return ((buffer[position++] & 0xFF) << 8) | (buffer[position++] & 0xFF);
-	}
-
 	// long
 
 	/** Reads an 8 byte long. */
@@ -212,6 +208,46 @@ public class Input {
 	/** Reads an 8 bytes double. */
 	public double readDouble() {
 		return Double.longBitsToDouble(readLong());
+	}
+
+	/** Reads an Enum. */
+	@SuppressWarnings("unchecked")
+	public <T extends Enum<T>> T readEnum() {
+		try {
+			return (T) Class.forName(readString()).getEnumConstants()[readInt()];
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> Object readObject() {
+		try {
+			Class<T> type = (Class<T>) Class.forName(readString());
+			if (type == boolean.class || type == Boolean.class) return readBoolean();
+			else if (type == byte.class || type == Byte.class) return readByte();
+			else if (type == char.class || type == Character.class) return readChar();
+			else if (type == short.class || type == Short.class) return readShort();
+			else if (type == int.class || type == Integer.class) return readInt();
+			else if (type == long.class || type == Long.class) return readLong();
+			else if (type == float.class || type == Float.class) return readFloat();
+			else if (type == double.class || type == Double.class) return readDouble();
+			else if (type == String.class) return readString();
+			else if (type.isEnum()) return readEnum();
+			else {
+				// TODO add externalization
+				T value = type.newInstance();
+				for (Field field : type.getDeclaredFields()) {
+					field.setAccessible(true);
+					if (!Modifier.isTransient(field.getModifiers())) field.set(value, readObject());
+				}
+				return value;
+			}
+		} catch (ReflectiveOperationException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

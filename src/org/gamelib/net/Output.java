@@ -5,6 +5,8 @@ package org.gamelib.net;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 /**
  * @author Axel
@@ -166,6 +168,38 @@ public class Output {
 	/** Writes an 8 byte double. */
 	public void writeDouble(double value) throws RuntimeException {
 		writeLong(Double.doubleToLongBits(value));
+	}
+
+	/** Writes an Enum. */
+	public void writeEnum(Enum<?> value) {
+		writeString(value.getClass().getName());
+		writeInt(value.ordinal());
+	}
+
+	public void writeObject(Object value) {
+		Class<?> type = value.getClass();
+		writeString(type.getName());
+		if (type == boolean.class || type == Boolean.class) writeBoolean((boolean) value);
+		else if (type == byte.class || type == Byte.class) writeByte((byte) value);
+		else if (type == char.class || type == Character.class) writeChar((char) value);
+		else if (type == short.class || type == Short.class) writeShort((int) value);
+		else if (type == int.class || type == Integer.class) writeInt((int) value);
+		else if (type == long.class || type == Long.class) writeLong((long) value);
+		else if (type == float.class || type == Float.class) writeFloat((float) value);
+		else if (type == double.class || type == Double.class) writeDouble((double) value);
+		else if (type == String.class) writeString((String) value);
+		else if (type.isEnum()) writeEnum((Enum<?>) value);
+		else {
+			// TODO add externalization
+			try {
+				for (Field field : type.getDeclaredFields()) {
+					field.setAccessible(true);
+					if (!Modifier.isTransient(field.getModifiers())) writeObject(field.get(value));
+				}
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

@@ -18,10 +18,10 @@ public class Connection {
 	TCP tcp;
 	UDP udp;
 	volatile boolean isConnected;
-	InetSocketAddress tcpHost, udpHost;
-	
+	InetSocketAddress tcpAddress, udpAddress;
+	public InetSocketAddress udpRemoteAddress;
+
 	public Connection(final SocketListener listener) {
-		this.tcp = new TCP();
 		this.listener = listener;
 	}
 
@@ -29,15 +29,21 @@ public class Connection {
 		this(null);
 	}
 
-	public void sendTCP(Object object) throws IOException {
+	public int sendTCP(Object object) throws IOException {
 		if (object == null) throw new IllegalArgumentException("object cannot be null");
-		tcp.send(object);
+		int length = tcp.send(object);
+		if (length == 0) throw new IOException(this + " TCP had nothing to send.");
+		return length;
 	}
 
-	public void sendUDP(Object object) throws IOException {
+	public int sendUDP(Object object) throws IOException {
 		if (object == null) throw new IllegalArgumentException("object cannot be null");
-		if (udp.connectedAddress == null) throw new SocketException("Connection is closed.");
-		udp.send(object, udp.connectedAddress);
+		if (udp == null) throw new IllegalStateException("UDP is not connected.");
+		if (udpRemoteAddress == null) throw new SocketException("Connection is closed.");
+		int length = udp.send(object, udpRemoteAddress);
+		if (length == 0) throw new IOException(this + " UDP had nothing to send.");
+		else if (length == -1) throw new IOException(this + " was unable to send.");
+		return length;
 	}
 
 	public void close() throws IOException {
@@ -45,29 +51,45 @@ public class Connection {
 		isConnected = false;
 		if (tcp != null) tcp.close();
 		if (udp != null && udp.connectedAddress != null) udp.close();
-		if (wasConnected) {
-			notifyDisconnected(null);
-		}
+		if (wasConnected) notifyDisconnected(this);
+	}
+
+	/** Returns the IP address and port of the remote end of the TCP connection, or null if this connection is not connected. */
+	public InetSocketAddress getRemoteTCPAddress() {
+		return tcpConnected() ? (InetSocketAddress) tcp.socketChannel.socket().getRemoteSocketAddress() : null;
+	}
+
+	/** Returns the IP address and port of the remote end of the UDP connection, or null if this connection is not connected. */
+	public InetSocketAddress getRemoteUDPAddress() {
+		return udpConnected() ? udpRemoteAddress : null;
 	}
 
 	public boolean closed() {
 		return !isConnected;
 	}
 
-	protected void notifyConnected(Connection connection) {
+	public boolean tcpConnected() {
+		return tcp != null && tcp.socketChannel.isConnected();
+	}
+
+	public boolean udpConnected() {
+		return udp != null && udpRemoteAddress != null;
+	}
+
+	protected void notifyConnected(Connection connection) throws IOException {
 		isConnected = true;
 		if (listener != null) listener.connected(connection);
 	}
 
-	protected void notifyDisconnected(Connection connection) {
+	protected void notifyDisconnected(Connection connection) throws IOException {
 		if (listener != null) listener.disconnected(connection);
 	}
 
-	protected void notifyReceived(Object object) {
+	protected void notifyReceived(Object object) throws IOException {
 		if (listener != null) listener.received(object);
 	}
 
-	protected void notifySent(Object object) {
+	protected void notifySent(Object object) throws IOException {
 		if (listener != null) listener.sent(object);
 	}
 }

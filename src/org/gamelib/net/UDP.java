@@ -17,7 +17,7 @@ import java.nio.channels.Selector;
  */
 public class UDP {
 	DatagramChannel datagramChannel;
-	final ByteBuffer readBuffer, writeBuffer;
+	private final ByteBuffer readBuffer, writeBuffer;
 	private SelectionKey selectionKey;
 	InetSocketAddress connectedAddress;
 	Serialization serialization = new Serialization();
@@ -33,11 +33,9 @@ public class UDP {
 
 	public void bind(Selector selector, InetSocketAddress localPort) {
 		close();
-		readBuffer.clear();
-		writeBuffer.clear();
 		try {
 			datagramChannel = selector.provider().openDatagramChannel();
-			datagramChannel.socket().bind(localPort);
+			datagramChannel.socket().bind(this.connectedAddress = localPort);
 			datagramChannel.configureBlocking(false);
 			selectionKey = datagramChannel.register(selector, SelectionKey.OP_READ);
 		} catch (IOException e) {
@@ -48,8 +46,6 @@ public class UDP {
 
 	public void connect(Selector selector, InetSocketAddress remoteAddress) {
 		close();
-		readBuffer.clear();
-		writeBuffer.clear();
 		try {
 			datagramChannel = selector.provider().openDatagramChannel();
 			datagramChannel.socket().bind(null);
@@ -94,6 +90,8 @@ public class UDP {
 	}
 
 	public void close() {
+		readBuffer.clear();
+		writeBuffer.clear();
 		try {
 			if (datagramChannel != null) {
 				datagramChannel.close();
