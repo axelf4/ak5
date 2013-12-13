@@ -3,7 +3,6 @@
  */
 package org.gamelib.backend;
 
-import org.gamelib.util.Color;
 
 /**
  * A graphics context that allows to the screen or off-screen images.

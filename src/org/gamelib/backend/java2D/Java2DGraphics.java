@@ -6,9 +6,9 @@ package org.gamelib.backend.java2D;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import org.gamelib.backend.Color;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
-import org.gamelib.util.Color;
 
 /**
  * @author pwnedary

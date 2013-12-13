@@ -5,9 +5,9 @@ package org.gamelib.backend.lwjgl;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import org.gamelib.backend.Color;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
-import org.gamelib.util.Color;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 

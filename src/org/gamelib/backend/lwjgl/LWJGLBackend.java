@@ -28,12 +28,12 @@ import org.gamelib.Drawable;
 import org.gamelib.Game;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.BackendImpl;
+import org.gamelib.backend.Color;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
 import org.gamelib.backend.Sound;
 import org.gamelib.backend.VideoMode;
-import org.gamelib.util.Color;
 import org.gamelib.util.Math2;
 import org.gamelib.util.geom.Rectangle;
 import org.lwjgl.BufferUtils;
@@ -318,7 +318,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		// ByteBuffer textureBuffer = convertImageData(new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR), image);
 		BufferedImage image1 = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g2d = (Graphics2D) image1.getGraphics();
-		g2d.setColor(org.gamelib.util.Color.CYAN.toAWT());
+		g2d.setColor(org.gamelib.backend.Color.CYAN.toAWT());
 		g2d.fillRect(10, 10, 50, 50);
 		ByteBuffer textureBuffer = convertImageData(image1, image);
 		// initialize texture

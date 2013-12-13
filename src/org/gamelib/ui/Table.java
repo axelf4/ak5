@@ -6,8 +6,8 @@ package org.gamelib.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gamelib.backend.Color;
 import org.gamelib.backend.Graphics;
-import org.gamelib.util.Color;
 
 /**
  * @author pwnedary

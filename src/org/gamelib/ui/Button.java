@@ -3,9 +3,9 @@
  */
 package org.gamelib.ui;
 
+import org.gamelib.backend.Color;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Input;
-import org.gamelib.util.Color;
 import org.gamelib.util.geom.Point;
 import org.gamelib.util.geom.Rectangle;
 

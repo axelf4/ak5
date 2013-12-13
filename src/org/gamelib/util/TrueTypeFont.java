@@ -58,12 +58,12 @@ public class TrueTypeFont implements Font {
 	/** The font metrics for our Java AWT font */
 	private FontMetrics fontMetrics;
 
-	private org.gamelib.util.Color fontColor;
+	private org.gamelib.backend.Color fontColor;
 
 	private int correctL = 9, correctR = 8;
 	int format = ALIGN_LEFT;
 
-	public TrueTypeFont(java.awt.Font font, boolean antiAlias, char[] additionalChars, org.gamelib.util.Color fontColor) {
+	public TrueTypeFont(java.awt.Font font, boolean antiAlias, char[] additionalChars, org.gamelib.backend.Color fontColor) {
 		this.font = font;
 		this.fontSize = font.getSize() + 3;
 		this.antiAlias = antiAlias;
@@ -76,7 +76,7 @@ public class TrueTypeFont implements Font {
 	}
 
 	public TrueTypeFont(java.awt.Font font) {
-		this(font, true, null, org.gamelib.util.Color.BLACK);
+		this(font, true, null, org.gamelib.backend.Color.BLACK);
 	}
 
 	public TrueTypeFont() {
