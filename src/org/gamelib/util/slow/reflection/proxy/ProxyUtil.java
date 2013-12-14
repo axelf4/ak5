@@ -10,6 +10,7 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 
 /**
+ * rename to Proxies
  * @author pwnedary
  */
 @SuppressWarnings("unchecked")
