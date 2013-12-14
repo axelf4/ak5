@@ -21,15 +21,21 @@ public class HashTable<K, V> implements Row<Entry<K, V>> {
 	}
 
 	@Override
-	public void add(Entry<K, V> e) {
+	public int add(Entry<K, V> e) {
 		// TODO Auto-generated method stub
-
+		return 0;
 	}
 
 	@Override
 	public void remove(int index) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public int indexOf(Entry<K, V> e) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	@Override

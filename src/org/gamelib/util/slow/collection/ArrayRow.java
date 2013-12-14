@@ -5,11 +5,10 @@ package org.gamelib.util.slow.collection;
 
 import java.util.Iterator;
 
-
 /**
  * @author pwnedary
  */
-public class ArrayRow<E> implements Row<E> {
+public class ArrayRow<E> extends AbstractTuple<E> {
 	private E[] elements;
 	private int size;
 
@@ -34,14 +33,15 @@ public class ArrayRow<E> implements Row<E> {
 	}
 
 	@Override
-	public void add(E e) {
-		if (size >= elements.length) {
+	public int add(E e) {
+		if (size() >= elements.length) {
 			@SuppressWarnings("unchecked")
-			E[] tmp = (E[]) new Object[size * 2];
+			E[] tmp = (E[]) new Object[size() * 2];
 			System.arraycopy(elements, 0, tmp, 0, elements.length);
 			elements = tmp;
 		}
-		elements[size++] = e;
+		elements[size()] = e;
+		return size++;
 	}
 
 	@Override
@@ -52,11 +52,6 @@ public class ArrayRow<E> implements Row<E> {
 	@Override
 	public int size() {
 		return size;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return size > 0;
 	}
 
 	@Override

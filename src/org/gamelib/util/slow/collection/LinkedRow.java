@@ -9,7 +9,7 @@ import java.util.Iterator;
 /**
  * @author pwnedary
  */
-public class LinkedRow<E> implements Row<E> {
+public class LinkedRow<E> extends AbstractTuple<E> {
 	private Node<E> head;
 	private Node<E> tail;
 	private int size;
@@ -23,12 +23,12 @@ public class LinkedRow<E> implements Row<E> {
 	}
 
 	@Override
-	public void add(final E e) {
+	public int add(final E e) {
 		Node<E> node = new Node<>(e, null, null, tail);
 		if (size() == 0) head = node;
 		else tail.setNext(node);
 		tail = node;
-		size++;
+		return size++;
 	}
 
 	@Override
@@ -43,11 +43,6 @@ public class LinkedRow<E> implements Row<E> {
 	@Override
 	public int size() {
 		return size;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return size > 0;
 	}
 
 	@Override
