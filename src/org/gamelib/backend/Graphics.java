@@ -3,28 +3,24 @@
  */
 package org.gamelib.backend;
 
-
 /**
- * A graphics context that allows to the screen or off-screen images.
- * 
+ * A graphics context that allows to the screen or off-screen images. TODO things needed to be added: methods for pushing/popping transforms ability to set projection matrix
  * @author pwnedary
  */
 public interface Graphics {
 
 	/**
 	 * Set the color to use when rendering to this context
-	 * 
 	 * @param color The color to use when rendering to this context
 	 */
 	public void setColor(Color color);
 
 	/**
 	 * Get the color in use by this graphics context
-	 * 
 	 * @return The color in use by this graphics context
 	 */
 	public Color getColor();
-	
+
 	/** Begins drawing with this graphics context. */
 	public void begin();
 
@@ -44,14 +40,12 @@ public interface Graphics {
 
 	/**
 	 * Translates the origin to <i>x</i>,&nbsp;<i>y</i>,&nbsp;<i>z</i>.
-	 * 
 	 * @param flag can be {@link #ADD} or {@link #SET}
 	 */
 	public void translate(float x, float y, float z, int flag);
 
 	/**
 	 * Apply a scaling factor to everything drawn.
-	 * 
 	 * @param sx The scaling factor on the x-axis
 	 * @param sy The scaling factor on the y-axis
 	 * @param sz The scaling factor on the z-axis
@@ -60,14 +54,12 @@ public interface Graphics {
 
 	/**
 	 * Apply a rotation to everything draw on the graphics context
-	 * 
 	 * @param theta The angle (in degrees) to rotate by
 	 */
 	public void rotate(double theta);
 
 	/**
 	 * Draw an image to the canvas.
-	 * 
 	 * @param img the image to draw
 	 * @param dx1 the x coordinate of the start of the destination
 	 * @param dy1 the y coordinate of the start of the destination
@@ -82,7 +74,6 @@ public interface Graphics {
 
 	/**
 	 * Draw a line on the canvas in the current color.
-	 * 
 	 * @param x1 The x coordinate of the start point
 	 * @param y1 The y coordinate of the start point
 	 * @param x2 The x coordinate of the end point
@@ -92,7 +83,6 @@ public interface Graphics {
 
 	/**
 	 * Draw a rectangle to the canvas in the current color.
-	 * 
 	 * @param x1 The x coordinate of the top left corner
 	 * @param y1 The y coordinate of the top left corner
 	 * @param width The width of the rectangle to draw
@@ -102,7 +92,6 @@ public interface Graphics {
 
 	/**
 	 * Fill a rectangle on the canvas in the current color.
-	 * 
 	 * @param x1 The x coordinate of the top left corner
 	 * @param y1 The y coordinate of the top left corner
 	 * @param width The width of the rectangle to fill
@@ -114,5 +103,8 @@ public interface Graphics {
 
 	/** Clears the screen in the desired color. */
 	public void clear();
+
+	// public void push();
+	// public void pop();
 
 }

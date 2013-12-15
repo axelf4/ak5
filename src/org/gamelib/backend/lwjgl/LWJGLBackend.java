@@ -83,7 +83,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		glOrtho(0, width, height, 0, 1, -1); // 0,0 : top-left
-		// glOrtho(0, width, 0, height, 1, -1); // 0,0 : bottom-left
+//		 glOrtho(0, width, 0, height, 1, -1); // 0,0 : bottom-left
 		glMatrixMode(GL_MODELVIEW);
 
 		// GL11.glTranslatef((width - xsize) / 2, (height - ysize) / 2, 0);
@@ -96,7 +96,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glViewport(0, 0, width, height);
-		glMatrixMode(GL_MODELVIEW);
+		// glMatrixMode(GL_MODELVIEW);
 	}
 
 	static void init3d(int width, int height) {
@@ -238,7 +238,6 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	/**
 	 * Create a new texture ID
-	 * 
 	 * @return a new texture ID
 	 */
 	private int createTextureID() {
@@ -250,7 +249,6 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	/**
 	 * Creates an integer buffer to hold specified ints - strictly a utility method
-	 * 
 	 * @param size how many int to contain
 	 * @return created IntBuffer
 	 */
@@ -260,7 +258,6 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	/**
 	 * Convert the buffered image to a texture
-	 * 
 	 * @param bufferedImage The image to convert to a texture
 	 * @param image The texture to store the data into
 	 * @return a buffer containing the data
