@@ -26,11 +26,12 @@ public interface Row<E> extends Iterable<E> {
 	int add(final E e);
 
 	/**
-	 * Removes the element at <code>index</code>.
+	 * Removes and returns the element at <code>index</code>.
 	 * 
 	 * @param index the element's index of which to remove
+	 * @return the removed element
 	 */
-	void remove(int index);
+	E remove(int index);
 
 	/**
 	 * Returns <code>e</code>'s first occurence's index in this row or <tt>-1</tt> if it didn't exist.

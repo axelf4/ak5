@@ -8,7 +8,7 @@ import java.util.Iterator;
 /**
  * @author pwnedary
  */
-public class ArrayRow<E> extends AbstractTuple<E> {
+public class ArrayRow<E> extends AbstractRow<E> {
 	private E[] elements;
 	private int size;
 
@@ -24,7 +24,7 @@ public class ArrayRow<E> extends AbstractTuple<E> {
 	}
 
 	public ArrayRow() {
-		this(1);
+		this(16);
 	}
 
 	@Override
@@ -34,19 +34,21 @@ public class ArrayRow<E> extends AbstractTuple<E> {
 
 	@Override
 	public int add(E e) {
-		if (size() >= elements.length) {
+		if (size == elements.length) {
 			@SuppressWarnings("unchecked")
-			E[] tmp = (E[]) new Object[size() * 2];
+			E[] tmp = (E[]) new Object[size << 1];
 			System.arraycopy(elements, 0, tmp, 0, elements.length);
 			elements = tmp;
 		}
-		elements[size()] = e;
+		elements[size] = e;
 		return size++;
 	}
-
+	
 	@Override
-	public void remove(int index) {
+	public E remove(int index) {
+		E value = elements[index];
 		System.arraycopy(elements, index + 1, elements, index, size-- - index);
+		return value;
 	}
 
 	@Override

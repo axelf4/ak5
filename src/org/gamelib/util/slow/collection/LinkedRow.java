@@ -5,11 +5,10 @@ package org.gamelib.util.slow.collection;
 
 import java.util.Iterator;
 
-
 /**
  * @author pwnedary
  */
-public class LinkedRow<E> extends AbstractTuple<E> {
+public class LinkedRow<E> extends AbstractRow<E> {
 	private Node<E> head;
 	private Node<E> tail;
 	private int size;
@@ -32,13 +31,23 @@ public class LinkedRow<E> extends AbstractTuple<E> {
 	}
 
 	@Override
-	public void remove(int index) {
+	public E remove(int index) {
+		if (index >= size) throw new IndexOutOfBoundsException();
 		Node<E> node = head;
 		for (; index > 0; index--)
 			node = node.getNext();
 		if (node.getPrev() != null) node.getPrev().setNext(node.getNext());
 		else head = node.getNext();
+		return node.get();
 	}
+
+	@Override
+	public int indexOf(E e) {
+		int i = 0;
+		for (Iterator<E> iterator = iterator(); iterator.hasNext(); i++)
+			if (e.equals(iterator.next())) return i;
+		return -1;
+	};
 
 	@Override
 	public int size() {
