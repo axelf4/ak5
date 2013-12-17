@@ -53,7 +53,7 @@ public class LWJGLInput extends Input {
 
 	@Override
 	public int getMouseY() {
-		return Display.getHeight() - Mouse.getY();
+		return Display.getHeight() - 1 - Mouse.getY();
 	}
 
 	/** {@inheritDoc} */
