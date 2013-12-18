@@ -178,10 +178,6 @@ public class TrueTypeFont implements Font {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.util.Font#drawString(org.gamelib.backend.Graphics, java.lang.String, int, int)
-	 */
 	@Override
 	public void drawString(Graphics g, String str, int x, int y) {
 		Rectangle intObject = null;
@@ -199,10 +195,8 @@ public class TrueTypeFont implements Font {
 			d = -1;
 			c = correctR;
 
-			while (i < endIndex) {
-				if (str.charAt(i) == '\n') startY += fontHeight;
-				i++;
-			}
+			while (i < endIndex)
+				if (str.charAt(i++) == '\n') startY += fontHeight;
 			break;
 		}
 		case ALIGN_CENTER: {
@@ -225,11 +219,7 @@ public class TrueTypeFont implements Font {
 
 		while (i >= startIndex && i <= endIndex) {
 			charCurrent = str.charAt(i);
-			if (charCurrent < 256) {
-				intObject = charArray[charCurrent];
-			} else {
-				intObject = (Rectangle) customChars.get(Character.valueOf((char) charCurrent));
-			}
+			intObject = charCurrent < 256 ? charArray[charCurrent] : customChars.get(Character.valueOf((char) charCurrent));
 
 			if (intObject != null) {
 				if (d < 0) totalwidth += (intObject.getWidth() - c) * d;
@@ -256,10 +246,6 @@ public class TrueTypeFont implements Font {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.util.Font#getWidth(java.lang.String)
-	 */
 	@Override
 	public int getWidth(String str) {
 		int totalwidth = 0;
@@ -267,18 +253,13 @@ public class TrueTypeFont implements Font {
 		int currentChar = 0;
 		for (int i = 0; i < str.length(); i++) {
 			currentChar = str.charAt(i);
-			if (currentChar < 256) intObject = charArray[currentChar];
-			else intObject = (Rectangle) customChars.get(new Character((char) currentChar));
+			intObject = currentChar < 256 ? charArray[currentChar] : customChars.get(Character.valueOf((char) currentChar));
 
 			if (intObject != null) totalwidth += intObject.getWidth() - correctL;
 		}
 		return totalwidth;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.util.Font#getHeight()
-	 */
 	@Override
 	public int getHeight() {
 		return fontHeight;

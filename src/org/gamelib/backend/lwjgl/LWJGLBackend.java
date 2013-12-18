@@ -24,7 +24,7 @@ import javax.imageio.ImageIO;
 import org.gamelib.Drawable;
 import org.gamelib.Game;
 import org.gamelib.backend.Backend;
-import org.gamelib.backend.BackendImpl;
+import org.gamelib.backend.Backend.BackendImpl;
 import org.gamelib.backend.Color;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
@@ -49,7 +49,6 @@ import org.lwjgl.util.glu.GLU;
  * @author pwnedary
  */
 public class LWJGLBackend extends BackendImpl implements Backend {
-
 	/** The color model including alpha for GL images */
 	private static final ColorModel glAlphaColorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[] { 8, 8, 8, 8 }, true, false, ComponentColorModel.TRANSLUCENT, DataBuffer.TYPE_BYTE);;
 	/** The color model for GL images */
@@ -61,8 +60,8 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	static void init2d(int width, int height) {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		// glOrtho(0, width, height, 0, 1, -1); // 0,0 : top-left
-		glOrtho(0, width, 0, height, 1, -1); // 0,0 : bottom-left
+		glOrtho(0, width, height, 0, 1, -1); // 0,0 at top left
+		// glOrtho(0, width, 0, height, 1, -1); // 0,0 at bottom left
 		glMatrixMode(GL_MODELVIEW);
 
 		glShadeModel(GL_SMOOTH);
@@ -120,6 +119,8 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 			Display.setDisplayMode(targetDisplayMode);
 			Display.setFullscreen(videoMode.fullscreen());
 			Display.setVSyncEnabled(videoMode.vsync);
+			Display.setResizable(videoMode.resizable);
+
 			Display.create();
 
 			super.start(game);
@@ -236,7 +237,6 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	/**
 	 * Convert the buffered image to a texture
-	 * 
 	 * @param bufferedImage The image to convert to a texture
 	 * @param image The texture to store the data into
 	 * @return a buffer containing the data
