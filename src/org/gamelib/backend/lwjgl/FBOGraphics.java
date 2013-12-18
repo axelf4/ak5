@@ -3,23 +3,18 @@
  */
 package org.gamelib.backend.lwjgl;
 
-// import static org.lwjgl.opengl.EXTFramebufferObject.*;
 import static org.lwjgl.opengl.EXTFramebufferObject.*;
 import static org.lwjgl.opengl.GL11.*;
 
-import java.nio.IntBuffer;
-
 import org.gamelib.Game;
 import org.gamelib.backend.Backend;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GLContext;
 
 /**
- * TODO: rename to FrameBuffer
- * TODO utilize renderbuffers if wanted
+ * TODO: rename to FrameBuffer TODO utilize renderbuffers if wanted
+ * 
  * @author pwnedary
  */
 public class FBOGraphics extends LWJGLGraphics {
@@ -33,24 +28,19 @@ public class FBOGraphics extends LWJGLGraphics {
 		if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) throw new Error("FBOs not supported");
 
 		// Initialize frame buffer
-		// frameBufferID = glGenFramebuffersEXT(); // create new frame buffer
-		IntBuffer buffer = BufferUtils.createIntBuffer(1); // ByteBuffer.allocateDirect(1*4).order(ByteOrder.nativeOrder()).asIntBuffer(); // allocate a 1 int byte buffer
-		EXTFramebufferObject.glGenFramebuffersEXT(buffer); // generate
-		frameBufferID = buffer.get(0);
+		frameBufferID = glGenFramebuffersEXT(); // create new frame buffer
 
-		// FBOs wont work if texture isn't just created
-		// LWJGLImage tmp = (LWJGLImage) ((LWJGLBackend) Game.getBackend()).createImage(image.getWidth(), image.getHeight());
+		// LWJGLImage tmp = (LWJGLImage) ((LWJGLBackend) Game.getBackend()).createImage(image.getWidth(), image.getHeight()); // FBOs wont work if texture isn't just created
 		// image.textureID = tmp.textureID;
 		image.bind();
 
-		// Attach a texture
 		bind();
-		EXTFramebufferObject.glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, image.target, image.getTextureID(), 0);
+		EXTFramebufferObject.glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, image.target, image.getTextureID(), 0); // attach texture
 
-		// initialize renderbuffer renderBufferID = EXTFramebufferObject.glGenRenderbuffersEXT();
+		// initialize renderbuffer renderBufferID = glGenRenderbuffersEXT();
 		// glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, renderBufferID); // bind the depth renderbuffer glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL14.GL_DEPTH_COMPONENT24, 512, 512); // get the data space for it glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,GL_DEPTH_ATTACHMENT_EXT,GL_RENDERBUFFER_EXT, renderBufferID); // bind it to the renderbuffer
 
-		check(); // Check
+		check(); // check
 		// if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) != GL_FRAMEBUFFER_COMPLETE) throw new Error("couldn't create FBO");
 
 		image.unbind();
@@ -180,35 +170,6 @@ public class FBOGraphics extends LWJGLGraphics {
 		Backend backend = Game.getBackend();
 		GL11.glOrtho(0, backend.getWidth(), backend.getHeight(), 0, 1, -1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-	}
-
-	private void old() {
-		if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) throw new Error("FBOs not supported");
-
-		// initialize frame buffer
-		// frameBufferID = glGenFramebuffersEXT(); // create new framebuffer
-		IntBuffer buffer = BufferUtils.createIntBuffer(1);
-		GL30.glGenFramebuffers(buffer);
-		frameBufferID = buffer.get(0);
-
-		// FBOs wont work if texture isn't just created
-		// LWJGLImage tmp = (LWJGLImage) ((LWJGLBackend) Game.getBackend()).createImage(image.getWidth(), image.getHeight());
-		// image.textureID = tmp.textureID;
-
-		// glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, frameBufferID);
-		// glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, image.target, image.textureID, 0); // attach texture
-		bind();
-		GL30.glFramebufferTexture2D(GL30.GL_DRAW_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, image.target, image.textureID, 0);
-		// initialize renderbuffer renderBufferID = EXTFramebufferObject.glGenRenderbuffersEXT();
-		// glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, renderBufferID); // bind the depth renderbuffer glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL14.GL_DEPTH_COMPONENT24, 512, 512); // get the data space for it glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,GL_DEPTH_ATTACHMENT_EXT,GL_RENDERBUFFER_EXT, renderBufferID); // bind it to the renderbuffer
-
-		// Check
-		check();
-		// if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) != GL_FRAMEBUFFER_COMPLETE) throw new Error("couldn't create FBO");
-
-		unbind();
-		// glPushAttrib(GL_VIEWPORT_BIT);
-		// glViewport(0, 0, image.getWidth(), image.getHeight()); // An FBO has its own viewport
 	}
 
 }

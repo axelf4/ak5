@@ -25,14 +25,8 @@ public class LWJGLGraphics implements Graphics {
 	protected LWJGLImage image;
 	protected float deltaX, deltaY, deltaZ;
 
-	/**
-	 * 
-	 */
 	public LWJGLGraphics() {}
 
-	/**
-	 * 
-	 */
 	public LWJGLGraphics(LWJGLImage img) {
 		this();
 		this.image = img;
@@ -48,7 +42,6 @@ public class LWJGLGraphics implements Graphics {
 		}
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void setColor(Color color) {
 		this.currentColor = color;
@@ -56,19 +49,15 @@ public class LWJGLGraphics implements Graphics {
 		float g = currentColor.getGreen() / 255;
 		float b = currentColor.getBlue() / 255;
 		float a = currentColor.getAlpha() / 255;
-		// GL11.glColor3f(currentColor.getRed() / 255, currentColor.getGreen() /
-		// 255, currentColor.getBlue() / 255);
-		GL11.glColor4f(r, g, b, a);
-		GL11.glClearColor(r, g, b, a);
+		glColor4f(r, g, b, a);
+		glClearColor(r, g, b, a);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public Color getColor() {
 		return currentColor;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
 		initGL(2);
@@ -77,41 +66,28 @@ public class LWJGLGraphics implements Graphics {
 		float v = (float) sy1 / image.getTexHeight();
 		float u2 = (float) sx2 / image.getTexWidth();
 		float v2 = (float) sy2 / image.getTexHeight();
-		int width = dx2 - dx1;
-		int height = dy2 - dy1;
-		Color previous = currentColor;
 
-		setColor(Color.WHITE);
-		translate(dx1, dy1, 0.0f);
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(image.target, image.textureID); // bind the appropriate texture for this image
-		/*
-		 * glBegin(GL11.GL_QUADS); // GL_QUADS { glTexCoord2f(u, v); glVertex2f(0, 0); glTexCoord2f(u2, v); glVertex2f(width, 0); glTexCoord2f(u2, v2); glVertex2f(width, height); glTexCoord2f(u, v2); glVertex2f(0, height); // glTexCoord2f(u, v); glVertex2f(dx1, dx1); glTexCoord2f(u2, v); glVertex2f(dx2, dy1); glTexCoord2f(u2, v2); glVertex2f(dx2, dy2); glTexCoord2f(u, v2); glVertex2f(dx1, dy2); }
-		 */
 		glBegin(GL11.GL_TRIANGLE_STRIP); // GL_QUADS
 		{
 			glTexCoord2f(u, v);
-			glVertex2f(0, 0);
+			glVertex2f(dx1, dy1);
 
 			glTexCoord2f(u, v2);
-			glVertex2f(0, height);
+			glVertex2f(dx1, dy2);
 
 			glTexCoord2f(u2, v);
-			glVertex2f(width, 0);
+			glVertex2f(dx2, dy1);
 
 			glTexCoord2f(u2, v2);
-			glVertex2f(width, height);
-
-			// glTexCoord2f(u, v); glVertex2f(dx1, dx1); glTexCoord2f(u2, v); glVertex2f(dx2, dy1); glTexCoord2f(u2, v2); glVertex2f(dx2, dy2); glTexCoord2f(u, v2); glVertex2f(dx1, dy2);
+			glVertex2f(dx2, dy2);
 		}
 		glEnd();
 		glBindTexture(image.target, 0);
 		glDisable(GL_TEXTURE_2D);
-		translate(-dx1, -dy1, 0.0f);
-		setColor(previous);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void drawLine(int x1, int y1, int x2, int y2) {
 		initGL(2);
@@ -123,7 +99,6 @@ public class LWJGLGraphics implements Graphics {
 		GL11.glEnd();
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void drawRect(int x, int y, int width, int height) {
 		initGL(2);
@@ -133,7 +108,6 @@ public class LWJGLGraphics implements Graphics {
 		drawLine(x, y + height, x, y);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void fillRect(int x, int y, int width, int height) {
 		initGL(2);
@@ -147,17 +121,14 @@ public class LWJGLGraphics implements Graphics {
 		GL11.glEnd();
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void dispose() {}
 
-	/** {@inheritDoc} */
 	@Override
 	public void clear() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | (GL11.glIsEnabled(GL11.GL_DEPTH_TEST) ? GL11.GL_DEPTH_BUFFER_BIT : 0)); // clear the screen and depth buffer
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void drawCube(int x, int y, int z, int width, int height, int depth) {
 		initGL(3);
@@ -205,7 +176,6 @@ public class LWJGLGraphics implements Graphics {
 		GL11.glEnd();
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void translate(float x, float y, float z) {
 		glTranslatef(x, y, z);
@@ -213,20 +183,17 @@ public class LWJGLGraphics implements Graphics {
 		this.deltaY += y;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void translate(float x, float y, float z, int flag) {
 		if ((flag & ADD) == ADD) translate(x, y, z);
 		else if ((flag & SET) == SET) translate(-deltaX + x, -deltaY + y, -deltaZ + z);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void scale(float sx, float sy, float sz) {
 		glScalef(sx, sy, sz);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void rotate(double theta) {
 		glRotated(theta, deltaX, deltaY, deltaZ);
@@ -251,6 +218,7 @@ public class LWJGLGraphics implements Graphics {
 
 	/**
 	 * Sets the matrix to an orthographic projection like glOrtho (http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml) following the OpenGL equivalent
+	 * 
 	 * @param left The left clipping plane
 	 * @param right The right clipping plane
 	 * @param bottom The bottom clipping plane

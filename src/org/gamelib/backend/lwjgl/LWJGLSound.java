@@ -13,6 +13,7 @@ import org.lwjgl.openal.AL10;
 
 /**
  * TODO: move static fields to {@link LWJGLResourceFactory}
+ * 
  * @author pwnedary
  */
 public class LWJGLSound implements Sound {
@@ -37,17 +38,10 @@ public class LWJGLSound implements Sound {
 	/** The {@link source} buffer's index. */
 	int index;
 
-	/**
-	 * 
-	 */
 	public LWJGLSound(int index) {
 		this.index = index;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backend.Sound#play()
-	 */
 	@Override
 	public void play() {
 		// int channel = source.get(index);
@@ -56,43 +50,25 @@ public class LWJGLSound implements Sound {
 		alSourcePlay(source.get(index));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backend.Sound#pause()
-	 */
 	@Override
 	public void pause() {
 		AL10.alSourcePause(source.get(index));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backend.Sound#stop()
-	 */
 	@Override
 	public void stop() {
 		AL10.alSourceStop(source.get(index));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backend.Sound#loop(int)
-	 */
 	@Override
 	public void loop(int count) {
 		alSourcei(source.get(index), AL_LOOPING, count <= -1 ? AL_TRUE : AL_FALSE);
-		if (count <= -1)
-			alSourcei(source.get(index), AL_BUFFER, buffer.get(index)); // link buffer and source
-		else
-			for (int i = 0; i < count; i++)
-				AL10.alSourceQueueBuffers(source.get(index), buffer.get(index));
+		if (count <= -1) alSourcei(source.get(index), AL_BUFFER, buffer.get(index)); // link buffer and source
+		else for (int i = 0; i < count; i++)
+			AL10.alSourceQueueBuffers(source.get(index), buffer.get(index));
 		AL10.alSourcePlay(source.get(index));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.backend.Sound#playing()
-	 */
 	@Override
 	public boolean playing() {
 		return alGetSourcei(source.get(index), AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING;
