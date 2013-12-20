@@ -8,7 +8,6 @@ package org.gamelib.backend;
  * @author pwnedary
  */
 public interface Sound {
-
 	/** If {@link #loop(int)} should loop continuously. */
 	public static final int LOOP_CONTINUOUSLY = -1;
 
@@ -26,5 +25,4 @@ public interface Sound {
 
 	/** @return if the sound is playing */
 	public boolean playing();
-
 }
