@@ -42,21 +42,18 @@ public class Java2DPanel extends JPanel {
 		super.paintComponent(g);
 		try {
 			do {
-				if (volatileImage == null || volatileImage.validate(getGraphicsConfiguration()) == VolatileImage.IMAGE_INCOMPATIBLE) {
-					volatileImage = createVolatileImage(getWidth(), getHeight());
-				}
+				if (volatileImage == null || volatileImage.validate(getGraphicsConfiguration()) == VolatileImage.IMAGE_INCOMPATIBLE) volatileImage = createVolatileImage(getWidth(), getHeight());
 				g2d = volatileImage.createGraphics();
 				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-				AffineTransform affineTransform = g2d.getTransform();
+				// AffineTransform affineTransform = g2d.getTransform();
 				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-				
+
 				g2d.setColor(Color.WHITE); // clear screen
 				g2d.fillRect(0, 0, getWidth(), getHeight());
 
-				if (callback != null)
-					callback.draw(new Java2DGraphics(g2d, getWidth(), getHeight()), delta);
+				if (callback != null) callback.draw(new Java2DGraphics(g2d, getWidth(), getHeight()), delta);
 
-				g2d.setTransform(affineTransform);
+				// g2d.setTransform(affineTransform);
 				g2d.dispose();
 			} while (volatileImage.contentsLost());
 		} catch (Exception e) {
@@ -67,10 +64,7 @@ public class Java2DPanel extends JPanel {
 			g.dispose();
 		}
 
-		// Tell the System to do the Drawing now, otherwise it can take a few
-		// extra ms until
-		// Drawing is done which looks very jerky
-		Toolkit.getDefaultToolkit().sync();
+		Toolkit.getDefaultToolkit().sync(); // Tell the System to draw now, otherwise it can take a few extra ms until drawing is done which looks jerky
 	}
 
 }

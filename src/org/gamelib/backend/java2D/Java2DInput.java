@@ -43,7 +43,6 @@ public class Java2DInput extends Input implements KeyEventDispatcher, MouseListe
 		component.addMouseWheelListener(this);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent e) {
 		assert EventQueue.isDispatchThread();
@@ -53,7 +52,6 @@ public class Java2DInput extends Input implements KeyEventDispatcher, MouseListe
 
 	/* Mouse listeners */
 
-	/** {@inheritDoc} */
 	@Override
 	public void mouseMoved(java.awt.event.MouseEvent e) {
 		prevX = getMouseX();
@@ -61,52 +59,43 @@ public class Java2DInput extends Input implements KeyEventDispatcher, MouseListe
 		mouseEvent(MOUSE_MOVED, e.getButton() - 1, e.getX(), e.getY());
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void mousePressed(java.awt.event.MouseEvent e) {
 		mouseEvent(MOUSE_PRESSED, e.getButton() - 1, e.getX(), e.getY());
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void mouseReleased(java.awt.event.MouseEvent e) {
 		mouseEvent(MOUSE_RELEASED, e.getButton() - 1, e.getX(), e.getY());
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		mouseEvent(MOUSE_DRAGGED, e.getButton() - 1, e.getX(), e.getY());
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// mouseEvent(MOUSE_CLICKED, e.getButton() - 1, e.getX(), e.getY());
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void mouseEntered(MouseEvent e) {}
 
-	/** {@inheritDoc} */
 	@Override
 	public void mouseExited(MouseEvent e) {
 		Component component = this.component.getParent().getParent().getParent().getParent();
 		if (grabbed) mouseMove(component.getX() + prevX, component.getY() + prevY);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		mouseWheelEvent(e.getPreciseWheelRotation());
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void poll() {}
 
-	/** {@inheritDoc} */
 	@Override
 	public int translateKeyCode(int keyCode) {
 		switch (keyCode) {
@@ -187,7 +176,6 @@ public class Java2DInput extends Input implements KeyEventDispatcher, MouseListe
 		}
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void mouseMove(int x, int y) {
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -211,15 +199,12 @@ public class Java2DInput extends Input implements KeyEventDispatcher, MouseListe
 
 	@Override
 	public void setGrabbed(boolean grabbed) {
-		if (this.grabbed = grabbed) {
-			setCursor(new Java2DImage(new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB)));
-		} else component.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		if (this.grabbed = grabbed) setCursor(new Java2DImage(new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB)));
+		else component.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 
 	@Override
 	public void setCursor(Image image) {
-		Toolkit toolkit = Toolkit.getDefaultToolkit();
-		Cursor c = toolkit.createCustomCursor(((Java2DImage) image).bufferedImage, new Point(component.getX(), component.getY()), "img");
-		component.setCursor(c);
+		component.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(((Java2DImage) image).bufferedImage, new Point(component.getX(), component.getY()), "img"));
 	}
 }

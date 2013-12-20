@@ -38,7 +38,6 @@ import org.gamelib.util.geom.Rectangle;
 
 /**
  * The {@link Backend} using Java2D for rendering and resources.
- * 
  * @author pwnedary
  */
 public class Java2DBackend extends BackendImpl implements Backend {
@@ -61,7 +60,6 @@ public class Java2DBackend extends BackendImpl implements Backend {
 		input = new Java2DInput(panel);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public Graphics getGraphics() {
 		return graphics == null && true ? graphics = new Java2DGraphics(panel.g2d, panel.getWidth(), panel.getHeight()) : graphics;
@@ -71,7 +69,6 @@ public class Java2DBackend extends BackendImpl implements Backend {
 		return input;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void draw(Drawable callback, float delta) {
 		panel.delta = delta;
@@ -79,31 +76,26 @@ public class Java2DBackend extends BackendImpl implements Backend {
 		panel.repaint();
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public long getTime() {
 		return System.nanoTime() / 1000000;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean shouldClose() {
 		return false || super.shouldClose();
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void setTitle(String s) {
 		if (container instanceof JFrame) ((JFrame) container).setTitle(s);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public Graphics getGraphics(Image img) {
 		return new Java2DGraphics(((Java2DImage) img).bufferedImage.getGraphics(), img.getWidth(), img.getHeight());
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void destroy() {
 		GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -116,12 +108,12 @@ public class Java2DBackend extends BackendImpl implements Backend {
 		return new Rectangle(panel.getX(), panel.getY(), panel.getWidth(), panel.getHeight());
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void start(Game game) {
 		VideoMode videoMode = game.getResolution();
 		if (container instanceof JFrame) {
 			((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			((JFrame) container).setResizable(videoMode.resizable);
 			setFullscreen((JFrame) container, videoMode.fullscreen());
 			if (!videoMode.fullscreen()) container.setSize(new Dimension(videoMode.getWidth(), videoMode.getHeight()));
 		} else if (container instanceof JApplet) ((JApplet) container).resize(new Dimension(videoMode.getWidth(), videoMode.getHeight()));
@@ -135,13 +127,11 @@ public class Java2DBackend extends BackendImpl implements Backend {
 		}
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int getWidth() {
 		return panel.getWidth();
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int getHeight() {
 		return panel.getHeight();
@@ -167,13 +157,11 @@ public class Java2DBackend extends BackendImpl implements Backend {
 		}
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public InputStream getResourceAsStream(String name) {
 		return Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public Image getImage(File file) throws IOException {
 		// return new Java2DImage(ImageIO.read(file));
@@ -183,14 +171,12 @@ public class Java2DBackend extends BackendImpl implements Backend {
 		return new Java2DImage(image);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public Image createImage(int width, int height) {
 		// return new Java2DImage(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
-		return new Java2DImage(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(width, height, Transparency.TRANSLUCENT));
+		return new Java2DImage(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(width, height, Transparency.BITMASK));
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public Sound getSound(File file) throws IOException {
 		Java2DSound sound = null;
@@ -205,7 +191,6 @@ public class Java2DBackend extends BackendImpl implements Backend {
 		return sound;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public Image getImage(BufferedImage img) {
 		return new Java2DImage(img);
