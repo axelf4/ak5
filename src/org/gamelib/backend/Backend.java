@@ -78,8 +78,7 @@ public interface Backend extends Destroyable {
 		public void start(Game game) {
 			this.game = game;
 			this.videoMode = game.getResolution();
-			if (game.toString().equals(game.getClass().toString())) throw new RuntimeException(game + " haven't overriden toString.");
-			else setTitle(game.toString());
+			setTitle(game.toString());
 		}
 
 		/** {@inheritDoc} */
