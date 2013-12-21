@@ -8,7 +8,9 @@ import java.beans.ConstructorProperties;
 /**
  * The dimensions of the screen and whether fullscreen or not.
  * @author pwnedary
+ * @deprecated replaced by {@link Configuration}
  */
+@Deprecated
 public class VideoMode {
 	public static final VideoMode WINDOW_800X600 = new VideoMode(800, 600, false);
 	public static final VideoMode FULLSCREEN_1366X768 = new VideoMode(1366, 768, true);

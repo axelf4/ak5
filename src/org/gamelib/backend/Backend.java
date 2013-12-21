@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.gamelib.Destroyable;
 import org.gamelib.Drawable;
 import org.gamelib.Game;
 import org.gamelib.util.geom.Rectangle;
@@ -17,9 +16,9 @@ import org.gamelib.util.geom.Rectangle;
  * The class responsible for the technical stuff, such as collecting input and processing it.
  * @author pwnedary
  */
-public interface Backend extends Destroyable {
+public interface Backend {
 	/** Starts every aspect of this {@link Backend}. */
-	void start(Game game);
+	void start(Configuration configuration);
 
 	/** Stops every used resource. */
 	void stop();
@@ -48,7 +47,7 @@ public interface Backend extends Destroyable {
 	/** @return a {@link Graphics} context to draw on. */
 	Graphics getGraphics();
 
-	/** @return a {@link Graphics} context to draw on the specified image. */
+	/** @return a {@link Graphics} context to draw on the <code>image</code>. */
 	Graphics getGraphics(Image image);
 
 	/** @return the processor for input */
@@ -70,24 +69,19 @@ public interface Backend extends Destroyable {
 
 	public abstract class BackendImpl implements Backend {
 		protected Game game;
-		protected VideoMode videoMode;
+		protected Configuration configuration;
 		boolean shouldStop = false;
-
-		/** Initializes getters from Game, then initializes Game. */
+		
 		@Override
-		public void start(Game game) {
-			this.game = game;
-			this.videoMode = game.getResolution();
-			setTitle(game.toString());
+		public void start(Configuration configuration) {
+			this.configuration = configuration;
 		}
 
-		/** {@inheritDoc} */
 		@Override
 		public void stop() {
 			this.shouldStop = true;
 		}
 
-		/** {@inheritDoc} */
 		@Override
 		public boolean shouldClose() {
 			return shouldStop;

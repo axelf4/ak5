@@ -4,11 +4,11 @@
 package org.gamelib.backend.java2D;
 
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.MediaTracker;
 import java.awt.Transparency;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -26,14 +26,13 @@ import javax.swing.JApplet;
 import javax.swing.JFrame;
 
 import org.gamelib.Drawable;
-import org.gamelib.Game;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Backend.BackendImpl;
+import org.gamelib.backend.Configuration;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
 import org.gamelib.backend.Sound;
-import org.gamelib.backend.VideoMode;
 import org.gamelib.util.geom.Rectangle;
 
 /**
@@ -96,11 +95,19 @@ public class Java2DBackend extends BackendImpl implements Backend {
 		return new Java2DGraphics(((Java2DImage) img).bufferedImage.getGraphics(), img.getWidth(), img.getHeight());
 	}
 
-	@Override
+	// TODO REMOVE
 	public void destroy() {
 		GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		graphicsDevice.setFullScreenWindow(null);
 		if (container instanceof JFrame) container.dispatchEvent(new WindowEvent((JFrame) container, WindowEvent.WINDOW_CLOSING));
+	}
+
+	@Override
+	public void stop() {
+		super.stop();
+		GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		graphicsDevice.setFullScreenWindow(null);
+		// if (container instanceof JFrame) container.dispatchEvent(new WindowEvent((JFrame) container, WindowEvent.WINDOW_CLOSING));
 	}
 
 	@Override
@@ -109,22 +116,22 @@ public class Java2DBackend extends BackendImpl implements Backend {
 	}
 
 	@Override
-	public void start(Game game) {
-		VideoMode videoMode = game.getResolution();
+	public void start(Configuration configuration) {
+		super.start(configuration);
 		if (container instanceof JFrame) {
-			((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			((JFrame) container).setResizable(videoMode.resizable);
-			setFullscreen((JFrame) container, videoMode.fullscreen());
-			if (!videoMode.fullscreen()) container.setSize(new Dimension(videoMode.getWidth(), videoMode.getHeight()));
-		} else if (container instanceof JApplet) ((JApplet) container).resize(new Dimension(videoMode.getWidth(), videoMode.getHeight()));
-
-		super.start(game); // let BackendImpl initialize Game
-
-		try {
-			tracker.waitForAll(); // wait for loading files
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+			((JFrame) container).setResizable(configuration.resizable());
+			// ((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			((JFrame) container).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			((JFrame) container).addWindowListener(new WindowAdapter() {
+				@Override
+				public void windowClosed(WindowEvent e) {
+					stop();
+				}
+			});
+			setFullscreen((JFrame) container, configuration.fullscreen());
+			if (!configuration.fullscreen()) container.setSize(configuration.getWidth(), configuration.getHeight());
+		} else if (container instanceof JApplet) ((JApplet) container).resize(configuration.getWidth(), configuration.getHeight());
+		// try { tracker.waitForAll(); // wait for loading files } catch (InterruptedException e) { e.printStackTrace(); }
 	}
 
 	@Override
