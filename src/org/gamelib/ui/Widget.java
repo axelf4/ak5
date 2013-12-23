@@ -3,81 +3,40 @@
  */
 package org.gamelib.ui;
 
-import org.gamelib.Game;
 import org.gamelib.Handler;
-import org.gamelib.backend.Backend;
-import org.gamelib.util.geom.Rectangle;
 
 /**
  * @author pwnedary
  */
-public abstract class Widget implements Handler, Layout {
+public interface Widget extends Handler {
+	void layout();
 
-	// TODO add container class with add method
-	protected WidgetGroup parent;
-	protected boolean needsLayout;
-	// protected final Rectangle bounds = new Rectangle();
-	protected int x, y, width, height;
+	/** If invalid, calls layout. */
+	void validate();
 
-	protected Widget() {
+	void invalidate();
+
+	int getX();
+
+	void setX(int x);
+
+	int getY();
+
+	void setY(int y);
+	
+	int getMinimumWidth();
+
+	int getMinimumHeight();
+
+	int getPrefferedWidth();
+
+	int getPrefferedHeight();
+	
+	int getMaximumWidth();
+
+	int getMaximumHeight();
+
+	public static abstract class WidgetImpl implements Widget {
+
 	}
-
-	public void validate() {
-		if (needsLayout) layout();
-		needsLayout = false;
-	}
-
-	public void invalidate() {
-		needsLayout = true;
-	}
-
-	public void setBounds(int x, int y, int width, int height) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-	}
-
-	public int getX() {
-		return x;
-	}
-
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY(int y) {
-		this.y = y;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
-	}
-
-	protected Rectangle getParentBounds() {
-		// int layoutX, layoutY, layoutWidth, layoutHeight;
-		if (parent != null)
-			return new Rectangle(parent.getX(), parent.getY(), parent.getWidth(), parent.getHeight());
-		else {
-			Backend backend = Game.getBackend();
-			return new Rectangle(0, 0, backend.getWidth(), backend.getHeight());
-		}
-	}
-
 }

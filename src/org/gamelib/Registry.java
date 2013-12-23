@@ -17,7 +17,7 @@ import org.gamelib.Handler.Event;
 public class Registry {
 
 	/** Root of group hierarchy */
-	public static final Group MAIN_GROUP = new Group().setAlwaysActive(true);
+	public static final Group MAIN_GROUP = new Group(null).setAlwaysActive(true);
 	/** The singleton instance */
 	private static Registry instance;
 

@@ -12,7 +12,7 @@ import org.gamelib.util.geom.Rectangle;
 /**
  * @author Axel
  */
-public class Button extends Widget {
+public class Button extends Widget2 {
 	
 	public Button(ButtonStyle style) {
 	}

@@ -3,7 +3,6 @@
  */
 package org.gamelib;
 
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,16 +14,15 @@ import org.gamelib.Handler.Event;
 
 /**
  * An aggregate of handlers.
- * @author Axel
+ * @author pwnedary
  */
 public class Group {
 	public Map<Class<? extends Event>, List<Handler>> handlers = new HashMap<>();
-	private Rectangle size = null;
 	/** Whether the handlers should receive events. */
-	boolean active = true;
+	private boolean active = true;
 	private boolean alwaysActive = false;
-	Group parent;
-	List<Group> children = new ArrayList<Group>();
+	protected Group parent;
+	protected List<Group> children = new ArrayList<Group>();
 
 	public Group(Group parent) {
 		handlers.put(Event.class, new LinkedList<Handler>());
@@ -32,27 +30,8 @@ public class Group {
 		if (this instanceof Handler) register((Handler) this);
 	}
 
-	/** Creates a new {@link Group} at top-level. */
 	public Group() {
-		this(null);
-	}
-
-	/** @return the size */
-	public Rectangle getRectangle() {
-		return size;
-	}
-
-	/**
-	 * Sets the size to the specified.
-	 * @param size
-	 */
-	public void setSize(Rectangle size) {
-		this.size = size;
-	}
-
-	public Group setAlwaysActive(boolean b) {
-		this.alwaysActive = b;
-		return this;
+		this(Registry.MAIN_GROUP);
 	}
 
 	/** @return if active */
@@ -69,7 +48,11 @@ public class Group {
 		}
 	}
 	
-	
+	public Group setAlwaysActive(boolean b) {
+		this.alwaysActive = b;
+		return this;
+	}
+
 	/**
 	 * Registers an {@link Handler}.
 	 * @param handler an {@link Handler} instance
@@ -78,8 +61,13 @@ public class Group {
 		if (handler == null) throw new IllegalArgumentException("handler cannot be null");
 		handlers.get(Event.class).add(handler);
 	}
+	
+	public void add(Group group) {
+		if (group == null) throw new IllegalArgumentException("group cannot be null");
+		children.add(group);
+	}
 
-	List<Group> getHierarchy() {
+	public List<Group> getHierarchy() {
 		List<Group> list = new ArrayList<>();
 		list.add(this);
 		for (int i = 0; i < children.size(); i++)

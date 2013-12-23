@@ -9,7 +9,7 @@ import org.gamelib.util.Font;
 /**
  * @author pwnedary
  */
-public class Label extends Widget {
+public class Label extends Widget2 {
 
 	private String text;
 	private LabelStyle style;

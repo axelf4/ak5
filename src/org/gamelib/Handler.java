@@ -15,7 +15,7 @@ import org.gamelib.ui.Component;
 /**
  * Captures registered {@link Event}s.
  * 
- * @author Axel
+ * @author pwnedary
  */
 public interface Handler {
 	/**

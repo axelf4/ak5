@@ -9,7 +9,7 @@ package org.gamelib.ui;
  */
 public class Cell {
 	boolean endRow;
-	Widget widget;
+	Widget2 widget2;
 	int colspan = 1;
 	int row, column;
 	boolean fill;

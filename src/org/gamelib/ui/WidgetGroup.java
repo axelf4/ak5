@@ -4,41 +4,22 @@
 package org.gamelib.ui;
 
 import java.util.Iterator;
-import java.util.LinkedList;
+
+import org.gamelib.Group;
+import org.gamelib.Handler;
 
 /**
  * @author pwnedary
- *
  */
-public abstract class WidgetGroup extends Widget {
-	
-	protected final LinkedList<Widget> children = new LinkedList<>();
+public abstract class WidgetGroup extends Group implements Widget {
 
-	public WidgetGroup() {
-		// TODO Auto-generated constructor stub
-	}
-
-	/** {@inheritDoc} */
 	@Override
 	public boolean handle(Event event) {
 		boolean value = false;
-		for (Iterator<Widget> iterator = children.iterator(); iterator.hasNext();) {
-			Widget widget = iterator.next();
-			widget.handle(event);
-			value = true;
-		}
+		for (Iterator<Group> iterator1 = getHierarchy().iterator(); iterator1.hasNext();)
+			for (Iterator<Handler> iterator2 = iterator1.next().handlers.get(event.getClass()).iterator(); iterator2.hasNext();)
+				value |= iterator2.next().handle(event);
 		return value;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void layout() {
-		// TODO Auto-generated method stub
-
-	}
-	
-	protected void addChild(Widget widget) {
-		children.add(widget);
 	}
 
 }

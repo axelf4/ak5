@@ -12,7 +12,7 @@ import org.gamelib.backend.Graphics;
 /**
  * @author pwnedary
  */
-public class Table extends WidgetGroup {
+public class Table extends WidgetGroup2 {
 
 	List<Cell> cells = new ArrayList<>(4);
 	int rows;
@@ -45,15 +45,15 @@ public class Table extends WidgetGroup {
 
 		for (int i = 0; i < cells.size(); i++) {
 			Cell c = cells.get(i);
-			c.widget.validate();
-			maxWidth = Math.max(maxWidth, c.widget.getPrefferedWidth());
-			maxHeight = Math.max(maxHeight, c.widget.getPrefferedHeight());
+			c.widget2.validate();
+			maxWidth = Math.max(maxWidth, c.widget2.getPrefferedWidth());
+			maxHeight = Math.max(maxHeight, c.widget2.getPrefferedHeight());
 		}
 
 		int currentX = 0, currentY = 0;
 		for (int i = 0; i < cells.size(); i++) {
 			Cell c = cells.get(i);
-			Widget w = c.widget;
+			Widget2 w = c.widget2;
 			int widgetX = currentX + ((maxWidth / 2) - (w.getPrefferedWidth() / 2));
 			int widgetY = currentY + ((maxHeight / 2) - (w.getPrefferedHeight() / 2));
 			w.setBounds(widgetX, widgetY, w.width, w.height);
@@ -71,15 +71,15 @@ public class Table extends WidgetGroup {
 
 		for (int i = 0; i < cells.size(); i++) {
 			Cell c = cells.get(i);
-			c.widget.validate();
-			maxWidth = Math.max(maxWidth, c.widget.getPrefferedWidth());
-			maxHeight = Math.max(maxHeight, c.widget.getPrefferedHeight());
+			c.widget2.validate();
+			maxWidth = Math.max(maxWidth, c.widget2.getPrefferedWidth());
+			maxHeight = Math.max(maxHeight, c.widget2.getPrefferedHeight());
 		}
 
 		int currentX = 0, currentY = 0;
 		for (int i = 0; i < cells.size(); i++) {
 			Cell c = cells.get(i);
-			Widget w = c.widget;
+			Widget2 w = c.widget2;
 			int widgetX = currentX + ((maxWidth / 2) - (w.getPrefferedWidth() / 2));
 			int widgetY = currentY + ((maxHeight / 2) - (w.getPrefferedHeight() / 2));
 			
@@ -106,12 +106,12 @@ public class Table extends WidgetGroup {
 		invalidate();
 	}
 
-	public Cell add(Widget widget) {
-		super.addChild(widget);
+	public Cell add(Widget2 widget2) {
+		super.addChild(widget2);
 		invalidate();
 
 		Cell cell = new Cell();
-		cell.widget = widget;
+		cell.widget2 = widget2;
 		if (cells.size() > 0) {
 			cell.row = rows;
 			if (cells.get(cells.size() - 1).endRow) cell.column = 0;
