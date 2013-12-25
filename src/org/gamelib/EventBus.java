@@ -10,34 +10,34 @@ import java.util.List;
 import org.gamelib.Handler.Event;
 
 /**
- * The registry holding all of the handlers. An handler should be registered with {@link #register(Object)}. TODO make handle return boolean, and unregister from event if return false;
- * @author Axel
+ * The registry holding all of the handlers. An handler should be registered with {@link #register(Object)}.
+ * @author pwnedary
  * @since 0.0.1
  */
-public class Registry {
-
+public class EventBus {
 	/** Root of group hierarchy */
 	public static final Group MAIN_GROUP = new Group(null).setAlwaysActive(true);
 	/** The singleton instance */
-	private static Registry instance;
+	private static EventBus instance;
 
-	private Registry() {}
+	private EventBus() {}
 
 	/**
 	 * @return the singleton instance
 	 */
-	public static Registry instance() {
-		return instance == null ? instance = new Registry() : instance;
+	public static EventBus instance() {
+		return instance == null ? instance = new EventBus() : instance;
 	}
 
-	/** The *NEW* way of registering handlers. */
+	/** Registers <code>handler</code> for handling events for <code>group</code>. */
 	public void register(Group group, Handler handler) {
 		if (group == null || handler == null) throw new IllegalArgumentException("arguments cannot be null");
 		// group.handlers.get(Event.class).add(handler); // wildcard for every handler
-		for (Iterator<List<Handler>> iterator = group.handlers.values().iterator(); iterator.hasNext();) iterator.next().add(handler);
+		for (Iterator<List<Handler>> iterator = group.handlers.values().iterator(); iterator.hasNext();)
+			iterator.next().add(handler);
 	}
 
-	/** The *NEW* way of registering handlers. */
+	/** Registers <code>handler</code> for handling events. */
 	public void register(Handler handler) {
 		register(MAIN_GROUP, handler);
 	}
@@ -47,6 +47,11 @@ public class Registry {
 			List<Handler> handlers = (List<Handler>) iterator.next();
 			handlers.remove(handler);
 		}
+	}
+
+	public void unregister(Handler handler) {
+		for (Group group : MAIN_GROUP.getHierarchy())
+			unregister(group, handler);
 	}
 
 	/**
@@ -62,11 +67,8 @@ public class Registry {
 			if (!group.handlers.containsKey(eventType)) group.handlers.put(eventType, handlers = new LinkedList<>(group.handlers.get(Event.class)));
 			else handlers = group.handlers.get(eventType);
 
-			for (Iterator<Handler> iterator = handlers.iterator(); iterator.hasNext();) {
-				Handler handler = (Handler) iterator.next();
-				if (!handler.handle(event) && event.unregisterAfterNoInterrest()) iterator.remove();
-				if (event.cancelled) break;
-			}
+			for (Iterator<Handler> iterator = handlers.iterator(); iterator.hasNext() && !event.cancelled();)
+				if (!iterator.next().handle(event)) iterator.remove();
 		}
 	}
 

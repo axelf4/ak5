@@ -79,7 +79,7 @@ public abstract class Game {
 		@Override
 		public void tick(float delta) {
 			backend.getInput().poll();
-			Registry.instance().dispatch(new Event.Tick(delta));
+			EventBus.instance().dispatch(new Event.Tick(delta));
 			// Registry.instance().dispatch(new Event.AdvancedTick(delta));
 		}
 
@@ -89,7 +89,7 @@ public abstract class Game {
 			backend.draw(new Drawable() {
 				@Override
 				public void draw(Graphics g, float delta) {
-					Registry.instance().dispatch(new Event.Draw(g, delta));
+					EventBus.instance().dispatch(new Event.Draw(g, delta));
 				}
 			}, delta);
 		}

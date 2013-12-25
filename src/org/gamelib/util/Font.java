@@ -6,32 +6,44 @@ package org.gamelib.util;
 import org.gamelib.backend.Graphics;
 
 /**
+ * TODO add bitmap fonts
  * @author pwnedary
  */
 public interface Font {
-
 	/** The plain style constant. */
-	public static final int PLAIN = 0;
+	static final int PLAIN = 0;
 	/** The bold style constant. */
-	public static final int BOLD = 1;
+	static final int BOLD = 1;
 	/** The italicized style constant. */
-	public static final int ITALIC = 2;
+	static final int ITALIC = 2;
 	/** The underline style constant. */
-	public static final int UNDERLINE = 4;
+	static final int UNDERLINE = 4;
 	/** The strikethrough style constant. */
-	public static final int STRIKETHROUGH = 8;
+	static final int STRIKETHROUGH = 8;
 
 	/** The size to use if not specified. */
-	public static final int DEFAULT_SIZE = 15;
+	static final int DEFAULT_SIZE = 15;
 
-	public static final int ALIGN_LEFT = 0;
-	public static final int ALIGN_RIGHT = 1;
-	public static final int ALIGN_CENTER = 2;
+	static final int ALIGN_LEFT = 0;
+	static final int ALIGN_RIGHT = 1;
+	static final int ALIGN_CENTER = 2;
 
-	public void drawString(Graphics g, String str, int x, int y);
+	void drawString(Graphics g, String str, int x, int y);
 
-	public int getWidth(String str);
+	int getWidth(String string);
 
-	public int getHeight();
+	int getHeight();
+
+	int visibleChars(String string, int width);
+
+	static abstract class FontImpl implements Font {
+		@Override
+		public int visibleChars(String string, int width) {
+			int i = 0;
+			for (int totalWidth = 0; i < string.length() && (totalWidth += getWidth(String.valueOf(string.charAt(i)))) <= width; i++)
+				;
+			return i;
+		}
+	}
 
 }

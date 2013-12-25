@@ -8,14 +8,14 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import org.gamelib.backend.Graphics;
-import org.gamelib.util.Font;
+import org.gamelib.util.Font.FontImpl;
 
 /**
  * @author pwnedary
  * @see java.awt.Font
  */
-public class AWTFont implements Font {
-	
+public class AWTFont extends FontImpl {
+
 	private java.awt.Font font;
 	private FontMetrics metrics;
 
@@ -27,7 +27,8 @@ public class AWTFont implements Font {
 		this.metrics = new BufferedImage(1, 1, BufferedImage.TYPE_BYTE_BINARY).createGraphics().getFontMetrics(font);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.util.Font#drawString(java.awt.Graphics2D, java.lang.String, int, int)
 	 */
 	@Override
@@ -35,13 +36,14 @@ public class AWTFont implements Font {
 		Java2DGraphics g2 = (Java2DGraphics) g;
 		Graphics2D g2d = g2.getGraphics2D();
 		java.awt.Font tmp = g2d.getFont();
-		
+
 		g2d.setFont(font);
 		g2d.drawString(str, x, y);
 		g2d.setFont(tmp);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.util.Font#getWidth(java.lang.String)
 	 */
 	@Override
@@ -49,7 +51,8 @@ public class AWTFont implements Font {
 		return metrics.stringWidth(str);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.gamelib.util.Font#getHeight()
 	 */
 	@Override

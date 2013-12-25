@@ -18,20 +18,20 @@ import org.gamelib.Handler.Event;
  */
 public class Group {
 	public Map<Class<? extends Event>, List<Handler>> handlers = new HashMap<>();
+	protected Group parent;
+	protected List<Group> children = new ArrayList<Group>();
 	/** Whether the handlers should receive events. */
 	private boolean active = true;
 	private boolean alwaysActive = false;
-	protected Group parent;
-	protected List<Group> children = new ArrayList<Group>();
 
 	public Group(Group parent) {
 		handlers.put(Event.class, new LinkedList<Handler>());
-		if ((this.parent = parent) != null || (parent = Registry.MAIN_GROUP) != null) parent.children.add(this);
+		if ((this.parent = parent) != null || (parent = EventBus.MAIN_GROUP) != null) parent.children.add(this);
 		if (this instanceof Handler) register((Handler) this);
 	}
 
 	public Group() {
-		this(Registry.MAIN_GROUP);
+		this(EventBus.MAIN_GROUP);
 	}
 
 	/** @return if active */
@@ -47,7 +47,7 @@ public class Group {
 			group.setActive(active);
 		}
 	}
-	
+
 	public Group setAlwaysActive(boolean b) {
 		this.alwaysActive = b;
 		return this;
@@ -61,7 +61,7 @@ public class Group {
 		if (handler == null) throw new IllegalArgumentException("handler cannot be null");
 		handlers.get(Event.class).add(handler);
 	}
-	
+
 	public void add(Group group) {
 		if (group == null) throw new IllegalArgumentException("group cannot be null");
 		children.add(group);
@@ -79,7 +79,7 @@ public class Group {
 
 	/** Deactivates every other group except for this one and it's children. */
 	public void focus() {
-		for (Group toCheck : Registry.MAIN_GROUP.getHierarchy())
+		for (Group toCheck : EventBus.MAIN_GROUP.getHierarchy())
 			if (!toCheck.alwaysActive) toCheck.setActive(false);
 		setActive(true);
 	}
