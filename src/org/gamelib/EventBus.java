@@ -20,7 +20,7 @@ public class EventBus {
 	/** The singleton instance */
 	private static EventBus instance;
 
-	private EventBus() {}
+	// private EventBus() {}
 
 	/**
 	 * @return the singleton instance
