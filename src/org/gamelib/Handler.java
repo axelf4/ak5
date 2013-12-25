@@ -46,7 +46,6 @@ public interface Handler {
 			/** Optionally the object on which the Event first occurred */
 			public Object source;
 
-			/** {@inheritDoc} */
 			@Override
 			public boolean cancelled() {
 				return cancelled;
