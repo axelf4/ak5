@@ -5,7 +5,7 @@ package org.gamelib.ui;
 
 import org.gamelib.Group;
 import org.gamelib.Handler;
-import org.gamelib.Registry;
+import org.gamelib.EventBus;
 import org.gamelib.util.geom.Rectangle;
 
 /**
@@ -24,7 +24,7 @@ public abstract class Component implements Handler, Createable, Referenced<Group
 	@Deprecated
 	public Component(Group group) {
 		this.group = group;
-		Registry.instance().register(group, this);
+		EventBus.instance().register(group, this);
 	}
 
 	public Component() {
@@ -32,7 +32,7 @@ public abstract class Component implements Handler, Createable, Referenced<Group
 
 	@Override
 	public void create() {
-		Registry.instance().register(group, this);
+		EventBus.instance().register(group, this);
 	}
 
 	public void setRectangle(Rectangle rectangle) {
