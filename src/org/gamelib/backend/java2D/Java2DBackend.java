@@ -29,6 +29,7 @@ import org.gamelib.Drawable;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Backend.BackendImpl;
 import org.gamelib.backend.Configuration;
+import org.gamelib.backend.Configuration.DisplayConfiguration;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
@@ -118,8 +119,9 @@ public class Java2DBackend extends BackendImpl implements Backend {
 	@Override
 	public void start(Configuration configuration) {
 		super.start(configuration);
+		DisplayConfiguration config = (DisplayConfiguration) configuration;
 		if (container instanceof JFrame) {
-			((JFrame) container).setResizable(configuration.resizable());
+			((JFrame) container).setResizable(config.resizable());
 			// ((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			((JFrame) container).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			((JFrame) container).addWindowListener(new WindowAdapter() {
@@ -128,9 +130,9 @@ public class Java2DBackend extends BackendImpl implements Backend {
 					stop();
 				}
 			});
-			setFullscreen((JFrame) container, configuration.fullscreen());
-			if (!configuration.fullscreen()) container.setSize(configuration.getWidth(), configuration.getHeight());
-		} else if (container instanceof JApplet) ((JApplet) container).resize(configuration.getWidth(), configuration.getHeight());
+			setFullscreen((JFrame) container, config.fullscreen());
+			if (!config.fullscreen()) container.setSize(config.getWidth(), config.getHeight());
+		} else if (container instanceof JApplet) ((JApplet) container).resize(config.getWidth(), config.getHeight());
 		// try { tracker.waitForAll(); // wait for loading files } catch (InterruptedException e) { e.printStackTrace(); }
 	}
 

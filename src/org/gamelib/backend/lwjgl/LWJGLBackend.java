@@ -27,6 +27,7 @@ import org.gamelib.backend.Backend;
 import org.gamelib.backend.Backend.BackendImpl;
 import org.gamelib.backend.Color;
 import org.gamelib.backend.Configuration;
+import org.gamelib.backend.Configuration.DisplayConfiguration;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
@@ -61,15 +62,16 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	public void start(Configuration configuration) {
 		super.start(configuration);
 		try {
+			DisplayConfiguration config = (DisplayConfiguration) configuration;
 			DisplayMode targetDisplayMode = null;
-			if (configuration.fullscreen()) {
+			if (config.fullscreen()) {
 				DisplayMode[] modes = Display.getAvailableDisplayModes();
 				int freq = 0;
 
 				for (int i = 0; i < modes.length; i++) {
 					DisplayMode current = modes[i];
 
-					if ((current.getWidth() == configuration.getWidth()) && (current.getHeight() == configuration.getHeight())) {
+					if ((current.getWidth() == config.getWidth()) && (current.getHeight() == config.getHeight())) {
 						if ((targetDisplayMode == null) || (current.getFrequency() >= freq)) {
 							if ((targetDisplayMode == null) || (current.getBitsPerPixel() > targetDisplayMode.getBitsPerPixel())) {
 								targetDisplayMode = current;
@@ -83,12 +85,13 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 						}
 					}
 				}
-			} else targetDisplayMode = new DisplayMode(configuration.getWidth(), configuration.getHeight());
+			} else targetDisplayMode = new DisplayMode(config.getWidth(), config.getHeight());
 
 			Display.setDisplayMode(targetDisplayMode);
-			Display.setFullscreen(configuration.fullscreen());
-			if (configuration instanceof LWJGLConfiguration) Display.setVSyncEnabled(((LWJGLConfiguration) configuration).vsync);
-			Display.setResizable(configuration.resizable());
+			Display.setFullscreen(config.fullscreen());
+			if (configuration instanceof LWJGLConfiguration) Display.setVSyncEnabled(((LWJGLConfiguration) configuration).vsync());
+			// Display.setResizable(config.resizable());
+			Display.setResizable(config.resizable());
 			Display.create();
 
 			glShadeModel(GL_SMOOTH);
@@ -121,7 +124,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		Matrix4 projection;
-		if (configuration instanceof LWJGLConfiguration && ((LWJGLConfiguration) configuration).originBottomLeft) projection = new Matrix4().setToOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1);
+		if (configuration instanceof LWJGLConfiguration && ((LWJGLConfiguration) configuration).originBottomLeft()) projection = new Matrix4().setToOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1);
 		else projection = new Matrix4().setToOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
 		glLoadMatrix((FloatBuffer) BufferUtils.createFloatBuffer(projection.val.length).put(projection.val).flip());
 		glMatrixMode(GL_MODELVIEW);
