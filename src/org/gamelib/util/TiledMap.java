@@ -30,12 +30,7 @@ import org.xml.sax.SAXException;
  * @author pwnedary
  */
 public class TiledMap implements Map {
-
 	private static final long serialVersionUID = 3403715541913955133L;
-	/** Indicates a orthogonal map */
-	public static final int ORTHOGONAL = 0;
-	/** Indicates an isometric map */
-	public static final int ISOMETRIC = 1;
 
 	/** The width of the map */
 	private int width;
@@ -73,8 +68,7 @@ public class TiledMap implements Map {
 			orientation = root.getAttribute("orientation").equals("orthogonal") ? TiledMap.ORTHOGONAL : TiledMap.ISOMETRIC;
 			String mapLocation = file.getParent();
 
-			// now read the map properties
-			properties = new Properties();
+			properties = new Properties(); // now read the map properties
 			Element propsElement = (Element) root.getElementsByTagName("properties").item(0);
 			if (propsElement != null) {
 				NodeList props = propsElement.getElementsByTagName("property");
@@ -118,7 +112,7 @@ public class TiledMap implements Map {
 						byte[] dec = decodeBase64(enc);
 						GZIPInputStream is = new GZIPInputStream(new ByteArrayInputStream(dec));
 
-						for (int y = 0; y < height; y++) {
+						for (int y = 0; y < height; y++)
 							for (int x = 0; x < width; x++) {
 								int tileId = 0;
 								tileId |= is.read();
@@ -128,7 +122,6 @@ public class TiledMap implements Map {
 
 								layer.data[x][y] = tileId;
 							}
-						}
 					} catch (IOException e) {
 						throw new RuntimeException("Unable to decode base 64 block");
 					}
@@ -165,38 +158,27 @@ public class TiledMap implements Map {
 		this.properties = properties;
 	}
 
-	/** {@inheritDoc} */
 	@Override
-	public void draw(Graphics g, int x, int y, int tile) {
-		for (int tileSet = 0; tileSet < tileSets.size(); tileSet++) {
-			TileSet set = tileSets.get(tileSet);
-			if (tile >= set.firstGID && tile <= set.lastGID) {
-				set.draw(g, tile, x, y);
-			}
-		}
+	public void draw(Graphics g, int x, int y, int sx, int sy, int layer) {
+		int gid = getTileID(sx, sy, layer);
+		getTileSetByGID(gid).draw(g, gid, x, y);
 	}
 
 	@Override
-	public void draw(Graphics g, int rx, int ry, int rw, int rh) {
+	public void draw(Graphics g, int x, int y, int rx, int ry, int rw, int rh) {
 		for (int tileSet = 0; tileSet < tileSets.size(); tileSet++) {
 			TileSet set = tileSets.get(tileSet);
-			for (int layer = 0; layer < layers.size(); layer++) {
+
+			if (orientation == ORTHOGONAL) for (int layer = 0; layer < layers.size(); layer++) {
 				int[][] data = layers.get(layer).data;
-				for (int tx = rx; tx < data.length; tx++) {
+				for (int tx = rx; tx < data.length; tx++)
 					for (int ty = ry; ty < data[0].length; ty++) {
 						int gid = data[tx][ty];
-						if (gid >= set.firstGID && gid <= set.lastGID) {
-							set.draw(g, gid, tx * tileWidth, ty * tileHeight);
-						}
+						if (gid >= set.firstGID && gid <= set.lastGID) set.draw(g, gid, tx * tileWidth, ty * tileHeight);
 					}
-				}
 			}
+			else if (orientation == ISOMETRIC) throw new UnsupportedOperationException();
 		}
-	}
-
-	@Override
-	public void draw(Graphics g) {
-		draw(g, 0, 0, width, height);
 	}
 
 	@Override
@@ -384,6 +366,7 @@ public class TiledMap implements Map {
 		}
 	}
 
+	@Deprecated
 	public static TiledMap load(File file) throws FileNotFoundException,
 			IOException {
 		try {
@@ -545,27 +528,28 @@ public class TiledMap implements Map {
 		baseCodes['/'] = 63;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int getWidth() {
 		return width;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int getHeight() {
 		return height;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int getTileWidth() {
 		return tileWidth;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int getTileHeight() {
 		return tileHeight;
+	}
+
+	@Override
+	public int getLayerCount() {
+		return layers.size();
 	}
 }
