@@ -13,13 +13,13 @@ import org.gamelib.backend.Image;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Matrix4f;
 
 /**
  * @author pwnedary
  */
 public class LWJGLGraphics implements Graphics {
-
 	/** the current color */
 	private Color currentColor = Color.BLACK;
 	protected LWJGLImage image;
@@ -32,13 +32,30 @@ public class LWJGLGraphics implements Graphics {
 		this.image = img;
 	}
 
-	int d = 0;
+	static int dimension = 0;
 
-	private void initGL(int d) {
-		if (d != this.d) {
-			if (d == 2) LWJGLBackend.init2d(Display.getWidth(), Display.getHeight());
-			else if (d == 3) LWJGLBackend.init3d(Display.getWidth(), Display.getHeight());
-			this.d = d;
+	private void predraw(int dimension) {
+		if (dimension != LWJGLGraphics.dimension) {
+			if (dimension == 2) {
+				glMatrixMode(GL_PROJECTION);
+				glLoadIdentity();
+				glOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1); // 0,0 at bottom left
+				// glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1); // 0,0 at top left
+				glMatrixMode(GL_MODELVIEW);
+
+				glDisable(GL_DEPTH_TEST);
+				// glDisable(GL_LIGHTING);
+			} else if (dimension == 3) {
+				GL11.glMatrixMode(GL11.GL_PROJECTION); // resets any previous projection matrices
+				GL11.glLoadIdentity();
+				GLU.gluPerspective(45.0f, (float) Display.getWidth() / (float) Display.getHeight(), 0.1f, 100.0f);
+				GL11.glMatrixMode(GL11.GL_MODELVIEW);
+
+				GL11.glEnable(GL11.GL_DEPTH_TEST);
+				GL11.glDepthFunc(GL11.GL_LEQUAL);
+				GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
+			}
+			LWJGLGraphics.dimension = dimension;
 		}
 	}
 
@@ -60,7 +77,7 @@ public class LWJGLGraphics implements Graphics {
 
 	@Override
 	public void drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
-		initGL(2);
+		predraw(2);
 		LWJGLImage image = (LWJGLImage) img;
 		float u = (float) sx1 / image.getTexWidth();
 		float v = (float) sy1 / image.getTexHeight();
@@ -73,13 +90,10 @@ public class LWJGLGraphics implements Graphics {
 		{
 			glTexCoord2f(u, v);
 			glVertex2f(dx1, dy1);
-
 			glTexCoord2f(u, v2);
 			glVertex2f(dx1, dy2);
-
 			glTexCoord2f(u2, v);
 			glVertex2f(dx2, dy1);
-
 			glTexCoord2f(u2, v2);
 			glVertex2f(dx2, dy2);
 		}
@@ -90,7 +104,7 @@ public class LWJGLGraphics implements Graphics {
 
 	@Override
 	public void drawLine(int x1, int y1, int x2, int y2) {
-		initGL(2);
+		predraw(2);
 		GL11.glBegin(GL11.GL_LINE_STRIP);
 		{
 			GL11.glVertex2i(x1, y1);
@@ -101,7 +115,7 @@ public class LWJGLGraphics implements Graphics {
 
 	@Override
 	public void drawRect(int x, int y, int width, int height) {
-		initGL(2);
+		predraw(2);
 		drawLine(x, y, x + width, y);
 		drawLine(x + width, y, x + width, y + height);
 		drawLine(x + width, y + height, x, y + height);
@@ -110,7 +124,7 @@ public class LWJGLGraphics implements Graphics {
 
 	@Override
 	public void fillRect(int x, int y, int width, int height) {
-		initGL(2);
+		predraw(2);
 		GL11.glBegin(GL11.GL_QUADS);
 		{
 			GL11.glVertex2i(x, y);
@@ -131,7 +145,7 @@ public class LWJGLGraphics implements Graphics {
 
 	@Override
 	public void drawCube(int x, int y, int z, int width, int height, int depth) {
-		initGL(3);
+		predraw(3);
 		int x2 = x + width;
 		int y2 = y + height;
 		int z2 = z + depth;
@@ -218,7 +232,6 @@ public class LWJGLGraphics implements Graphics {
 
 	/**
 	 * Sets the matrix to an orthographic projection like glOrtho (http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml) following the OpenGL equivalent
-	 * 
 	 * @param left The left clipping plane
 	 * @param right The right clipping plane
 	 * @param bottom The bottom clipping plane
@@ -261,7 +274,9 @@ public class LWJGLGraphics implements Graphics {
 	}
 
 	@Override
-	public void begin() {}
+	public void begin() {
+		// dimension = 0;
+	}
 
 	@Override
 	public void end() {}

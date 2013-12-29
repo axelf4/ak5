@@ -6,14 +6,12 @@ package org.gamelib;
 import org.gamelib.Handler.Event;
 import org.gamelib.Loop.LoopListener;
 import org.gamelib.backend.Backend;
+import org.gamelib.backend.Configuration;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Input;
-import org.gamelib.backend.VideoMode;
 import org.gamelib.util.Instance;
 import org.gamelib.util.Instance.CreationalPattern;
 import org.gamelib.util.Logger.Log;
-
-import com.sun.istack.internal.NotNull;
 
 /**
  * An abstraction of a Game which handles the Backend and the Thread.
@@ -36,7 +34,7 @@ public abstract class Game {
 	}
 
 	/** Starts the game by starting the {@link Thread} and {@link Backend}. Calls {@link #initialize()}. */
-	protected void start(@NotNull Backend backend) {
+	protected void start(Backend backend) {
 		this.backend = backend;
 		this.input = backend.getInput();
 
@@ -48,23 +46,27 @@ public abstract class Game {
 	public abstract void initialize();
 
 	/** Used as the default window title and thread name. */
-	@NotNull
 	@Override
 	public abstract String toString();
 
-	/** @return the {@link VideoMode} to use */
-	public abstract VideoMode getResolution();
+	/**
+	 * Returns the {@link Configuration} to use when starting this game.
+	 * @return the Configuration to use
+	 */
+	public abstract Configuration getConfiguration();
 
 	/** @return the {@link Loop} to use */
 	public Loop getLoop() {
 		return new FixedTimestepLoop(new DefaultLoopListener());
 	}
 
-	class DefaultLoopListener implements LoopListener {
+	private class DefaultLoopListener implements LoopListener {
 		/** {@inheritDoc} */
 		@Override
 		public void start() {
-			backend.start(Game.this);
+			// backend.start(Game.this);
+			backend.start(getConfiguration());
+			backend.setTitle(Game.this.toString());
 			initialize(); // initialize game lastly
 		}
 
@@ -72,7 +74,6 @@ public abstract class Game {
 		@Override
 		public void stop() {
 			backend.stop();
-			backend.destroy();
 		}
 
 		/** {@inheritDoc} */
