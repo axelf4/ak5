@@ -90,7 +90,6 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 			Display.setDisplayMode(targetDisplayMode);
 			Display.setFullscreen(config.fullscreen());
 			if (configuration instanceof LWJGLConfiguration) Display.setVSyncEnabled(((LWJGLConfiguration) configuration).vsync());
-			// Display.setResizable(config.resizable());
 			Display.setResizable(config.resizable());
 			Display.create();
 
@@ -156,13 +155,6 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		if (GLContext.getCapabilities().GL_EXT_framebuffer_object) return new FBOGraphics((LWJGLImage) image);
 		else if ((Pbuffer.getCapabilities() & Pbuffer.PBUFFER_SUPPORTED) != 0) return new PbufferGraphics((LWJGLImage) image);
 		else throw new Error("Your OpenGL card doesn't support offscreen buffers.");
-	}
-
-	public void destroy() {
-		Display.destroy();
-		AL10.alDeleteSources(source);
-		AL10.alDeleteBuffers(buffer);
-		if (AL.isCreated()) AL.destroy();
 	}
 
 	@Override
