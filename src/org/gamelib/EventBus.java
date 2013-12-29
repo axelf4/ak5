@@ -29,7 +29,7 @@ public class EventBus {
 		return instance == null ? instance = new EventBus() : instance;
 	}
 
-	/** Registers <code>handler</code> for handling events for <code>group</code>. */
+	/** Registers an <code>handler</code> for handling events for <code>group</code>. */
 	public void register(Group group, Handler handler) {
 		if (group == null || handler == null) throw new IllegalArgumentException("arguments cannot be null");
 		// group.handlers.get(Event.class).add(handler); // wildcard for every handler
@@ -37,7 +37,7 @@ public class EventBus {
 			iterator.next().add(handler);
 	}
 
-	/** Registers <code>handler</code> for handling events. */
+	/** Registers an <code>handler</code> for handling events. */
 	public void register(Handler handler) {
 		register(MAIN_GROUP, handler);
 	}
@@ -55,7 +55,7 @@ public class EventBus {
 	}
 
 	/**
-	 * Fires <code>event</code> to every handler listening to it.
+	 * Fires <code>event</code> to all handlers listening for it.
 	 * @param event the event to fire
 	 */
 	public void dispatch(Event event) {
