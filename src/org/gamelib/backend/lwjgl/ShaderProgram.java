@@ -26,7 +26,6 @@ import org.lwjgl.util.vector.Vector4f;
 /**
  * @author pwnedary
  */
-@SuppressWarnings("unused")
 public class ShaderProgram {
 
 	private static FloatBuffer fbuf16;
