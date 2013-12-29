@@ -11,10 +11,10 @@ import java.util.List;
 
 import org.gamelib.util.slow.reflection.proxy.Invocation;
 import org.gamelib.util.slow.reflection.proxy.IterableProxy;
-import org.gamelib.util.slow.reflection.proxy.ProxyUtil;
+import org.gamelib.util.slow.reflection.proxy.Proxies;
 
 import static org.gamelib.util.slow.reflection.TypeToken.*;
-import static org.gamelib.util.slow.reflection.proxy.ProxyUtil.*;
+import static org.gamelib.util.slow.reflection.proxy.Proxies.*;
 
 /**
  * @author pwnedary
@@ -23,15 +23,15 @@ import static org.gamelib.util.slow.reflection.proxy.ProxyUtil.*;
 public class ListLib {
 
 	public static <T> T on(Class<T> clazz) {
-		return ProxyUtil.createProxy(clazz, new Invocation(clazz));
+		return Proxies.createProxy(clazz, new Invocation(clazz));
 	}
 
 	public static <T> T on(Class<T> clazz, Object... conArgs) {
-		return ProxyUtil.createProxy(clazz, new Invocation(clazz), conArgs);
+		return Proxies.createProxy(clazz, new Invocation(clazz), conArgs);
 	}
 
 	public static <T> T on(Class<T> clazz, Class<?>[] conArgTypes, Object[] conArgs) {
-		return ProxyUtil.createProxy(clazz, new Invocation(clazz), conArgTypes, conArgs);
+		return Proxies.createProxy(clazz, new Invocation(clazz), conArgTypes, conArgs);
 	}
 
 	/** Transforms the {@link Collection} into a single object having the same methods. */

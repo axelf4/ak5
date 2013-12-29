@@ -63,7 +63,7 @@ public class Invocation extends InvocationHandler {
 
 		Class<?> returnType = method.getReturnType();
 		Invocation next = new Invocation(returnType, this);
-		Object value = ProxyUtil.isProxable(returnType) ? ProxyUtil.createProxy(returnType, next) : getDefaultValue(returnType, INVOCATION_BY_PLACEHOLDER.size());
+		Object value = Proxies.isProxable(returnType) ? Proxies.createProxy(returnType, next) : getDefaultValue(returnType, INVOCATION_BY_PLACEHOLDER.size());
 		INVOCATION_BY_PLACEHOLDER.put(value, this);
 		return value;
 	}
@@ -91,7 +91,7 @@ public class Invocation extends InvocationHandler {
 	}
 	
 	public static <T> T on(Class<T> clazz) {
-		return ProxyUtil.createProxy(clazz, new Invocation(clazz));
+		return Proxies.createProxy(clazz, new Invocation(clazz));
 	}
 
 	public static Invocation from(Object placeholder) {
