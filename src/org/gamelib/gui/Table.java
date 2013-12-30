@@ -15,6 +15,7 @@ import org.gamelib.Handler;
  */
 public class Table extends WidgetGroup {
 	private final List<Cell> cells = new ArrayList<>(4);
+	private int rows, columns;
 
 	@Override
 	public void layout() {
@@ -36,19 +37,38 @@ public class Table extends WidgetGroup {
 	}
 
 	private void computeSize() {
+		int[] columnPrefWidth = new int[columns];
+		int[] columnMinWidth = new int[columns];
+		int[] rowPrefHeight = new int[rows];
+		int[] rowMinHeight = new int[rows];
+		for (int i = 0; i < cells.size(); i++) {
+			Cell c = cells.get(i);
+			Widget widget = c.widget;
+			int prefWidth = widget.getPrefferedWidth();
+			int prefHeight = widget.getPrefferedHeight();
+			int minWidth = widget.getMinimumWidth();
+			int minHeight = widget.getMinimumHeight();
+			int maxWidth = widget.getMaximumWidth();
+			int maxHeight = widget.getMaximumHeight();
+			// TODO include padding
+
+			columnPrefWidth[c.column] = Math.max(columnPrefWidth[c.column], prefWidth);
+			columnMinWidth[c.column] = Math.max(columnMinWidth[c.column], minWidth);
+
+			rowPrefHeight[c.row] = Math.max(rowPrefHeight[c.row], prefHeight);
+			rowMinHeight[c.row] = Math.max(rowMinHeight[c.row], minHeight);
+		}
+
 		valid = true;
-		// TODO
 	}
 
 	@Override
 	public int getPrefferedWidth() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int getPrefferedHeight() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -59,7 +79,17 @@ public class Table extends WidgetGroup {
 	}
 
 	public void add(Widget widget) {
+		Cell cell = new Cell();
+		cell.widget = widget;
+		// TODO set cell row and column
+		cells.add(cell);
+	}
 
+	public void row() {
+		if (cells.size() > 0) {
+			cells.get(cells.size() - 1).endRow = true;
+			rows++;
+		}
 	}
 
 	@Override
@@ -69,7 +99,7 @@ public class Table extends WidgetGroup {
 	}
 
 	private static class Cell {
-		public boolean endRow;
+		private boolean endRow;
 		public Widget widget;
 		public int colspan = 1;
 		public int row, column;

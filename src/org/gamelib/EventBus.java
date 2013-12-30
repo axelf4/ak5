@@ -10,7 +10,8 @@ import java.util.List;
 import org.gamelib.Handler.Event;
 
 /**
- * The registry holding all of the handlers. An handler should be registered with {@link #register(Object)}.
+ * The registry holding all of the handlers. An handler should be registered with {@link #register(Object)}. <br />
+ * TODO add singleton instance in {@link Game}
  * @author pwnedary
  * @since 0.0.1
  */
