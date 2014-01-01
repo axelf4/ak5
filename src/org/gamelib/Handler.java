@@ -10,7 +10,6 @@ import java.awt.event.MouseWheelEvent;
 
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Input;
-import org.gamelib.ui.Component;
 
 /**
  * Captures registered {@link Event}s.
@@ -119,16 +118,6 @@ public interface Handler {
 			public MouseWheel(Input input, double scrollAmount) {
 				super(input);
 				this.scrollAmount = scrollAmount;
-			}
-		}
-
-		/** Event triggered by a layout component. */
-		public static final class Layout extends EventImpl {
-			public Component id;
-			public Event event;
-
-			public Layout(Component id, Event event) {
-				this.id = id;
 			}
 		}
 	}
