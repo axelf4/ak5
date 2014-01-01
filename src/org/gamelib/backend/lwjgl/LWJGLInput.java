@@ -13,20 +13,18 @@ import org.lwjgl.opengl.Display;
  * @author pwnedary
  */
 public class LWJGLInput extends Input {
-
-	/** {@inheritDoc} */
 	@Override
 	public void poll() {
 		while (Keyboard.next())
 			keyEvent(Keyboard.getEventKeyState() ? KEY_PRESSED : KEY_RELEASED, translateKeyCode(Keyboard.getEventKey())); // poll key events
 
 		// Point p = new Point(org.lwjgl.input.Mouse.getX(), Display.getHeight() - org.lwjgl.input.Mouse.getY());
-		int mouseX = 0, mouseY = 0; // mouse position
-		if (!Mouse.isGrabbed()) {
-			mouseX = Mouse.getX();
-			mouseY = Display.getHeight() - Mouse.getY();
-		}
-		while (org.lwjgl.input.Mouse.next()) { // poll mouse events
+		int mouseX = getMouseX(), mouseY = getMouseY(); // mouse position
+		// if (!Mouse.isGrabbed()) {
+		// mouseX = getMouseX();
+		// mouseY = getMouseY();
+		// }
+		while (Mouse.next()) { // poll mouse events
 			boolean pressed = Mouse.getEventButtonState();
 			int button = Mouse.getEventButton();
 			button = button == 1 ? BUTTON3 : button;
@@ -36,10 +34,10 @@ public class LWJGLInput extends Input {
 		}
 	}
 
-	@Override
-	public boolean keyPressed(int keycode) {
-		return Keyboard.isKeyDown(keycode);
-	}
+	// @Override
+	// public boolean keyPressed(int keycode) {
+	// return Keyboard.isKeyDown(keycode);
+	// }
 
 	@Override
 	public boolean mousePressed(int button) {
@@ -56,7 +54,6 @@ public class LWJGLInput extends Input {
 		return Display.getHeight() - 1 - Mouse.getY();
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int translateKeyCode(int keyCode) {
 		if (keyCode == Keyboard.KEY_LSHIFT || keyCode == Keyboard.KEY_RSHIFT) return Key.KEY_SHIFT;
@@ -65,7 +62,6 @@ public class LWJGLInput extends Input {
 		return keyCode;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void mouseMove(int x, int y) {
 		org.lwjgl.input.Mouse.setCursorPosition(x, Display.getHeight() - y);

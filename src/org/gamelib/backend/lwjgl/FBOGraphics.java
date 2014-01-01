@@ -6,15 +6,14 @@ package org.gamelib.backend.lwjgl;
 import static org.lwjgl.opengl.EXTFramebufferObject.*;
 import static org.lwjgl.opengl.GL11.*;
 
-import org.gamelib.Game;
-import org.gamelib.backend.Backend;
+import org.gamelib.backend.Color;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
 /**
  * TODO: rename to FrameBuffer TODO utilize renderbuffers if wanted
- * 
  * @author pwnedary
  */
 public class FBOGraphics extends LWJGLGraphics {
@@ -106,7 +105,8 @@ public class FBOGraphics extends LWJGLGraphics {
 
 		bind();
 		GL11.glPushAttrib(GL_VIEWPORT_BIT);
-		GL11.glViewport(0, 0, image.getWidth(), image.getHeight()); // An FBO has its own viewport
+		// glViewport(0, 0, image.getWidth(), image.getHeight()); // An FBO has its own viewport
+		glViewport(0, 0, Display.getWidth(), Display.getHeight());
 	}
 
 	/**
@@ -118,8 +118,8 @@ public class FBOGraphics extends LWJGLGraphics {
 		// glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 		// glReadBuffer(GL_BACK);
 
-		unbind();
 		GL11.glPopAttrib();
+		unbind();
 	}
 
 	/** Bind the FBO. */
@@ -137,39 +137,4 @@ public class FBOGraphics extends LWJGLGraphics {
 		// GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 		// glReadBuffer(GL_BACK);
 	}
-
-	/**
-	 * Initialise the GL context
-	 */
-	protected void initGL() {
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glShadeModel(GL11.GL_SMOOTH);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		GL11.glDisable(GL11.GL_LIGHTING);
-
-		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		GL11.glClearDepth(1);
-
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-		Backend backend = Game.getBackend();
-		GL11.glViewport(0, 0, backend.getWidth(), backend.getHeight());
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		GL11.glLoadIdentity();
-
-		enterOrtho();
-	}
-
-	/**
-	 * Enter the orthographic mode
-	 */
-	protected void enterOrtho() {
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glLoadIdentity();
-		Backend backend = Game.getBackend();
-		GL11.glOrtho(0, backend.getWidth(), backend.getHeight(), 0, 1, -1);
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-	}
-
 }

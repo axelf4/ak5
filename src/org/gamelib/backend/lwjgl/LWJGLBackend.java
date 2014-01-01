@@ -17,33 +17,34 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 
 import org.gamelib.Drawable;
-import org.gamelib.Game;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Backend.BackendImpl;
 import org.gamelib.backend.Color;
+import org.gamelib.backend.Configuration;
+import org.gamelib.backend.Configuration.DisplayConfiguration;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
 import org.gamelib.backend.Sound;
-import org.gamelib.backend.VideoMode;
 import org.gamelib.util.Math2;
+import org.gamelib.util.geom.Matrix4;
 import org.gamelib.util.geom.Rectangle;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.Pbuffer;
 import org.lwjgl.util.WaveData;
-import org.lwjgl.util.glu.GLU;
 
 /**
  * @author pwnedary
@@ -57,49 +58,20 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	LWJGLGraphics graphics;
 	LWJGLInput input;
 
-	static void init2d(int width, int height) {
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0, width, height, 0, 1, -1); // 0,0 at top left
-		// glOrtho(0, width, 0, height, 1, -1); // 0,0 at bottom left
-		glMatrixMode(GL_MODELVIEW);
-
-		glShadeModel(GL_SMOOTH);
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_LIGHTING);
-		// glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClearDepth(1);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glViewport(0, 0, width, height);
-	}
-
-	static void init3d(int width, int height) {
-		GL11.glMatrixMode(GL11.GL_PROJECTION); // resets any previous projection matrices
-		GL11.glLoadIdentity();
-		GLU.gluPerspective(45.0f, (float) width / (float) height, 0.1f, 100.0f);
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-
-		GL11.glShadeModel(GL11.GL_SMOOTH);
-		GL11.glClearDepth(1.0f);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glDepthFunc(GL11.GL_LEQUAL);
-		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
-	}
-
 	@Override
-	public void start(Game game) {
+	public void start(Configuration configuration) {
+		super.start(configuration);
 		try {
-			VideoMode videoMode = game.getResolution();
+			DisplayConfiguration config = (DisplayConfiguration) configuration;
 			DisplayMode targetDisplayMode = null;
-			if (videoMode.fullscreen()) {
+			if (config.fullscreen()) {
 				DisplayMode[] modes = Display.getAvailableDisplayModes();
 				int freq = 0;
 
 				for (int i = 0; i < modes.length; i++) {
 					DisplayMode current = modes[i];
 
-					if ((current.getWidth() == videoMode.getWidth()) && (current.getHeight() == videoMode.getHeight())) {
+					if ((current.getWidth() == config.getWidth()) && (current.getHeight() == config.getHeight())) {
 						if ((targetDisplayMode == null) || (current.getFrequency() >= freq)) {
 							if ((targetDisplayMode == null) || (current.getBitsPerPixel() > targetDisplayMode.getBitsPerPixel())) {
 								targetDisplayMode = current;
@@ -113,17 +85,20 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 						}
 					}
 				}
-			} else targetDisplayMode = new DisplayMode(videoMode.getWidth(), videoMode.getHeight());
+			} else targetDisplayMode = new DisplayMode(config.getWidth(), config.getHeight());
 
-			// Display.setDisplayMode(new DisplayMode(800, 600));
 			Display.setDisplayMode(targetDisplayMode);
-			Display.setFullscreen(videoMode.fullscreen());
-			Display.setVSyncEnabled(videoMode.vsync);
-			Display.setResizable(videoMode.resizable);
-
+			Display.setFullscreen(config.fullscreen());
+			if (configuration instanceof LWJGLConfiguration) Display.setVSyncEnabled(((LWJGLConfiguration) configuration).vsync());
+			Display.setResizable(config.resizable());
 			Display.create();
 
-			super.start(game);
+			glShadeModel(GL_SMOOTH);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			glClearDepth(1.0f);
+			glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
@@ -144,16 +119,20 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		Graphics g = getGraphics();
 		g.setColor(Color.WHITE);
 		g.clear();
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		Matrix4 projection;
+		if (configuration instanceof LWJGLConfiguration && ((LWJGLConfiguration) configuration).originBottomLeft()) projection = new Matrix4().setToOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1);
+		else projection = new Matrix4().setToOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
+		glLoadMatrix((FloatBuffer) BufferUtils.createFloatBuffer(projection.val.length).put(projection.val).flip());
+		glMatrixMode(GL_MODELVIEW);
+
 		// Game2.getInstance().screen.drawHandlers(getGraphics(), delta);
 		callback.draw(g, delta);
+		g.end();
 		Display.update();
 		// Util.checkGLError();
-	}
-
-	public org.lwjgl.opengl.DisplayMode convertModes(DisplayMode mode) {
-		return new org.lwjgl.opengl.DisplayMode(mode.getWidth(), mode.getHeight());
 	}
 
 	@Override
@@ -179,7 +158,8 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	}
 
 	@Override
-	public void destroy() {
+	public void stop() {
+		super.stop();
 		Display.destroy();
 		AL10.alDeleteSources(source);
 		AL10.alDeleteBuffers(buffer);

@@ -18,7 +18,7 @@ import java.util.Set;
 import org.gamelib.util.slow.reflection.model.Type;
 import org.gamelib.util.slow.reflection.model.Type.ClassType;
 import org.gamelib.util.slow.reflection.proxy.Invocation;
-import org.gamelib.util.slow.reflection.proxy.ProxyUtil;
+import org.gamelib.util.slow.reflection.proxy.Proxies;
 import org.gamelib.util.slow.vfs.Vfs;
 
 /**
@@ -26,15 +26,15 @@ import org.gamelib.util.slow.vfs.Vfs;
  */
 public final class Reflection {
 	public static <T> T on(Class<T> clazz) {
-		return ProxyUtil.createProxy(clazz, new Invocation(clazz));
+		return Proxies.createProxy(clazz, new Invocation(clazz));
 	}
 
 	public static <T> T on(Class<T> clazz, Object[] conArgs) {
-		return ProxyUtil.createProxy(clazz, new Invocation(clazz), conArgs);
+		return Proxies.createProxy(clazz, new Invocation(clazz), conArgs);
 	}
 
 	public static <T> T on(Class<T> clazz, Class<?>[] conArgTypes, Object[] conArgs) {
-		return ProxyUtil.createProxy(clazz, new Invocation(clazz), conArgTypes, conArgs);
+		return Proxies.createProxy(clazz, new Invocation(clazz), conArgTypes, conArgs);
 	}
 
 	// @formatter:off

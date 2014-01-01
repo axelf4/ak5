@@ -10,14 +10,13 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 
 /**
- * rename to Proxies
  * @author pwnedary
  */
 @SuppressWarnings("unchecked")
-public class ProxyUtil {
+public class Proxies {
 
 	/**
-	 * Creates a dynamic proxy
+	 * Creates a dynamic proxy.
 	 * @param clazz The class to be proxied
 	 * @param handler The {@link InvocationHandler} that manages the invocations to the created proxy
 	 * @param interfaces The interfaces that has to be implemented by the new proxy
@@ -28,9 +27,9 @@ public class ProxyUtil {
 		if (!isProxable(clazz)) return null;
 		return (T) createEnhancer(clazz, handler, interfaces).create();
 	}
-	
+
 	/**
-	 * Creates a dynamic proxy
+	 * Creates a dynamic proxy.
 	 * @param clazz The class to be proxied
 	 * @param handler The {@link InvocationHandler} that manages the invocations to the created proxy
 	 * @param interfaces The interfaces that has to be implemented by the new proxy
@@ -43,9 +42,9 @@ public class ProxyUtil {
 			conArgsTypes[i] = conArgs[i].getClass();
 		return createProxy(clazz, handler, conArgsTypes, conArgs, interfaces);
 	}
-	
+
 	/**
-	 * Creates a dynamic proxy
+	 * Creates a dynamic proxy.
 	 * @param clazz The class to be proxied
 	 * @param handler The {@link InvocationHandler} that manages the invocations to the created proxy
 	 * @param interfaces The interfaces that has to be implemented by the new proxy
@@ -57,7 +56,7 @@ public class ProxyUtil {
 	}
 
 	/**
-	 * Check if the given class is nor final neither a primitive one
+	 * Check if the given class is nor final neither a primitive one.
 	 * @param clazz The class to be checked
 	 * @return True if the class is proxable, false otherwise
 	 */

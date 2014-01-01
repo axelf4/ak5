@@ -20,7 +20,7 @@ public abstract class Trace<T> extends InvocationHandler {
 	}
 
 	public final Object call(Object instance) {
-		trace(ProxyUtil.createProxy(proxied, this));
+		trace(Proxies.createProxy(proxied, this));
 		try {
 			for (Trace<?> element = this; element != null && element.method != null; element = element.next)
 				instance = element.method.invoke(instance, args);
@@ -39,7 +39,7 @@ public abstract class Trace<T> extends InvocationHandler {
 
 		@SuppressWarnings("unchecked")
 		Class<Object> returnType = (Class<Object>) method.getReturnType();
-		Object value = ProxyUtil.isProxable(returnType) ? ProxyUtil.createProxy(returnType, next = new Trace<Object>(returnType) {
+		Object value = Proxies.isProxable(returnType) ? Proxies.createProxy(returnType, next = new Trace<Object>(returnType) {
 			@Override
 			public void trace(Object instance) {}
 		}) : getDefaultValue(returnType);

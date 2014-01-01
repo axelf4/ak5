@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.gamelib.util.slow.reflection.proxy.Invocation;
 import org.gamelib.util.slow.reflection.proxy.InvocationHandler;
-import org.gamelib.util.slow.reflection.proxy.ProxyUtil;
+import org.gamelib.util.slow.reflection.proxy.Proxies;
 
 /**
  * @author pwnedary
@@ -37,7 +37,7 @@ public class Getter<T, T3 extends Object> {
 	
 	public T value(Class<T> clazz) {
 		this.clazz = clazz;
-		return ProxyUtil.createProxy(clazz, new InvocationHandler() {
+		return Proxies.createProxy(clazz, new InvocationHandler() {
 			@Override
 			public Object invoke(Object proxy, Method method, Object[] args)
 					throws Throwable {
@@ -69,15 +69,15 @@ public class Getter<T, T3 extends Object> {
 	};
 	
 	public <T2 extends Object> T2 get(Class<T2> clazz) {
-		return (T2) ProxyUtil.createProxy(clazz, GET_INVOCATION_HANDLER);
+		return (T2) Proxies.createProxy(clazz, GET_INVOCATION_HANDLER);
 	}
 	
 	public <T2 extends Object> T2 get(Class<T2> clazz, Object... conArgs) {
-		return (T2) ProxyUtil.createProxy(clazz, GET_INVOCATION_HANDLER, conArgs);
+		return (T2) Proxies.createProxy(clazz, GET_INVOCATION_HANDLER, conArgs);
 	}
 	
 	public <T2 extends Object> T2 get(Class<T2> clazz, Class<?>[] conArgsTypes, Object[] conArgs) {
-		return (T2) ProxyUtil.createProxy(clazz, GET_INVOCATION_HANDLER, conArgsTypes, conArgs);
+		return (T2) Proxies.createProxy(clazz, GET_INVOCATION_HANDLER, conArgsTypes, conArgs);
 	}
 
 }
