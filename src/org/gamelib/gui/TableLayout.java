@@ -5,7 +5,6 @@ package org.gamelib.gui;
 
 import org.gamelib.Group;
 import org.gamelib.Handler;
-import org.gamelib.Handler.Event;
 import org.gamelib.gui.TableLayout.TableToolkit;
 import org.gamelib.util.Pool;
 
@@ -48,16 +47,15 @@ public class TableLayout extends BaseTableLayout<Handler, Table, TableLayout, Ta
 			}
 		}
 		// Validate children separately from sizing actors to ensure actors without a cell are validated.
-		for (Group group : table.getHierarchy())
-			for (Handler child : group.handlers.get(Event.class))
-				if (child instanceof Widget) ((Widget) child).validate();
+		for (Handler child : table.getChildren())
+			if (child instanceof Widget) ((Widget) child).validate();
 	}
 
 	@Override
 	public void invalidateHierarchy() {
-		for (Group group : getTable().getHierarchy())
-			for (Handler child : group.handlers.get(Event.class))
-				if (child instanceof Widget) ((Widget) child).invalidate();
+		super.invalidate();
+		for (Handler child : getTable().getChildren())
+			if (child instanceof Widget) ((Widget) child).invalidate();
 	}
 
 	public static class TableToolkit extends Toolkit<Handler, Table, TableLayout> {
@@ -82,13 +80,12 @@ public class TableLayout extends BaseTableLayout<Handler, Table, TableLayout, Ta
 
 		@Override
 		public void addChild(Handler parent, Handler child) {
-			System.out.println(parent);
 			((Group) parent).register(child);
 		}
 
 		@Override
 		public void removeChild(Handler parent, Handler child) {
-			// ((Group) parent).unregister(child);
+			((Group) parent).unregister(child);
 		}
 
 		@Override

@@ -24,15 +24,16 @@ public abstract class Component implements Handler, Createable, Referenced<Group
 	@Deprecated
 	public Component(Group group) {
 		this.group = group;
-		EventBus.instance().register(group, this);
+		// EventBus.instance().register(group, this);
+		group.register(this);
 	}
 
-	public Component() {
-	}
+	public Component() {}
 
 	@Override
 	public void create() {
-		EventBus.instance().register(group, this);
+		// EventBus.instance().register(group, this);
+		group.register(this);
 	}
 
 	public void setRectangle(Rectangle rectangle) {

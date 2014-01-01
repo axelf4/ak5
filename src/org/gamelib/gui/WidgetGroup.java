@@ -3,12 +3,8 @@
  */
 package org.gamelib.gui;
 
-import java.util.Iterator;
-
 import org.gamelib.Game;
 import org.gamelib.Group;
-import org.gamelib.Handler;
-import org.gamelib.Handler.Event;
 
 /**
  * @author pwnedary
@@ -30,7 +26,6 @@ public abstract class WidgetGroup extends Group implements Widget {
 		if (fillParent) {
 			int width = parent instanceof WidgetGroup ? ((Widget) parent).getWidth() : Game.getBackend().getWidth();
 			int height = parent instanceof WidgetGroup ? ((Widget) parent).getHeight() : Game.getBackend().getHeight();
-			System.out.println(width + " : " + height);
 			if (width != getWidth() || height != getHeight()) {
 				setWidth(width);
 				setHeight(height);
@@ -50,15 +45,8 @@ public abstract class WidgetGroup extends Group implements Widget {
 
 	@Override
 	public boolean handle(Event event) {
-		boolean value = false;
-		if (event instanceof Event.Draw) {
-			value = true;
-			validate();
-		}
-		for (Group group : getHierarchy())
-			for (Handler handler : group.handlers.get(Event.class))
-				value |= handler.handle(event);
-		return value;
+		if (event instanceof Event.Draw) validate();
+		return super.handle(event) || (event instanceof Event.Draw);
 	}
 
 	@Override
