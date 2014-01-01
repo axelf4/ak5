@@ -29,9 +29,6 @@ import java.util.NoSuchElementException;
  * 	};
  * }
  * </pre>
- * 
- * TODO
- * 
  * @author pwnedary
  */
 public abstract class AbstractIterator<E> implements Iterator<E> {
@@ -55,8 +52,7 @@ public abstract class AbstractIterator<E> implements Iterator<E> {
 	}
 
 	/**
-	 * Unsupported.
-	 * 
+	 * Unsupported. Implementations may support.
 	 * @throws UnsupportedOperationException always
 	 */
 	@Override
@@ -72,7 +68,6 @@ public abstract class AbstractIterator<E> implements Iterator<E> {
 
 	/**
 	 * Returns the next item or {@link #endOfData()} if reached end.
-	 * 
 	 * @return the next item, if exists
 	 */
 	protected abstract E computeNext();
