@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.gui;
+package org.gamelib.ui;
 
 import com.esotericsoftware.tablelayout.Cell;
 

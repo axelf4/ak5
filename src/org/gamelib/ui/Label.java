@@ -1,10 +1,10 @@
 /**
  * 
  */
-package org.gamelib.gui;
+package org.gamelib.ui;
 
 import org.gamelib.backend.Graphics;
-import org.gamelib.gui.Widget.WidgetImpl;
+import org.gamelib.ui.Widget.WidgetImpl;
 import org.gamelib.util.Font;
 import org.gamelib.util.geom.Rectangle;
 

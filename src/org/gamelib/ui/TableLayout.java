@@ -1,11 +1,11 @@
 /**
  * 
  */
-package org.gamelib.gui;
+package org.gamelib.ui;
 
 import org.gamelib.Group;
 import org.gamelib.Handler;
-import org.gamelib.gui.TableLayout.TableToolkit;
+import org.gamelib.ui.TableLayout.TableToolkit;
 import org.gamelib.util.Pool;
 
 import com.esotericsoftware.tablelayout.BaseTableLayout;
