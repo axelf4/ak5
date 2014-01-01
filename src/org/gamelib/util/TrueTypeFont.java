@@ -20,12 +20,13 @@ import java.util.Map;
 import org.gamelib.Game;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
+import org.gamelib.util.Font.FontImpl;
 import org.gamelib.util.geom.Rectangle;
 
 /**
- * @author Axel
+ * @author pwnedary
  */
-public class TrueTypeFont implements Font {
+public class TrueTypeFont extends FontImpl {
 
 	/** Array that holds necessary information about the font characters positions */
 	private Rectangle[] charArray = new Rectangle[256];
@@ -41,9 +42,7 @@ public class TrueTypeFont implements Font {
 	/** Font's height */
 	private int fontHeight = 0;
 
-	/** Texture used to cache the font 0-255 characters */
-	// private int fontTextureID;
-	/** Image to cache the font image */
+	/** Image to cache the font 0-255 characters */
 	public Image fontImage;
 
 	/** Default font texture width */

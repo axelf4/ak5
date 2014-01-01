@@ -9,7 +9,7 @@ import java.awt.event.KeyEvent;
 
 import org.gamelib.Game;
 import org.gamelib.Handler.Event;
-import org.gamelib.Registry;
+import org.gamelib.EventBus;
 
 /**
  * An instance is used for checking user input and derived by {@link Backend}.
@@ -126,7 +126,7 @@ public abstract class Input {
 		keycode = translateKeyCode(keycode);
 		pressed[keycode] = id == KEY_PRESSED;
 		if (keycode == Key.KEY_ESCAPE) Game.instance().stop(); // debugging
-		Registry.instance().dispatch(new Event.Key(this, id, keycode));
+		EventBus.instance().dispatch(new Event.Key(this, id, keycode));
 	}
 
 	protected void mouseEvent(int id, int button, int mouseX, int mouseY) {
@@ -134,11 +134,11 @@ public abstract class Input {
 		this.mouseY = mouseY;
 		if (button != -1 && (id == MOUSE_PRESSED || id == MOUSE_RELEASED)) mousePressed[button] = id == MOUSE_PRESSED;
 		// System.out.println("x: " + getMouseX() + " y: " + getMouseY());
-		Registry.instance().dispatch(new Event.Mouse(this, id, button));
+		EventBus.instance().dispatch(new Event.Mouse(this, id, button));
 	}
 
 	protected void mouseWheelEvent(double scrollAmount) {
-		Registry.instance().dispatch(new Event.MouseWheel(this, scrollAmount));
+		EventBus.instance().dispatch(new Event.MouseWheel(this, scrollAmount));
 	}
 
 	/**

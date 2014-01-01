@@ -1,12 +1,12 @@
 /**
  * 
  */
-package org.gamelib.ui;
+package org.gamelib.gui;
 
 /**
  * @author Axel
  */
-public enum Alignment {
+public enum Align {
 	/***/
 	LEFT(0, 1),
 	/***/
@@ -31,7 +31,7 @@ public enum Alignment {
 	final byte hpos;
 	final byte vpos;
 
-	private Alignment(int hpos, int vpos) {
+	private Align(int hpos, int vpos) {
 		this.hpos = (byte) hpos;
 		this.vpos = (byte) vpos;
 	}
