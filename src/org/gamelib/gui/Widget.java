@@ -68,6 +68,13 @@ public interface Widget extends Handler {
 		}
 
 		@Override
+		public boolean handle(Event event) {
+			if (event instanceof Event.Draw) validate();
+			else return false;
+			return true;
+		}
+
+		@Override
 		public int getX() {
 			return x;
 		}

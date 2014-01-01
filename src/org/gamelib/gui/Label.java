@@ -65,8 +65,8 @@ public class Label extends WidgetImpl {
 
 	@Override
 	public boolean handle(Event event) {
+		super.handle(event);
 		if (event instanceof Event.Draw) {
-			validate();
 			Graphics g = ((Event.Draw) event).graphics;
 			font.drawString(g, show, getX(), getY());
 		} else return false;

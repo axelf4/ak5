@@ -3,8 +3,8 @@
  */
 package org.gamelib;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.gamelib.Handler.Event;
@@ -65,11 +65,13 @@ public class EventBus {
 
 			Class<? extends Event> eventType = event.getClass();
 			List<Handler> handlers;
-			if (!group.handlers.containsKey(eventType)) group.handlers.put(eventType, handlers = new LinkedList<>(group.handlers.get(Event.class)));
+			if (!group.handlers.containsKey(eventType)) group.handlers.put(eventType, handlers = new ArrayList<>(group.handlers.get(Event.class)));
 			else handlers = group.handlers.get(eventType);
 
-			for (Iterator<Handler> iterator = handlers.iterator(); iterator.hasNext() && !event.cancelled();)
-				if (!iterator.next().handle(event)) iterator.remove();
+			// for (Iterator<Handler> iterator = handlers.iterator(); iterator.hasNext() && !event.cancelled();)
+			// if (!iterator.next().handle(event)) iterator.remove();
+			for (int i = 0; i < handlers.size() && !event.cancelled(); i++)
+				if (!handlers.get(i).handle(event)) handlers.remove(i);
 		}
 	}
 

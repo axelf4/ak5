@@ -6,14 +6,14 @@ package org.gamelib;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.gamelib.Handler.Event;
 
 /**
- * An aggregate of handlers.
+ * An aggregate of handlers.<br />
+ * TODO make groups handlers and have handle iterate downwards
  * @author pwnedary
  */
 public class Group {
@@ -25,9 +25,10 @@ public class Group {
 	private boolean alwaysActive = false;
 
 	public Group(Group parent) {
-		handlers.put(Event.class, new LinkedList<Handler>());
-		if ((this.parent = parent) != null || (parent = EventBus.MAIN_GROUP) != null) parent.children.add(this);
-		if (this instanceof Handler) register((Handler) this);
+		handlers.put(Event.class, new ArrayList<Handler>());
+		// if ((this.parent = parent) != null || (parent = EventBus.MAIN_GROUP) != null) parent.children.add(this);
+		if ((this.parent = parent) != null) parent.children.add(this);
+		// if (this instanceof Handler) register((Handler) this);
 	}
 
 	public Group() {
