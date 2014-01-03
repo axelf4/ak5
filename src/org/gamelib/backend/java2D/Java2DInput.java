@@ -53,25 +53,29 @@ public class Java2DInput extends Input implements KeyEventDispatcher, MouseListe
 	/* Mouse listeners */
 
 	@Override
-	public void mouseMoved(java.awt.event.MouseEvent e) {
+	public void mouseMoved(MouseEvent e) {
 		prevX = getMouseX();
 		prevY = getMouseY();
 		mouseEvent(MOUSE_MOVED, e.getButton() - 1, e.getX(), e.getY());
 	}
 
 	@Override
-	public void mousePressed(java.awt.event.MouseEvent e) {
+	public void mousePressed(MouseEvent e) {
 		mouseEvent(MOUSE_PRESSED, e.getButton() - 1, e.getX(), e.getY());
 	}
 
 	@Override
-	public void mouseReleased(java.awt.event.MouseEvent e) {
+	public void mouseReleased(MouseEvent e) {
 		mouseEvent(MOUSE_RELEASED, e.getButton() - 1, e.getX(), e.getY());
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		mouseEvent(MOUSE_DRAGGED, e.getButton() - 1, e.getX(), e.getY());
+		int button = -1;
+		if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK) button = 0;
+		else if ((e.getModifiersEx() & MouseEvent.BUTTON2_DOWN_MASK) == MouseEvent.BUTTON2_DOWN_MASK) button = 1;
+		else if ((e.getModifiersEx() & MouseEvent.BUTTON3_DOWN_MASK) == MouseEvent.BUTTON3_DOWN_MASK) button = 2;
+		mouseEvent(MOUSE_DRAGGED, button, e.getX(), e.getY());
 	}
 
 	@Override
