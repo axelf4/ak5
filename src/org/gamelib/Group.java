@@ -33,7 +33,7 @@ public class Group implements Handler {
 	}
 
 	public Group() {
-		this(EventBus.instance().main);
+		this(null);
 	}
 
 	@Override

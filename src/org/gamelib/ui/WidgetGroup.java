@@ -16,10 +16,6 @@ public abstract class WidgetGroup extends Group implements Widget {
 	protected int height;
 	protected boolean valid = false;
 
-	public WidgetGroup() {
-		super(null);
-	}
-
 	@Override
 	public void validate() {
 		boolean fillParent = true;
