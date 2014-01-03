@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.net;
+package org.gamelib.util.net;
 
 import java.io.IOException;
 import java.io.OutputStream;

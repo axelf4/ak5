@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.net;
+package org.gamelib.util.net;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

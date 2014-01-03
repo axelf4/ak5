@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.net;
+package org.gamelib.util.net;
 
 /**
  * Internal message to determine round trip time.
