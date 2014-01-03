@@ -8,6 +8,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.MediaTracker;
 import java.awt.Transparency;
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -96,19 +97,13 @@ public class Java2DBackend extends BackendImpl implements Backend {
 		return new Java2DGraphics(((Java2DImage) img).bufferedImage.getGraphics(), img.getWidth(), img.getHeight());
 	}
 
-	// TODO REMOVE
-	public void destroy() {
-		GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-		graphicsDevice.setFullScreenWindow(null);
-		if (container instanceof JFrame) container.dispatchEvent(new WindowEvent((JFrame) container, WindowEvent.WINDOW_CLOSING));
-	}
-
 	@Override
 	public void stop() {
 		super.stop();
 		GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		graphicsDevice.setFullScreenWindow(null);
 		// if (container instanceof JFrame) container.dispatchEvent(new WindowEvent((JFrame) container, WindowEvent.WINDOW_CLOSING));
+		if (container instanceof Window) ((Window) container).dispose();
 	}
 
 	@Override
