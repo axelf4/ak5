@@ -41,9 +41,9 @@ public abstract class Input {
 	public static final int NOBUTTON = -1;
 	/** Indicates commonly the left mouse button; used by {@link #getButton}. */
 	public static final int BUTTON1 = 0;
-	/** Indicates commonly the right mouse button; used by {@link #getButton}. */
-	public static final int BUTTON2 = 1;
 	/** Indicates commonly the middle mouse button; used by {@link #getButton}. */
+	public static final int BUTTON2 = 1;
+	/** Indicates commonly the right mouse button; used by {@link #getButton}. */
 	public static final int BUTTON3 = 2;
 
 	/** Array of keys pressed since last queries. */
