@@ -9,8 +9,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.MediaTracker;
 import java.awt.Transparency;
 import java.awt.Window;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -117,14 +115,9 @@ public class Java2DBackend extends BackendImpl implements Backend {
 		DisplayConfiguration config = (DisplayConfiguration) configuration;
 		if (container instanceof JFrame) {
 			((JFrame) container).setResizable(config.resizable());
-			// ((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			((JFrame) container).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			((JFrame) container).addWindowListener(new WindowAdapter() {
-				@Override
-				public void windowClosed(WindowEvent e) {
-					stop();
-				}
-			});
+			((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			// ((JFrame) container).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); ((JFrame) container).addWindowListener(new WindowAdapter() { @Override public void windowClosed(WindowEvent e) { stop(); } });
+
 			setFullscreen((JFrame) container, config.fullscreen());
 			if (!config.fullscreen()) container.setSize(config.getWidth(), config.getHeight());
 		} else if (container instanceof JApplet) ((JApplet) container).resize(config.getWidth(), config.getHeight());
