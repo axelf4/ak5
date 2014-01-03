@@ -3,6 +3,7 @@
  */
 package org.gamelib.backend.lwjgl;
 
+import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.lwjgl.opengl.GL11;
 
@@ -107,6 +108,11 @@ public class LWJGLImage implements Image {
 	 */
 	public void setTexHeight(int texHeight) {
 		this.texHeight = texHeight;
+	}
+
+	@Override
+	public void draw(Graphics g, float delta) {
+		g.drawImage(this, 0, 0, 0 + getWidth(), 0 + getHeight(), 0, 0, 0 + getWidth(), 0 + getHeight());
 	}
 
 }

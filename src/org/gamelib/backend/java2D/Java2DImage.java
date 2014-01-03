@@ -5,6 +5,7 @@ package org.gamelib.backend.java2D;
 
 import java.awt.image.BufferedImage;
 
+import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 
 /**
@@ -38,6 +39,11 @@ public class Java2DImage implements Image {
 	@Override
 	public void setHeight(int height) {
 		this.height = height;
+	}
+
+	@Override
+	public void draw(Graphics g, float delta) {
+		g.drawImage(this, 0, 0, 0 + getWidth(), 0 + getHeight(), 0, 0, 0 + getWidth(), 0 + getHeight());
 	}
 
 }

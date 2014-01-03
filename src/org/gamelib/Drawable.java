@@ -8,7 +8,6 @@ import org.gamelib.backend.Graphics;
 /**
  * Abstraction for "something that can be drawn".
  * @author pwnedary
- *
  */
 public interface Drawable {
 
