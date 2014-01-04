@@ -4,79 +4,87 @@
 package org.gamelib.util;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.gamelib.util.Path.Node;
 
 /**
  * A path determined by a pathfinding algorithm.
- * 
  * @author pwnedary
- * 
  */
-public interface Path extends Serializable {
+public interface Path extends List<Node> {
+	public Path find(int x1, int y1, int x2, int y2, boolean[][] grid); // TODO use Map instead of boolean[][]
 
-	/** @return the number of steps */
-	public int getLength();
+	/**  */
+	public void allowDiagonal(boolean allow);
 
-	/** @return the step at the given index */
-	public Step getStep(int i);
-
-	/** Append a step to the path. */
-	public void appendStep(Step step);
+	public void crossCorners(boolean cross);
 
 	/** A single step within the path */
-	public class Step implements Serializable {
-		private static final long serialVersionUID = 9152451330690034687L;
-		/** The x coordinate at the given step */
-		private int x;
-		/** The y coordinate at the given step */
-		private int y;
+	public interface Node extends Serializable {
 
 		/**
-		 * Create a new step
-		 * 
-		 * @param x The x coordinate of the new step
-		 * @param y The y coordinate of the new step
+		 * The x-coordinate of the node.
+		 * @return the x-coordinate
 		 */
-		public Step(int x, int y) {
-			this.x = x;
-			this.y = y;
-		}
+		int getX();
 
 		/**
-		 * Get the x coordinate of the new step
-		 * 
-		 * @return The x coordinate of the new step
+		 * The y-coordinate of the node.
+		 * @return the y-coordinate
 		 */
-		public int getX() {
-			return x;
-		}
+		int getY();
 
-		/**
-		 * Get the y coordinate of the new step
-		 * 
-		 * @return The y coordinate of the new step
-		 */
-		public int getY() {
-			return y;
-		}
+		public static abstract class NodeImpl implements Node {
+			private static final long serialVersionUID = -4930032274620361780L;
+			protected int x;
+			protected int y;
+			protected boolean walkable;
 
-		/**
-		 * @see Object#hashCode()
-		 */
-		public int hashCode() {
-			return x * y;
-		}
-
-		/**
-		 * @see Object#equals(Object)
-		 */
-		public boolean equals(Object other) {
-			if (other instanceof Step) {
-				Step o = (Step) other;
-
-				return (o.x == x) && (o.y == y);
+			public NodeImpl(int x, int y) {
+				this.x = x;
+				this.y = y;
 			}
 
-			return false;
+			@Override
+			public int getX() {
+				return x;
+			}
+
+			@Override
+			public int getY() {
+				return y;
+			}
+
+			@Override
+			public String toString() {
+				return "[" + getX() + "," + getY() + "]";
+			}
+
+			public int hashCode() {
+				return x * y;
+			}
+
+			public boolean equals(Object other) {
+				return other instanceof Node && ((Node) other).getX() == getX() && ((Node) other).getY() == getY();
+			}
+		}
+	}
+
+	public static abstract class PathImpl extends ArrayList<Node> implements Path {
+		private static final long serialVersionUID = -8478168287245780437L;
+		protected boolean allowDiagonal = true;
+		protected boolean crossCorners = true;
+
+		@Override
+		public void allowDiagonal(boolean allow) {
+			this.allowDiagonal = allow;
+		}
+
+		@Override
+		public void crossCorners(boolean cross) {
+			this.crossCorners = cross;
 		}
 	}
 
