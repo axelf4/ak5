@@ -96,7 +96,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 			glShadeModel(GL_SMOOTH);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			// glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 			glClearDepth(1.0f);
 			glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		} catch (LWJGLException e) {
@@ -127,6 +127,9 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		else projection = new Matrix4().setToOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
 		glLoadMatrix((FloatBuffer) BufferUtils.createFloatBuffer(projection.val.length).put(projection.val).flip());
 		glMatrixMode(GL_MODELVIEW);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		// Game2.getInstance().screen.drawHandlers(getGraphics(), delta);
 		callback.draw(g, delta);
