@@ -26,11 +26,12 @@ import java.awt.image.BufferedImage;
 
 import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
+import org.gamelib.backend.Input.InputImpl;
 
 /**
  * @author Axel
  */
-public class Java2DInput extends Input implements KeyEventDispatcher, MouseListener, MouseMotionListener, MouseWheelListener {
+public class Java2DInput extends InputImpl implements Input, KeyEventDispatcher, MouseListener, MouseMotionListener, MouseWheelListener {
 	private Component component;
 	private boolean grabbed;
 	private int prevX, prevY;

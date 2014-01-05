@@ -15,55 +15,41 @@ import org.gamelib.EventBus;
  * An instance is used for checking user input and derived by {@link Backend}.
  * @author pwnedary
  */
-public abstract class Input {
+public interface Input {
 	/** The rate at which to repeat key presses, in Hz. */
-	@SuppressWarnings("unused")
-	private final int MAX_REPEAT_RATE = 100;
+	@Deprecated
+	static final int MAX_REPEAT_RATE = 100;
 
 	/** The "key pressed" event. */
-	public static final int KEY_PRESSED = KeyEvent.KEY_PRESSED;
+	static final int KEY_PRESSED = KeyEvent.KEY_PRESSED;
 	/** The "key released" event. */
-	public static final int KEY_RELEASED = KeyEvent.KEY_RELEASED;
+	static final int KEY_RELEASED = KeyEvent.KEY_RELEASED;
 
 	/** The "mouse moved" event. */
-	public static final int MOUSE_MOVED = 0;
+	static final int MOUSE_MOVED = 0;
 	/** The "mouse dragged" event. */
-	public static final int MOUSE_DRAGGED = 1;
+	static final int MOUSE_DRAGGED = 1;
 	/** The "mouse pressed" event. */
-	public static final int MOUSE_PRESSED = 2;
+	static final int MOUSE_PRESSED = 2;
 	/** The "mouse released" event. */
-	public static final int MOUSE_RELEASED = 3;
-	/*
-	 * * The "mouse clicked" event. * / public static final int MOUSE_CLICKED = 4;
-	 */
+	static final int MOUSE_RELEASED = 3;
+	// /* The "mouse clicked" event. */ public static final int MOUSE_CLICKED = 4;
 
 	/** Indicates no mouse buttons; used by {@link #getButton}. */
-	public static final int NOBUTTON = -1;
+	static final int NOBUTTON = -1;
 	/** Indicates commonly the left mouse button; used by {@link #getButton}. */
-	public static final int BUTTON1 = 0;
+	static final int BUTTON1 = 0;
 	/** Indicates commonly the middle mouse button; used by {@link #getButton}. */
-	public static final int BUTTON2 = 1;
+	static final int BUTTON2 = 1;
 	/** Indicates commonly the right mouse button; used by {@link #getButton}. */
-	public static final int BUTTON3 = 2;
-
-	/** Array of keys pressed since last queries. */
-	protected boolean[] pressed = new boolean[1024];
-	// Timer keyRepeatTimer;
-	/** The x position of the mouse cursor. */
-	protected int mouseX;
-	/** The y position of the mouse cursor. */
-	protected int mouseY;
-	/** Array of pressed mouse buttons. */
-	protected boolean[] mousePressed = new boolean[3]; // 10
+	static final int BUTTON3 = 2;
 
 	/**
 	 * Returns whether the <code>key</code> is pressed.
 	 * @param keycode The key code as found in {@link Input.Key}
 	 * @return whether the key is pressed
 	 */
-	public boolean keyPressed(int keycode) {
-		return pressed[keycode];
-	}
+	boolean keyPressed(int keycode);
 
 	/**
 	 * Returns whether the mouse <code>button</code> is pressed.<br />
@@ -71,74 +57,105 @@ public abstract class Input {
 	 * @param button which button to check for
 	 * @return whether the mouse button is pressed
 	 */
-	public boolean mousePressed(int button) {
-		return mousePressed[button];
-	}
+	boolean mousePressed(int button);
 
 	/**
 	 * Returns the <code>x</code> position of the mouse cursor within the container.
 	 * @return The x position of the mouse
 	 */
-	public int getMouseX() {
-		return mouseX;
-	}
+	int getMouseX();
 
 	/**
 	 * Returns the <code>y</code> position of the mouse cursor within the container.
 	 * @return The y position of the mouse
 	 */
-	public int getMouseY() {
-		return mouseY;
-	}
+	int getMouseY();
 
 	/** Simulates a key press. */
-	public void simulateKey(int id, int keycode) { // abstract
-		try {
-			Robot robot = new Robot();
-			if (id == KEY_PRESSED) robot.keyPress(keycode);
-			else if (id == KEY_RELEASED) robot.keyRelease(keycode);
-			else throw new IllegalArgumentException("Invalid key code");
-		} catch (AWTException e) {
-			e.printStackTrace();
-		}
-	}
+	void simulateKey(int id, int keycode);
 
 	/** Checks for queued input states. */
-	public abstract void poll();
+	void poll();
 
 	/**
 	 * Moves the mouse to the given coordinates, (<code>x</code>,<code>y</code>).
 	 * @param x the mouse's new x-coordinate
 	 * @param y the mouse's new y-coordinate
 	 */
-	public abstract void mouseMove(int x, int y);
+	void mouseMove(int x, int y);
 
 	/** Hides and captures the mouse at it's position. */
-	public abstract void setGrabbed(boolean grabbed);
+	void setGrabbed(boolean grabbed);
 
 	/**
 	 * Sets this window's cursor to show the given image.
 	 * @param image the new cursor image, if null the default
 	 */
-	public abstract void setCursor(Image image);
+	void setCursor(Image image);
 
-	protected void keyEvent(int id, int keycode) {
-		keycode = translateKeyCode(keycode);
-		pressed[keycode] = id == KEY_PRESSED;
-		if (keycode == Key.KEY_ESCAPE) Game.instance().stop(); // debugging
-		EventBus.instance().dispatch(new Event.Key(this, id, keycode));
-	}
+	/**
+	 * Translates the keyCode to match the ones in {@link Input.Key}. The normal user should never have to use this method.
+	 * @param keyCode the key to translate
+	 * @return the translated key
+	 */
+	int translateKeyCode(int keyCode);
 
-	protected void mouseEvent(int id, int button, int mouseX, int mouseY) {
-		this.mouseX = mouseX;
-		this.mouseY = mouseY;
-		if (button != -1 && (id == MOUSE_PRESSED || id == MOUSE_RELEASED)) mousePressed[button] = id == MOUSE_PRESSED;
-		// System.out.println("x: " + getMouseX() + " y: " + getMouseY());
-		EventBus.instance().dispatch(new Event.Mouse(this, id, button));
-	}
+	public static abstract class InputImpl implements Input {
+		/** Array of keys pressed since last queries. */
+		protected boolean[] pressed = new boolean[1024];
+		// Timer keyRepeatTimer;
+		/** The x position of the mouse cursor. */
+		protected int mouseX;
+		/** The y position of the mouse cursor. */
+		protected int mouseY;
+		/** Array of pressed mouse buttons. */
+		protected boolean[] mousePressed = new boolean[3]; // 10
 
-	protected void mouseWheelEvent(double scrollAmount) {
-		EventBus.instance().dispatch(new Event.MouseWheel(this, scrollAmount));
+		public boolean keyPressed(int keycode) {
+			return pressed[keycode];
+		}
+
+		public boolean mousePressed(int button) {
+			return mousePressed[button];
+		}
+
+		public int getMouseX() {
+			return mouseX;
+		}
+
+		public int getMouseY() {
+			return mouseY;
+		}
+
+		public void simulateKey(int id, int keycode) {
+			try {
+				Robot robot = new Robot();
+				if (id == KEY_PRESSED) robot.keyPress(keycode);
+				else if (id == KEY_RELEASED) robot.keyRelease(keycode);
+				else throw new IllegalArgumentException("Invalid key code");
+			} catch (AWTException e) {
+				e.printStackTrace();
+			}
+		}
+
+		protected void keyEvent(int id, int keycode) {
+			keycode = translateKeyCode(keycode);
+			pressed[keycode] = id == KEY_PRESSED;
+			if (keycode == Key.KEY_ESCAPE) Game.instance().stop(); // debugging
+			EventBus.instance().dispatch(new Event.Key(this, id, keycode));
+		}
+
+		protected void mouseEvent(int id, int button, int mouseX, int mouseY) {
+			this.mouseX = mouseX;
+			this.mouseY = mouseY;
+			if (button != -1 && (id == MOUSE_PRESSED || id == MOUSE_RELEASED)) mousePressed[button] = id == MOUSE_PRESSED;
+			// System.out.println("x: " + getMouseX() + " y: " + getMouseY());
+			EventBus.instance().dispatch(new Event.Mouse(this, id, button));
+		}
+
+		protected void mouseWheelEvent(double scrollAmount) {
+			EventBus.instance().dispatch(new Event.MouseWheel(this, scrollAmount));
+		}
 	}
 
 	/**
@@ -269,11 +286,4 @@ public abstract class Input {
 		public static final int KEY_CONTROL = 213;
 		public static final int KEY_MENU = 214;
 	}
-
-	/**
-	 * Translates the keyCode to match the ones in {@link Input.Key}. The normal user should never have to use this method.
-	 * @param keyCode the key to translate
-	 * @return the translated key
-	 */
-	public abstract int translateKeyCode(int keyCode);
 }

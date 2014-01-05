@@ -5,6 +5,7 @@ package org.gamelib.backend.lwjgl;
 
 import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
+import org.gamelib.backend.Input.InputImpl;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -12,7 +13,7 @@ import org.lwjgl.opengl.Display;
 /**
  * @author pwnedary
  */
-public class LWJGLInput extends Input {
+public class LWJGLInput extends InputImpl implements Input {
 	@Override
 	public void poll() {
 		while (Keyboard.next())
@@ -34,10 +35,10 @@ public class LWJGLInput extends Input {
 		}
 	}
 
-	// @Override
-	// public boolean keyPressed(int keycode) {
-	// return Keyboard.isKeyDown(keycode);
-	// }
+	@Override
+	public boolean keyPressed(int keycode) {
+		return Keyboard.isKeyDown(keycode);
+	}
 
 	@Override
 	public boolean mousePressed(int button) {
