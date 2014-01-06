@@ -93,6 +93,14 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 			Display.setResizable(config.resizable());
 			Display.create();
 
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			Matrix4 projection;
+			if (configuration instanceof LWJGLConfiguration && ((LWJGLConfiguration) configuration).originBottomLeft()) projection = new Matrix4().setToOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1);
+			else projection = new Matrix4().setToOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
+			glLoadMatrix((FloatBuffer) BufferUtils.createFloatBuffer(projection.val.length).put(projection.val).flip());
+			glMatrixMode(GL_MODELVIEW);
+
 			glShadeModel(GL_SMOOTH);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -120,20 +128,10 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		g.setColor(Color.WHITE);
 		g.clear();
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		Matrix4 projection;
-		if (configuration instanceof LWJGLConfiguration && ((LWJGLConfiguration) configuration).originBottomLeft()) projection = new Matrix4().setToOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1);
-		else projection = new Matrix4().setToOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
-		glLoadMatrix((FloatBuffer) BufferUtils.createFloatBuffer(projection.val.length).put(projection.val).flip());
-		glMatrixMode(GL_MODELVIEW);
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		// TODO use Display.wasResized()
 
 		// Game2.getInstance().screen.drawHandlers(getGraphics(), delta);
 		callback.draw(g, delta);
-		g.end();
 		Display.update();
 		// Util.checkGLError();
 	}

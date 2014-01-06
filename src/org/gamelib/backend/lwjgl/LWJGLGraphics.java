@@ -37,11 +37,11 @@ public class LWJGLGraphics implements Graphics {
 	private void predraw(int dimension) {
 		if (dimension != LWJGLGraphics.dimension) {
 			if (dimension == 2) {
-				glMatrixMode(GL_PROJECTION);
-				glLoadIdentity();
-				glOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1); // 0,0 at bottom left
+				// glMatrixMode(GL_PROJECTION);
+				// glLoadIdentity();
+				// glOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1); // 0,0 at bottom left
 				// glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1); // 0,0 at top left
-				glMatrixMode(GL_MODELVIEW);
+				// glMatrixMode(GL_MODELVIEW);
 
 				glDisable(GL_DEPTH_TEST);
 				// glDisable(GL_LIGHTING);
@@ -62,10 +62,10 @@ public class LWJGLGraphics implements Graphics {
 	@Override
 	public void setColor(Color color) {
 		this.currentColor = color;
-		float r = currentColor.getRed() / 255;
-		float g = currentColor.getGreen() / 255;
-		float b = currentColor.getBlue() / 255;
-		float a = currentColor.getAlpha() / 255;
+		float r = (float) currentColor.getRed() / 255;
+		float g = (float) currentColor.getGreen() / 255;
+		float b = (float) currentColor.getBlue() / 255;
+		float a = (float) currentColor.getAlpha() / 255;
 		glColor4f(r, g, b, a);
 		glClearColor(r, g, b, a);
 	}

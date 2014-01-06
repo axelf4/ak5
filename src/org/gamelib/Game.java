@@ -44,6 +44,7 @@ public abstract class Game {
 	/** Stops the game programmatically by stopping the {@link Backend} after updates and rendering has returned. */
 	public void stop() {
 		running = false;
+		// thread.join();
 	}
 
 	/** Called after the engine is setup. */
