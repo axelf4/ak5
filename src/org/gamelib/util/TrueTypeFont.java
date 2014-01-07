@@ -265,18 +265,13 @@ public class TrueTypeFont extends FontImpl {
 	}
 
 	public static boolean isSupported(String fontname) {
-		java.awt.Font font[] = getFonts();
-		for (int i = font.length - 1; i >= 0; i--)
-			if (font[i].getName().equalsIgnoreCase(fontname)) return true;
+		for (java.awt.Font font : getFonts())
+			if (font.getName().equalsIgnoreCase(fontname)) return true;
 		return false;
 	}
 
 	public static java.awt.Font[] getFonts() {
 		return GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
-	}
-
-	public static byte[] intToByteArray(int value) {
-		return new byte[] { (byte) (value >>> 24), (byte) (value >>> 16), (byte) (value >>> 8), (byte) value };
 	}
 
 	public static java.awt.Font getFont(File file, int style, int size) {

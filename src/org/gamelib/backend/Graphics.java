@@ -4,11 +4,10 @@
 package org.gamelib.backend;
 
 /**
- * A graphics context that allows to the screen or off-screen images. TODO things needed to be added: methods for pushing/popping transforms ability to set projection matrix
+ * A graphics context that allows rendering to the canvas or off-screen images.
  * @author pwnedary
  */
 public interface Graphics {
-
 	/**
 	 * Set the color to use when rendering to this context
 	 * @param color The color to use when rendering to this context
@@ -30,19 +29,8 @@ public interface Graphics {
 	/** Releases any system resources that are used. */
 	public void dispose();
 
-	/** Increments the current. */
-	public static final int ADD = 0x01;
-	/** Sets the current. */
-	public static final int SET = 0x02;
-
 	/** Translates the origin to <i>x</i>,&nbsp;<i>y</i>,&nbsp;<i>z</i>. */
 	public void translate(float x, float y, float z);
-
-	/**
-	 * Translates the origin to <i>x</i>,&nbsp;<i>y</i>,&nbsp;<i>z</i>.
-	 * @param flag can be {@link #ADD} or {@link #SET}
-	 */
-	public void translate(float x, float y, float z, int flag);
 
 	/**
 	 * Apply a scaling factor to everything drawn.
@@ -104,7 +92,10 @@ public interface Graphics {
 	/** Clears the screen in the desired color. */
 	public void clear();
 
-	// public void push();
-	// public void pop();
+	/** Pushes the current coordinate transforms to be available from {@link #pop()}. */
+	public void push();
+
+	/** Retrieves and sets the coordinate transform to the last {@link #push()} call. */
+	public void pop();
 
 }

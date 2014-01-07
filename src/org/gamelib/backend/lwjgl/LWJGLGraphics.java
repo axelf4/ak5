@@ -5,30 +5,24 @@ package org.gamelib.backend.lwjgl;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import java.nio.FloatBuffer;
-
 import org.gamelib.backend.Color;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
-import org.lwjgl.util.vector.Matrix4f;
 
 /**
  * @author pwnedary
  */
 public class LWJGLGraphics implements Graphics {
-	/** the current color */
+	/** The current color */
 	private Color currentColor = Color.BLACK;
 	protected LWJGLImage image;
-	protected float deltaX, deltaY, deltaZ;
 
 	public LWJGLGraphics() {}
 
 	public LWJGLGraphics(LWJGLImage img) {
-		this();
 		this.image = img;
 	}
 
@@ -37,11 +31,11 @@ public class LWJGLGraphics implements Graphics {
 	private void predraw(int dimension) {
 		if (dimension != LWJGLGraphics.dimension) {
 			if (dimension == 2) {
-				// glMatrixMode(GL_PROJECTION);
-				// glLoadIdentity();
-				// glOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1); // 0,0 at bottom left
+				glMatrixMode(GL_PROJECTION);
+				glLoadIdentity();
+				glOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1); // 0,0 at bottom left
 				// glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1); // 0,0 at top left
-				// glMatrixMode(GL_MODELVIEW);
+				glMatrixMode(GL_MODELVIEW);
 
 				glDisable(GL_DEPTH_TEST);
 				// glDisable(GL_LIGHTING);
@@ -85,7 +79,7 @@ public class LWJGLGraphics implements Graphics {
 		float v2 = (float) sy2 / image.getTexHeight();
 
 		glEnable(GL_TEXTURE_2D);
-		glBindTexture(image.target, image.textureID); // bind the appropriate texture for this image
+		glBindTexture(image.target, image.texture); // bind the appropriate texture for this image
 		glBegin(GL11.GL_TRIANGLE_STRIP); // GL_QUADS
 		{
 			glTexCoord2f(u, v);
@@ -134,9 +128,6 @@ public class LWJGLGraphics implements Graphics {
 		}
 		GL11.glEnd();
 	}
-
-	@Override
-	public void dispose() {}
 
 	@Override
 	public void clear() {
@@ -193,14 +184,6 @@ public class LWJGLGraphics implements Graphics {
 	@Override
 	public void translate(float x, float y, float z) {
 		glTranslatef(x, y, z);
-		this.deltaX += x;
-		this.deltaY += y;
-	}
-
-	@Override
-	public void translate(float x, float y, float z, int flag) {
-		if ((flag & ADD) == ADD) translate(x, y, z);
-		else if ((flag & SET) == SET) translate(-deltaX + x, -deltaY + y, -deltaZ + z);
 	}
 
 	@Override
@@ -210,75 +193,26 @@ public class LWJGLGraphics implements Graphics {
 
 	@Override
 	public void rotate(double theta) {
-		glRotated(theta, deltaX, deltaY, deltaZ);
-	}
-
-	public void setProjection() {
-		Matrix4f projectionMatrix = new Matrix4f();
-		// glOrtho(0, width, height, 0, 1, -1); // 0,0 : top-left
-		setToOrtho(projectionMatrix, 0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
-		// setToOrtho(projectionMatrix, 0, Display.getWidth(), 0, Display.getHeight(), 1, -1);
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		FloatBuffer matrix44Buffer = BufferUtils.createFloatBuffer(16);
-		projectionMatrix.store(matrix44Buffer);
-		matrix44Buffer.flip();
-		glLoadMatrix(matrix44Buffer);
-		// glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1); // 0,0 : top-left
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-	}
-
-	/**
-	 * Sets the matrix to an orthographic projection like glOrtho (http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml) following the OpenGL equivalent
-	 * @param left The left clipping plane
-	 * @param right The right clipping plane
-	 * @param bottom The bottom clipping plane
-	 * @param top The top clipping plane
-	 * @param near The near clipping plane
-	 * @param far The far clipping plane
-	 * @return This matrix for the purpose of chaining methods together.
-	 */
-	private Matrix4f setToOrtho(Matrix4f m, float left, float right, float bottom, float top, float near, float far) {
-		float x_orth = 2 / (right - left);
-		float y_orth = 2 / (top - bottom);
-		float z_orth = -2 / (far - near);
-
-		float tx = -(right + left) / (right - left);
-		float ty = -(top + bottom) / (top - bottom);
-		float tz = -(far + near) / (far - near);
-
-		m.m00 = x_orth;
-		m.m10 = 0;
-		m.m20 = 0;
-		m.m30 = 0;
-		m.m01 = 0;
-		m.m11 = y_orth;
-		m.m21 = 0;
-		m.m31 = 0;
-		m.m02 = 0;
-		m.m12 = 0;
-		m.m22 = z_orth;
-		m.m32 = 0;
-		m.m03 = tx;
-		m.m13 = ty;
-		m.m23 = tz;
-		m.m33 = 1;
-
-		/*
-		 * m.m00 = 1; m.m01 = 0; m.m02 = 0; m.m03 = 0; m.m10 = 0; m.m11 = 1; m.m12 = 0; m.m13 = 0; m.m20 = 0; m.m21 = 0; m.m22 = 1; m.m23 = 0; m.m30 = 0; m.m31 = 0; m.m32 = 0; m.m33 = 1;
-		 */
-
-		return m;
+		glRotated(theta, 0.0d, 0.0d, 0.0d);
 	}
 
 	@Override
-	public void begin() {
-		// dimension = 0;
-	}
+	public void begin() {}
 
 	@Override
 	public void end() {}
+
+	@Override
+	public void dispose() {}
+
+	@Override
+	public void push() {
+		glPushMatrix();
+	}
+
+	@Override
+	public void pop() {
+		glPopMatrix();
+	}
 
 }

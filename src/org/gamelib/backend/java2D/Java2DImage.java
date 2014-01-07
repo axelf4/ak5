@@ -46,4 +46,12 @@ public class Java2DImage implements Image {
 		g.drawImage(this, 0, 0, 0 + getWidth(), 0 + getHeight(), 0, 0, 0 + getWidth(), 0 + getHeight());
 	}
 
+	@Override
+	public void dispose() {}
+
+	@Override
+	public void setFilter(Filter min, Filter mag) {}
+
+	@Override
+	public void setWrap(Wrap u, Wrap v) {}
 }

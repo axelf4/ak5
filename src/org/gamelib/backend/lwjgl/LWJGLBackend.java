@@ -93,13 +93,11 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 			Display.setResizable(config.resizable());
 			Display.create();
 
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			Matrix4 projection;
-			if (configuration instanceof LWJGLConfiguration && ((LWJGLConfiguration) configuration).originBottomLeft()) projection = new Matrix4().setToOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1);
-			else projection = new Matrix4().setToOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
-			glLoadMatrix((FloatBuffer) BufferUtils.createFloatBuffer(projection.val.length).put(projection.val).flip());
-			glMatrixMode(GL_MODELVIEW);
+			// glMatrixMode(GL_PROJECTION);
+			// glLoadIdentity();
+			// glOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1); // 0,0 at bottom left
+			// // glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1); // 0,0 at top left
+			// glMatrixMode(GL_MODELVIEW);
 
 			glShadeModel(GL_SMOOTH);
 			glEnable(GL_BLEND);
@@ -128,7 +126,17 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		g.setColor(Color.WHITE);
 		g.clear();
 
-		// TODO use Display.wasResized()
+		// if (Display.wasResized()) {
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		Matrix4 projection;
+		if (configuration instanceof LWJGLConfiguration && ((LWJGLConfiguration) configuration).originBottomLeft()) projection = new Matrix4().setToOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1);
+		else projection = new Matrix4().setToOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
+		glLoadMatrix((FloatBuffer) BufferUtils.createFloatBuffer(projection.val.length).put(projection.val).flip());
+		glMatrixMode(GL_MODELVIEW);
+
+		glViewport(0, 0, Display.getWidth(), Display.getHeight());
+		// }
 
 		// Game2.getInstance().screen.drawHandlers(getGraphics(), delta);
 		callback.draw(g, delta);
@@ -202,15 +210,8 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 		ByteBuffer textureBuffer = convertImageData(bufferedImage, image); // convert that image into a byte buffer of texture data
 
+		image.setFilter(Image.Filter.NEAREST, Image.Filter.NEAREST);
 		glBindTexture(target, textureID);
-		if (target == GL_TEXTURE_2D) {
-			/*
-			 * glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST); // GL_NEAREST glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // GL_NEAREST
-			 */
-			glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		}
-
 		glTexImage2D(target, 0, GL_RGBA, image.getTexWidth(), image.getTexHeight(), 0, srcPixelFormat, GL_UNSIGNED_BYTE, textureBuffer); // produce a texture from the byte buffer
 		glBindTexture(target, 0);
 		return image;

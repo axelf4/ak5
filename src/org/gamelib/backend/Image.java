@@ -3,28 +3,82 @@
  */
 package org.gamelib.backend;
 
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL14.*;
+
 import org.gamelib.Drawable;
+import org.gamelib.util.Disposable;
 
 /**
- * An generic in-memory image, which can be drawn by {@link Graphics#drawImage(Image, int, int, int, int, int, int, int, int)}.
+ * A generic in-memory image, which can be drawn by {@link Graphics#drawImage(Image, int, int, int, int, int, int, int, int)}.
  * @author pwnedary
  */
-public interface Image extends Drawable {
+public interface Image extends Drawable, Disposable {
+	enum Filter {
+		NEAREST(GL_NEAREST), LINEAR(GL_LINEAR), MIPMAP(GL_LINEAR_MIPMAP_LINEAR), LINEAR_MIPMAP_LINEAR(
+				GL_LINEAR_MIPMAP_LINEAR), NEAREST_MIPMAP_NEAREST(
+				GL_NEAREST_MIPMAP_NEAREST), LINEAR_MIPMAP_NEAREST(
+				GL_LINEAR_MIPMAP_NEAREST), NEAREST_MIPMAP_LINEAR(
+				GL_NEAREST_MIPMAP_LINEAR);
+
+		final int glEnum;
+
+		private Filter(int glEnum) {
+			this.glEnum = glEnum;
+		}
+
+		public int getGLEnum() {
+			return glEnum;
+		}
+
+		public boolean isMipMap() {
+			return glEnum != GL_NEAREST && glEnum != GL_LINEAR;
+		}
+	}
+
+	enum Wrap {
+		CLAMP(GL_CLAMP), REPEAT(GL_REPEAT), MIRRORED_REPEAT(GL_MIRRORED_REPEAT);
+
+		final int glEnum;
+
+		Wrap(int glEnum) {
+			this.glEnum = glEnum;
+		}
+
+		public int getGLEnum() {
+			return glEnum;
+		}
+	}
+
 	/**
 	 * Returns the width of this image.
 	 * @return the width of this image
 	 */
-	public int getWidth();
+	int getWidth();
 
 	/** Sets the width of this image. */
-	public void setWidth(int width);
+	void setWidth(int width);
 
 	/**
 	 * Returns the height of this image.
 	 * @return the height of this image
 	 */
-	public int getHeight();
+	int getHeight();
 
 	/** Sets the height of this image. */
-	public void setHeight(int height);
+	void setHeight(int height);
+
+	/**
+	 * Sets the {@link Filter} for minification and magnification.
+	 * @param minFilter the minification filter
+	 * @param magFilter the magnification filter
+	 */
+	void setFilter(Filter min, Filter mag);
+
+	/**
+	 * Sets the {@link Wrap} on the u and v axis.
+	 * @param u the u wrap
+	 * @param v the v wrap
+	 */
+	void setWrap(Wrap u, Wrap v);
 }

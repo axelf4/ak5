@@ -88,7 +88,7 @@ public class PbufferGraphics extends LWJGLGraphics {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glViewport(0, 0, image.getWidth(), image.getHeight());
-		glBindTexture(GL_TEXTURE_2D, image.textureID);
+		glBindTexture(GL_TEXTURE_2D, image.texture);
 		Display.makeCurrent();
 	}
 
