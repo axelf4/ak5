@@ -23,6 +23,8 @@ import java.util.Hashtable;
 import javax.imageio.ImageIO;
 
 import org.gamelib.Drawable;
+import org.gamelib.EventBus;
+import org.gamelib.Handler.Event;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Backend.BackendImpl;
 import org.gamelib.backend.Color;
@@ -126,7 +128,6 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		g.setColor(Color.WHITE);
 		g.clear();
 
-		// if (Display.wasResized()) {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		Matrix4 projection;
@@ -136,12 +137,12 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		glMatrixMode(GL_MODELVIEW);
 
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
-		// }
 
 		// Game2.getInstance().screen.drawHandlers(getGraphics(), delta);
 		callback.draw(g, delta);
 		Display.update();
 		// Util.checkGLError();
+		if (Display.wasResized()) EventBus.instance().dispatch(new Event.Resize());
 	}
 
 	@Override

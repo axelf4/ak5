@@ -77,6 +77,7 @@ public abstract class Game {
 
 		@Override
 		public void stop() {
+			EventBus.instance().dispatch(new Event.Stop());
 			backend.stop();
 		}
 

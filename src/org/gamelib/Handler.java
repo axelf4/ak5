@@ -62,7 +62,7 @@ public interface Handler {
 		}
 
 		/** Event triggered each tick. */
-		public static class Tick extends EventImpl {
+		public static class Tick extends EventImpl implements Event {
 			public float delta;
 
 			public Tick(float delta) {
@@ -71,7 +71,7 @@ public interface Handler {
 		}
 
 		/** Event triggered when the screen redraws. */
-		public static final class Draw extends EventImpl {
+		public static final class Draw extends EventImpl implements Event {
 			public Graphics graphics;
 			public float delta;
 
@@ -82,7 +82,7 @@ public interface Handler {
 		}
 
 		/** Abstract event for input actions. */
-		public abstract static class Control<T extends InputEvent> extends EventImpl {
+		public abstract static class Control<T extends InputEvent> extends EventImpl implements Event {
 			public Input input;
 
 			public Control(Input input) {
@@ -120,5 +120,9 @@ public interface Handler {
 				this.scrollAmount = scrollAmount;
 			}
 		}
+
+		public static final class Resize extends EventImpl implements Event {}
+
+		public static final class Stop extends EventImpl implements Event {}
 	}
 }
