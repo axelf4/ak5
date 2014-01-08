@@ -14,15 +14,19 @@ import org.gamelib.backend.Image;
  */
 public class LWJGLImage implements Image {
 	/** The GL target type */
-	public int target;
+	public final int target;
 	/** The GL texture */
-	public int texture;
+	public final int texture;
 	/** The width of the image */
 	private int width;
 	/** The height of the image */
 	private int height;
-	public int texWidth;
-	public int texHeight;
+	/** The width of the GL texture */
+	private int texWidth;
+	/** The height of the GL texture */
+	private int texHeight;
+	/* The region's texture coordinates */
+	public float u = 0, v = 0, u2 = 1, v2 = 1;
 
 	public LWJGLImage(int target, int texture) {
 		this.target = target = GL_TEXTURE_2D;
@@ -59,10 +63,6 @@ public class LWJGLImage implements Image {
 	@Override
 	public void setHeight(int height) {
 		this.height = height;
-	}
-
-	public int getTextureID() {
-		return texture;
 	}
 
 	/**
@@ -117,5 +117,19 @@ public class LWJGLImage implements Image {
 		glTexParameteri(target, GL_TEXTURE_WRAP_S, u.getGLEnum());
 		glTexParameteri(target, GL_TEXTURE_WRAP_T, v.getGLEnum());
 		unbind();
+	}
+
+	@Override
+	public Image region(int x, int y, int width, int height) {
+		LWJGLImage image = new LWJGLImage(target, texture);
+		image.setWidth(width);
+		image.setHeight(height);
+		image.setTexWidth(getTexWidth());
+		image.setTexHeight(getTexHeight());
+		image.u = (float) x / image.getTexWidth();
+		image.v = (float) y / image.getTexHeight();
+		image.u2 = (float) (x + width) / image.getTexWidth();
+		image.v2 = (float) (y + height) / image.getTexHeight();
+		return image;
 	}
 }

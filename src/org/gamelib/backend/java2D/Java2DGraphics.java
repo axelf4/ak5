@@ -5,7 +5,6 @@ package org.gamelib.backend.java2D;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -41,8 +40,8 @@ public class Java2DGraphics implements Graphics {
 
 	@Override
 	public void drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
-		BufferedImage bufferedImage = ((Java2DImage) img).bufferedImage;
-		g2d.drawImage(bufferedImage, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
+		if (sx1 < 0 || sy1 < 0 || sx2 > img.getWidth() || sy2 > img.getHeight()) throw new IllegalArgumentException("Source coordinates are out of bounds.");
+		g2d.drawImage(((Java2DImage) img).bufferedImage, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
 	}
 
 	@Override

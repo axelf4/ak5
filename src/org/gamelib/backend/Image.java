@@ -81,4 +81,14 @@ public interface Image extends Drawable, Disposable {
 	 * @param v the v wrap
 	 */
 	void setWrap(Wrap u, Wrap v);
+
+	/**
+	 * Returns a subimage as defined by the specified region, that shares the same content as this {@link Image}.
+	 * @param x the x-coordinate of the upper-left corner of the rectangular region
+	 * @param y the y-coordinate of the upper-left corner of the rectangular region
+	 * @param width the width of the rectangular region
+	 * @param height the height of the rectangular region
+	 * @return an Image that is a subimage of this Image
+	 */
+	Image region(int x, int y, int width, int height);
 }

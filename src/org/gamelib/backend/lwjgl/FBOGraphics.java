@@ -6,7 +6,6 @@ package org.gamelib.backend.lwjgl;
 import static org.lwjgl.opengl.EXTFramebufferObject.*;
 import static org.lwjgl.opengl.GL11.*;
 
-import org.gamelib.backend.Color;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
@@ -34,7 +33,7 @@ public class FBOGraphics extends LWJGLGraphics {
 		image.bind();
 
 		bind();
-		EXTFramebufferObject.glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, image.target, image.getTextureID(), 0); // attach texture
+		EXTFramebufferObject.glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, image.target, image.texture, 0); // attach texture
 
 		// initialize renderbuffer renderBufferID = glGenRenderbuffersEXT();
 		// glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, renderBufferID); // bind the depth renderbuffer glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL14.GL_DEPTH_COMPONENT24, 512, 512); // get the data space for it glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,GL_DEPTH_ATTACHMENT_EXT,GL_RENDERBUFFER_EXT, renderBufferID); // bind it to the renderbuffer

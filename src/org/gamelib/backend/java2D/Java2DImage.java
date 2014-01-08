@@ -54,4 +54,9 @@ public class Java2DImage implements Image {
 
 	@Override
 	public void setWrap(Wrap u, Wrap v) {}
+
+	@Override
+	public Image region(int x, int y, int width, int height) {
+		return new Java2DImage(bufferedImage.getSubimage(x, y, width, height));
+	}
 }

@@ -71,12 +71,17 @@ public class LWJGLGraphics implements Graphics {
 
 	@Override
 	public void drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
+		if (sx1 < 0 || sy1 < 0 || sx2 > img.getWidth() || sy2 > img.getHeight()) throw new IllegalArgumentException("Source coordinates are out of bounds.");
 		predraw(2);
 		LWJGLImage image = (LWJGLImage) img;
-		float u = (float) sx1 / image.getTexWidth();
-		float v = (float) sy1 / image.getTexHeight();
-		float u2 = (float) sx2 / image.getTexWidth();
-		float v2 = (float) sy2 / image.getTexHeight();
+		// float u = (float) (sx1 + image.x) / image.getTexWidth();
+		// float v = (float) (sy1 + image.y) / image.getTexHeight();
+		// float u2 = (float) (sx2 + image.x) / image.getTexWidth();
+		// float v2 = (float) (sy2 + image.y) / image.getTexHeight();
+		 float u = (float) sx1 / image.getTexWidth() + image.u;
+		 float v = (float) sy1 / image.getTexHeight() + image.v;
+		 float u2 = (float) sx2 / image.getTexWidth() + image.u;
+		 float v2 = (float) sy2 / image.getTexHeight() + image.v;
 
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(image.target, image.texture); // bind the appropriate texture for this image

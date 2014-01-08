@@ -9,14 +9,14 @@ package org.gamelib.backend;
  */
 public interface Graphics {
 	/**
-	 * Set the color to use when rendering to this context
-	 * @param color The color to use when rendering to this context
+	 * Sets the color to use when rendering to this context.
+	 * @param color the color to use when rendering to this context
 	 */
 	public void setColor(Color color);
 
 	/**
-	 * Get the color in use by this graphics context
-	 * @return The color in use by this graphics context
+	 * Returns the color in use by this graphics context.
+	 * @return the color in use by this graphics context
 	 */
 	public Color getColor();
 
@@ -33,7 +33,7 @@ public interface Graphics {
 	public void translate(float x, float y, float z);
 
 	/**
-	 * Apply a scaling factor to everything drawn.
+	 * Applies a scaling factor to everything drawn.
 	 * @param sx The scaling factor on the x-axis
 	 * @param sy The scaling factor on the y-axis
 	 * @param sz The scaling factor on the z-axis
@@ -41,13 +41,13 @@ public interface Graphics {
 	public void scale(float sx, float sy, float sz);
 
 	/**
-	 * Apply a rotation to everything draw on the graphics context
+	 * Applies a rotation to everything draw on the graphics context
 	 * @param theta The angle (in degrees) to rotate by
 	 */
 	public void rotate(double theta);
 
 	/**
-	 * Draw an image to the canvas.
+	 * Draws an image to the canvas.
 	 * @param img the image to draw
 	 * @param dx1 the x coordinate of the start of the destination
 	 * @param dy1 the y coordinate of the start of the destination
@@ -57,11 +57,12 @@ public interface Graphics {
 	 * @param sy1 the y coordinate of the start of the source
 	 * @param sx2 the x coordinate of the end of the source
 	 * @param sy2 the y coordinate of the end of the source
+	 * @throws IllegalArgumentException if source coordinates are out of bounds
 	 */
 	public void drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2);
 
 	/**
-	 * Draw a line on the canvas in the current color.
+	 * Draws a line on the canvas in the current color.
 	 * @param x1 The x coordinate of the start point
 	 * @param y1 The y coordinate of the start point
 	 * @param x2 The x coordinate of the end point
@@ -70,7 +71,7 @@ public interface Graphics {
 	public void drawLine(int x1, int y1, int x2, int y2);
 
 	/**
-	 * Draw a rectangle to the canvas in the current color.
+	 * Draws a rectangle to the canvas in the current color.
 	 * @param x1 The x coordinate of the top left corner
 	 * @param y1 The y coordinate of the top left corner
 	 * @param width The width of the rectangle to draw
@@ -79,7 +80,7 @@ public interface Graphics {
 	public void drawRect(int x, int y, int width, int height);
 
 	/**
-	 * Fill a rectangle on the canvas in the current color.
+	 * Fills a rectangle on the canvas in the current color.
 	 * @param x1 The x coordinate of the top left corner
 	 * @param y1 The y coordinate of the top left corner
 	 * @param width The width of the rectangle to fill
