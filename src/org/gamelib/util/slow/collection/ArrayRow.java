@@ -9,7 +9,7 @@ import java.util.Iterator;
  * @author pwnedary
  */
 public class ArrayRow<E> extends AbstractRow<E> {
-	private E[] elements;
+	public E[] elements; // public here trades stability for speed
 	private int size;
 
 	public ArrayRow(E[] elements) {
