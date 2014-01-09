@@ -11,15 +11,11 @@ import java.beans.ConstructorProperties;
  * @author pwnedary
  */
 public class Range<N extends Number & Comparable<N>> {
-
 	/** The smallest possible in this range. */
 	private N smallest;
 	/** The largest possible in this range. */
 	private N largest;
 
-	/**
-	 * 
-	 */
 	@ConstructorProperties(value = { "smallest", "largest" })
 	public Range(N smallest, N largest) {
 		this.smallest = smallest.compareTo(largest) < 0 ? smallest : largest;
@@ -72,5 +68,8 @@ public class Range<N extends Number & Comparable<N>> {
 	public void setLargest(N largest) {
 		this.largest = largest;
 	}
-
+	
+	public int getInterval() {
+		return largest.intValue() - smallest.intValue();
+	}
 }
