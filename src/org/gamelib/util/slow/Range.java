@@ -68,8 +68,15 @@ public class Range<N extends Number & Comparable<N>> {
 	public void setLargest(N largest) {
 		this.largest = largest;
 	}
-	
-	public int getInterval() {
-		return largest.intValue() - smallest.intValue();
+
+	@SuppressWarnings("unchecked")
+	public N getInterval() {
+		if (smallest instanceof Byte && largest instanceof Byte) return (N) Byte.valueOf((byte) (largest.byteValue() - smallest.byteValue()));
+		else if (smallest instanceof Double && largest instanceof Double) return (N) Double.valueOf(largest.doubleValue() - smallest.doubleValue());
+		else if (smallest instanceof Float && largest instanceof Float) return (N) Float.valueOf(largest.floatValue() - smallest.floatValue());
+		else if (smallest instanceof Integer && largest instanceof Integer) return (N) Integer.valueOf(largest.intValue() - smallest.intValue());
+		else if (smallest instanceof Long && largest instanceof Long) return (N) Long.valueOf(largest.longValue() - smallest.longValue());
+		else if (smallest instanceof Short && largest instanceof Short) return (N) Short.valueOf((short) (largest.shortValue() - smallest.shortValue()));
+		else return null;
 	}
 }
