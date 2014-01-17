@@ -103,7 +103,7 @@ public class Group implements Handler {
 
 	/** Deactivates every other group except for this one and it's children. */
 	public void focus() {
-		for (Handler handler : EventBus.instance().main.getChildren())
+		for (Handler handler : EventBus.instance().getChildren())
 			if (handler instanceof Group && !((Group) handler).alwaysActive) ((Group) handler).setActive(false);
 		setActive(true);
 	}
