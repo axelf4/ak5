@@ -7,7 +7,6 @@ package org.gamelib;
  * @author pwnedary
  */
 public class FixedTimestepLoop implements Loop {
-
 	// This value would probably be stored elsewhere.
 	final double GAME_HERTZ = 30.0; // 30.0
 	// Calculate how many ns each frame should take for our target game hertz.
@@ -27,7 +26,6 @@ public class FixedTimestepLoop implements Loop {
 		this.listener = listener;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void run() {
 		// We will need the last update time.
@@ -37,7 +35,7 @@ public class FixedTimestepLoop implements Loop {
 		// Simple way of finding FPS.
 		int lastSecondTime = (int) (lastUpdateTime / 1000000000);
 		listener.start();
-
+		
 		while (!listener.shouldStop()) {
 			double now = System.nanoTime();
 			int updateCount = 0;
@@ -89,19 +87,11 @@ public class FixedTimestepLoop implements Loop {
 		listener.stop();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Loop#getFPS()
-	 */
 	@Override
 	public int getFPS() {
 		return fps;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.gamelib.Loop#setLoopListener(org.gamelib.Loop.LoopListener)
-	 */
 	@Override
 	public void setLoopListener(LoopListener listener) {
 		this.listener = listener;
