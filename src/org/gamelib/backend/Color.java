@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author pwnedary
  * @see java.awt.Color
  */
-public class Color implements Serializable {
+public final class Color implements Serializable {
 	private static final long serialVersionUID = 4649728280397747213L;
 
 	/** The color white. */
@@ -42,7 +42,7 @@ public class Color implements Serializable {
 	public static final Color BLUE = new Color(0, 0, 255);
 
 	/** The color value. */
-	final int value;
+	private final int value;
 
 	/**
 	 * Creates an sRGB color with the red, green, blue and alpha values in the range (0 - 255).
