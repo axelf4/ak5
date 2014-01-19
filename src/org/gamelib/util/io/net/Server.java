@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.util.net;
+package org.gamelib.util.io.net;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -65,36 +65,33 @@ public class Server implements EndPoint {
 				Connection fromConnection = (Connection) selectionKey.attachment();
 				int ops = selectionKey.readyOps();
 				try {
-					if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
-						if (fromConnection != null && selectionKey.channel() == fromConnection.tcp.socketChannel) {
-							Object object;
-							while ((object = fromConnection.tcp.readObject()) != null)
-								notifyReceived(fromConnection, object);
-						} else if (udp == null) selectionKey.channel().close();
-						else if (selectionKey.channel() == udp.datagramChannel) {
-							InetSocketAddress fromAddress = udp.readFromAddress();
-							Object object = udp.readObject();
+					if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) if (fromConnection != null && selectionKey.channel() == fromConnection.tcp.socketChannel) {
+						Object object;
+						while ((object = fromConnection.tcp.readObject()) != null)
+							notifyReceived(fromConnection, object);
+					} else if (udp == null) selectionKey.channel().close();
+					else if (selectionKey.channel() == udp.datagramChannel) {
+						InetSocketAddress fromAddress = udp.readFromAddress();
+						Object object = udp.readObject();
+						if (fromConnection == null) {
 							for (Connection connection : connections)
-								if (connection.getRemoteUDPAddress() != null && fromAddress.getHostString().equals(connection.getRemoteUDPAddress().getHostString()) || fromAddress.getHostString().equals(connection.getRemoteTCPAddress().getHostString())) {
+								if ((connection.getRemoteUDPAddress() != null && fromAddress.equals(connection.getRemoteUDPAddress())) || (connection.getRemoteTCPAddress() != null && fromAddress.getAddress().equals(connection.getRemoteTCPAddress().getAddress()))) {
 									fromConnection = connection;
 									break;
 								}
-							// System.out.println("fromConnection " + fromConnection + " object: " + object);
 							if (fromConnection == null) connections.add(fromConnection = new Connection());
-							if (object instanceof RegisterUDP) fromConnection.udpRemoteAddress = fromAddress;
-							notifyReceived(fromConnection, object);
 						}
+						if (object instanceof RegisterUDP) fromConnection.udpRemoteAddress = fromAddress;
+						notifyReceived(fromConnection, object);
 					} else if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE && fromConnection != null) fromConnection.tcp.writeOperation();
 					else if ((ops & SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT) {
 						SocketChannel socketChannel = serverChannel.accept();
 						if (socketChannel != null) {
-							System.out.println(socketChannel.getRemoteAddress());
-							for (Connection connection2 : connections)
-								if (connection2.udpRemoteAddress != null && ((InetSocketAddress) socketChannel.getRemoteAddress()).getHostString().equals(connection2.udpRemoteAddress.getHostString())) {
-									fromConnection = connection2;
+							for (Connection connection : connections)
+								if (connection.getRemoteUDPAddress() != null && fromConnection.getRemoteTCPAddress().getAddress().equals(connection.getRemoteUDPAddress().getAddress())) {
+									fromConnection = connection; // Found previous udp connection from peer
 									break;
 								}
-							System.out.println(fromConnection);
 							if (fromConnection == null) connections.add(fromConnection = new Connection());
 							(fromConnection.tcp = new TCP()).accept(selector, socketChannel).attach(fromConnection); // Attach connection to accepted key
 							notifyConnected(fromConnection);
@@ -106,6 +103,7 @@ public class Server implements EndPoint {
 						fromConnection.close();
 					} else selectionKey.channel().close();
 				} catch (IOException e) {
+					e.printStackTrace();
 					fromConnection.close();
 				}
 			}

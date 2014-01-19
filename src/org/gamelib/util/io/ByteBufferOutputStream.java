@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.util.net;
+package org.gamelib.util.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -11,7 +11,6 @@ import java.nio.ByteBuffer;
  * @author pwnedary
  */
 public class ByteBufferOutputStream extends OutputStream {
-
 	private ByteBuffer buffer;
 
 	public ByteBufferOutputStream(ByteBuffer buffer) {

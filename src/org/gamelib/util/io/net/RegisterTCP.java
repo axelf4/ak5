@@ -1,7 +1,9 @@
 /**
  * 
  */
-package org.gamelib.util.net;
+package org.gamelib.util.io.net;
+
+import org.gamelib.util.io.Buf;
 
 /**
  * @author Axel
@@ -16,12 +18,12 @@ public class RegisterTCP implements FrameworkMessage<RegisterTCP> {
 	public RegisterTCP() {}
 
 	@Override
-	public void write(Output output, RegisterTCP object) {
+	public void write(Buf output, RegisterTCP object) {
 		output.writeInt(connectionId);
 	}
 
 	@Override
-	public RegisterTCP read(Input input) {
+	public RegisterTCP read(Buf input) {
 		return new RegisterTCP(input.readInt());
 	}
 }

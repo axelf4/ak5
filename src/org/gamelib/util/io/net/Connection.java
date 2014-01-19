@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.util.net;
+package org.gamelib.util.io.net;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -13,7 +13,6 @@ import java.net.SocketException;
  * @author pwnedary
  */
 public class Connection {
-
 	final SocketListener listener;
 	TCP tcp;
 	UDP udp;
@@ -55,8 +54,8 @@ public class Connection {
 	}
 
 	/** Returns the IP address and port of the remote end of the TCP connection, or null if this connection is not connected. */
-	public InetSocketAddress getRemoteTCPAddress() {
-		return tcpConnected() ? (InetSocketAddress) tcp.socketChannel.socket().getRemoteSocketAddress() : null;
+	public InetSocketAddress getRemoteTCPAddress() throws IOException {
+		return tcpConnected() ? (InetSocketAddress) tcp.socketChannel.getRemoteAddress() : null;
 	}
 
 	/** Returns the IP address and port of the remote end of the UDP connection, or null if this connection is not connected. */

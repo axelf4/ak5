@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.util.net;
+package org.gamelib.util.io.net;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

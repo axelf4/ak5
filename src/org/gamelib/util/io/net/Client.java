@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.util.net;
+package org.gamelib.util.io.net;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -13,6 +13,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.Executors;
 
 /**
  * @author pwnedary
@@ -36,22 +37,27 @@ public class Client extends Connection implements EndPoint {
 			throws IOException {
 		// selector.wakeup();
 		int timeout = 5000;
-		long endTime = System.currentTimeMillis() + timeout;
+		final long endTime = System.currentTimeMillis() + timeout;
 		try {
 			if (tcpAddress != null) (tcp = new TCP(8192, 2048)).connect(selector, this.tcpAddress = tcpAddress);
 			if (udpAddress != null) {
 				(udp = new UDP()).connect(selector, this.udpRemoteAddress = this.udpAddress = udpAddress);
 
-				synchronized (udpRegistrationLock) {
-					while (!udpRegistered && System.currentTimeMillis() < endTime) {
-						sendUDP(new RegisterUDP(new InetSocketAddress(2222)));
-						try {
-							udpRegistrationLock.wait(5000); // 500
-						} catch (InterruptedException e) {
-							e.printStackTrace();
+				Executors.newSingleThreadExecutor().execute(new Runnable() {
+					@Override
+					public void run() {
+						synchronized (udpRegistrationLock) {
+							while (!udpRegistered && System.currentTimeMillis() < endTime) {
+								try {
+									sendUDP(new RegisterUDP(new InetSocketAddress(2222)));
+									udpRegistrationLock.wait(5000); // 500
+								} catch (Throwable e) {
+									e.printStackTrace();
+								}
+							}
 						}
 					}
-				}
+				});
 			}
 		} catch (IOException e) {
 			close();
@@ -68,31 +74,26 @@ public class Client extends Connection implements EndPoint {
 				iterator.remove();
 				int ops = selectionKey.readyOps();
 				try {
-					if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
+					if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) if (selectionKey.channel() == tcp.socketChannel) {
 						Object object;
-						if (selectionKey.channel() == tcp.socketChannel) {
-							while ((object = tcp.readObject()) != null)
-								notifyReceived(object);
-						} else if (selectionKey.channel() == udp.datagramChannel) {
-							if (udp.readFromAddress() != null) {
-								object = udp.readObject();
-								if (object instanceof RegisterUDP) {
-									System.out.println("client received registerudp");
-									synchronized (udpRegistrationLock) {
-										udpRegistered = true;
-										udpRegistrationLock.notifyAll();
-									}
-									notifyConnected(this);
-								} else if (object != null) notifyReceived(object);
-							}
+						while ((object = tcp.readObject()) != null)
+							notifyReceived(object);
+					} else if (udp == null) selectionKey.channel().close();
+					else if (selectionKey.channel() == udp.datagramChannel) {
+						if (udp.readFromAddress() != null) {
+							Object object = udp.readObject();
+							if (object instanceof RegisterUDP) {
+								synchronized (udpRegistrationLock) {
+									udpRegistered = true;
+									udpRegistrationLock.notifyAll();
+								}
+								notifyConnected(this);
+							} else if (object != null) notifyReceived(object);
 						}
 					} else if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE) tcp.writeOperation();
 					else if ((ops & SelectionKey.OP_CONNECT) == SelectionKey.OP_CONNECT) {
 						if (((SocketChannel) selectionKey.channel()).finishConnect()) {
 							selectionKey.interestOps(SelectionKey.OP_READ);
-							if (udp != null) {
-								// sendTCP(new RegisterUDP((InetSocketAddress) udp.datagramChannel.getLocalAddress()));
-							}
 							notifyConnected(this);
 						}
 					}

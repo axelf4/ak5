@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.util.net;
+package org.gamelib.util.io.net;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -12,19 +12,23 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 
+import org.gamelib.util.io.Buf;
+
 /**
  * @author pwnedary
  */
 public class UDP {
 	DatagramChannel datagramChannel;
-	private final ByteBuffer readBuffer, writeBuffer;
 	private SelectionKey selectionKey;
+	private final ByteBuffer readBuffer, writeBuffer;
+	private Buf readBufferHandle, writeBufferHandle;
 	InetSocketAddress connectedAddress;
-	Serialization serialization = new Serialization();
 
 	public UDP(int bufferSize) {
 		readBuffer = ByteBuffer.allocate(bufferSize);
 		writeBuffer = ByteBuffer.allocateDirect(bufferSize);
+		readBufferHandle = new Buf.NIOByteBuffer(readBuffer);
+		writeBufferHandle = new Buf.NIOByteBuffer(writeBuffer);
 	}
 
 	public UDP() {
@@ -66,13 +70,10 @@ public class UDP {
 	public int send(Object object, SocketAddress address) throws IOException {
 		if (datagramChannel == null) throw new SocketException("Connection is closed.");
 		try {
-			serialization.write(writeBuffer, object);
+			writeBufferHandle.writeObject(object);
 			writeBuffer.flip();
-			int length = writeBuffer.limit();
 			datagramChannel.send(writeBuffer, address);
-
-			boolean wasFullWrite = !writeBuffer.hasRemaining();
-			return wasFullWrite ? length : -1;
+			return !writeBuffer.hasRemaining() ? writeBuffer.limit() : -1; // was full write?, length or -1
 		} finally {
 			writeBuffer.clear();
 		}
@@ -81,7 +82,7 @@ public class UDP {
 	public Object readObject() throws IOException {
 		readBuffer.flip();
 		try {
-			Object object = serialization.read(readBuffer);
+			Object object = readBufferHandle.readObject();
 			if (readBuffer.hasRemaining()) throw new IOException("Incorrect number of bytes (" + readBuffer.remaining() + " remaining) used to deserialize object: " + object);
 			return object;
 		} finally {

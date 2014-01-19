@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.util.net;
+package org.gamelib.util.io.net;
 
 import java.io.IOException;
 import java.net.SocketAddress;
@@ -11,21 +11,23 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
+import org.gamelib.util.io.Buf;
+
 /**
  * @author pwnedary
  */
 public class TCP {
-
 	SocketChannel socketChannel;
-	ByteBuffer readBuffer, writeBuffer;
-
-	SelectionKey selectionKey;
-	int currentObjectLength = 0;
-	Serialization serialization = new Serialization();
+	private SelectionKey selectionKey;
+	private final ByteBuffer readBuffer, writeBuffer;
+	private final Buf readBufferHandle, writeBufferHandle;
+	private int currentObjectLength = 0;
 
 	public TCP(int readBufferSize, int writeBufferSize) {
 		readBuffer = ByteBuffer.allocate(readBufferSize);
 		writeBuffer = ByteBuffer.allocate(writeBufferSize);
+		readBufferHandle = new Buf.NIOByteBuffer(readBuffer);
+		writeBufferHandle = new Buf.NIOByteBuffer(writeBuffer);
 	}
 
 	public TCP() {
@@ -97,15 +99,15 @@ public class TCP {
 		if (socketChannel == null) throw new SocketException("Connection is closed.");
 		// Leave room for length.
 		int start = writeBuffer.position();
-		int lengthLength = serialization.getLengthLength();
+		int lengthLength = writeBufferHandle.intBytes();
 		writeBuffer.position(writeBuffer.position() + lengthLength);
 
-		serialization.write(writeBuffer, object); // Write data.
+		writeBufferHandle.writeObject(object); // Write data.
 		int end = writeBuffer.position();
 
 		// Write data length.
 		writeBuffer.position(start);
-		serialization.writeLength(writeBuffer, end - lengthLength - start);
+		writeBufferHandle.writeInt(end - lengthLength - start);
 		writeBuffer.position(end);
 
 		// Write to socket if no data was queued.
@@ -117,21 +119,21 @@ public class TCP {
 	public Object readObject() throws IOException {
 		if (socketChannel == null) throw new SocketException("Connection is closed.");
 		if (currentObjectLength == 0) {
-			int lengthLength = serialization.getLengthLength(); // Read length of next object
+			int lengthLength = readBufferHandle.intBytes(); // Read length of next object
 			if (readBuffer.remaining() < lengthLength) {
 				readBuffer.compact();
-				if (socketChannel.read(readBuffer) == -1) throw new SocketException("Connection is closed."); // Read bytes into buffer
+				if (socketChannel.read(readBuffer) == -1) throw new SocketException("Connection is closed."); // Read bytes into readBufferHandle
 				readBuffer.flip();
 
 				if (readBuffer.remaining() < lengthLength) return null;
 			}
-			currentObjectLength = serialization.readLength(readBuffer);
+			currentObjectLength = readBufferHandle.readInt();
 		}
 
 		int length = currentObjectLength;
 		if (readBuffer.remaining() < length) {
 			readBuffer.compact();
-			if (socketChannel.read(readBuffer) == -1) throw new SocketException("Connection is closed."); // Read bytes into buffer
+			if (socketChannel.read(readBuffer) == -1) throw new SocketException("Connection is closed."); // Read bytes into readBufferHandle
 			readBuffer.flip();
 
 			if (readBuffer.remaining() < length) return null;
@@ -143,7 +145,7 @@ public class TCP {
 
 		if (length == 0) return null;
 		readBuffer.limit(startPosition + length);
-		Object object = serialization.read(readBuffer);
+		Object object = readBufferHandle.readObject();
 		readBuffer.limit(oldLimit);
 		if (readBuffer.position() - startPosition != length) throw new IOException("Incorrect number of bytes (" + (startPosition + length - readBuffer.position()) + " remaining) used to deserialize object: " + object);
 

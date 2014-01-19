@@ -1,7 +1,9 @@
 /**
  * 
  */
-package org.gamelib.util.net;
+package org.gamelib.util.io.net;
+
+import org.gamelib.util.io.Serializer;
 
 /**
  * @author Axel
