@@ -56,46 +56,48 @@ public class Server implements EndPoint {
 	}
 
 	public void update() throws IOException {
-		int select = selector.selectNow();
-		if (select != 0) {
+		if (selector.selectNow() != 0) {
 			Set<SelectionKey> keys = selector.selectedKeys();
 			for (Iterator<SelectionKey> iterator = keys.iterator(); iterator.hasNext();) {
 				SelectionKey selectionKey = iterator.next();
 				iterator.remove();
+				if (!selectionKey.isValid()) continue;
 				Connection fromConnection = (Connection) selectionKey.attachment();
 				int ops = selectionKey.readyOps();
 				try {
-					if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) if (fromConnection != null && selectionKey.channel() == fromConnection.tcp.socketChannel) {
-						Object object;
-						while ((object = fromConnection.tcp.readObject()) != null)
+					if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
+						if (fromConnection != null && selectionKey.channel() == fromConnection.tcp.socketChannel) {
+							Object object;
+							while ((object = fromConnection.tcp.readObject()) != null)
+								notifyReceived(fromConnection, object);
+						} else if (udp == null) selectionKey.channel().close();
+						else if (selectionKey.channel() == udp.datagramChannel) {
+							InetSocketAddress fromAddress = udp.readFromAddress();
+							Object object = udp.readObject();
+							if (fromConnection == null) {
+								for (Connection connection : connections)
+									if ((connection.getRemoteUDPAddress() != null && fromAddress.equals(connection.getRemoteUDPAddress())) || (connection.getRemoteTCPAddress() != null && fromAddress.getAddress().equals(connection.getRemoteTCPAddress().getAddress()))) {
+										fromConnection = connection;
+										break;
+									}
+								if (fromConnection == null) connections.add(fromConnection = new Connection());
+							}
+							if (object instanceof RegisterUDP) fromConnection.udpRemoteAddress = fromAddress;
 							notifyReceived(fromConnection, object);
-					} else if (udp == null) selectionKey.channel().close();
-					else if (selectionKey.channel() == udp.datagramChannel) {
-						InetSocketAddress fromAddress = udp.readFromAddress();
-						Object object = udp.readObject();
-						if (fromConnection == null) {
-							for (Connection connection : connections)
-								if ((connection.getRemoteUDPAddress() != null && fromAddress.equals(connection.getRemoteUDPAddress())) || (connection.getRemoteTCPAddress() != null && fromAddress.getAddress().equals(connection.getRemoteTCPAddress().getAddress()))) {
-									fromConnection = connection;
-									break;
-								}
-							if (fromConnection == null) connections.add(fromConnection = new Connection());
 						}
-						if (object instanceof RegisterUDP) fromConnection.udpRemoteAddress = fromAddress;
-						notifyReceived(fromConnection, object);
-					} else if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE && fromConnection != null) fromConnection.tcp.writeOperation();
-					else if ((ops & SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT) {
+					}
+					if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE && fromConnection != null) fromConnection.tcp.writeOperation();
+					// if ((ops & SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT) {
+					if ((ops & SelectionKey.OP_ACCEPT) != 0) {
 						SocketChannel socketChannel = serverChannel.accept();
-						if (socketChannel != null) {
-							for (Connection connection : connections)
-								if (connection.getRemoteUDPAddress() != null && fromConnection.getRemoteTCPAddress().getAddress().equals(connection.getRemoteUDPAddress().getAddress())) {
-									fromConnection = connection; // Found previous udp connection from peer
-									break;
-								}
-							if (fromConnection == null) connections.add(fromConnection = new Connection());
-							(fromConnection.tcp = new TCP()).accept(selector, socketChannel).attach(fromConnection); // Attach connection to accepted key
-							notifyConnected(fromConnection);
-						}
+						for (Connection connection : connections)
+							if (connection.getRemoteUDPAddress() != null && fromConnection.getRemoteTCPAddress().getAddress().equals(connection.getRemoteUDPAddress().getAddress())) {
+								fromConnection = connection; // Found previous udp connection from peer
+								break;
+							}
+						if (fromConnection == null) connections.add(fromConnection = new Connection());
+						(fromConnection.tcp = new TCP()).accept(selector, socketChannel).attach(fromConnection); // Attach connection to accepted key
+						notifyConnected(fromConnection);
 					}
 				} catch (CancelledKeyException e) {
 					if (fromConnection != null) {

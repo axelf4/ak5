@@ -6,6 +6,7 @@ package org.gamelib.util.io.net;
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -18,7 +19,7 @@ import org.gamelib.util.io.Buf;
  */
 public class TCP {
 	SocketChannel socketChannel;
-	private SelectionKey selectionKey;
+	SelectionKey selectionKey;
 	private final ByteBuffer readBuffer, writeBuffer;
 	private final Buf readBufferHandle, writeBufferHandle;
 	private int currentObjectLength = 0;
@@ -45,7 +46,7 @@ public class TCP {
 		try {
 			this.socketChannel = socketChannel;
 			socketChannel.configureBlocking(false);
-			socketChannel.socket().setTcpNoDelay(true);
+			socketChannel.setOption(StandardSocketOptions.TCP_NODELAY, true); // socketChannel.socket().setTcpNoDelay(true);
 
 			return selectionKey = socketChannel.register(selector, SelectionKey.OP_READ); // Return selection key
 		} catch (IOException e) {
@@ -59,18 +60,25 @@ public class TCP {
 	 * 
 	 * @param address
 	 * @param selector
+	 * @return
 	 * @throws IOException
+	 * @return whether the connection established
 	 */
-	public void connect(Selector selector, SocketAddress address)
+	public boolean connect(Selector selector, SocketAddress address)
 			throws IOException {
 		close();
 		try {
 			this.socketChannel = selector.provider().openSocketChannel();
+			socketChannel.setOption(StandardSocketOptions.TCP_NODELAY, true); // socketChannel.socket().setTcpNoDelay(true);
+			socketChannel.socket().connect(address); // Connect using blocking mode for simplicity.
 			socketChannel.configureBlocking(false);
-			socketChannel.socket().setTcpNoDelay(true);
+			selectionKey = socketChannel.register(selector, SelectionKey.OP_READ);
+			return true;
 
-			selectionKey = socketChannel.register(selector, SelectionKey.OP_CONNECT); // , this
-			socketChannel.connect(address);
+			// selectionKey = socketChannel.register(selector, SelectionKey.OP_CONNECT);
+			// boolean connected = socketChannel.connect(address);
+			// // connected |= socketChannel.finishConnect();
+			// return connected;
 		} catch (IOException e) {
 			close();
 			throw new IOException("Unable to connect to: " + address, e);
