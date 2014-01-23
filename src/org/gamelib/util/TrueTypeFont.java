@@ -27,9 +27,8 @@ import org.gamelib.util.geom.Rectangle;
  * @author pwnedary
  */
 public class TrueTypeFont extends FontImpl {
-
 	/** Array that holds necessary information about the font characters positions */
-	private Rectangle[] charArray = new Rectangle[256];
+	private Rectangle[] glyphs = new Rectangle[256];
 	/** Map of user defined font characters (Character <-> Rectangle) */
 	private Map<Character, Rectangle> customChars = new HashMap<>();
 
@@ -142,30 +141,30 @@ public class TrueTypeFont extends FontImpl {
 
 				BufferedImage fontImage = getFontImage(ch);
 
-				Rectangle newIntObject = new Rectangle();
+				Rectangle glyph = new Rectangle();
 
-				newIntObject.setWidth(fontImage.getWidth());
-				newIntObject.setHeight(fontImage.getHeight());
+				glyph.setWidth(fontImage.getWidth());
+				glyph.setHeight(fontImage.getHeight());
 
-				if (positionX + newIntObject.getWidth() >= textureWidth) {
+				if (positionX + glyph.getWidth() >= textureWidth) {
 					positionX = 0;
 					positionY += rowHeight;
 					rowHeight = 0;
 				}
 
-				newIntObject.setX(positionX);
-				newIntObject.setY(positionY);
+				glyph.setX(positionX);
+				glyph.setY(positionY);
 
-				if (newIntObject.getHeight() > fontHeight) fontHeight = newIntObject.getHeight();
-				if (newIntObject.getHeight() > rowHeight) rowHeight = newIntObject.getHeight();
+				if (glyph.getHeight() > fontHeight) fontHeight = glyph.getHeight();
+				if (glyph.getHeight() > rowHeight) rowHeight = glyph.getHeight();
 
 				// Draw it here
 				g.drawImage(fontImage, positionX, positionY, null);
 
-				positionX += newIntObject.getWidth();
+				positionX += glyph.getWidth();
 
-				if (i < 256) charArray[i] = newIntObject;// standard characters
-				else customChars.put(new Character(ch), newIntObject); // custom characters
+				if (i < 256) glyphs[i] = glyph;// standard characters
+				else customChars.put(new Character(ch), glyph); // custom characters
 
 				fontImage = null;
 			}
@@ -202,7 +201,7 @@ public class TrueTypeFont extends FontImpl {
 			for (int l = startIndex; l <= endIndex; l++) {
 				charCurrent = str.charAt(l);
 				if (charCurrent == '\n') break;
-				if (charCurrent < 256) intObject = charArray[charCurrent];
+				if (charCurrent < 256) intObject = glyphs[charCurrent];
 				else intObject = (Rectangle) customChars.get(new Character((char) charCurrent));
 				totalwidth += intObject.getWidth() - correctL;
 			}
@@ -218,7 +217,7 @@ public class TrueTypeFont extends FontImpl {
 
 		while (i >= startIndex && i <= endIndex) {
 			charCurrent = str.charAt(i);
-			intObject = charCurrent < 256 ? charArray[charCurrent] : customChars.get(Character.valueOf((char) charCurrent));
+			intObject = charCurrent < 256 ? glyphs[charCurrent] : customChars.get(Character.valueOf((char) charCurrent));
 
 			if (intObject != null) {
 				if (d < 0) totalwidth += (intObject.getWidth() - c) * d;
@@ -229,7 +228,7 @@ public class TrueTypeFont extends FontImpl {
 						for (int l = i + 1; l <= endIndex; l++) {
 							charCurrent = str.charAt(l);
 							if (charCurrent == '\n') break;
-							if (charCurrent < 256) intObject = charArray[charCurrent];
+							if (charCurrent < 256) intObject = glyphs[charCurrent];
 							else intObject = (Rectangle) customChars.get(new Character((char) charCurrent));
 							totalwidth += intObject.getWidth() - correctL;
 						}
@@ -252,7 +251,7 @@ public class TrueTypeFont extends FontImpl {
 		int currentChar = 0;
 		for (int i = 0; i < str.length(); i++) {
 			currentChar = str.charAt(i);
-			intObject = currentChar < 256 ? charArray[currentChar] : customChars.get(Character.valueOf((char) currentChar));
+			intObject = currentChar < 256 ? glyphs[currentChar] : customChars.get(Character.valueOf((char) currentChar));
 
 			if (intObject != null) totalwidth += intObject.getWidth() - correctL;
 		}
