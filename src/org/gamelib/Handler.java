@@ -12,37 +12,43 @@ import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Input;
 
 /**
- * Captures registered {@link Event}s.
+ * Callback SAM (Single Abstract Method)-interface for subscribed {@link Event}s. At registration all {@link Event}s will be subscribed to, but excluded as {@link #handle(Event)} denies.
+ * 
  * @author pwnedary
  */
 public interface Handler {
 	/**
-	 * Called when one of the listened events are fired.
-	 * @param event the triggered event
-	 * @return whether this handler is listening for the event
+	 * Handles the published {@code event}. Returns <tt>false</tt> if this {@link Handler} isn't subscribing to {@link Event}s of {@linkplain Event#getClass() <code>event</code>'s class} anymore.
+	 * 
+	 * @param event the {@link Event} being published
+	 * @return <tt>true</tt> if subscribing to event
 	 */
 	public boolean handle(Event event);
 
+	/** An Event that occurred; may hold additional information. */
 	public interface Event {
 		/**
-		 * Returns whether this {@link Event} has been cancelled and won't continue to be dispatched.
-		 * @return whether cancelled
+		 * Returns whether this {@link Event} has been cancelled and won't get published to underlying handlers.
+		 * 
+		 * @return <tt>true</tt> if cancelled
 		 */
 		public boolean cancelled();
 
-		/** Stops the next handlers from receiving this event. */
+		/** Stops the underlying handlers from receiving this event. */
 		public void cancel();
 
 		/**
-		 * Returns optionally an instance related to the cause of this {@link Event}.
-		 * @return object caused this event
+		 * Returns the object that caused this {@link Event} <i>(optional operation)</i>.
+		 * 
+		 * @return the object that caused this Event
+		 * @throws UnsupportedOperationException If the cause was unknown/specified.
 		 */
 		public Object source();
 
 		public static abstract class EventImpl implements Event {
-			/** If stopped notifying next handlers. */
+			/** If to stop notifying underlying handlers. */
 			public boolean cancelled;
-			/** Optionally the object on which the Event first occurred */
+			/** Optionally the object that caused this Event. */
 			public Object source;
 
 			@Override
@@ -57,6 +63,7 @@ public interface Handler {
 
 			@Override
 			public Object source() {
+				if (source == null) throw new UnsupportedOperationException("No source was declared.");
 				return source;
 			}
 		}
