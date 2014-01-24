@@ -36,7 +36,6 @@ public class Client extends Connection implements EndPoint {
 
 	public void open(InetSocketAddress tcpAddress, InetSocketAddress udpAddress)
 			throws IOException {
-		// selector.wakeup();
 		int timeout = 5000;
 		final long endTime = System.currentTimeMillis() + timeout;
 		try {
@@ -80,8 +79,9 @@ public class Client extends Connection implements EndPoint {
 				if (!selectionKey.isValid()) continue;
 				int ops = selectionKey.readyOps();
 				try {
-					if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
+					if ((ops & SelectionKey.OP_READ) != 0) {
 						if (selectionKey.channel() == tcp.socketChannel) {
+							System.out.println("read tcp client");
 							Object object;
 							while ((object = tcp.readObject()) != null)
 								notifyReceived(object);
@@ -99,12 +99,10 @@ public class Client extends Connection implements EndPoint {
 							}
 						}
 					}
-					if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE) tcp.writeOperation();
-					if ((ops & SelectionKey.OP_CONNECT) == SelectionKey.OP_CONNECT) {
-						System.out.println("client connect key");
+					if ((ops & SelectionKey.OP_WRITE) != 0) tcp.writeOperation();
+					if ((ops & SelectionKey.OP_CONNECT) != 0) {
 						if (((SocketChannel) selectionKey.channel()).finishConnect()) {
 							selectionKey.interestOps(SelectionKey.OP_READ);
-							System.out.println("client connect");
 							notifyConnected(this);
 						}
 					}

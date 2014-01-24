@@ -70,15 +70,13 @@ public class TCP {
 		try {
 			this.socketChannel = selector.provider().openSocketChannel();
 			socketChannel.setOption(StandardSocketOptions.TCP_NODELAY, true); // socketChannel.socket().setTcpNoDelay(true);
-			socketChannel.socket().connect(address); // Connect using blocking mode for simplicity.
+			// socketChannel.socket().connect(address); // Connect using blocking mode for simplicity.
 			socketChannel.configureBlocking(false);
-			selectionKey = socketChannel.register(selector, SelectionKey.OP_READ);
-			return true;
+			// selectionKey = socketChannel.register(selector, SelectionKey.OP_READ);
+			// return true;
 
-			// selectionKey = socketChannel.register(selector, SelectionKey.OP_CONNECT);
-			// boolean connected = socketChannel.connect(address);
-			// // connected |= socketChannel.finishConnect();
-			// return connected;
+			selectionKey = socketChannel.register(selector, SelectionKey.OP_CONNECT);
+			return socketChannel.connect(address);
 		} catch (IOException e) {
 			close();
 			throw new IOException("Unable to connect to: " + address, e);
@@ -105,10 +103,9 @@ public class TCP {
 
 	public int send(Object object) throws IOException {
 		if (socketChannel == null) throw new SocketException("Connection is closed.");
-		// Leave room for length.
 		int start = writeBuffer.position();
 		int lengthLength = writeBufferHandle.intBytes();
-		writeBuffer.position(writeBuffer.position() + lengthLength);
+		writeBuffer.position(writeBuffer.position() + lengthLength); // Leave room for length.
 
 		writeBufferHandle.writeObject(object); // Write data.
 		int end = writeBuffer.position();
@@ -130,7 +127,7 @@ public class TCP {
 			int lengthLength = readBufferHandle.intBytes(); // Read length of next object
 			if (readBuffer.remaining() < lengthLength) {
 				readBuffer.compact();
-				if (socketChannel.read(readBuffer) == -1) throw new SocketException("Connection is closed."); // Read bytes into readBufferHandle
+				if (socketChannel.read(readBuffer) == -1) throw new SocketException("Connection is closed."); // Read bytes into readBuffer
 				readBuffer.flip();
 
 				if (readBuffer.remaining() < lengthLength) return null;
@@ -141,7 +138,7 @@ public class TCP {
 		int length = currentObjectLength;
 		if (readBuffer.remaining() < length) {
 			readBuffer.compact();
-			if (socketChannel.read(readBuffer) == -1) throw new SocketException("Connection is closed."); // Read bytes into readBufferHandle
+			if (socketChannel.read(readBuffer) == -1) throw new SocketException("Connection is closed."); // Read bytes into readBuffer
 			readBuffer.flip();
 
 			if (readBuffer.remaining() < length) return null;

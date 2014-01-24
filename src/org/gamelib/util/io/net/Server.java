@@ -40,7 +40,6 @@ public class Server implements EndPoint {
 	public void open(InetSocketAddress tcpPort, InetSocketAddress udpPort)
 			throws IOException {
 		close();
-		selector.wakeup();
 		try {
 			if (tcpPort != null) {
 				serverChannel = selector.provider().openServerSocketChannel();
@@ -65,7 +64,7 @@ public class Server implements EndPoint {
 				Connection fromConnection = (Connection) selectionKey.attachment();
 				int ops = selectionKey.readyOps();
 				try {
-					if ((ops & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
+					if ((ops & SelectionKey.OP_READ) != 0) {
 						if (fromConnection != null && selectionKey.channel() == fromConnection.tcp.socketChannel) {
 							Object object;
 							while ((object = fromConnection.tcp.readObject()) != null)
@@ -86,8 +85,7 @@ public class Server implements EndPoint {
 							notifyReceived(fromConnection, object);
 						}
 					}
-					if ((ops & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE && fromConnection != null) fromConnection.tcp.writeOperation();
-					// if ((ops & SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT) {
+					if ((ops & SelectionKey.OP_WRITE) != 0 && fromConnection != null) fromConnection.tcp.writeOperation();
 					if ((ops & SelectionKey.OP_ACCEPT) != 0) {
 						SocketChannel socketChannel = serverChannel.accept();
 						for (Connection connection : connections)

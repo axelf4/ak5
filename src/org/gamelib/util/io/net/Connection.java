@@ -30,6 +30,7 @@ public class Connection {
 
 	public int sendTCP(Object object) throws IOException {
 		if (object == null) throw new IllegalArgumentException("object cannot be null");
+		if (tcp == null) throw new IllegalStateException("TCP is not connected.");
 		int length = tcp.send(object);
 		if (length == 0) throw new IOException(this + " TCP had nothing to send.");
 		return length;

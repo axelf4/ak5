@@ -10,35 +10,91 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.nio.InvalidMarkException;
 import java.nio.charset.StandardCharsets;
 
 import org.gamelib.util.io.Serializer.Serialization;
 
 /**
- * A (<code>byte</code>) buffer implementing {@link ObjectSerialization} for ease by way of de/serialization. Most commonly you'd just want to wrap a nio {@link ByteBuffer} in {@link NIOByteBuffer}.
+ * A random and sequential accessible sequence of zero or more bytes (octets), abstracting byte arrays ({@code byte[]}) and {@linkplain ByteBuffer NIO Buffers}.
  * 
  * @author pwnedary
  */
 public interface Buf extends Strm, ObjectSerialization {
-	/** Returns this buffer's capacity. */
+	/**
+	 * Returns the number of bytes (octets) this buffer can contain.
+	 * 
+	 * @return the capacity
+	 */
 	int capacity();
 
+	/**
+	 * Returns this buffer's position. </p>
+	 * 
+	 * @return The position of this buffer
+	 */
 	int position();
 
-	void position(int newPosition);
+	/**
+	 * Sets this buffer's position. If the mark is defined and larger than the new position then it is discarded.
+	 * 
+	 * @param newPosition The new position value; must be non-negative and no larger than the current limit
+	 * @return This buffer
+	 * @throws IllegalArgumentException If the preconditions on <tt>newPosition</tt> do not hold
+	 */
+	Buf position(int newPosition);
 
+	/**
+	 * Returns this buffer's limit.
+	 * 
+	 * @return The limit of this buffer
+	 */
 	int limit();
 
-	void limit(int newLimit);
+	/**
+	 * Sets this buffer's limit. If the position is larger than the new limit then it is set to the new limit. If the mark is defined and larger than the new limit then it is discarded.
+	 * 
+	 * @param newLimit The new limit value; must be non-negative and no larger than this buffer's capacity
+	 * @return This buffer
+	 * @throws IllegalArgumentException If the preconditions on <tt>newLimit</tt> do not hold
+	 */
+	Buf limit(int newLimit);
 
-	/** Clears this buffer by setting the position to zero and the limit to the capacity. */
-	void clear();
+	/**
+	 * Sets this buffer's mark at its position.
+	 * 
+	 * @return This buffer
+	 */
+	Buf mark();
 
-	/** Flips this buffer by setting the limit to the position and the position to zero. */
-	void flip();
+	/**
+	 * Resets this buffer's position to the previously-marked position. Invoking this method neither changes nor discards the mark's value.
+	 * 
+	 * @return This buffer
+	 * @throws InvalidMarkException If the mark has not been set
+	 */
+	Buf reset();
 
-	/** Rewinds this buffer by setting the position to zero. */
-	void rewind();
+	/**
+	 * Clears this buffer by setting the position to zero, the limit to the capacity and discarding the mark.
+	 * 
+	 * @return This buffer
+	 */
+	Buf clear();
+
+	/**
+	 * Flips this buffer by setting the limit to the position, the position to zero and discarding the mark.
+	 * 
+	 * @return This buffer
+	 */
+	Buf flip();
+
+	/**
+	 * Rewinds this buffer by setting the position to zero and discarding the mark.
+	 * 
+	 * @return This buffer
+	 */
+	Buf rewind();
 
 	/**
 	 * Returns the number of bytes between the current position and the limit.
@@ -54,8 +110,9 @@ public interface Buf extends Strm, ObjectSerialization {
 	 */
 	boolean hasRemaining();
 
-	void flush();
+	Buf flush();
 
+	/** Returns a {@linkplain ByteBuffer NIO Byte Buffer} representing this buffer. */
 	ByteBuffer nio();
 
 	/* BYTE */
@@ -76,7 +133,17 @@ public interface Buf extends Strm, ObjectSerialization {
 	@Override
 	public void write(byte[] src, int off, int len);
 
+	/** Enumeration of endianness or byte orders. */
+	public enum ByteOrder {
+		/** Bytes of a multibyte value are ordered from most significant to least significant. */
+		BIG_ENDIAN,
+		/** Bytes of a multibyte value are ordered from least significant to most significant. */
+		LITTLE_ENDIAN;
+	}
+
 	public static abstract class BufImpl extends ObjectSerializationImp implements Buf {
+		protected int mark = -1;
+
 		@Override
 		public int availible() {
 			return capacity() - position();
@@ -100,20 +167,38 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public void clear() {
+		public Buf mark() {
+			this.mark = position();
+			return this;
+		}
+
+		@Override
+		public Buf reset() {
+			if (mark == -1) throw new InvalidMarkException();
+			return position(mark);
+		}
+
+		@Override
+		public Buf clear() {
 			position(0);
 			limit(capacity());
+			this.mark = -1;
+			return this;
 		}
 
 		@Override
-		public void flip() {
+		public Buf flip() {
 			limit(position());
 			position(0);
+			this.mark = -1;
+			return this;
 		}
 
 		@Override
-		public void rewind() {
+		public Buf rewind() {
 			position(0);
+			this.mark = -1;
+			return this;
 		}
 
 		@Override
@@ -124,6 +209,11 @@ public interface Buf extends Strm, ObjectSerialization {
 		@Override
 		public boolean hasRemaining() {
 			return remaining() > 0;
+		}
+
+		@Override
+		public Buf flush() {
+			return this;
 		}
 
 		/** Reads an Enum. */
@@ -229,8 +319,9 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public void position(int newPosition) {
+		public Buf position(int newPosition) {
 			buffer.position(newPosition);
+			return this;
 		}
 
 		@Override
@@ -239,12 +330,40 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public void limit(int newLimit) {
+		public Buf limit(int newLimit) {
 			buffer.limit(newLimit);
+			return this;
 		}
 
 		@Override
-		public void flush() {}
+		public Buf mark() {
+			buffer.mark();
+			return this;
+		}
+
+		@Override
+		public Buf reset() {
+			buffer.reset();
+			return this;
+		}
+
+		@Override
+		public Buf clear() {
+			buffer.clear();
+			return this;
+		}
+
+		@Override
+		public Buf flip() {
+			buffer.flip();
+			return this;
+		}
+
+		@Override
+		public Buf rewind() {
+			buffer.rewind();
+			return this;
+		}
 
 		@Override
 		public ByteBuffer nio() {
@@ -406,8 +525,9 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public void position(int newPosition) {
+		public Buf position(int newPosition) {
 			this.position = newPosition;
+			return this;
 		}
 
 		@Override
@@ -416,8 +536,9 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public void limit(int newLimit) {
+		public Buf limit(int newLimit) {
 			this.limit = newLimit;
+			return this;
 		}
 
 		/** @return true if the buffer has been resized. */
@@ -438,14 +559,15 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public void flush() {
-			if (outputStream == null) return;
+		public Buf flush() {
+			if (outputStream == null) return this;
 			try {
 				outputStream.write(buffer, 0, position);
 			} catch (IOException ex) {
 				throw new RuntimeException(ex);
 			}
 			position = 0;
+			return this;
 		}
 
 		/**
