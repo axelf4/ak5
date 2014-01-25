@@ -5,7 +5,6 @@ package org.gamelib;
 
 /**
  * The registry holding all of the handlers. An handler should be registered with {@link #register(Object)}. <br />
- * TODO add singleton instance in {@link Game}
  * 
  * @author pwnedary
  * @since 0.0.1
@@ -32,7 +31,7 @@ public class EventBus extends Group {
 	}
 
 	/*
-	 *  * Registers an <code>handler</code> for handling events. * / public void register(Handler handler) { main.register(handler); } public void unregister(Handler handler) { main.unregister(handler); }
+	 * * Registers an <code>handler</code> for handling events. * / public void register(Handler handler) { main.register(handler); } public void unregister(Handler handler) { main.unregister(handler); }
 	 */
 
 	/**

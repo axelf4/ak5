@@ -28,7 +28,6 @@ import org.gamelib.Handler.Event;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Backend.BackendImpl;
 import org.gamelib.backend.Color;
-import org.gamelib.backend.Configuration;
 import org.gamelib.backend.Configuration.DisplayConfiguration;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
@@ -61,8 +60,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	LWJGLInput input;
 
 	@Override
-	public void start(Configuration configuration) {
-		super.start(configuration);
+	public void start() {
 		try {
 			DisplayConfiguration config = (DisplayConfiguration) configuration;
 			DisplayMode targetDisplayMode = null;
@@ -93,6 +91,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 			Display.setFullscreen(config.fullscreen());
 			if (configuration instanceof LWJGLConfiguration) Display.setVSyncEnabled(((LWJGLConfiguration) configuration).vsync());
 			Display.setResizable(config.resizable());
+			setTitle(configuration.getProperty("name", "Game"));
 			Display.create();
 
 			// glMatrixMode(GL_PROJECTION);
@@ -151,8 +150,8 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	}
 
 	@Override
-	public boolean shouldClose() {
-		return Display.isCloseRequested() || super.shouldClose();
+	public boolean keepRunning() {
+		return !Display.isCloseRequested() && super.keepRunning();
 	}
 
 	@Override
@@ -168,8 +167,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	}
 
 	@Override
-	public void stop() {
-		super.stop();
+	public void dispose() {
 		Display.destroy();
 		AL10.alDeleteSources(source);
 		AL10.alDeleteBuffers(buffer);
@@ -220,6 +218,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	/**
 	 * Convert the buffered image to a texture
+	 * 
 	 * @param bufferedImage The image to convert to a texture
 	 * @param image The texture to store the data into
 	 * @return a buffer containing the data

@@ -139,8 +139,10 @@ public interface Handler {
 			}
 		}
 
-		public static final class Resize extends EventImpl implements Event {}
+		public static final class Create extends EventImpl implements Event {}
 
-		public static final class Stop extends EventImpl implements Event {}
+		public static final class Dispose extends EventImpl implements Event {}
+
+		public static final class Resize extends EventImpl implements Event {}
 	}
 }

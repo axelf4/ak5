@@ -7,12 +7,12 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 
-import org.gamelib.Game;
-import org.gamelib.Handler.Event;
 import org.gamelib.EventBus;
+import org.gamelib.Handler.Event;
 
 /**
  * An instance is used for checking user input and derived by {@link Backend}.
+ * 
  * @author pwnedary
  */
 public interface Input {
@@ -46,6 +46,7 @@ public interface Input {
 
 	/**
 	 * Returns whether the <code>key</code> is pressed.
+	 * 
 	 * @param keycode The key code as found in {@link Input.Key}
 	 * @return whether the key is pressed
 	 */
@@ -54,6 +55,7 @@ public interface Input {
 	/**
 	 * Returns whether the mouse <code>button</code> is pressed.<br />
 	 * {@link #BUTTON1}, {@link #BUTTON2}, {@link #BUTTON3} or {@link #NOBUTTON} if none.
+	 * 
 	 * @param button which button to check for
 	 * @return whether the mouse button is pressed
 	 */
@@ -61,12 +63,14 @@ public interface Input {
 
 	/**
 	 * Returns the <code>x</code> position of the mouse cursor within the container.
+	 * 
 	 * @return The x position of the mouse
 	 */
 	int getMouseX();
 
 	/**
 	 * Returns the <code>y</code> position of the mouse cursor within the container.
+	 * 
 	 * @return The y position of the mouse
 	 */
 	int getMouseY();
@@ -79,6 +83,7 @@ public interface Input {
 
 	/**
 	 * Moves the mouse to the given coordinates, (<code>x</code>,<code>y</code>).
+	 * 
 	 * @param x the mouse's new x-coordinate
 	 * @param y the mouse's new y-coordinate
 	 */
@@ -89,12 +94,14 @@ public interface Input {
 
 	/**
 	 * Sets this window's cursor to show the given image.
+	 * 
 	 * @param image the new cursor image, if null the default
 	 */
 	void setCursor(Image image);
 
 	/**
 	 * Translates the keyCode to match the ones in {@link Input.Key}. The normal user should never have to use this method.
+	 * 
 	 * @param keyCode the key to translate
 	 * @return the translated key
 	 */
@@ -141,7 +148,7 @@ public interface Input {
 		protected void keyEvent(int id, int keycode) {
 			keycode = translateKeyCode(keycode);
 			pressed[keycode] = id == KEY_PRESSED;
-			if (keycode == Key.KEY_ESCAPE) Game.instance().stop(); // debugging
+			// if (keycode == Key.KEY_ESCAPE) Game2.instance().stop(); // debugging
 			EventBus.instance().dispatch(new Event.Key(this, id, keycode));
 		}
 
@@ -160,6 +167,7 @@ public interface Input {
 
 	/**
 	 * Constants for keyboard hardware. Virtual key codes.
+	 * 
 	 * @see java.awt.event.KeyEvent
 	 */
 	public static final class Key {

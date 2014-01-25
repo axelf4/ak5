@@ -5,6 +5,7 @@ package org.gamelib;
 
 /**
  * A {@link Runnable} that runs smoothly and takes care of drawing between updates.
+ * 
  * @author pwnedary
  */
 public interface Loop extends Runnable {
@@ -28,8 +29,12 @@ public interface Loop extends Runnable {
 		/** The game should draw onto the canvas. */
 		public void draw(float delta);
 
-		/** @return whether to stop */
-		public boolean shouldStop();
+		/**
+		 * Returns <tt>true</tt> if the {@link Loop} should keep running.
+		 * 
+		 * @return whether to keep running
+		 */
+		boolean keepRunning();
 	}
 
 }
