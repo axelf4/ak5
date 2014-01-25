@@ -18,7 +18,18 @@ import org.gamelib.backend.Input;
  */
 public interface Handler {
 	/**
-	 * Handles the published {@code event}. Returns <tt>false</tt> if this {@link Handler} isn't subscribing to {@link Event}s of {@linkplain Event#getClass() <code>event</code>'s class} anymore.
+	 * Handles the published {@code event}.
+	 * <p>
+	 * Returns <tt>false</tt> if this {@link Handler} isn't subscribing to {@link Event}s of {@linkplain Event#getClass() <code>event</code>'s class}. For example:
+	 * 
+	 * <pre>
+	 * public boolean handle(Event event) {
+	 *  if (event instanceof Event.Tick) {
+	 *   ...
+	 *  } else return false;
+	 *  return true;
+	 * }
+	 * </pre>
 	 * 
 	 * @param event the {@link Event} being published
 	 * @return <tt>true</tt> if subscribing to event
