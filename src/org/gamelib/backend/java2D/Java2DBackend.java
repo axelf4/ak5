@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
@@ -25,6 +26,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import org.gamelib.Drawable;
 import org.gamelib.backend.Backend;
@@ -45,20 +47,23 @@ public class Java2DBackend extends BackendImpl implements Backend {
 	/** {@linkplain Container AWT Container} for {@link #panel}. */
 	private final Container container;
 	/** The canvas drawn upon. */
-	private final Java2DPanel panel;
+	private final Java2DPanel panel = new Java2DPanel();
 	/** The {@link Input} instance to use. */
-	private final Java2DInput input;
+	private final Java2DInput input = new Java2DInput(panel);
 	/** Tracker for waiting for loading resources. */
-	private final MediaTracker tracker;
+	private final MediaTracker tracker = new MediaTracker(panel);
 	/** The ids used by {@link #tracker}. */
 	private int nextAvailableId = 0;
 
 	private Java2DGraphics graphics;
 
+	public Java2DBackend() {
+		this(new JFrame());
+	}
+
 	public Java2DBackend(Container container) {
-		(this.container = container).add(panel = new Java2DPanel());
-		input = new Java2DInput(panel);
-		tracker = new MediaTracker(panel);
+		// (this.container = container).add(panel = new Java2DPanel());
+		this.container = container;
 	}
 
 	@Override
@@ -107,23 +112,34 @@ public class Java2DBackend extends BackendImpl implements Backend {
 
 	@Override
 	public void start() {
-		DisplayConfiguration config = (DisplayConfiguration) configuration;
-		if (container instanceof JFrame) {
-			((JFrame) container).setResizable(config.resizable());
-			// ((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			((JFrame) container).setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-			((JFrame) container).addWindowListener(new WindowAdapter() {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
 				@Override
-				public void windowClosing(WindowEvent e) {
-					stop();
+				public void run() {
+					DisplayConfiguration config = (DisplayConfiguration) configuration;
+					if (container instanceof JFrame) {
+						((JFrame) container).setResizable(config.resizable());
+						// ((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+						((JFrame) container).setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+						((JFrame) container).addWindowListener(new WindowAdapter() {
+							@Override
+							public void windowClosing(WindowEvent e) {
+								stop();
+							}
+						});
+
+						setFullscreen((JFrame) container, config.fullscreen());
+						if (!config.fullscreen()) container.setSize(config.getWidth(), config.getHeight());
+					} else if (container instanceof JApplet) ((JApplet) container).resize(config.getWidth(), config.getHeight());
+					panel.setSize(config.getWidth(), config.getHeight());
+					container.add(panel);
+					setTitle(configuration.getProperty("name", "Game"));
+					// try { tracker.waitForAll(); // wait for loading files } catch (InterruptedException e) { e.printStackTrace(); }
 				}
 			});
-
-			setFullscreen((JFrame) container, config.fullscreen());
-			if (!config.fullscreen()) container.setSize(config.getWidth(), config.getHeight());
-		} else if (container instanceof JApplet) ((JApplet) container).resize(config.getWidth(), config.getHeight());
-		setTitle(configuration.getProperty("name", "Game"));
-		// try { tracker.waitForAll(); // wait for loading files } catch (InterruptedException e) { e.printStackTrace(); }
+		} catch (InvocationTargetException | InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

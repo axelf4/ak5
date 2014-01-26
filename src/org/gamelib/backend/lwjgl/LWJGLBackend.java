@@ -6,6 +6,8 @@ package org.gamelib.backend.lwjgl;
 import static org.gamelib.backend.lwjgl.LWJGLSound.*;
 import static org.lwjgl.opengl.GL11.*;
 
+import java.awt.Canvas;
+import java.awt.Container;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -58,6 +60,31 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	LWJGLGraphics graphics;
 	LWJGLInput input;
+	/** The Display's parent. */
+	private Canvas parent;
+
+	public LWJGLBackend(Container container) {
+		parent = new Canvas() {
+			private static final long serialVersionUID = -1322716872632362790L;
+
+			@Override
+			public final void addNotify() {
+				super.addNotify();
+				// startLWJGL();
+			}
+
+			@Override
+			public final void removeNotify() {
+				stop();
+				super.removeNotify();
+			}
+		};
+		parent.setSize(container.getWidth(), container.getHeight());
+		container.add(parent);
+		parent.setFocusable(true);
+		parent.requestFocus();
+		parent.setIgnoreRepaint(true);
+	}
 
 	@Override
 	public void start() {
@@ -92,6 +119,8 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 			if (configuration instanceof LWJGLConfiguration) Display.setVSyncEnabled(((LWJGLConfiguration) configuration).vsync());
 			Display.setResizable(config.resizable());
 			setTitle(configuration.getProperty("name", "Game"));
+			if (parent != null) parent.setSize(config.getWidth(), config.getHeight()); // parent.getParent().setSize(config.getWidth(), config.getHeight());
+			Display.setParent(parent);
 			Display.create();
 
 			// glMatrixMode(GL_PROJECTION);

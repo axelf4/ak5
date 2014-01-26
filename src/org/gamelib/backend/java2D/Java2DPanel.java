@@ -3,11 +3,9 @@
  */
 package org.gamelib.backend.java2D;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -31,6 +29,7 @@ public class Java2DPanel extends JPanel {
 
 	public Java2DPanel() {
 		setIgnoreRepaint(true);
+		setFocusable(true);
 		setRequestFocusEnabled(true);
 		// g2d = (Graphics2D) new BufferedImage(1, 1, BufferedImage.TYPE_BYTE_GRAY).getGraphics();
 		addComponentListener(new ComponentAdapter() {
@@ -48,8 +47,7 @@ public class Java2DPanel extends JPanel {
 			do {
 				if (volatileImage == null || volatileImage.validate(getGraphicsConfiguration()) == VolatileImage.IMAGE_INCOMPATIBLE) volatileImage = createVolatileImage(getWidth(), getHeight());
 				g2d = volatileImage.createGraphics();
-				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+				// g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 				g2d.setColor(Color.WHITE);
 				g2d.fillRect(0, 0, getWidth(), getHeight()); // clear screen
