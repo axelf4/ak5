@@ -7,12 +7,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.gamelib.util.slow.reflection.Reflection;
 
 /**
  * An alternative to {@link java.lang.Enum}, for representing enumerations.
+ * 
  * @see java.lang.Enum
  * @author pwnedary
  */
@@ -26,7 +28,8 @@ public class Enum<E extends Enum<E>> implements Comparable<E> {
 
 	public Enum() {
 		if (constructor) return;
-		@SuppressWarnings("rawtypes") Class<? extends Enum> type = this.getClass();
+		@SuppressWarnings("rawtypes")
+		Class<? extends Enum> type = this.getClass();
 		if (type.getSuperclass() != Enum.class) throw new Error("Enums cannot be extended.");
 
 		constructor = true;
@@ -62,6 +65,7 @@ public class Enum<E extends Enum<E>> implements Comparable<E> {
 
 	/**
 	 * Returns the ordinal of this enumeration constant (its position in its enum declaration, where the initial constant is assigned an ordinal of zero). Most programmers will have no use for this method. It is designed for use by sophisticated enum-based data structures, such as {@link java.util.EnumSet} and {@link java.util.EnumMap}.
+	 * 
 	 * @return the ordinal of this enumeration constant
 	 */
 	public final int ordinal() {
@@ -96,6 +100,7 @@ public class Enum<E extends Enum<E>> implements Comparable<E> {
 
 	/**
 	 * Throws CloneNotSupportedException. This guarantees that enums are never cloned, which is necessary to preserve their "singleton" status.
+	 * 
 	 * @return (never returns)
 	 */
 	@Override
@@ -118,6 +123,7 @@ public class Enum<E extends Enum<E>> implements Comparable<E> {
 	 * Returns the enum constant of the specified enum type with the specified name. The name must match exactly an identifier used to declare an enum constant in this type. (Extraneous whitespace characters are not permitted.)
 	 * <p>
 	 * Note that for a particular enum type {@code T}, the implicitly declared {@code public static T valueOf(String)} method on that enum may be used instead of this method to map from a name to the corresponding enum constant. All the constants of an enum type can be obtained by calling the implicit {@code public static T[] values()} method of that type.
+	 * 
 	 * @param <T> The enum type whose constant is to be returned
 	 * @param enumType the {@code Class} object of the enum type from which to return a constant
 	 * @param name the name of the constant to return
@@ -161,15 +167,16 @@ public class Enum<E extends Enum<E>> implements Comparable<E> {
 		if (valuesField == null) throw new RuntimeException();
 		valuesField.setAccessible(true);
 		try {
+			@SuppressWarnings("unchecked")
 			List<E> values = new ArrayList<>(Arrays.asList((E[]) valuesField.get(enumClass)));
-			
+
 			// E newValue = (E) makeEnum(enumClass, name, values.size(), paramTypes, paramValues);
 			Object[] initargs = new Object[paramValues.length + 2];
 			initargs[0] = name;
 			initargs[1] = Integer.valueOf(values.size());
 			System.arraycopy(paramValues, 0, initargs, 2, paramValues.length);
 			E newValue = Reflection.newInstance(enumClass, paramTypes, initargs);
-			
+
 			values.add(newValue);
 			for (Field field : Class.class.getDeclaredFields()) {
 				if (field.getName().contains("enumConstantDirectory") || field.getName().contains("enumConstants")) {
@@ -192,6 +199,22 @@ public class Enum<E extends Enum<E>> implements Comparable<E> {
 		initargs[1] = Integer.valueOf(ordinal);
 		System.arraycopy(paramValues, 0, initargs, 2, paramValues.length);
 		return Reflection.newInstance(enumClass, paramTypes, initargs);
+	}
+
+	public static <E extends java.lang.Enum<E>> EnumSet<E> getEnumSetFromBitmask(int flag, Class<E> elementType) {
+		EnumSet<E> value = EnumSet.noneOf(elementType);
+		E[] values = elementType.getEnumConstants();
+		for (int i = 0, j = 1; i < values.length; i++, j = 1 << i)
+			if ((flag & j) == j) value.add(values[i]);
+		return value;
+	}
+
+	public static <E extends java.lang.Enum<E>> EnumSet<E> getEnumSetFromBitflag(int flag, @SuppressWarnings("unchecked") E... values) {
+		@SuppressWarnings("unchecked")
+		EnumSet<E> value = EnumSet.noneOf((Class<E>) values.getClass().getComponentType());
+		for (int i = 0, j = 1; i < values.length; i++, j = 1 << i)
+			if ((flag & j) == j) value.add(values[i]);
+		return value;
 	}
 
 }
