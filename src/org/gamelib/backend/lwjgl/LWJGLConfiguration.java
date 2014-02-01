@@ -9,8 +9,8 @@ import org.gamelib.backend.DisplayConfiguration;
  * @author pwnedary
  */
 public class LWJGLConfiguration extends DisplayConfiguration {
-	public static final String VSYNC_KEY = "vsync",
-			ORIGIN_BOTTOM_LEFT_KEY = "originBottomLeft";
+	public static final String VSYNC = "vsync",
+			ORIGIN_BOTTOM_LEFT = "originBottomLeft";
 	public boolean vsync = false;
 	public boolean originBottomLeft = false;
 
@@ -23,9 +23,9 @@ public class LWJGLConfiguration extends DisplayConfiguration {
 	public <T> T getProperty(Object key, T... def) {
 		if (key instanceof String) {
 			switch ((String) key) {
-			case VSYNC_KEY:
+			case VSYNC:
 				return (T) Boolean.valueOf(vsync);
-			case ORIGIN_BOTTOM_LEFT_KEY:
+			case ORIGIN_BOTTOM_LEFT:
 				return (T) Boolean.valueOf(originBottomLeft);
 			}
 		}
@@ -36,10 +36,10 @@ public class LWJGLConfiguration extends DisplayConfiguration {
 	public <T> T setProperty(Object key, T value) {
 		if (key instanceof String) {
 			switch ((String) key) {
-			case VSYNC_KEY:
+			case VSYNC:
 				vsync = (Boolean) value;
 				break;
-			case ORIGIN_BOTTOM_LEFT_KEY:
+			case ORIGIN_BOTTOM_LEFT:
 				originBottomLeft = (Boolean) value;
 				break;
 			}
@@ -51,7 +51,7 @@ public class LWJGLConfiguration extends DisplayConfiguration {
 	public boolean hasProperty(Object key) {
 		if (!(key instanceof String)) return false;
 		String string = (String) key;
-		return (string.equals(VSYNC_KEY) && string.equals(ORIGIN_BOTTOM_LEFT_KEY)) || super.hasProperty(string);
+		return (string.equals(VSYNC) && string.equals(ORIGIN_BOTTOM_LEFT)) || super.hasProperty(string);
 	}
 
 	/** If should use vsync */
@@ -76,7 +76,7 @@ public class LWJGLConfiguration extends DisplayConfiguration {
 	@Override
 	public void flush() {
 		super.flush();
-		setProperty(VSYNC_KEY, vsync());
-		setProperty(ORIGIN_BOTTOM_LEFT_KEY, originBottomLeft());
+		setProperty(VSYNC, vsync());
+		setProperty(ORIGIN_BOTTOM_LEFT, originBottomLeft());
 	}
 }

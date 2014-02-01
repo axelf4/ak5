@@ -5,14 +5,16 @@ package org.gamelib.backend;
 
 import org.gamelib.util.Configuration;
 import org.gamelib.util.Configuration.VariableConfiguration;
+import org.gamelib.util.slow.reflection.NativeType;
 
 /**
  * @author pwnedary
  */
 public class DisplayConfiguration extends Configuration.VariableConfigurationImpl implements Configuration, VariableConfiguration {
-	public static final String WIDTH_KEY = "width", HEIGHT_KEY = "height",
-			FULLSCREEN_KEY = "fullscreen", RESIZABLE_KEY = "resizable",
-			TITLE_KEY = "title";
+	/* The different keys. */
+	public static final String WIDTH = "width", HEIGHT = "height",
+			FULLSCREEN = "fullscreen", RESIZABLE = "resizable",
+			TITLE = "title";
 
 	public int width;
 	public int height;
@@ -30,38 +32,38 @@ public class DisplayConfiguration extends Configuration.VariableConfigurationImp
 	public <T> T getProperty(Object key, T... def) {
 		if (key instanceof String) {
 			switch ((String) key) {
-			case WIDTH_KEY:
+			case WIDTH:
 				return (T) Integer.valueOf(width);
-			case HEIGHT_KEY:
+			case HEIGHT:
 				return (T) Integer.valueOf(height);
-			case FULLSCREEN_KEY:
+			case FULLSCREEN:
 				return (T) Boolean.valueOf(fullscreen);
-			case RESIZABLE_KEY:
+			case RESIZABLE:
 				return (T) Boolean.valueOf(resizable);
-			case TITLE_KEY:
+			case TITLE:
 				return (T) title;
 			}
 		}
-		throw new IllegalArgumentException("No such key: " + key);
+		return (T) (def.length == 0 ? new NativeType<>(def.getClass().getComponentType()).getDefaultValue() : (def.length == 1 ? def[0] : def));
 	}
 
 	@Override
 	public <T> T setProperty(Object key, T value) {
 		if (key instanceof String) {
 			switch ((String) key) {
-			case WIDTH_KEY:
+			case WIDTH:
 				width = (Integer) value;
 				break;
-			case HEIGHT_KEY:
+			case HEIGHT:
 				height = (Integer) value;
 				break;
-			case FULLSCREEN_KEY:
+			case FULLSCREEN:
 				fullscreen = (Boolean) value;
 				break;
-			case RESIZABLE_KEY:
+			case RESIZABLE:
 				resizable = (Boolean) value;
 				break;
-			case TITLE_KEY:
+			case TITLE:
 				title = (String) value;
 				break;
 			default:
@@ -75,7 +77,7 @@ public class DisplayConfiguration extends Configuration.VariableConfigurationImp
 	public boolean hasProperty(Object key) {
 		if (!(key instanceof String)) return false;
 		String string = (String) key;
-		return string.equals(WIDTH_KEY) && string.equals(HEIGHT_KEY) && string.equals(FULLSCREEN_KEY) && string.equals(RESIZABLE_KEY);
+		return string.equals(WIDTH) && string.equals(HEIGHT) && string.equals(FULLSCREEN) && string.equals(RESIZABLE);
 	}
 
 	@Override
@@ -83,6 +85,7 @@ public class DisplayConfiguration extends Configuration.VariableConfigurationImp
 
 	/**
 	 * Returns the width of the canvas.
+	 * 
 	 * @return the canvas's width
 	 */
 	public int getWidth() {
@@ -95,6 +98,7 @@ public class DisplayConfiguration extends Configuration.VariableConfigurationImp
 
 	/**
 	 * Returns the height of the canvas.
+	 * 
 	 * @return the canvas's height
 	 */
 	public int getHeight() {
@@ -115,6 +119,7 @@ public class DisplayConfiguration extends Configuration.VariableConfigurationImp
 
 	/**
 	 * Returns, if using a window, allowing it to be resized.
+	 * 
 	 * @return if the window is resizable
 	 */
 	public boolean resizable() {

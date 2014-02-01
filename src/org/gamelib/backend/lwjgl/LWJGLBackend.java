@@ -91,7 +91,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	@Override
 	public void start() {
 		try {
-			DisplayConfiguration config = (LWJGLConfiguration) configuration;
+			DisplayConfiguration config = (DisplayConfiguration) configuration;
 			DisplayMode targetDisplayMode = null;
 			if (config.fullscreen()) {
 				DisplayMode[] modes = Display.getAvailableDisplayModes();
@@ -120,7 +120,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 			Display.setFullscreen(config.fullscreen());
 			if (configuration instanceof LWJGLConfiguration) Display.setVSyncEnabled(((LWJGLConfiguration) configuration).vsync());
 			Display.setResizable(config.resizable());
-			setTitle(configuration.getProperty(DisplayConfiguration.TITLE_KEY, ""));
+			setTitle(configuration.getProperty(DisplayConfiguration.TITLE, ""));
 			if (parent != null) parent.setSize(config.getWidth(), config.getHeight()); // parent.getParent().setSize(config.getWidth(), config.getHeight());
 			Display.setParent(parent);
 			Display.create();
@@ -249,6 +249,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	/**
 	 * Convert the buffered image to a texture
+	 * 
 	 * @param bufferedImage The image to convert to a texture
 	 * @param image The texture to store the data into
 	 * @return a buffer containing the data

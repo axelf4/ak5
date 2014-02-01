@@ -116,9 +116,9 @@ public class Java2DBackend extends BackendImpl implements Backend {
 				@Override
 				public void run() {
 					// DisplayConfiguration config = (DisplayConfiguration) configuration;
-					int width = configuration.getProperty(DisplayConfiguration.WIDTH_KEY, 800), height = configuration.getProperty(DisplayConfiguration.HEIGHT_KEY, 600);
+					int width = configuration.getProperty(DisplayConfiguration.WIDTH, 800), height = configuration.getProperty(DisplayConfiguration.HEIGHT, 600);
 					if (container instanceof JFrame) {
-						((JFrame) container).setResizable(configuration.getProperty(DisplayConfiguration.RESIZABLE_KEY, false));
+						((JFrame) container).setResizable(configuration.getProperty(DisplayConfiguration.RESIZABLE, false));
 						// ((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 						((JFrame) container).setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 						((JFrame) container).addWindowListener(new WindowAdapter() {
@@ -128,13 +128,13 @@ public class Java2DBackend extends BackendImpl implements Backend {
 							}
 						});
 
-						boolean fullscreen = configuration.getProperty(DisplayConfiguration.FULLSCREEN_KEY, false);
+						boolean fullscreen = configuration.getProperty(DisplayConfiguration.FULLSCREEN, false);
 						setFullscreen((JFrame) container, fullscreen);
 						if (fullscreen) container.setSize(width, height);
 					} else if (container instanceof JApplet) ((JApplet) container).resize(width, height);
 					panel.setSize(width, height);
 					container.add(panel);
-					setTitle(configuration.getProperty(DisplayConfiguration.TITLE_KEY, ""));
+					setTitle(configuration.getProperty(DisplayConfiguration.TITLE, ""));
 					// try { tracker.waitForAll(); // wait for loading files } catch (InterruptedException e) { e.printStackTrace(); }
 				}
 			});
