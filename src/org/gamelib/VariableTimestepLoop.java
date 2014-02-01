@@ -27,7 +27,7 @@ public class VariableTimestepLoop implements Loop {
 		long lastLoopTime = System.nanoTime();
 
 		// keep looping round til the game ends
-		while (!listener.shouldStop()) {
+		while (listener.keepRunning()) {
 			// work out how long its been since the last update, for interpolation
 			long now = System.nanoTime();
 			long updateLength = now - lastLoopTime;

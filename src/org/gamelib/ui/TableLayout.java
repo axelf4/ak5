@@ -15,6 +15,7 @@ import com.esotericsoftware.tablelayout.Toolkit;
 /**
  * @author pwnedary
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class TableLayout extends BaseTableLayout<Handler, Table, TableLayout, TableToolkit> {
 	static {
 		if (Toolkit.instance == null) Toolkit.instance = new TableToolkit();

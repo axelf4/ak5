@@ -3,6 +3,7 @@
  */
 package org.gamelib.backend.java2D;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.LinkedList;
@@ -31,6 +32,7 @@ public class Java2DGraphics implements Graphics {
 	@Override
 	public void setColor(Color color) {
 		g2d.setColor((this.currentColor = color).toAWT());
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) color.getAlpha() / 255));
 	}
 
 	@Override

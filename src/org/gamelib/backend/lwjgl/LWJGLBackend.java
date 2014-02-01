@@ -6,6 +6,8 @@ package org.gamelib.backend.lwjgl;
 import static org.gamelib.backend.lwjgl.LWJGLSound.*;
 import static org.lwjgl.opengl.GL11.*;
 
+import java.awt.Canvas;
+import java.awt.Container;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -28,8 +30,7 @@ import org.gamelib.Handler.Event;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Backend.BackendImpl;
 import org.gamelib.backend.Color;
-import org.gamelib.backend.Configuration;
-import org.gamelib.backend.Configuration.DisplayConfiguration;
+import org.gamelib.backend.DisplayConfiguration;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
@@ -59,12 +60,36 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	LWJGLGraphics graphics;
 	LWJGLInput input;
+	/** The Display's parent. */
+	private Canvas parent;
+
+	public LWJGLBackend(Container container) {
+		parent = new Canvas() {
+			private static final long serialVersionUID = -1322716872632362790L;
+
+			@Override
+			public final void addNotify() {
+				super.addNotify();
+				// startLWJGL();
+			}
+
+			@Override
+			public final void removeNotify() {
+				stop();
+				super.removeNotify();
+			}
+		};
+		parent.setSize(container.getWidth(), container.getHeight());
+		container.add(parent);
+		parent.setFocusable(true);
+		parent.requestFocus();
+		parent.setIgnoreRepaint(true);
+	}
 
 	@Override
-	public void start(Configuration configuration) {
-		super.start(configuration);
+	public void start() {
 		try {
-			DisplayConfiguration config = (DisplayConfiguration) configuration;
+			DisplayConfiguration config = (LWJGLConfiguration) configuration;
 			DisplayMode targetDisplayMode = null;
 			if (config.fullscreen()) {
 				DisplayMode[] modes = Display.getAvailableDisplayModes();
@@ -93,6 +118,9 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 			Display.setFullscreen(config.fullscreen());
 			if (configuration instanceof LWJGLConfiguration) Display.setVSyncEnabled(((LWJGLConfiguration) configuration).vsync());
 			Display.setResizable(config.resizable());
+			setTitle(configuration.getProperty(DisplayConfiguration.TITLE_KEY, ""));
+			if (parent != null) parent.setSize(config.getWidth(), config.getHeight()); // parent.getParent().setSize(config.getWidth(), config.getHeight());
+			Display.setParent(parent);
 			Display.create();
 
 			// glMatrixMode(GL_PROJECTION);
@@ -151,8 +179,8 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	}
 
 	@Override
-	public boolean shouldClose() {
-		return Display.isCloseRequested() || super.shouldClose();
+	public boolean keepRunning() {
+		return !Display.isCloseRequested() && super.keepRunning();
 	}
 
 	@Override
@@ -168,8 +196,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	}
 
 	@Override
-	public void stop() {
-		super.stop();
+	public void dispose() {
 		Display.destroy();
 		AL10.alDeleteSources(source);
 		AL10.alDeleteBuffers(buffer);

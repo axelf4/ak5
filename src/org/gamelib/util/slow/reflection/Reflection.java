@@ -15,8 +15,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.gamelib.util.slow.reflection.model.Type;
-import org.gamelib.util.slow.reflection.model.Type.ClassType;
 import org.gamelib.util.slow.reflection.proxy.Invocation;
 import org.gamelib.util.slow.reflection.proxy.Proxies;
 import org.gamelib.util.slow.vfs.Vfs;
@@ -108,7 +106,8 @@ public final class Reflection {
 				if (!file.getName().endsWith(".class")) continue;
 				try {
 					// File file = new File(url.getPath());
-					Class clazz = (Class) getAdapter().getOrCreateClass(file);
+					// Class clazz = (Class) getAdapter().getOrCreateClass(file);
+					Class<?> clazz = Object.class;
 					if (clazz == null) continue;
 					for (Annotation annotation : clazz.getAnnotations()) {
 						System.err.println(annotation.annotationType());
@@ -118,10 +117,6 @@ public final class Reflection {
 				}
 			}
 		}
-	}
-
-	public static Adapter<?, ?, ?> getAdapter() {
-		return new ReflectionAdapter();
 	}
 
 	public static void setFieldFinal(Field field, boolean setFinal) {
@@ -186,7 +181,7 @@ public final class Reflection {
 	}
 
 	public static <T> Type<T> type(Class<T> type) {
-		return new ClassType<T>(type);
+		return new NativeType<T>(type);
 	}
 
 }

@@ -35,8 +35,8 @@ public class FixedTimestepLoop implements Loop {
 		// Simple way of finding FPS.
 		int lastSecondTime = (int) (lastUpdateTime / 1000000000);
 		listener.start();
-		
-		while (!listener.shouldStop()) {
+
+		while (listener.keepRunning()) {
 			double now = System.nanoTime();
 			int updateCount = 0;
 

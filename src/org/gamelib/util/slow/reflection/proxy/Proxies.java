@@ -14,22 +14,23 @@ import net.sf.cglib.proxy.MethodInterceptor;
  */
 @SuppressWarnings("unchecked")
 public class Proxies {
-
 	/**
 	 * Creates a dynamic proxy.
+	 * 
 	 * @param clazz The class to be proxied
 	 * @param handler The {@link InvocationHandler} that manages the invocations to the created proxy
 	 * @param interfaces The interfaces that has to be implemented by the new proxy
 	 * @return The newly created proxy
 	 */
 	public static <T> T createProxy(Class<T> clazz, InvocationHandler handler, Class<?>... interfaces) {
-		if (clazz.isInterface() && Proxy.isProxyClass(clazz)) return (T) createNativeJavaProxy(clazz.getClassLoader(), handler, interfaces);
 		if (!isProxable(clazz)) return null;
+		if (clazz.isInterface() && Proxy.isProxyClass(clazz)) return (T) createNativeJavaProxy(clazz.getClassLoader(), handler, interfaces);
 		return (T) createEnhancer(clazz, handler, interfaces).create();
 	}
 
 	/**
 	 * Creates a dynamic proxy.
+	 * 
 	 * @param clazz The class to be proxied
 	 * @param handler The {@link InvocationHandler} that manages the invocations to the created proxy
 	 * @param interfaces The interfaces that has to be implemented by the new proxy
@@ -45,6 +46,7 @@ public class Proxies {
 
 	/**
 	 * Creates a dynamic proxy.
+	 * 
 	 * @param clazz The class to be proxied
 	 * @param handler The {@link InvocationHandler} that manages the invocations to the created proxy
 	 * @param interfaces The interfaces that has to be implemented by the new proxy
@@ -57,6 +59,7 @@ public class Proxies {
 
 	/**
 	 * Check if the given class is nor final neither a primitive one.
+	 * 
 	 * @param clazz The class to be checked
 	 * @return True if the class is proxable, false otherwise
 	 */

@@ -34,8 +34,7 @@ public interface Access<T> {
 					public T get() {
 						try {
 							return (T) field.get(instance);
-						} catch (IllegalArgumentException
-								| IllegalAccessException e) {
+						} catch (IllegalArgumentException | IllegalAccessException e) {
 							e.printStackTrace();
 							return null;
 						}
@@ -45,8 +44,7 @@ public interface Access<T> {
 					public void set(T value) {
 						try {
 							field.set(instance, value);
-						} catch (IllegalArgumentException
-								| IllegalAccessException e) {
+						} catch (IllegalArgumentException | IllegalAccessException e) {
 							e.printStackTrace();
 						}
 					}
@@ -56,5 +54,24 @@ public interface Access<T> {
 				return null;
 			}
 		}
+	}
+
+	class Atomic<T> implements Access<T> {
+		T object;
+
+		public Atomic(T object) {
+			this.object = object;
+		}
+
+		@Override
+		public T get() {
+			return object;
+		}
+
+		@Override
+		public void set(T value) {
+			this.object = value;
+		}
+
 	}
 }

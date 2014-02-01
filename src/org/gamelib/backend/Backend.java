@@ -9,16 +9,26 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.gamelib.Drawable;
-import org.gamelib.Game;
+import org.gamelib.FixedTimestepLoop;
+import org.gamelib.Handler;
+import org.gamelib.Handler.Event;
+import org.gamelib.Loop.LoopListener;
+import org.gamelib.backend.Input.Key;
+import org.gamelib.util.Configuration;
+import org.gamelib.util.Disposable;
 import org.gamelib.util.geom.Rectangle;
 
 /**
  * The class responsible for the technical stuff, such as collecting input and processing it.
  * @author pwnedary
  */
-public interface Backend {
-	/** Starts every aspect of this {@link Backend}. */
-	void start(Configuration configuration);
+public interface Backend extends Disposable {
+	/**
+	 * Starts every aspect of this {@link Backend}.
+	 * @param configuration the configuration matching the Backend
+	 * @param handler Handler to be notified about Event.Create, Tick, Draw, etc.
+	 */
+	void start(Configuration configuration, Handler handler);
 
 	/** Stops every used resource. */
 	void stop();
@@ -29,8 +39,8 @@ public interface Backend {
 	/** @return system time in milliseconds */
 	long getTime();
 
-	/** @return whether the user has clicked the 'X' */
-	boolean shouldClose();
+	/** @return whether the user hasn't clicked the 'X' */
+	boolean keepRunning();
 
 	/** @param title the new window title */
 	void setTitle(String title);
@@ -44,10 +54,10 @@ public interface Backend {
 	/** @return the width of the canvas */
 	int getHeight();
 
-	/** @return a {@link Graphics} context to draw on. */
+	/** @return a {@link Graphics} context to draw on */
 	Graphics getGraphics();
 
-	/** @return a {@link Graphics} context to draw on the <code>image</code>. */
+	/** @return a {@link Graphics} context to draw on {@code image} */
 	Graphics getGraphics(Image image);
 
 	/** @return the processor for input */
@@ -68,28 +78,71 @@ public interface Backend {
 	public Sound getSound(File file) throws IOException;
 
 	public abstract class BackendImpl implements Backend {
-		protected Game game;
 		protected Configuration configuration;
-		boolean shouldStop = false;
-		
+
+		/* * The {@link Thread} running in the background * / private Thread thread; */
+		private boolean running;
+		private Handler handler;
+
 		@Override
-		public void start(Configuration configuration) {
+		public void start(Configuration configuration, Handler handler) {
 			this.configuration = configuration;
+			this.handler = handler;
+
+			running = true;
+			new Thread(configuration.getProperty("loop", new FixedTimestepLoop(new DefaultLoopListener())), handler.toString()).start();
 		}
+
+		protected abstract void start();
 
 		@Override
 		public void stop() {
-			this.shouldStop = true;
+			this.running = false;
 		}
 
 		@Override
-		public boolean shouldClose() {
-			return shouldStop;
+		public boolean keepRunning() {
+			return running;
 		}
 
 		@Override
 		public InputStream getResourceAsStream(String name) {
 			return Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
+		}
+
+		public class DefaultLoopListener implements LoopListener {
+			@Override
+			public void start() {
+				BackendImpl.this.start();
+				handler.handle(new Event.Create()); // Initialize game lastly
+			}
+
+			@Override
+			public void stop() {
+				handler.handle(new Event.Dispose());
+				dispose();
+			}
+
+			@Override
+			public void tick(float delta) {
+				if (getInput().keyPressed(Key.KEY_ESCAPE)) BackendImpl.this.stop();
+				handler.handle(new Event.Tick(delta));
+			}
+
+			@Override
+			public void draw(float delta) {
+				BackendImpl.this.draw(new Drawable() {
+					@Override
+					public void draw(Graphics g, float delta) {
+						handler.handle(new Event.Draw(g, delta));
+					}
+				}, delta);
+			}
+
+			@Override
+			public boolean keepRunning() {
+				return BackendImpl.this.keepRunning();
+			}
 		}
 	}
 }

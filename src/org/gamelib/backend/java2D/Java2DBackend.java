@@ -9,10 +9,13 @@ import java.awt.GraphicsEnvironment;
 import java.awt.MediaTracker;
 import java.awt.Transparency;
 import java.awt.Window;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
@@ -23,12 +26,12 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import org.gamelib.Drawable;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Backend.BackendImpl;
-import org.gamelib.backend.Configuration;
-import org.gamelib.backend.Configuration.DisplayConfiguration;
+import org.gamelib.backend.DisplayConfiguration;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
@@ -36,27 +39,30 @@ import org.gamelib.backend.Sound;
 import org.gamelib.util.geom.Rectangle;
 
 /**
- * The {@link Backend} using Java2D for rendering and resources.
+ * A {@link Backend} using Java2D for rendering and resources.
  * @author pwnedary
  */
 public class Java2DBackend extends BackendImpl implements Backend {
-	/** AWT {@link Container} for {@link #panel} */
+	/** {@linkplain Container AWT Container} for {@link #panel}. */
 	private final Container container;
-	/** The canvas drawn upon */
-	private final Java2DPanel panel;
-	/** The {@link Input} instance to use */
-	private final Java2DInput input;
-	/** Tracker for waiting for loading resources */
-	private final MediaTracker tracker;
-	/** The ids used by {@link #tracker} */
+	/** The canvas drawn upon. */
+	private final Java2DPanel panel = new Java2DPanel();
+	/** The {@link Input} instance to use. */
+	private final Java2DInput input = new Java2DInput(panel);
+	/** Tracker for waiting for loading resources. */
+	private final MediaTracker tracker = new MediaTracker(panel);
+	/** The ids used by {@link #tracker}. */
 	private int nextAvailableId = 0;
 
 	private Java2DGraphics graphics;
 
+	public Java2DBackend() {
+		this(new JFrame());
+	}
+
 	public Java2DBackend(Container container) {
-		(this.container = container).add(panel = new Java2DPanel());
-		tracker = new MediaTracker(panel);
-		input = new Java2DInput(panel);
+		// (this.container = container).add(panel = new Java2DPanel());
+		this.container = container;
 	}
 
 	@Override
@@ -81,11 +87,6 @@ public class Java2DBackend extends BackendImpl implements Backend {
 	}
 
 	@Override
-	public boolean shouldClose() {
-		return false || super.shouldClose();
-	}
-
-	@Override
 	public void setTitle(String s) {
 		if (container instanceof JFrame) ((JFrame) container).setTitle(s);
 	}
@@ -96,8 +97,7 @@ public class Java2DBackend extends BackendImpl implements Backend {
 	}
 
 	@Override
-	public void stop() {
-		super.stop();
+	public void dispose() {
 		GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		graphicsDevice.setFullScreenWindow(null);
 		// if (container instanceof JFrame) container.dispatchEvent(new WindowEvent((JFrame) container, WindowEvent.WINDOW_CLOSING));
@@ -110,18 +110,37 @@ public class Java2DBackend extends BackendImpl implements Backend {
 	}
 
 	@Override
-	public void start(Configuration configuration) {
-		super.start(configuration);
-		DisplayConfiguration config = (DisplayConfiguration) configuration;
-		if (container instanceof JFrame) {
-			((JFrame) container).setResizable(config.resizable());
-			((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			// ((JFrame) container).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); ((JFrame) container).addWindowListener(new WindowAdapter() { @Override public void windowClosed(WindowEvent e) { stop(); } });
+	public void start() {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					// DisplayConfiguration config = (DisplayConfiguration) configuration;
+					int width = configuration.getProperty(DisplayConfiguration.WIDTH_KEY, 800), height = configuration.getProperty(DisplayConfiguration.HEIGHT_KEY, 600);
+					if (container instanceof JFrame) {
+						((JFrame) container).setResizable(configuration.getProperty(DisplayConfiguration.RESIZABLE_KEY, false));
+						// ((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+						((JFrame) container).setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+						((JFrame) container).addWindowListener(new WindowAdapter() {
+							@Override
+							public void windowClosing(WindowEvent e) {
+								stop();
+							}
+						});
 
-			setFullscreen((JFrame) container, config.fullscreen());
-			if (!config.fullscreen()) container.setSize(config.getWidth(), config.getHeight());
-		} else if (container instanceof JApplet) ((JApplet) container).resize(config.getWidth(), config.getHeight());
-		// try { tracker.waitForAll(); // wait for loading files } catch (InterruptedException e) { e.printStackTrace(); }
+						boolean fullscreen = configuration.getProperty(DisplayConfiguration.FULLSCREEN_KEY, false);
+						setFullscreen((JFrame) container, fullscreen);
+						if (fullscreen) container.setSize(width, height);
+					} else if (container instanceof JApplet) ((JApplet) container).resize(width, height);
+					panel.setSize(width, height);
+					container.add(panel);
+					setTitle(configuration.getProperty(DisplayConfiguration.TITLE_KEY, ""));
+					// try { tracker.waitForAll(); // wait for loading files } catch (InterruptedException e) { e.printStackTrace(); }
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
