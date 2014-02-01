@@ -63,6 +63,8 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	/** The Display's parent. */
 	private Canvas parent;
 
+	public LWJGLBackend() {}
+
 	public LWJGLBackend(Container container) {
 		parent = new Canvas() {
 			private static final long serialVersionUID = -1322716872632362790L;
