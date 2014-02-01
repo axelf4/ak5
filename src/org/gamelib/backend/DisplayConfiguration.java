@@ -11,12 +11,14 @@ import org.gamelib.util.Configuration.VariableConfiguration;
  */
 public class DisplayConfiguration extends Configuration.VariableConfigurationImpl implements Configuration, VariableConfiguration {
 	public static final String WIDTH_KEY = "width", HEIGHT_KEY = "height",
-			FULLSCREEN_KEY = "fullscreen", RESIZABLE_KEY = "resizable";
+			FULLSCREEN_KEY = "fullscreen", RESIZABLE_KEY = "resizable",
+			TITLE_KEY = "title";
 
 	public int width;
 	public int height;
 	public boolean fullscreen = false;
 	public boolean resizable = false;
+	public String title = "";
 
 	public DisplayConfiguration(int width, int height) {
 		this.width = width;
@@ -36,6 +38,8 @@ public class DisplayConfiguration extends Configuration.VariableConfigurationImp
 				return (T) Boolean.valueOf(fullscreen);
 			case RESIZABLE_KEY:
 				return (T) Boolean.valueOf(resizable);
+			case TITLE_KEY:
+				return (T) title;
 			}
 		}
 		throw new IllegalArgumentException("No such key: " + key);
@@ -56,6 +60,9 @@ public class DisplayConfiguration extends Configuration.VariableConfigurationImp
 				break;
 			case RESIZABLE_KEY:
 				resizable = (Boolean) value;
+				break;
+			case TITLE_KEY:
+				title = (String) value;
 				break;
 			default:
 				throw new IllegalArgumentException("No such key: " + key);

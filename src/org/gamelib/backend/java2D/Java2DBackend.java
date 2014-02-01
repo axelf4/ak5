@@ -134,7 +134,7 @@ public class Java2DBackend extends BackendImpl implements Backend {
 					} else if (container instanceof JApplet) ((JApplet) container).resize(width, height);
 					panel.setSize(width, height);
 					container.add(panel);
-					setTitle(configuration.getProperty("name", "Game"));
+					setTitle(configuration.getProperty(DisplayConfiguration.TITLE_KEY, ""));
 					// try { tracker.waitForAll(); // wait for loading files } catch (InterruptedException e) { e.printStackTrace(); }
 				}
 			});

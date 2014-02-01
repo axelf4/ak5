@@ -118,7 +118,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 			Display.setFullscreen(config.fullscreen());
 			if (configuration instanceof LWJGLConfiguration) Display.setVSyncEnabled(((LWJGLConfiguration) configuration).vsync());
 			Display.setResizable(config.resizable());
-			setTitle(configuration.getProperty("name", "Game"));
+			setTitle(configuration.getProperty(DisplayConfiguration.TITLE_KEY, ""));
 			if (parent != null) parent.setSize(config.getWidth(), config.getHeight()); // parent.getParent().setSize(config.getWidth(), config.getHeight());
 			Display.setParent(parent);
 			Display.create();
