@@ -17,7 +17,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.gamelib.Game;
+import org.gamelib.backend.Backend;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.util.Font.FontImpl;
@@ -61,26 +61,26 @@ public class TrueTypeFont extends FontImpl {
 	private int correctL = 9, correctR = 8;
 	int format = ALIGN_LEFT;
 
-	public TrueTypeFont(java.awt.Font font, boolean antiAlias, char[] additionalChars, org.gamelib.backend.Color fontColor) {
+	public TrueTypeFont(Backend backend, java.awt.Font font, boolean antiAlias, char[] additionalChars, org.gamelib.backend.Color fontColor) {
 		this.font = font;
 		this.fontSize = font.getSize() + 3;
 		this.antiAlias = antiAlias;
 		this.fontColor = fontColor;
 
-		createSet(additionalChars);
+		createSet(backend, additionalChars);
 
 		fontHeight -= 1;
 		if (fontHeight <= 0) fontHeight = 1;
 	}
 
-	public TrueTypeFont(java.awt.Font font) {
-		this(font, true, null, org.gamelib.backend.Color.BLACK);
+	public TrueTypeFont(Backend backend, java.awt.Font font) {
+		this(backend, font, true, null, org.gamelib.backend.Color.BLACK);
 	}
 
-	public TrueTypeFont() {
+	public TrueTypeFont(Backend backend) {
 		// this(new java.awt.Font(null, Font.PLAIN, 15), true, null, org.gamelib.util.Color.BLACK);
 		// this(getFont(new File("org/gamelib/util/arial.ttf"), PLAIN, DEFAULT_SIZE));
-		this(getFont(new File("arial.ttf"), PLAIN, DEFAULT_SIZE));
+		this(backend, getFont(new File("arial.ttf"), PLAIN, DEFAULT_SIZE));
 	}
 
 	public void setCorrection(boolean on) {
@@ -120,7 +120,7 @@ public class TrueTypeFont extends FontImpl {
 
 	}
 
-	private void createSet(char[] customCharsArray) {
+	private void createSet(Backend backend, char[] customCharsArray) {
 		// If there are custom chars then I expand the font texture twice
 		if (customCharsArray != null && customCharsArray.length > 0) textureWidth *= 2;
 
@@ -169,7 +169,7 @@ public class TrueTypeFont extends FontImpl {
 				fontImage = null;
 			}
 
-			fontImage = Game.getBackend().getImage(imgTemp);
+			fontImage = backend.getImage(imgTemp);
 		} catch (Exception e) {
 			System.err.println("Failed to create font.");
 			e.printStackTrace();

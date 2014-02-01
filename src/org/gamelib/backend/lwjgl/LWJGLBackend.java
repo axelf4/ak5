@@ -26,6 +26,7 @@ import javax.imageio.ImageIO;
 
 import org.gamelib.Drawable;
 import org.gamelib.EventBus;
+import org.gamelib.Handler;
 import org.gamelib.Handler.Event;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Backend.BackendImpl;
@@ -35,6 +36,7 @@ import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
 import org.gamelib.backend.Sound;
+import org.gamelib.util.Configuration;
 import org.gamelib.util.Math2;
 import org.gamelib.util.geom.Matrix4;
 import org.gamelib.util.geom.Rectangle;
@@ -58,8 +60,8 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	/** The color model for GL images */
 	private static final ColorModel glColorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[] { 8, 8, 8, 0 }, false, false, ComponentColorModel.OPAQUE, DataBuffer.TYPE_BYTE);;
 
-	LWJGLGraphics graphics;
-	LWJGLInput input;
+	private LWJGLGraphics graphics;
+	private LWJGLInput input;
 	/** The Display's parent. */
 	private Canvas parent;
 
@@ -86,6 +88,12 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		parent.setFocusable(true);
 		parent.requestFocus();
 		parent.setIgnoreRepaint(true);
+	}
+
+	@Override
+	public void start(Configuration configuration, Handler handler) {
+		super.start(configuration, handler);
+		input = new LWJGLInput(handler);
 	}
 
 	@Override
@@ -149,7 +157,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	@Override
 	public Input getInput() {
-		return input == null ? input = new LWJGLInput() : input;
+		return input;
 	}
 
 	@Override

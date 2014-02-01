@@ -3,6 +3,7 @@
  */
 package org.gamelib.backend.lwjgl;
 
+import org.gamelib.Handler;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
 import org.gamelib.backend.Input.InputImpl;
@@ -14,6 +15,10 @@ import org.lwjgl.opengl.Display;
  * @author pwnedary
  */
 public class LWJGLInput extends InputImpl implements Input {
+	public LWJGLInput(Handler handler) {
+		super(handler);
+	}
+
 	@Override
 	public void poll() {
 		while (Keyboard.next())
@@ -31,7 +36,7 @@ public class LWJGLInput extends InputImpl implements Input {
 			button = button == 1 ? BUTTON3 : button;
 			mouseEvent(pressed ? MOUSE_PRESSED : MOUSE_RELEASED, button, mouseX, mouseY); // pressed or released
 			if (Mouse.getEventDX() != 0 || Mouse.getEventDY() != 0) mouseEvent(pressed ? MOUSE_DRAGGED : MOUSE_MOVED, button, mouseX, mouseY); // mouse moved
-			// if (!pressed) mouseEvent(MOUSE_CLICKED, button, mouseX, mouseY); // stupid clicked event
+			// if (!pressed) mouseEvent(MOUSE_CLICKED, button, mouseX, mouseY);
 		}
 	}
 

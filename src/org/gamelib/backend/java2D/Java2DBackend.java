@@ -24,11 +24,11 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import org.gamelib.Drawable;
+import org.gamelib.Handler;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Backend.BackendImpl;
 import org.gamelib.backend.DisplayConfiguration;
@@ -36,21 +36,23 @@ import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
 import org.gamelib.backend.Sound;
+import org.gamelib.util.Configuration;
 import org.gamelib.util.geom.Rectangle;
 
 /**
  * A {@link Backend} using Java2D for rendering and resources.
+ * 
  * @author pwnedary
  */
 public class Java2DBackend extends BackendImpl implements Backend {
 	/** {@linkplain Container AWT Container} for {@link #panel}. */
 	private final Container container;
 	/** The canvas drawn upon. */
-	private final Java2DPanel panel = new Java2DPanel();
+	private Java2DPanel panel;
 	/** The {@link Input} instance to use. */
-	private final Java2DInput input = new Java2DInput(panel);
+	private Java2DInput input;
 	/** Tracker for waiting for loading resources. */
-	private final MediaTracker tracker = new MediaTracker(panel);
+	private MediaTracker tracker;
 	/** The ids used by {@link #tracker}. */
 	private int nextAvailableId = 0;
 
@@ -110,13 +112,17 @@ public class Java2DBackend extends BackendImpl implements Backend {
 	}
 
 	@Override
-	public void start() {
+	public void start(final Configuration configuration, final Handler handler) {
+		super.start(configuration, handler);
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				@Override
 				public void run() {
-					// DisplayConfiguration config = (DisplayConfiguration) configuration;
 					int width = configuration.getProperty(DisplayConfiguration.WIDTH, 800), height = configuration.getProperty(DisplayConfiguration.HEIGHT, 600);
+					container.add(panel = new Java2DPanel(handler));
+					panel.setSize(width, height);
+					input = new Java2DInput(panel, handler);
+					tracker = new MediaTracker(panel);
 					if (container instanceof JFrame) {
 						((JFrame) container).setResizable(configuration.getProperty(DisplayConfiguration.RESIZABLE, false));
 						// ((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -130,10 +136,8 @@ public class Java2DBackend extends BackendImpl implements Backend {
 
 						boolean fullscreen = configuration.getProperty(DisplayConfiguration.FULLSCREEN, false);
 						setFullscreen((JFrame) container, fullscreen);
-						if (fullscreen) container.setSize(width, height);
-					} else if (container instanceof JApplet) ((JApplet) container).resize(width, height);
-					panel.setSize(width, height);
-					container.add(panel);
+						if (!fullscreen) container.setSize(width, height);
+					} // else if (container instanceof Applet) ((Applet) container).resize(width, height);
 					setTitle(configuration.getProperty(DisplayConfiguration.TITLE, ""));
 					// try { tracker.waitForAll(); // wait for loading files } catch (InterruptedException e) { e.printStackTrace(); }
 				}
@@ -142,6 +146,9 @@ public class Java2DBackend extends BackendImpl implements Backend {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void start() {}
 
 	@Override
 	public int getWidth() {

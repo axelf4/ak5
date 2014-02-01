@@ -7,13 +7,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
-import org.gamelib.Game;
+import org.gamelib.backend.Backend;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.w3c.dom.Element;
 
 /**
  * A layered map, intended to be parsed from an external map editor.
+ * 
  * @see TileED TileED map editor <a href="http://mapeditor.org/">http://mapeditor.org/</a>
  * @author pwnedary
  */
@@ -25,6 +26,7 @@ public interface Map extends Serializable {
 
 	/**
 	 * Returns the tile at <code>(x,y),layer</code>'s ID.
+	 * 
 	 * @param x the x-coordinate of the tile
 	 * @param y the y-coordinate of the tile
 	 * @param layer the layer of the tile
@@ -34,6 +36,7 @@ public interface Map extends Serializable {
 
 	/**
 	 * Sets the tile ID at <code>(x,y),layer</code>.
+	 * 
 	 * @param x the x-coordinate of the tile to set
 	 * @param y the y-coordinate of the tile to set
 	 * @param layer the layer in which to set the tile in
@@ -43,6 +46,7 @@ public interface Map extends Serializable {
 
 	/**
 	 * Draws the tile at <code>(sx,sy)</code> on the canvas at <code>(x,y)</code>.
+	 * 
 	 * @param g the {@link Graphics} object
 	 * @param x the corner's x-coordinate of where to draw
 	 * @param y the corner's y-coordinate of where to draw
@@ -54,6 +58,7 @@ public interface Map extends Serializable {
 
 	/**
 	 * Draws the selected region of the map.
+	 * 
 	 * @param g the {@link Graphics} object
 	 * @param x the corner's x-coordinate of where to draw
 	 * @param y the corner's y-coordinate of where to draw
@@ -66,36 +71,42 @@ public interface Map extends Serializable {
 
 	/**
 	 * Returns the number of tiles horizontally.
+	 * 
 	 * @return the number of tiles horizontally
 	 */
 	public int getWidth();
 
 	/**
 	 * Returns the number of tiles vertically.
+	 * 
 	 * @return the number of tiles vertically
 	 */
 	public int getHeight();
 
 	/**
 	 * Returns the tiles' width.
+	 * 
 	 * @return the tiles' width
 	 */
 	public int getTileWidth();
 
 	/**
 	 * Returns the tiles' height.
+	 * 
 	 * @return the tiles' height
 	 */
 	public int getTileHeight();
 
 	/**
 	 * Returns the number of layers.
+	 * 
 	 * @return the number of layers
 	 */
 	public int getLayerCount();
 
 	/**
 	 * TODO make more standard not to only use TilED.
+	 * 
 	 * @author pwnedary
 	 */
 	public class TileSet {
@@ -128,7 +139,7 @@ public interface Map extends Serializable {
 
 		public TileSet() {}
 
-		public TileSet(Element element, String mapLocation) {
+		public TileSet(Backend backend, Element element, String mapLocation) {
 			name = element.getAttribute("name");
 			firstGID = Integer.parseInt(element.getAttribute("firstgid"));
 
@@ -144,7 +155,7 @@ public interface Map extends Serializable {
 			tilesDown = Integer.parseInt(imageNode.getAttribute("height")) / tileHeight;
 
 			try {
-				image = Game.getBackend().getImage(new File(mapLocation + "/" + imageNode.getAttribute("source")));
+				image = backend.getImage(new File(mapLocation + "/" + imageNode.getAttribute("source")));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -159,6 +170,7 @@ public interface Map extends Serializable {
 
 		/**
 		 * Get the x position of a tile on this sheet
+		 * 
 		 * @param id The tileset specific ID (i.e. not the global one)
 		 * @return The index of the tile on the x-axis
 		 */
@@ -168,6 +180,7 @@ public interface Map extends Serializable {
 
 		/**
 		 * Get the y position of a tile on this sheet
+		 * 
 		 * @param id The tileset specific ID (i.e. not the global one)
 		 * @return The index of the tile on the y-axis
 		 */
@@ -177,6 +190,7 @@ public interface Map extends Serializable {
 
 		/**
 		 * Check if this tileset contains a particular tile
+		 * 
 		 * @param gid The global id to seach for
 		 * @return True if the ID is contained in this tileset
 		 */

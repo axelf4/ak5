@@ -14,7 +14,7 @@ import java.awt.image.VolatileImage;
 import javax.swing.JPanel;
 
 import org.gamelib.Drawable;
-import org.gamelib.EventBus;
+import org.gamelib.Handler;
 import org.gamelib.Handler.Event;
 
 /**
@@ -26,16 +26,18 @@ public class Java2DPanel extends JPanel {
 	Graphics2D g2d; // graphics2d
 	float delta;
 	Drawable callback;
+	private final Handler handler;
 
-	public Java2DPanel() {
+	public Java2DPanel(Handler handler) {
 		setIgnoreRepaint(true);
 		setFocusable(true);
 		setRequestFocusEnabled(true);
 		// g2d = (Graphics2D) new BufferedImage(1, 1, BufferedImage.TYPE_BYTE_GRAY).getGraphics();
+		this.handler = handler;
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				EventBus.instance().dispatch(new Event.Resize());
+				Java2DPanel.this.handler.handle(new Event.Resize());
 			}
 		});
 	}
@@ -66,5 +68,4 @@ public class Java2DPanel extends JPanel {
 
 		Toolkit.getDefaultToolkit().sync(); // Tell the System to draw now, otherwise it can take a few extra ms until drawing is done which looks jerky
 	}
-
 }

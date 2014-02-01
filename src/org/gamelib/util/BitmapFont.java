@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.StringTokenizer;
 
-import org.gamelib.Game;
+import org.gamelib.backend.Backend;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.util.Font.FontImpl;
@@ -28,8 +28,8 @@ public class BitmapFont extends FontImpl implements Font {
 	private Image[] pageImgs;
 	private Glyph[][] glyphs;
 
-	public BitmapFont(File file) {
-		try (InputStream stream = Game.getBackend().getResourceAsStream(file.getPath());
+	public BitmapFont(Backend backend, File file) {
+		try (InputStream stream = backend.getResourceAsStream(file.getPath());
 				BufferedReader reader = new BufferedReader(new InputStreamReader(stream, Charset.forName("UTF-8")))) {
 			reader.readLine(); // info
 			String[] common = reader.readLine().split(" ", 7);
@@ -42,7 +42,7 @@ public class BitmapFont extends FontImpl implements Font {
 				if (Integer.parseInt(page[1].substring(3)) != p) throw new IllegalArgumentException("Invalid font file; page ids should increment from 0."); // id=N
 				// File imgFile = new File(file.getParentFile().getPath() + File.separator + page[2].split("\"")[1]);
 				File imgFile = new File(file.getParentFile(), page[2].split("\"")[1]); // file=string
-				pageImgs[p] = Game.getBackend().getImage(imgFile);
+				pageImgs[p] = backend.getImage(imgFile);
 			}
 
 			float descent = 0;

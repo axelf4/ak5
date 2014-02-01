@@ -3,7 +3,6 @@
  */
 package org.gamelib.ui;
 
-import org.gamelib.Game;
 import org.gamelib.Group;
 
 /**
@@ -18,19 +17,11 @@ public abstract class WidgetGroup extends Group implements Widget {
 
 	@Override
 	public void validate() {
-		boolean fillParent = true;
-		if (fillParent) {
-			int width = parent instanceof WidgetGroup ? ((Widget) parent).getWidth() : Game.getBackend().getWidth();
-			int height = parent instanceof WidgetGroup ? ((Widget) parent).getHeight() : Game.getBackend().getHeight();
-			if (width != getWidth() || height != getHeight()) {
-				setWidth(width);
-				setHeight(height);
-				invalidate();
-			}
+		// boolean fillParent = true; if (fillParent) { int width = parent instanceof WidgetGroup ? ((Widget) parent).getWidth() : Game.getBackend().getWidth(); int height = parent instanceof WidgetGroup ? ((Widget) parent).getHeight() : Game.getBackend().getHeight(); if (width != getWidth() || height != getHeight()) { setWidth(width); setHeight(height); invalidate(); } }
+		if (!valid) {
+			layout();
+			valid = true;
 		}
-
-		if (!valid) layout();
-		valid = true;
 	}
 
 	@Override

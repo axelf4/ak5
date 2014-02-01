@@ -7,7 +7,7 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 
-import org.gamelib.EventBus;
+import org.gamelib.Handler;
 import org.gamelib.Handler.Event;
 
 /**
@@ -117,6 +117,11 @@ public interface Input {
 		protected int mouseY;
 		/** Array of pressed mouse buttons. */
 		protected boolean[] mousePressed = new boolean[3]; // 10
+		protected Handler handler;
+
+		public InputImpl(Handler handler) {
+			this.handler = handler;
+		}
 
 		public boolean keyPressed(int keycode) {
 			return pressed[keycode];
@@ -149,7 +154,7 @@ public interface Input {
 			keycode = translateKeyCode(keycode);
 			pressed[keycode] = id == KEY_PRESSED;
 			// if (keycode == Key.KEY_ESCAPE) Game2.instance().stop(); // debugging
-			EventBus.instance().dispatch(new Event.Key(this, id, keycode));
+			handler.handle(new Event.Key(this, id, keycode));
 		}
 
 		protected void mouseEvent(int id, int button, int mouseX, int mouseY) {
@@ -157,11 +162,11 @@ public interface Input {
 			this.mouseY = mouseY;
 			if (button != -1 && (id == MOUSE_PRESSED || id == MOUSE_RELEASED)) mousePressed[button] = id == MOUSE_PRESSED;
 			// System.out.println("x: " + getMouseX() + " y: " + getMouseY());
-			EventBus.instance().dispatch(new Event.Mouse(this, id, button));
+			handler.handle(new Event.Mouse(this, id, button));
 		}
 
 		protected void mouseWheelEvent(double scrollAmount) {
-			EventBus.instance().dispatch(new Event.MouseWheel(this, scrollAmount));
+			handler.handle(new Event.MouseWheel(this, scrollAmount));
 		}
 	}
 

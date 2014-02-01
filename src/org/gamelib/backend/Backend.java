@@ -20,11 +20,13 @@ import org.gamelib.util.geom.Rectangle;
 
 /**
  * The class responsible for the technical stuff, such as collecting input and processing it.
+ * 
  * @author pwnedary
  */
 public interface Backend extends Disposable {
 	/**
 	 * Starts every aspect of this {@link Backend}.
+	 * 
 	 * @param configuration the configuration matching the Backend
 	 * @param handler Handler to be notified about Event.Create, Tick, Draw, etc.
 	 */
@@ -33,8 +35,8 @@ public interface Backend extends Disposable {
 	/** Stops every used resource. */
 	void stop();
 
-	/** Prepares a draw to the canvas, with <code>callback</code> and completes it. */
-	void draw(Drawable callback, float delta);
+	/** Prepares a draw to the canvas, with <code>drawable</code> and completes it. */
+	void draw(Drawable drawable, float delta);
 
 	/** @return system time in milliseconds */
 	long getTime();
@@ -125,6 +127,7 @@ public interface Backend extends Disposable {
 
 			@Override
 			public void tick(float delta) {
+				getInput().poll();
 				if (getInput().keyPressed(Key.KEY_ESCAPE)) BackendImpl.this.stop();
 				handler.handle(new Event.Tick(delta));
 			}

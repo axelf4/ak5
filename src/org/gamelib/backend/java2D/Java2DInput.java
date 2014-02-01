@@ -24,6 +24,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 
+import org.gamelib.Handler;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
 import org.gamelib.backend.Input.InputImpl;
@@ -36,7 +37,8 @@ public class Java2DInput extends InputImpl implements Input, KeyEventDispatcher,
 	private boolean grabbed;
 	private int prevX, prevY;
 
-	public Java2DInput(Component component) {
+	public Java2DInput(Component component, Handler handler) {
+		super(handler);
 		this.component = component;
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
 		component.addMouseListener(this);
