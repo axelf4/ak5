@@ -14,16 +14,20 @@ import org.gamelib.Handler;
 import org.gamelib.Handler.Event;
 import org.gamelib.Loop.LoopListener;
 import org.gamelib.backend.Input.Key;
+import org.gamelib.util.Configuration;
 import org.gamelib.util.Disposable;
 import org.gamelib.util.geom.Rectangle;
 
 /**
  * The class responsible for the technical stuff, such as collecting input and processing it.
- * 
  * @author pwnedary
  */
 public interface Backend extends Disposable {
-	/** Starts every aspect of this {@link Backend}. */
+	/**
+	 * Starts every aspect of this {@link Backend}.
+	 * @param configuration the configuration matching the Backend
+	 * @param handler Handler to be notified about Event.Create, Tick, Draw, etc.
+	 */
 	void start(Configuration configuration, Handler handler);
 
 	/** Stops every used resource. */

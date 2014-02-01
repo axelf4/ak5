@@ -31,7 +31,7 @@ import javax.swing.SwingUtilities;
 import org.gamelib.Drawable;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Backend.BackendImpl;
-import org.gamelib.backend.Configuration.DisplayConfiguration;
+import org.gamelib.backend.DisplayConfiguration;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
@@ -40,7 +40,6 @@ import org.gamelib.util.geom.Rectangle;
 
 /**
  * A {@link Backend} using Java2D for rendering and resources.
- * 
  * @author pwnedary
  */
 public class Java2DBackend extends BackendImpl implements Backend {
@@ -116,9 +115,10 @@ public class Java2DBackend extends BackendImpl implements Backend {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				@Override
 				public void run() {
-					DisplayConfiguration config = (DisplayConfiguration) configuration;
+					// DisplayConfiguration config = (DisplayConfiguration) configuration;
+					int width = configuration.getProperty(DisplayConfiguration.WIDTH_KEY, 800), height = configuration.getProperty(DisplayConfiguration.HEIGHT_KEY, 600);
 					if (container instanceof JFrame) {
-						((JFrame) container).setResizable(config.resizable());
+						((JFrame) container).setResizable(configuration.getProperty(DisplayConfiguration.RESIZABLE_KEY, false));
 						// ((JFrame) container).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 						((JFrame) container).setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 						((JFrame) container).addWindowListener(new WindowAdapter() {
@@ -128,10 +128,11 @@ public class Java2DBackend extends BackendImpl implements Backend {
 							}
 						});
 
-						setFullscreen((JFrame) container, config.fullscreen());
-						if (!config.fullscreen()) container.setSize(config.getWidth(), config.getHeight());
-					} else if (container instanceof JApplet) ((JApplet) container).resize(config.getWidth(), config.getHeight());
-					panel.setSize(config.getWidth(), config.getHeight());
+						boolean fullscreen = configuration.getProperty(DisplayConfiguration.FULLSCREEN_KEY, false);
+						setFullscreen((JFrame) container, fullscreen);
+						if (fullscreen) container.setSize(width, height);
+					} else if (container instanceof JApplet) ((JApplet) container).resize(width, height);
+					panel.setSize(width, height);
 					container.add(panel);
 					setTitle(configuration.getProperty("name", "Game"));
 					// try { tracker.waitForAll(); // wait for loading files } catch (InterruptedException e) { e.printStackTrace(); }

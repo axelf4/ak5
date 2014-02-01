@@ -30,7 +30,7 @@ import org.gamelib.Handler.Event;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Backend.BackendImpl;
 import org.gamelib.backend.Color;
-import org.gamelib.backend.Configuration.DisplayConfiguration;
+import org.gamelib.backend.DisplayConfiguration;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
@@ -89,7 +89,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	@Override
 	public void start() {
 		try {
-			DisplayConfiguration config = (DisplayConfiguration) configuration;
+			DisplayConfiguration config = (LWJGLConfiguration) configuration;
 			DisplayMode targetDisplayMode = null;
 			if (config.fullscreen()) {
 				DisplayMode[] modes = Display.getAvailableDisplayModes();
@@ -247,7 +247,6 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	/**
 	 * Convert the buffered image to a texture
-	 * 
 	 * @param bufferedImage The image to convert to a texture
 	 * @param image The texture to store the data into
 	 * @return a buffer containing the data

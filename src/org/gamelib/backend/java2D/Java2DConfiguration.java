@@ -3,7 +3,7 @@
  */
 package org.gamelib.backend.java2D;
 
-import org.gamelib.backend.Configuration.DisplayConfiguration;
+import org.gamelib.backend.DisplayConfiguration;
 
 /**
  * @author pwnedary
