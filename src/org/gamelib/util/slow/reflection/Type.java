@@ -24,6 +24,8 @@ public interface Type<T> extends Reflective {
 	String getSimpleName();
 
 	Class<T> getType();
+	
+	T getDefaultValue();
 
 	void load(ClassLoader... classLoaders);
 

@@ -4,6 +4,7 @@
 package org.gamelib.util.slow.reflection;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
@@ -64,6 +65,22 @@ public class NativeType<T> implements Type<T> {
 	@Override
 	public Class<T> getType() {
 		return type;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public T getDefaultValue() {
+		if (type == Integer.TYPE || type == Integer.class) return (T) new Integer(0);
+		else if (type == Long.TYPE || type == Long.class) return (T) new Long(0);
+		else if (type == Double.TYPE || type == Double.class) return (T) new Double(0);
+		else if (type == Float.TYPE || type == Float.class) return (T) new Float(0);
+		else if (type == Character.TYPE || type == Character.class) return (T) new Character((char) 0);
+		else if (type == Short.TYPE || type == Short.class) return (T) new Short((short) 0);
+		else if (type == Byte.TYPE || type == Byte.class) return (T) new Byte((byte) 0);
+		else if (type == Boolean.TYPE || type == Boolean.class) return (T) Boolean.FALSE;
+		else if (type == String.class) return (T) "";
+		else if (type.isArray()) return (T) Array.newInstance(type.getComponentType(), 0);
+		else return null;
 	}
 
 	@Override
