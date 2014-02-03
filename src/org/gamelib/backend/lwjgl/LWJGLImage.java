@@ -5,11 +5,14 @@ package org.gamelib.backend.lwjgl;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.nio.ByteBuffer;
+
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 
 /**
  * Textures are automatically made p^2 for compatibility.
+ * 
  * @author pwnedary
  */
 public class LWJGLImage implements Image {
@@ -35,6 +38,7 @@ public class LWJGLImage implements Image {
 
 	/**
 	 * Binds the specified GL context to a texture.
+	 * 
 	 * @param gl the GL context to bind to
 	 */
 	public void bind() {
@@ -117,6 +121,15 @@ public class LWJGLImage implements Image {
 		glTexParameteri(target, GL_TEXTURE_WRAP_S, u.getGLEnum());
 		glTexParameteri(target, GL_TEXTURE_WRAP_T, v.getGLEnum());
 		unbind();
+	}
+
+	@Override
+	public int getPixel(int x, int y) {
+		ByteBuffer pixels = ByteBuffer.allocateDirect(getWidth() * getHeight() * 4);
+		bind();
+		glGetTexImage(target, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+		unbind();
+		return pixels.getInt(x * y * 4);
 	}
 
 	@Override

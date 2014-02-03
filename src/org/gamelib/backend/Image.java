@@ -11,6 +11,7 @@ import org.gamelib.util.Disposable;
 
 /**
  * A generic in-memory image, which can be drawn by {@link Graphics#drawImage(Image, int, int, int, int, int, int, int, int)}.
+ * 
  * @author pwnedary
  */
 public interface Image extends Drawable, Disposable {
@@ -52,6 +53,7 @@ public interface Image extends Drawable, Disposable {
 
 	/**
 	 * Returns the width of this image.
+	 * 
 	 * @return the width of this image
 	 */
 	int getWidth();
@@ -61,6 +63,7 @@ public interface Image extends Drawable, Disposable {
 
 	/**
 	 * Returns the height of this image.
+	 * 
 	 * @return the height of this image
 	 */
 	int getHeight();
@@ -70,6 +73,7 @@ public interface Image extends Drawable, Disposable {
 
 	/**
 	 * Sets the {@link Filter} for minification and magnification.
+	 * 
 	 * @param minFilter the minification filter
 	 * @param magFilter the magnification filter
 	 */
@@ -77,13 +81,24 @@ public interface Image extends Drawable, Disposable {
 
 	/**
 	 * Sets the {@link Wrap} on the u and v axis.
+	 * 
 	 * @param u the u wrap
 	 * @param v the v wrap
 	 */
 	void setWrap(Wrap u, Wrap v);
 
 	/**
+	 * Returns a 32-bit RGBA value of the pixel at (<code>x,y</code>), (<code>0,0</code> being top-left).
+	 * 
+	 * @param x the x-coordinate of the pixel
+	 * @param y the y-coordinate of the pixel
+	 * @return the color at x,y
+	 */
+	int getPixel(int x, int y);
+
+	/**
 	 * Returns a subimage as defined by the specified region, that shares the same content as this {@link Image}.
+	 * 
 	 * @param x the x-coordinate of the upper-left corner of the rectangular region
 	 * @param y the y-coordinate of the upper-left corner of the rectangular region
 	 * @param width the width of the rectangular region

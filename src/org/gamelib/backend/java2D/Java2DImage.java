@@ -56,6 +56,11 @@ public class Java2DImage implements Image {
 	public void setWrap(Wrap u, Wrap v) {}
 
 	@Override
+	public int getPixel(int x, int y) {
+		return bufferedImage.getRGB(x, y);
+	}
+
+	@Override
 	public Image region(int x, int y, int width, int height) {
 		return new Java2DImage(bufferedImage.getSubimage(x, y, width, height));
 	}
