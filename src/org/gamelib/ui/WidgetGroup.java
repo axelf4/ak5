@@ -33,7 +33,7 @@ public abstract class WidgetGroup extends Group implements Widget {
 	@Override
 	public boolean handle(Event event) {
 		if (event instanceof Event.Draw) validate();
-		return super.handle(event) || (event instanceof Event.Draw);
+		return super.handle(event) || event instanceof Event.Draw;
 	}
 
 	@Override

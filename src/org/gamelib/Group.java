@@ -12,6 +12,7 @@ import java.util.Map;
 /**
  * An aggregate of handlers.<br />
  * TODO make groups handlers and have handle iterate downwards
+ * 
  * @author pwnedary
  */
 public class Group implements Handler {
@@ -24,12 +25,9 @@ public class Group implements Handler {
 
 	public Group(Group parent) {
 		handlers.put(Event.class, new ArrayList<Handler>());
-		if ((this.parent = parent) != null) parent.handlers.get(Event.class).add(this);
+		if ((this.parent = parent) != null) parent.register(this);
 
 		// if ((this.parent = parent) != null || (parent = EventBus.MAIN_GROUP) != null) parent.children.add(this);
-		// if ((this.parent = parent) != null) parent.children.add(this);
-
-		// if (this instanceof Handler) register((Handler) this);
 	}
 
 	public Group() {
@@ -52,6 +50,7 @@ public class Group implements Handler {
 
 	/**
 	 * Registers the specified {@link Handler}, <code>handler</code>, for handling events.
+	 * 
 	 * @param handler the {@link Handler} to register
 	 */
 	public void register(Handler handler) {
@@ -82,6 +81,7 @@ public class Group implements Handler {
 
 	/**
 	 * Returns whether this {@link Group} is active.
+	 * 
 	 * @return whether active
 	 */
 	public boolean isActive() {
@@ -106,17 +106,5 @@ public class Group implements Handler {
 		for (Handler handler : EventBus.instance().getChildren())
 			if (handler instanceof Group && !((Group) handler).alwaysActive) ((Group) handler).setActive(false);
 		setActive(true);
-	}
-
-	/* DEPRECATED */
-
-	// TODO remove:
-	@Deprecated
-	protected List<Group> children = new ArrayList<Group>();
-
-	@Deprecated
-	public void add(Group group) {
-		if (group == null) throw new IllegalArgumentException("group cannot be null");
-		children.add(group);
 	}
 }

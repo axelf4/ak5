@@ -124,12 +124,36 @@ public class LWJGLImage implements Image {
 	}
 
 	@Override
+	public int[][] getPixels() {
+		final ByteBuffer pixels = ByteBuffer.allocateDirect(getTexWidth() * getTexHeight() * 4);
+		bind();
+		glGetTexImage(target, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+		unbind();
+		final int[][] result = new int[getWidth()][getHeight()];
+		for (int i = 0; i < getWidth(); i++) {
+			for (int j = 0; j < getHeight(); j++) {
+				result[i][j] = pixels.getInt(i * j * 4);
+			}
+		}
+		return result;
+	}
+
+	@Override
 	public int getPixel(int x, int y) {
 		ByteBuffer pixels = ByteBuffer.allocateDirect(getWidth() * getHeight() * 4);
 		bind();
 		glGetTexImage(target, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 		unbind();
 		return pixels.getInt(x * y * 4);
+	}
+	
+	@Override
+	public byte[] getData() {
+		ByteBuffer pixels = ByteBuffer.allocateDirect(getWidth() * getHeight() * 4);
+		bind();
+		glGetTexImage(target, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+		unbind();
+		return pixels.array();
 	}
 
 	@Override

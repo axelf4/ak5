@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 /**
  * Colors in the sRGB color space. TODO add color spaces use {@link Float#floatToRawIntBits(float)}.
+ * 
  * @author pwnedary
  * @see java.awt.Color
  */
@@ -46,6 +47,7 @@ public final class Color implements Serializable {
 
 	/**
 	 * Creates an sRGB color with the red, green, blue and alpha values in the range (0 - 255).
+	 * 
 	 * @param r the red component
 	 * @param g the green component
 	 * @param b the blue component
@@ -59,6 +61,7 @@ public final class Color implements Serializable {
 
 	/**
 	 * Creates an sRGB color with the red, green and blue values in the range (0.0 - 1.0).
+	 * 
 	 * @param r the red component
 	 * @param g the green component
 	 * @param b the blue component
@@ -70,6 +73,7 @@ public final class Color implements Serializable {
 
 	/**
 	 * Creates an opaque sRGB color with the red, green and blue values in the range (0 - 255).
+	 * 
 	 * @param r the red component
 	 * @param g the green component
 	 * @param b the blue component
@@ -81,6 +85,7 @@ public final class Color implements Serializable {
 
 	/**
 	 * Checks the color integer components supplied for validity. Throws an {@link IllegalArgumentException} if the value is out of range.
+	 * 
 	 * @param r the red component
 	 * @param g the green component
 	 * @param b the blue component
@@ -100,6 +105,7 @@ public final class Color implements Serializable {
 
 	/**
 	 * Returns the red component in the range 0-255 in the default sRGB space.
+	 * 
 	 * @return the red component.
 	 * @see #getRGB
 	 */
@@ -109,6 +115,7 @@ public final class Color implements Serializable {
 
 	/**
 	 * Returns the green component in the range 0-255 in the default sRGB space.
+	 * 
 	 * @return the green component.
 	 * @see #getRGB
 	 */
@@ -118,6 +125,7 @@ public final class Color implements Serializable {
 
 	/**
 	 * Returns the blue component in the range 0-255 in the default sRGB space.
+	 * 
 	 * @return the blue component.
 	 * @see #getRGB
 	 */
@@ -127,6 +135,7 @@ public final class Color implements Serializable {
 
 	/**
 	 * Returns the alpha component in the range 0-255.
+	 * 
 	 * @return the alpha component.
 	 * @see #getRGB
 	 */
@@ -136,11 +145,16 @@ public final class Color implements Serializable {
 
 	/**
 	 * Returns the AWT version of this color.
+	 * 
 	 * @return the AWT version
 	 * @see java.awt.Color
 	 */
 	public java.awt.Color toAWT() {
 		return new java.awt.Color(getRed(), getGreen(), getBlue(), getAlpha());
 	}
-
+	
+	/** Specifies a pixel format. */
+	public enum Format {
+		RGB888, RGBA8888;
+	}
 }

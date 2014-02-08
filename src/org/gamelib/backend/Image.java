@@ -88,6 +88,13 @@ public interface Image extends Drawable, Disposable {
 	void setWrap(Wrap u, Wrap v);
 
 	/**
+	 * Returns the pixels in a <code>int[][]</code> of 32-bit ARGB values.
+	 * 
+	 * @return the pixels
+	 */
+	int[][] getPixels();
+
+	/**
 	 * Returns a 32-bit RGBA value of the pixel at (<code>x,y</code>), (<code>0,0</code> being top-left).
 	 * 
 	 * @param x the x-coordinate of the pixel
@@ -95,6 +102,9 @@ public interface Image extends Drawable, Disposable {
 	 * @return the color at x,y
 	 */
 	int getPixel(int x, int y);
+
+	/** Returns a <code>byte[]</code> of the pixels. */
+	byte[] getData();
 
 	/**
 	 * Returns a subimage as defined by the specified region, that shares the same content as this {@link Image}.
