@@ -8,7 +8,9 @@ package org.gamelib;
  * 
  * @author pwnedary
  * @since 0.0.1
+ * @deprecated backends now take handler instance directly
  */
+@Deprecated
 public class EventBus extends Group {
 	/** The default instance */
 	private static EventBus instance;
