@@ -10,24 +10,21 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An aggregate of handlers.<br />
- * TODO make groups handlers and have handle iterate downwards
+ * An aggregate of handlers, whose {@linkplain #handle(org.gamelib.Handler.Event) handle} iterates downwards.
  * 
  * @author pwnedary
  */
 public class Group implements Handler {
+	/** Map of events to their subscribed handlers. */
 	public Map<Class<? extends Event>, List<Handler>> handlers = new HashMap<>();
+	/** The ancestor of this group. */
 	protected Group parent;
-
 	/** Whether the handlers should receive events. */
 	private boolean active = true;
-	private boolean alwaysActive = false;
 
 	public Group(Group parent) {
 		handlers.put(Event.class, new ArrayList<Handler>());
 		if ((this.parent = parent) != null) parent.register(this);
-
-		// if ((this.parent = parent) != null || (parent = EventBus.MAIN_GROUP) != null) parent.children.add(this);
 	}
 
 	public Group() {
@@ -66,6 +63,15 @@ public class Group implements Handler {
 	}
 
 	/**
+	 * Returns this Group's ancestor.
+	 * 
+	 * @return this group's parent
+	 */
+	public Group getParent() {
+		return parent;
+	}
+
+	/**
 	 * Returns all handler even in lower in hierarchy.
 	 */
 	public List<Handler> getChildren() {
@@ -88,23 +94,17 @@ public class Group implements Handler {
 		return active;
 	}
 
-	/** Sets this and every underlying group to <code>active</code>. */
+	/** Sets this group to <code>active</code>. */
 	public void setActive(boolean active) {
-		this.active = active;
-		// for (Iterator<Group> iterator = children.iterator(); iterator.hasNext();) { Group group = (Group) iterator.next(); group.setActive(active); }
-	}
-
-	public Group setAlwaysActive(boolean b) {
-		this.alwaysActive = b;
-		return this;
+		this.active = active; // for (Iterator<Group> iterator = children.iterator(); iterator.hasNext();) { Group group = (Group) iterator.next(); group.setActive(active); }
 	}
 
 	/* Group utility */
 
 	/** Deactivates every other group except for this one and it's children. */
 	public void focus() {
-		for (Handler handler : EventBus.instance().getChildren())
-			if (handler instanceof Group && !((Group) handler).alwaysActive) ((Group) handler).setActive(false);
+		if (getParent() != null) for (Handler handler : getParent().getChildren())
+			if (handler instanceof Group) ((Group) handler).setActive(false);
 		setActive(true);
 	}
 }
