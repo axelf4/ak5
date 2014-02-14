@@ -25,7 +25,6 @@ import java.util.Hashtable;
 import javax.imageio.ImageIO;
 
 import org.gamelib.Drawable;
-import org.gamelib.EventBus;
 import org.gamelib.Handler;
 import org.gamelib.Handler.Event;
 import org.gamelib.backend.Backend;
@@ -180,7 +179,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		callback.draw(g, delta);
 		Display.update();
 		// Util.checkGLError();
-		if (Display.wasResized()) EventBus.instance().dispatch(new Event.Resize());
+		if (Display.wasResized()) handler.handle(new Event.Resize());
 	}
 
 	@Override

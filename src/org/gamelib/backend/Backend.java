@@ -84,7 +84,7 @@ public interface Backend extends Disposable {
 
 		/* * The {@link Thread} running in the background * / private Thread thread; */
 		private boolean running;
-		private Handler handler;
+		protected Handler handler;
 
 		@Override
 		public void start(Configuration configuration, Handler handler) {
