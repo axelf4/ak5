@@ -9,17 +9,16 @@ import java.util.Iterator;
  * @author pwnedary
  */
 public class ArrayRow<E> extends AbstractRow<E> {
-	public E[] elements; // public here trades stability for speed
+	public Object[] elements; // public trades stability for speed
 	private int size;
 
-	public ArrayRow(E[] elements) {
+	public ArrayRow(Object[] elements) {
 		this.elements = elements;
 		this.size = elements.length;
 	}
 
-	@SuppressWarnings("unchecked")
 	public ArrayRow(int initialSize) {
-		this((E[]) new Object[initialSize]);
+		this.elements = new Object[initialSize];
 		this.size = 0;
 	}
 
@@ -27,9 +26,10 @@ public class ArrayRow<E> extends AbstractRow<E> {
 		this(16);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public E get(int index) {
-		return elements[index];
+		return (E) elements[index];
 	}
 
 	@Override
@@ -43,10 +43,11 @@ public class ArrayRow<E> extends AbstractRow<E> {
 		elements[size] = e;
 		return size++;
 	}
-	
+
 	@Override
 	public E remove(int index) {
-		E value = elements[index];
+		@SuppressWarnings("unchecked")
+		E value = (E) elements[index];
 		System.arraycopy(elements, index + 1, elements, index, size-- - index);
 		return value;
 	}
