@@ -8,9 +8,7 @@ import org.gamelib.ui.Widget.WidgetImpl;
 import org.gamelib.util.Font;
 import org.gamelib.util.geom.Rectangle;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public class Label extends WidgetImpl {
 	/** The text to be displayed. */
 	private String text, show;
@@ -47,7 +45,7 @@ public class Label extends WidgetImpl {
 	}
 
 	public void setText(String text) {
-		this.show = this.text = text;
+		this.text = text;
 		invalidate();
 	}
 
@@ -73,6 +71,10 @@ public class Label extends WidgetImpl {
 		return true;
 	}
 
+	/** Whether {@linkplain #text} should be truncated with an ellipsis punctuation mark if it's length exceeds the
+	 * bounds.
+	 * 
+	 * @param ellipsis whether to truncate text */
 	public void setEllipsis(boolean ellipsis) {
 		this.ellipsis = ellipsis;
 		invalidate();

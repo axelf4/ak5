@@ -56,9 +56,6 @@ public class Cell<C> {
 	int cellAboveIndex = -1;
 	float computedPadTop, computedPadLeft, computedPadBottom, computedPadRight;
 
-	public Cell () {
-	}
-
 	public void setLayout (BaseTableLayout layout) {
 		this.layout = layout;
 	}
@@ -668,6 +665,13 @@ public class Cell<C> {
 		uniformX = x;
 		uniformY = y;
 		return this;
+	}
+
+	public void setWidgetBounds (float x, float y, float width, float height) {
+		widgetX = x;
+		widgetY = y;
+		widgetWidth = width;
+		widgetHeight = height;
 	}
 
 	public float getWidgetX () {

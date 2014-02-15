@@ -9,11 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-/**
- * An aggregate of handlers, whose {@linkplain #handle(org.gamelib.Handler.Event) handle} iterates downwards.
+/** An aggregate of handlers, whose {@linkplain #handle(org.gamelib.Handler.Event) handle} iterates downwards.
  * 
- * @author pwnedary
- */
+ * @author pwnedary */
 public class Group implements Handler {
 	/** Map of events to their subscribed handlers. */
 	public Map<Class<? extends Event>, List<Handler>> handlers = new HashMap<>();
@@ -45,11 +43,9 @@ public class Group implements Handler {
 		return value;
 	}
 
-	/**
-	 * Registers the specified {@link Handler}, <code>handler</code>, for handling events.
+	/** Registers the specified {@link Handler}, <code>handler</code>, for handling events.
 	 * 
-	 * @param handler the {@link Handler} to register
-	 */
+	 * @param handler the {@link Handler} to register */
 	public void register(Handler handler) {
 		if (handler == null) throw new IllegalArgumentException("handler cannot be null");
 		// handlers.get(Event.class).add(handler);
@@ -62,29 +58,23 @@ public class Group implements Handler {
 			if (iterator.next().equals(handler)) iterator.remove();
 	}
 
-	/**
-	 * Returns this Group's ancestor.
+	/** Returns this Group's ancestor.
 	 * 
-	 * @return this group's parent
-	 */
+	 * @return this group's parent */
 	public Group getParent() {
 		return parent;
 	}
 
-	/**
-	 * Returns all direct children one level lower in hierarchy, added to this {@link Group}.
+	/** Returns all direct children one level lower in hierarchy, added to this {@link Group}.
 	 * 
-	 * @return this Group's children
-	 */
+	 * @return this Group's children */
 	public List<Handler> getChildren() {
 		return handlers.get(Event.class);
 	}
 
-	/**
-	 * Returns whether this {@link Group} is active.
+	/** Returns whether this {@link Group} is active.
 	 * 
-	 * @return whether active
-	 */
+	 * @return whether active */
 	public boolean isActive() {
 		return active;
 	}

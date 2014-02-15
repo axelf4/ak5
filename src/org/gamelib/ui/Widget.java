@@ -121,7 +121,7 @@ public interface Widget extends Handler {
 
 		@Override
 		public int getMinimumHeight() {
-			return Integer.MAX_VALUE;
+			return getPrefferedHeight();
 		}
 
 		@Override
@@ -131,7 +131,7 @@ public interface Widget extends Handler {
 
 		@Override
 		public int getMaximumHeight() {
-			return getPrefferedHeight();
+			return Integer.MAX_VALUE;
 		}
 
 		@Override

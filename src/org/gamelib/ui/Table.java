@@ -3,11 +3,19 @@
  */
 package org.gamelib.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.gamelib.Group;
 import org.gamelib.Handler;
+import org.gamelib.backend.Color;
+import org.gamelib.backend.Graphics;
+import org.gamelib.ui.Table.TableToolkit.DebugRect;
 import org.gamelib.util.Pool;
+import org.gamelib.util.geom.Rectangle;
 
 import com.esotericsoftware.tablelayout.BaseTableLayout;
+import com.esotericsoftware.tablelayout.BaseTableLayout.Debug;
 import com.esotericsoftware.tablelayout.Cell;
 import com.esotericsoftware.tablelayout.Toolkit;
 
@@ -20,11 +28,19 @@ public class Table extends WidgetGroup {
 	public Table() {
 		layout = new TableLayout();
 		layout.setTable(this);
+		layout.debug();
 	}
 
 	@Override
 	public void layout() {
 		layout.layout();
+	}
+
+	@Override
+	public boolean handle(Event event) {
+		boolean value = super.handle(event);
+		if (event instanceof Event.Draw) layout.drawDebug(((Event.Draw) event).graphics);
+		return value || event instanceof Event.Draw;
 	}
 
 	@Override
@@ -58,36 +74,37 @@ public class Table extends WidgetGroup {
 		return layout.row();
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	public static class TableLayout extends BaseTableLayout<Handler, Table, TableLayout, TableToolkit> {
 		static {
 			if (Toolkit.instance == null) Toolkit.instance = new TableToolkit();
 		}
+		List<DebugRect> debugRects;
 
 		public TableLayout() {
 			super((TableToolkit) Toolkit.instance);
 		}
 
+		@SuppressWarnings("unchecked")
 		public void layout() {
 			Table table = getTable();
-			float width = table.getWidth();
-			float height = table.getHeight();
+			int width = table.getWidth();
+			int height = table.getHeight();
 
 			super.layout(0, 0, width, height);
 
-			java.util.List<Cell> cells = getCells();
-			for (int i = 0, n = cells.size(); i < n; i++) {
-				Cell c = cells.get(i);
+			for (Cell<Widget> c : getCells()) {
 				if (c.getIgnore()) continue;
-				float widgetHeight = c.getWidgetHeight();
-				float widgetY = height - c.getWidgetY() - widgetHeight;
-				c.setWidgetY(widgetY);
-				Handler handler = (Handler) c.getWidget();
-				if (handler != null && handler instanceof Widget) {
-					((Widget) handler).setX((int) c.getWidgetX());
-					((Widget) handler).setY((int) widgetY);
-					((Widget) handler).setHeight((int) c.getWidgetHeight());
-					((Widget) handler).setHeight((int) widgetHeight);
+				int widgetWidth = Math.round(c.getWidgetWidth());
+				int widgetHeight = Math.round(c.getWidgetHeight());
+				int widgetX = Math.round(c.getWidgetX());
+				int widgetY = height - Math.round(c.getWidgetY()) - widgetHeight;
+				c.setWidgetBounds(widgetX, widgetY, widgetWidth, widgetHeight);
+				Widget widget = c.getWidget();
+				if (widget != null) {
+					widget.setX(widgetX);
+					widget.setY(widgetY);
+					widget.setWidth(widgetWidth);
+					widget.setHeight(widgetHeight);
 				}
 			}
 			// Validate children separately from sizing actors to ensure actors without a cell are validated.
@@ -101,6 +118,28 @@ public class Table extends WidgetGroup {
 			for (Group parent = getTable(); parent != null; parent = parent.getParent())
 				if (parent instanceof Widget) ((Widget) parent).invalidate();
 				else break;
+		}
+
+		public void drawDebug(Graphics g) {
+			if (getDebug() == Debug.none || debugRects == null) return;
+			int x = 0, y = 0;
+			Widget parent = getTable();
+			while (true) {
+				x += parent.getX();
+				y += parent.getY();
+				if (parent.getParent() instanceof Widget) parent = (Widget) parent.getParent();
+				else break;
+			}
+
+			g.begin();
+			for (int i = 0, n = debugRects.size(); i < n; i++) {
+				DebugRect rect = debugRects.get(i);
+				Color color = new Color(rect.type == Debug.cell ? 255 : 0, rect.type == Debug.widget ? 255 : 0, rect.type == Debug.table ? 255 : 0);
+
+				g.setColor(color);
+				g.drawRect(x + rect.getX(), y + rect.getY() - rect.getHeight(), rect.getWidth(), rect.getHeight());
+			}
+			g.end();
 		}
 	}
 
@@ -185,12 +224,22 @@ public class Table extends WidgetGroup {
 
 		@Override
 		public void clearDebugRectangles(TableLayout layout) {
-			// TODO Auto-generated method stub
+			if (layout.debugRects != null) layout.debugRects.clear();
 		}
 
 		@Override
 		public void addDebugRectangle(TableLayout layout, com.esotericsoftware.tablelayout.BaseTableLayout.Debug type, float x, float y, float w, float h) {
-			// TODO Auto-generated method stub
+			if (layout.debugRects == null) layout.debugRects = new ArrayList<>();
+			layout.debugRects.add(new DebugRect(type, x, layout.getTable().getHeight() - y, w, h));
+		}
+
+		static class DebugRect extends Rectangle {
+			final Debug type;
+
+			public DebugRect(Debug type, float x, float y, float width, float height) {
+				super((int) x, (int) y, (int) width, (int) height);
+				this.type = type;
+			}
 		}
 	}
 }
