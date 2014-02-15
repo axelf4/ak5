@@ -5,7 +5,6 @@ package org.gamelib.util;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -16,9 +15,7 @@ import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.util.Font.FontImpl;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public class BitmapFont extends FontImpl implements Font {
 	private static final int LOG2_PAGE_SIZE = 9;
 	private static final int PAGE_SIZE = 1 << LOG2_PAGE_SIZE;
@@ -90,11 +87,8 @@ public class BitmapFont extends FontImpl implements Font {
 				int amount = Integer.parseInt(tokens.nextToken());
 				glyph.setKerning(second, amount);
 			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
-			// throw new IllegalArgumentException("Invalid font file.");
+			throw new IllegalArgumentException("Invalid font file.", e);
 		}
 	}
 
@@ -139,7 +133,7 @@ public class BitmapFont extends FontImpl implements Font {
 		for (int i = 0; i < string.length(); i++) {
 			c = string.charAt(i);
 			Glyph glyph = getGlyph(c);
-			totalWidth += glyph.width;
+			totalWidth += glyph.xadvance;
 			if (prev != '\u0000') totalWidth += glyph.getKerning(prev);
 			prev = c;
 		}
