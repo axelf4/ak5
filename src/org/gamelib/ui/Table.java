@@ -67,8 +67,10 @@ public class Table extends WidgetGroup {
 		return layout.defaults();
 	}
 
-	public void debug() {
-		layout.debug();
+	public void debug(Debug... lines) {
+		if (lines.length == 0) layout.debug();
+		else for (Debug debug : lines)
+			layout.debug(debug);
 	}
 
 	public static void drawDebug(Graphics g, Group group) {
