@@ -3,6 +3,7 @@
  */
 package org.gamelib.ui;
 
+import org.gamelib.backend.Color;
 import org.gamelib.backend.Graphics;
 import org.gamelib.ui.Widget.WidgetImpl;
 import org.gamelib.util.Font;
@@ -12,11 +13,14 @@ import org.gamelib.util.geom.Rectangle;
 public class Label extends WidgetImpl {
 	/** The text to be displayed. */
 	private String text, show;
+	/** The font to draw in. */
 	private final Font font;
 	/** Text's AABB */
-	Rectangle bounds = new Rectangle();
-	/** TODO shorten if needed */
+	private Rectangle bounds = new Rectangle();
+	/** If truncating if needed. */
 	private boolean ellipsis = false;
+	/** Color to draw text in. */
+	public Color fontColor = Color.BLACK;
 
 	public Label(String text, Font font) {
 		this.show = this.text = text;
@@ -66,6 +70,7 @@ public class Label extends WidgetImpl {
 		super.handle(event);
 		if (event instanceof Event.Draw) {
 			Graphics g = ((Event.Draw) event).graphics;
+			g.setColor(fontColor);
 			font.drawString(g, show, getX(), getY());
 		} else return false;
 		return true;
