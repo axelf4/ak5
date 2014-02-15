@@ -34,13 +34,6 @@ public class Table extends WidgetGroup {
 	}
 
 	@Override
-	public boolean handle(Event event) {
-		boolean value = super.handle(event);
-		if (event instanceof Event.Draw) layout.drawDebug(((Event.Draw) event).graphics);
-		return value || event instanceof Event.Draw;
-	}
-
-	@Override
 	public int getPrefferedWidth() {
 		return (int) layout.getPrefWidth();
 	}
@@ -76,6 +69,13 @@ public class Table extends WidgetGroup {
 
 	public void debug() {
 		layout.debug();
+	}
+
+	public static void drawDebug(Graphics g, Group group) {
+		for (Handler handler : group.getChildren()) {
+			if (handler instanceof Table) ((Table) handler).layout.drawDebug(g);
+			if (handler instanceof Group) drawDebug(g, (Group) handler);
+		}
 	}
 
 	public static class TableLayout extends BaseTableLayout<Handler, Table, TableLayout, TableToolkit> {
