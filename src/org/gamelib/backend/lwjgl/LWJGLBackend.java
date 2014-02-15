@@ -59,7 +59,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	/** The color model for GL images */
 	private static final ColorModel glColorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[] { 8, 8, 8, 0 }, false, false, ComponentColorModel.OPAQUE, DataBuffer.TYPE_BYTE);;
 
-	private LWJGLGraphics graphics;
+	private ImmediateGraphics graphics;
 	private LWJGLInput input;
 	/** The Display's parent. */
 	private Canvas parent;
@@ -151,7 +151,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	@Override
 	public Graphics getGraphics() {
-		return graphics == null ? graphics = new LWJGLGraphics() : graphics;
+		return graphics == null ? graphics = new ImmediateGraphics() : graphics;
 	}
 
 	@Override
