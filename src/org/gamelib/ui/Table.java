@@ -19,16 +19,13 @@ import com.esotericsoftware.tablelayout.BaseTableLayout.Debug;
 import com.esotericsoftware.tablelayout.Cell;
 import com.esotericsoftware.tablelayout.Toolkit;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public class Table extends WidgetGroup {
 	private final TableLayout layout;
 
 	public Table() {
 		layout = new TableLayout();
 		layout.setTable(this);
-		layout.debug();
 	}
 
 	@Override
@@ -67,11 +64,18 @@ public class Table extends WidgetGroup {
 		return layout.add(widget);
 	}
 
-	/**
-	 * Indicates that subsequent cells should be added to a new row and returns the cell values that will be used as the defaults for all cells in the new row.
-	 */
+	/** Indicates that subsequent cells should be added to a new row and returns the cell values that will be used as the
+	 * defaults for all cells in the new row. */
 	public Cell<?> row() {
 		return layout.row();
+	}
+
+	public Cell<?> defaults() {
+		return layout.defaults();
+	}
+
+	public void debug() {
+		layout.debug();
 	}
 
 	public static class TableLayout extends BaseTableLayout<Handler, Table, TableLayout, TableToolkit> {
@@ -94,17 +98,12 @@ public class Table extends WidgetGroup {
 
 			for (Cell<Widget> c : getCells()) {
 				if (c.getIgnore()) continue;
-				int widgetWidth = Math.round(c.getWidgetWidth());
-				int widgetHeight = Math.round(c.getWidgetHeight());
-				int widgetX = Math.round(c.getWidgetX());
-				int widgetY = height - Math.round(c.getWidgetY()) - widgetHeight;
-				c.setWidgetBounds(widgetX, widgetY, widgetWidth, widgetHeight);
 				Widget widget = c.getWidget();
 				if (widget != null) {
-					widget.setX(widgetX);
-					widget.setY(widgetY);
-					widget.setWidth(widgetWidth);
-					widget.setHeight(widgetHeight);
+					widget.setX(table.getX() + (int) c.getWidgetX());
+					widget.setY(table.getY() + (int) c.getWidgetY());
+					widget.setWidth((int) c.getWidgetWidth());
+					widget.setHeight((int) c.getWidgetHeight());
 				}
 			}
 			// Validate children separately from sizing actors to ensure actors without a cell are validated.
@@ -137,7 +136,7 @@ public class Table extends WidgetGroup {
 				Color color = new Color(rect.type == Debug.cell ? 255 : 0, rect.type == Debug.widget ? 255 : 0, rect.type == Debug.table ? 255 : 0);
 
 				g.setColor(color);
-				g.drawRect(x + rect.getX(), y + rect.getY() - rect.getHeight(), rect.getWidth(), rect.getHeight());
+				g.drawRect(x + rect.getX(), y + rect.getY(), rect.getWidth(), rect.getHeight());
 			}
 			g.end();
 		}
@@ -230,7 +229,7 @@ public class Table extends WidgetGroup {
 		@Override
 		public void addDebugRectangle(TableLayout layout, com.esotericsoftware.tablelayout.BaseTableLayout.Debug type, float x, float y, float w, float h) {
 			if (layout.debugRects == null) layout.debugRects = new ArrayList<>();
-			layout.debugRects.add(new DebugRect(type, x, layout.getTable().getHeight() - y, w, h));
+			layout.debugRects.add(new DebugRect(type, x, y, w, h));
 		}
 
 		static class DebugRect extends Rectangle {
