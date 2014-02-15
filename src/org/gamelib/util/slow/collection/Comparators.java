@@ -6,7 +6,7 @@ package org.gamelib.util.slow.collection;
 import java.util.Comparator;
 
 /**
- * @author Axel
+ * @author pwnedary
  */
 public final class Comparators {
 	public static final Comparator<Object> DEFAULT_COMPARATOR = new Comparator<Object>() {
