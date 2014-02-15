@@ -72,17 +72,12 @@ public class Group implements Handler {
 	}
 
 	/**
-	 * Returns all handler even in lower in hierarchy.
+	 * Returns all direct children one level lower in hierarchy, added to this {@link Group}.
+	 * 
+	 * @return this Group's children
 	 */
 	public List<Handler> getChildren() {
-		List<Handler> list = new ArrayList<>();
-		// list.add(this);
-		// for (int i = 0; i < children.size(); i++) list.addAll(children.get(i).getHierarchy());
-		for (Handler handler : handlers.get(Event.class)) {
-			list.add(handler);
-			if (handler instanceof Group) list.addAll(((Group) handler).getChildren());
-		}
-		return list;
+		return handlers.get(Event.class);
 	}
 
 	/**
@@ -96,7 +91,7 @@ public class Group implements Handler {
 
 	/** Sets this group to <code>active</code>. */
 	public void setActive(boolean active) {
-		this.active = active; // for (Iterator<Group> iterator = children.iterator(); iterator.hasNext();) { Group group = (Group) iterator.next(); group.setActive(active); }
+		this.active = active;
 	}
 
 	/* Group utility */
