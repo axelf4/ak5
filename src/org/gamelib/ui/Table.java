@@ -18,6 +18,7 @@ import com.esotericsoftware.tablelayout.BaseTableLayout;
 import com.esotericsoftware.tablelayout.BaseTableLayout.Debug;
 import com.esotericsoftware.tablelayout.Cell;
 import com.esotericsoftware.tablelayout.Toolkit;
+import com.esotericsoftware.tablelayout.Value;
 
 /** @author pwnedary */
 public class Table extends WidgetGroup {
@@ -78,6 +79,118 @@ public class Table extends WidgetGroup {
 			if (handler instanceof Table) ((Table) handler).layout.drawDebug(g);
 			if (handler instanceof Group) drawDebug(g, (Group) handler);
 		}
+	}
+
+	/** Sets the padTop, padLeft, padBottom, and padRight around the table to the specified value. */
+	public Table pad(Value pad) {
+		layout.pad(pad);
+		return this;
+	}
+
+	public Table pad(Value top, Value left, Value bottom, Value right) {
+		layout.pad(top, left, bottom, right);
+		return this;
+	}
+
+	/** Padding at the top edge of the table. */
+	public Table padTop(Value padTop) {
+		layout.padTop(padTop);
+		return this;
+	}
+
+	/** Padding at the left edge of the table. */
+	public Table padLeft(Value padLeft) {
+		layout.padLeft(padLeft);
+		return this;
+	}
+
+	/** Padding at the bottom edge of the table. */
+	public Table padBottom(Value padBottom) {
+		layout.padBottom(padBottom);
+		return this;
+	}
+
+	/** Padding at the right edge of the table. */
+	public Table padRight(Value padRight) {
+		layout.padRight(padRight);
+		return this;
+	}
+
+	/** Sets the padTop, padLeft, padBottom, and padRight around the table to the specified value. */
+	public Table pad(float pad) {
+		layout.pad(pad);
+		return this;
+	}
+
+	public Table pad(float top, float left, float bottom, float right) {
+		layout.pad(top, left, bottom, right);
+		return this;
+	}
+
+	/** Padding at the top edge of the table. */
+	public Table padTop(float padTop) {
+		layout.padTop(padTop);
+		return this;
+	}
+
+	/** Padding at the left edge of the table. */
+	public Table padLeft(float padLeft) {
+		layout.padLeft(padLeft);
+		return this;
+	}
+
+	/** Padding at the bottom edge of the table. */
+	public Table padBottom(float padBottom) {
+		layout.padBottom(padBottom);
+		return this;
+	}
+
+	/** Padding at the right edge of the table. */
+	public Table padRight(float padRight) {
+		layout.padRight(padRight);
+		return this;
+	}
+
+	/** Sets the alignment of the logical table within the table widget. Set to {@link Align#center}, {@link Align#top},
+	 * {@link Align#bottom} , {@link Align#left} , {@link Align#right}, or any combination of those. */
+	public Table align(int align) {
+		layout.align(align);
+		return this;
+	}
+
+	/** Sets the alignment of the logical table within the table widget to {@link Align#center}. This clears any other
+	 * alignment. */
+	public Table center() {
+		layout.center();
+		return this;
+	}
+
+	/** Adds {@link Align#top} and clears {@link Align#bottom} for the alignment of the logical table within the table
+	 * widget. */
+	public Table top() {
+		layout.top();
+		return this;
+	}
+
+	/** Adds {@link Align#left} and clears {@link Align#right} for the alignment of the logical table within the table
+	 * widget. */
+	public Table left() {
+		layout.left();
+		return this;
+	}
+
+	/** Adds {@link Align#bottom} and clears {@link Align#top} for the alignment of the logical table within the table
+	 * widget. */
+	public Table bottom() {
+		layout.bottom();
+		return this;
+	}
+
+	/** Adds {@link Align#right} and clears {@link Align#left} for the alignment of the logical table within the table
+	 * widget. */
+	public Table right() {
+		layout.right();
+		return this;
 	}
 
 	public static class TableLayout extends BaseTableLayout<Handler, Table, TableLayout, TableToolkit> {
