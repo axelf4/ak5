@@ -80,6 +80,10 @@ public class Line implements Shape {
 		return new Line2D.Float(x1, y1, x2, y2);
 	}
 
+	public double length() {
+		return Math.sqrt((getX1() - getX2()) * (getX1() - getX2()) + (getY1() - getY2()) * (getY1() - getY2()));
+	}
+
 	/** Returns the X coordinate of the start point of this {@code Line} object.
 	 * 
 	 * @return the X coordinate of the start point */
