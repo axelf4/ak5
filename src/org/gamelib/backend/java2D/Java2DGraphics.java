@@ -13,10 +13,8 @@ import org.gamelib.backend.Color;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 
-/**
- * @author pwnedary
- * @see java.awt.Graphics
- */
+/** @author pwnedary
+ * @see java.awt.Graphics */
 public class Java2DGraphics implements Graphics {
 	protected Graphics2D g2d;
 	int width, height;
