@@ -22,11 +22,11 @@ public class RegisterUDP implements FrameworkMessage<RegisterUDP> {
 	@Override
 	public void write(Buf output, RegisterUDP object) {
 		output.writeString(udpRemoteAddress.getHostString());
-		output.writeInt(udpRemoteAddress.getPort());
+		output.putInt(udpRemoteAddress.getPort());
 	}
 
 	@Override
 	public RegisterUDP read(Buf input) {
-		return new RegisterUDP(InetSocketAddress.createUnresolved(input.readString(), input.readInt()));
+		return new RegisterUDP(InetSocketAddress.createUnresolved(input.readString(), input.getInt()));
 	}
 }

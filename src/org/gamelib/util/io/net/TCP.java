@@ -14,9 +14,7 @@ import java.nio.channels.SocketChannel;
 
 import org.gamelib.util.io.Buf;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public class TCP {
 	SocketChannel socketChannel;
 	SelectionKey selectionKey;
@@ -35,11 +33,9 @@ public class TCP {
 		this(4096, 4096);
 	}
 
-	/**
-	 * Server
+	/** Server
 	 * 
-	 * @return
-	 */
+	 * @return */
 	public SelectionKey accept(Selector selector, SocketChannel socketChannel)
 			throws IOException {
 		close();
@@ -55,15 +51,13 @@ public class TCP {
 		}
 	}
 
-	/**
-	 * Client
+	/** Client
 	 * 
 	 * @param address
 	 * @param selector
 	 * @return
 	 * @throws IOException
-	 * @return whether the connection established
-	 */
+	 * @return whether the connection established */
 	public boolean connect(Selector selector, SocketAddress address)
 			throws IOException {
 		close();
@@ -83,9 +77,7 @@ public class TCP {
 		}
 	}
 
-	/**
-	 * @throws IOException
-	 */
+	/** @throws IOException */
 	public void writeOperation() throws IOException {
 		if (socketChannel == null) throw new SocketException("Connection is closed.");
 		if (writeToSocket()) selectionKey.interestOps(SelectionKey.OP_READ); // Write successful, clear OP_WRITE
@@ -104,7 +96,7 @@ public class TCP {
 	public int send(Object object) throws IOException {
 		if (socketChannel == null) throw new SocketException("Connection is closed.");
 		int start = writeBuffer.position();
-		int lengthLength = writeBufferHandle.intBytes();
+		int lengthLength = 4;
 		writeBuffer.position(writeBuffer.position() + lengthLength); // Leave room for length.
 
 		writeBufferHandle.writeObject(object); // Write data.
@@ -112,7 +104,7 @@ public class TCP {
 
 		// Write data length.
 		writeBuffer.position(start);
-		writeBufferHandle.writeInt(end - lengthLength - start);
+		writeBufferHandle.putInt(end - lengthLength - start);
 		writeBuffer.position(end);
 
 		// Write to socket if no data was queued.
@@ -124,7 +116,7 @@ public class TCP {
 	public Object readObject() throws IOException {
 		if (socketChannel == null) throw new SocketException("Connection is closed.");
 		if (currentObjectLength == 0) {
-			int lengthLength = readBufferHandle.intBytes(); // Read length of next object
+			int lengthLength = 4;
 			if (readBuffer.remaining() < lengthLength) {
 				readBuffer.compact();
 				if (socketChannel.read(readBuffer) == -1) throw new SocketException("Connection is closed."); // Read bytes into readBuffer
@@ -132,7 +124,7 @@ public class TCP {
 
 				if (readBuffer.remaining() < lengthLength) return null;
 			}
-			currentObjectLength = readBufferHandle.readInt();
+			currentObjectLength = readBufferHandle.getInt(); // Read length of next object
 		}
 
 		int length = currentObjectLength;

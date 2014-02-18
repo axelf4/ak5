@@ -19,11 +19,11 @@ public class RegisterTCP implements FrameworkMessage<RegisterTCP> {
 
 	@Override
 	public void write(Buf output, RegisterTCP object) {
-		output.writeInt(connectionId);
+		output.putInt(connectionId);
 	}
 
 	@Override
 	public RegisterTCP read(Buf input) {
-		return new RegisterTCP(input.readInt());
+		return new RegisterTCP(input.getInt());
 	}
 }
