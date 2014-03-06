@@ -19,7 +19,7 @@ import org.gamelib.util.io.Serializer.Serialization;
  * and {@linkplain ByteBuffer NIO Buffers}.
  * 
  * @author pwnedary */
-public interface Buf extends ObjectSerialization {
+public interface ByteBuf extends ObjectSerialization {
 	/** Returns the number of bytes (octets) this buffer can contain.
 	 * 
 	 * @return the capacity */
@@ -35,7 +35,7 @@ public interface Buf extends ObjectSerialization {
 	 * @param newPosition The new position value; must be non-negative and no larger than the current limit
 	 * @return This buffer
 	 * @throws IllegalArgumentException If the preconditions on <tt>newPosition</tt> do not hold */
-	Buf position(int newPosition);
+	ByteBuf position(int newPosition);
 
 	/** Returns this buffer's limit.
 	 * 
@@ -48,34 +48,34 @@ public interface Buf extends ObjectSerialization {
 	 * @param newLimit The new limit value; must be non-negative and no larger than this buffer's capacity
 	 * @return This buffer
 	 * @throws IllegalArgumentException If the preconditions on <tt>newLimit</tt> do not hold */
-	Buf limit(int newLimit);
+	ByteBuf limit(int newLimit);
 
 	/** Sets this buffer's mark at its position.
 	 * 
 	 * @return This buffer */
-	Buf mark();
+	ByteBuf mark();
 
 	/** Resets this buffer's position to the previously-marked position. Invoking this method neither changes nor
 	 * discards the mark's value.
 	 * 
 	 * @return This buffer
 	 * @throws InvalidMarkException If the mark has not been set */
-	Buf reset();
+	ByteBuf reset();
 
 	/** Clears this buffer by setting the position to zero, the limit to the capacity and discarding the mark.
 	 * 
 	 * @return This buffer */
-	Buf clear();
+	ByteBuf clear();
 
 	/** Flips this buffer by setting the limit to the position, the position to zero and discarding the mark.
 	 * 
 	 * @return This buffer */
-	Buf flip();
+	ByteBuf flip();
 
 	/** Rewinds this buffer by setting the position to zero and discarding the mark.
 	 * 
 	 * @return This buffer */
-	Buf rewind();
+	ByteBuf rewind();
 
 	/** Returns the number of bytes between the current position and the limit.
 	 * 
@@ -87,7 +87,7 @@ public interface Buf extends ObjectSerialization {
 	 * @return <tt>true</tt> if there's any bytes remaining */
 	boolean hasRemaining();
 
-	Buf flush();
+	ByteBuf flush();
 
 	/** Returns a {@linkplain ByteBuffer NIO Byte Buffer} representing this buffer. */
 	ByteBuffer nio();
@@ -170,7 +170,7 @@ public interface Buf extends ObjectSerialization {
 		LITTLE_ENDIAN;
 	}
 
-	public static abstract class BufImpl implements Buf {
+	public static abstract class ByteBufImpl implements ByteBuf {
 		protected int mark = -1;
 
 		/* @Override public long skip(long n) { long remaining = n; int nr; if (n <= 0) return 0; int size = (int)
@@ -179,19 +179,19 @@ public interface Buf extends ObjectSerialization {
 		 * if (nr < 0) break; remaining -= nr; } return 0; } */
 
 		@Override
-		public Buf mark() {
+		public ByteBuf mark() {
 			this.mark = position();
 			return this;
 		}
 
 		@Override
-		public Buf reset() {
+		public ByteBuf reset() {
 			if (mark == -1) throw new InvalidMarkException();
 			return position(mark);
 		}
 
 		@Override
-		public Buf clear() {
+		public ByteBuf clear() {
 			position(0);
 			limit(capacity());
 			this.mark = -1;
@@ -199,7 +199,7 @@ public interface Buf extends ObjectSerialization {
 		}
 
 		@Override
-		public Buf flip() {
+		public ByteBuf flip() {
 			limit(position());
 			position(0);
 			this.mark = -1;
@@ -207,7 +207,7 @@ public interface Buf extends ObjectSerialization {
 		}
 
 		@Override
-		public Buf rewind() {
+		public ByteBuf rewind() {
 			position(0);
 			this.mark = -1;
 			return this;
@@ -224,7 +224,7 @@ public interface Buf extends ObjectSerialization {
 		}
 
 		@Override
-		public Buf flush() {
+		public ByteBuf flush() {
 			return this;
 		}
 
@@ -312,11 +312,11 @@ public interface Buf extends ObjectSerialization {
 		}
 	}
 
-	public static class NIOByteBuffer extends BufImpl implements Buf {
+	public static class NIOByteBuf extends ByteBufImpl implements ByteBuf {
 		protected ByteBuffer buffer;
 
 		/** Constructs a new Buf backed by buffer. */
-		public NIOByteBuffer(ByteBuffer buffer) {
+		public NIOByteBuf(ByteBuffer buffer) {
 			this.buffer = buffer;
 		}
 
@@ -331,7 +331,7 @@ public interface Buf extends ObjectSerialization {
 		}
 
 		@Override
-		public Buf position(int newPosition) {
+		public ByteBuf position(int newPosition) {
 			buffer.position(newPosition);
 			return this;
 		}
@@ -342,37 +342,37 @@ public interface Buf extends ObjectSerialization {
 		}
 
 		@Override
-		public Buf limit(int newLimit) {
+		public ByteBuf limit(int newLimit) {
 			buffer.limit(newLimit);
 			return this;
 		}
 
 		@Override
-		public Buf mark() {
+		public ByteBuf mark() {
 			buffer.mark();
 			return this;
 		}
 
 		@Override
-		public Buf reset() {
+		public ByteBuf reset() {
 			buffer.reset();
 			return this;
 		}
 
 		@Override
-		public Buf clear() {
+		public ByteBuf clear() {
 			buffer.clear();
 			return this;
 		}
 
 		@Override
-		public Buf flip() {
+		public ByteBuf flip() {
 			buffer.flip();
 			return this;
 		}
 
 		@Override
-		public Buf rewind() {
+		public ByteBuf rewind() {
 			buffer.rewind();
 			return this;
 		}
@@ -486,7 +486,7 @@ public interface Buf extends ObjectSerialization {
 		}
 	}
 
-	public static class StreamByteBuffer extends BufImpl implements Buf {
+	public static class StreamByteBuf extends ByteBufImpl implements ByteBuf {
 		protected int maxCapacity;
 		protected int position;
 		protected int capacity;
@@ -500,7 +500,7 @@ public interface Buf extends ObjectSerialization {
 		 * @param bufferSize The initial size of the buffer.
 		 * @param maxBufferSize The buffer is doubled as needed until it exceeds maxBufferSize and an exception is
 		 *            thrown. Can be -1 for no maximum. */
-		public StreamByteBuffer(int bufferSize, int maxBufferSize) {
+		public StreamByteBuf(int bufferSize, int maxBufferSize) {
 			if (maxBufferSize < -1) throw new IllegalArgumentException("maxBufferSize cannot be < -1: " + maxBufferSize);
 			this.capacity = bufferSize;
 			this.maxCapacity = maxBufferSize == -1 ? Integer.MAX_VALUE : maxBufferSize;
@@ -508,18 +508,18 @@ public interface Buf extends ObjectSerialization {
 		}
 
 		/** Creates a new Input for reading from an InputStream with a buffer size of 4096. */
-		public StreamByteBuffer(InputStream inputStream) {
+		public StreamByteBuf(InputStream inputStream) {
 			this(4096, 4096);
 			if ((this.inputStream = inputStream) == null) throw new IllegalArgumentException("inputStream cannot be null.");
 		}
 
 		/** Creates a new Output for writing to an OutputStream. A buffer size of 4096 is used. */
-		public StreamByteBuffer(OutputStream outputStream) {
+		public StreamByteBuf(OutputStream outputStream) {
 			this(4096, 4096);
 			if ((this.outputStream = outputStream) == null) throw new IllegalArgumentException("outputStream cannot be null.");
 		}
 
-		public StreamByteBuffer(InputStream inputStream, OutputStream outputStream) {
+		public StreamByteBuf(InputStream inputStream, OutputStream outputStream) {
 			this(4096, 4096);
 			if ((this.inputStream = inputStream) == null) throw new IllegalArgumentException("inputStream cannot be null.");
 			if ((this.outputStream = outputStream) == null) throw new IllegalArgumentException("outputStream cannot be null.");
@@ -536,7 +536,7 @@ public interface Buf extends ObjectSerialization {
 		}
 
 		@Override
-		public Buf position(int newPosition) {
+		public ByteBuf position(int newPosition) {
 			this.position = newPosition;
 			return this;
 		}
@@ -547,7 +547,7 @@ public interface Buf extends ObjectSerialization {
 		}
 
 		@Override
-		public Buf limit(int newLimit) {
+		public ByteBuf limit(int newLimit) {
 			this.limit = newLimit;
 			return this;
 		}
@@ -570,7 +570,7 @@ public interface Buf extends ObjectSerialization {
 		}
 
 		@Override
-		public Buf flush() {
+		public ByteBuf flush() {
 			if (outputStream == null) return this;
 			try {
 				outputStream.write(buffer, 0, position);

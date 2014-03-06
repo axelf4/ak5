@@ -12,21 +12,21 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
-import org.gamelib.util.io.Buf;
+import org.gamelib.util.io.ByteBuf;
 
 /** @author pwnedary */
 public class TCP {
 	SocketChannel socketChannel;
 	SelectionKey selectionKey;
 	private final ByteBuffer readBuffer, writeBuffer;
-	private final Buf readBufferHandle, writeBufferHandle;
+	private final ByteBuf readBufferHandle, writeBufferHandle;
 	private int currentObjectLength = 0;
 
 	public TCP(int readBufferSize, int writeBufferSize) {
 		readBuffer = ByteBuffer.allocate(readBufferSize);
 		writeBuffer = ByteBuffer.allocate(writeBufferSize);
-		readBufferHandle = new Buf.NIOByteBuffer(readBuffer);
-		writeBufferHandle = new Buf.NIOByteBuffer(writeBuffer);
+		readBufferHandle = new ByteBuf.NIOByteBuf(readBuffer);
+		writeBufferHandle = new ByteBuf.NIOByteBuf(writeBuffer);
 	}
 
 	public TCP() {
