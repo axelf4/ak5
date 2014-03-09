@@ -3,16 +3,13 @@
  */
 package org.gamelib.util;
 
-import java.awt.geom.Line2D;
-
 import org.gamelib.Drawable;
-import org.gamelib.backend.Color;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
+import org.gamelib.util.geom.Line;
+import org.gamelib.util.geom.Point;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public class NinePatch implements Drawable {
 	/* Indices for {@link #NinePatch(TextureRegion...)} constructor, alphabetically first in javadoc. */
 	public static final int TOP_LEFT = 0;
@@ -27,6 +24,8 @@ public class NinePatch implements Drawable {
 	Image[] patches = new Image[9];
 
 	Image rawImage;
+	/* Dimensions except middle patch. */
+	int minWidth, minHeight;
 
 	public NinePatch(Image image, int left, int right, int top, int bottom) {
 		this(image);
@@ -36,52 +35,80 @@ public class NinePatch implements Drawable {
 	public NinePatch(Image image) {
 		if (image.getWidth() < 3 || image.getHeight() < 3) throw new IllegalArgumentException("Image must be atleast 3x3p large.");
 		rawImage = image.region(1, 1, image.getWidth() - 1, image.getHeight() - 1);
+
+		Line horizontalStretch = parseInterval(image, IntervalType.HORIZONTAL_STRETCH);
+		minWidth = rawImage.getWidth() - (int) horizontalStretch.length();
+		Line verticalStretch = parseInterval(image, IntervalType.VERTICAL_STRETCH);
+		minHeight = rawImage.getHeight() - (int) verticalStretch.length();
+		System.out.println("hor: " + horizontalStretch.length() + " ver: " + verticalStretch.length());
+		patches[TOP_LEFT] = rawImage.region(0, 0, horizontalStretch.getX1() - 1, verticalStretch.getY1() - 1);
+		patches[TOP_CENTER] = rawImage.region(horizontalStretch.getX1(), 0, horizontalStretch.getX2() - horizontalStretch.getX1(), verticalStretch.getY1() - 1);
+		patches[TOP_RIGHT] = rawImage.region(horizontalStretch.getX2() + 1, 0, rawImage.getWidth()- horizontalStretch.getX2(), verticalStretch.getY1() - 1);
 	}
 
-	void parseInterval(Image image, IntervalType intervalType) {
+	Line parseInterval(Image image, IntervalType intervalType) {
 		final int length = intervalType == IntervalType.HORIZONTAL_STRETCH || intervalType == IntervalType.HORIZONTAL_CONTENT ? image.getWidth() : image.getHeight();
 		int[][] pixels = image.getPixels();
-		Line2D.Float interval = new Line2D.Float();
-		float lastX, lastY;
+		int x1 = -1, y1 = -1;
+		Point last = null;
 		for (int i = 1; i < length; i++) {
-			final int argb;
+			final Point pixel;
 			switch (intervalType) {
 			case HORIZONTAL_STRETCH:
-				argb = pixels[i][0];
+				pixel = new Point(i, 0);
 				break;
 			case VERTICAL_STRETCH:
-				argb = pixels[0][i];
+				pixel = new Point(0, i);
 				break;
 			case HORIZONTAL_CONTENT:
-				argb = pixels[i][image.getHeight() - 1];
+				pixel = new Point(i, image.getHeight() - 1);
 				break;
 			case VERTICAL_CONTENT:
-				argb = pixels[image.getHeight() - 1][i];
+				pixel = new Point(image.getHeight() - 1, i);
 				break;
 			default:
-				argb = 0;
+				pixel = null;
 				break;
 			}
-			boolean black = argb == java.awt.Color.BLACK.getRGB();
-			if (black) {
-				switch (intervalType) {
-				case HORIZONTAL_STRETCH:
-					break;
-				case VERTICAL_STRETCH:
-					break;
-				case HORIZONTAL_CONTENT:
-					break;
-				case VERTICAL_CONTENT:
-					break;
-				default:
-					break;
+			System.out.println("pixel: " + pixels[pixel.getX()][pixel.getY()] + " x: " +pixel.getX() + " y: " + pixel.getY());
+			System.out.println(java.awt.Color.BLACK.getRGB());
+			if (pixels[pixel.getX()][pixel.getY()] == java.awt.Color.BLACK.getRGB()) {
+				if (x1 == -1 && y1 == -1) {
+					x1 = pixel.getX();
+					y1 = pixel.getY();
 				}
-			}
+			} else if ((x1 != -1 && y1 != -1) || i + 1 >= length) return new Line(x1, y1, last.getX(), last.getY());
+			last = pixel;
 		}
+		return null;
 	}
 
 	@Override
 	public void draw(Graphics g, float delta) {}
+
+	public void draw(Graphics g, int x, int y, int width, int height) {
+		int dx = x;
+		int dy = y - height;
+		int w, h;
+		int stretchableWidth = width - minWidth, stretchableHeight = height - minHeight;
+		for (int i = 0; i < 3; i++) { // 9 instead of 3
+			Image patch = patches[i];
+			if (i % 3 == 0) { // new row
+				dx = x;
+				dy += height;
+			}
+
+			if (i == TOP_CENTER || i == MIDDLE_CENTER || i == BOTTOM_CENTER) w = stretchableWidth; // center column patches
+			else w = patch.getWidth();
+
+			if (i / 3 == 1) h = stretchableHeight; // middle row patches
+			else h = patch.getHeight();
+
+			g.drawImage(patch, dx, dy, dx + w, dy + h, 0, 0, patch.getWidth(), patch.getHeight());
+
+			dx += w;
+		}
+	}
 
 	private class Interval {
 

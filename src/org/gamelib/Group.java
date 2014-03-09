@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.gamelib.ui.Widget;
+
 /** An aggregate of handlers, whose {@linkplain #handle(org.gamelib.Handler.Event) handle} iterates downwards.
  * 
  * @author pwnedary */
@@ -51,6 +53,8 @@ public class Group implements Handler {
 		// handlers.get(Event.class).add(handler);
 		for (List<Handler> handlers : this.handlers.values())
 			handlers.add(handler);
+		if (handler instanceof Group) ((Group) handler).setParent(this);
+		else if (handler instanceof Widget) ((Widget) handler).setParent(this);
 	}
 
 	public void unregister(Handler handler) {
@@ -58,11 +62,18 @@ public class Group implements Handler {
 			if (iterator.next().equals(handler)) iterator.remove();
 	}
 
-	/** Returns this Group's ancestor.
+	/** Returns this {@link Group}'s ancestor.
 	 * 
-	 * @return this group's parent */
+	 * @return this Group's parent */
 	public Group getParent() {
 		return parent;
+	}
+
+	/** Sets this {@link Group}'s ancestor.
+	 * 
+	 * @param parent this Group's new parent */
+	public void setParent(Group parent) {
+		this.parent = parent;
 	}
 
 	/** Returns all direct children one level lower in hierarchy, added to this {@link Group}.

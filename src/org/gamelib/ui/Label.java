@@ -36,8 +36,6 @@ public class Label extends WidgetImpl {
 
 	@Override
 	public void layout() {
-		computeSizes();
-
 		if (ellipsis && getWidth() < bounds.getWidth()) {
 			int ellipsisWidth = font.getWidth("...");
 			if (getWidth() >= ellipsisWidth) show = text.substring(0, font.visibleChars(text, getWidth() - ellipsisWidth)) + "...";
@@ -49,7 +47,8 @@ public class Label extends WidgetImpl {
 	}
 
 	public void setText(String text) {
-		this.text = text;
+		if (text.equals(this.text)) return;
+		this.show = this.text = text;
 		invalidate();
 	}
 
@@ -67,8 +66,8 @@ public class Label extends WidgetImpl {
 
 	@Override
 	public boolean handle(Event event) {
-		super.handle(event);
 		if (event instanceof Event.Draw) {
+			validate();
 			Graphics g = ((Event.Draw) event).graphics;
 			g.setColor(fontColor);
 			font.drawString(g, show, getX(), getY());
@@ -76,7 +75,7 @@ public class Label extends WidgetImpl {
 		return true;
 	}
 
-	/** Whether {@linkplain #text} should be truncated with an ellipsis punctuation mark if it's length exceeds the
+	/** Whether {@linkplain #text} should be truncated with an ellipsis punctuation mark if it's width exceeds the
 	 * bounds.
 	 * 
 	 * @param ellipsis whether to truncate text */

@@ -62,16 +62,17 @@ public class Java2DImage implements Image {
 		final int[][] result = new int[getWidth()][getHeight()];
 		final boolean hasAlpha = bufferedImage.getAlphaRaster() != null;
 		final int bitsPerPixel = hasAlpha ? 4 : 3;
-		for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += bitsPerPixel) {
-			int abgr = (hasAlpha ? (pixels[pixel] & 0xFF) << 24 : -16777216) | // alpha
+		for (int pixel = 0, row = 0, col = 0; col < width && row < height; pixel += bitsPerPixel) {
+			int abgr = (hasAlpha ? (pixels[pixel] & 0xFF) << 24 : 0) | // alpha
 			(pixels[pixel + 1] & 0xFF) << 16 | // blue
 			(pixels[pixel + 2] & 0xFF) << 8 | // green
 			(pixels[pixel + 3] & 0xFF); // red
-			result[row][col] = abgr;
+			result[col][row] = abgr;
 			if (++col == width) {
 				col = 0;
 				row++;
 			}
+			System.out.println("col: " + col + " row: " + row);
 		}
 		return result;
 	}

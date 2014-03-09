@@ -11,16 +11,15 @@ import java.awt.event.MouseWheelEvent;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Input;
 
-/**
- * Callback SAM (Single Abstract Method)-interface for subscribed {@link Event}s. At registration all {@link Event}s will be subscribed to, but excluded as {@link #handle(Event)} denies.
+/** Callback SAM (Single Abstract Method)-interface for subscribed {@link Event}s. At registration all {@link Event}s
+ * will be subscribed to, but excluded as {@link #handle(Event)} denies.
  * 
- * @author pwnedary
- */
+ * @author pwnedary */
 public interface Handler {
-	/**
-	 * Handles the published {@code event}.
+	/** Handles the published {@code event}.
 	 * <p>
-	 * Returns <tt>false</tt> if this {@link Handler} isn't subscribing to {@link Event}s of {@linkplain Event#getClass() <code>event</code>'s class}. For example:
+	 * Returns <tt>false</tt> if this {@link Handler} isn't subscribing to {@link Event}s of
+	 * {@linkplain Event#getClass() <code>event</code>'s class}. For example:
 	 * 
 	 * <pre>
 	 * public boolean handle(Event event) {
@@ -32,28 +31,23 @@ public interface Handler {
 	 * </pre>
 	 * 
 	 * @param event the {@link Event} being published
-	 * @return <tt>true</tt> if subscribing to event
-	 */
+	 * @return <tt>true</tt> if subscribing to event */
 	public boolean handle(Event event);
 
 	/** An Event that occurred; may hold additional information. */
 	public interface Event {
-		/**
-		 * Returns whether this {@link Event} has been cancelled and won't get published to underlying handlers.
+		/** Returns whether this {@link Event} has been cancelled and won't get published to underlying handlers.
 		 * 
-		 * @return <tt>true</tt> if cancelled
-		 */
+		 * @return <tt>true</tt> if cancelled */
 		public boolean cancelled();
 
 		/** Stops the underlying handlers from receiving this event. */
 		public void cancel();
 
-		/**
-		 * Returns the object that caused this {@link Event} <i>(optional operation)</i>.
+		/** Returns the object that caused this {@link Event} <i>(optional operation)</i>.
 		 * 
 		 * @return the object that caused this Event
-		 * @throws UnsupportedOperationException If the cause was unknown/specified.
-		 */
+		 * @throws UnsupportedOperationException If the cause was unknown/specified. */
 		public Object source();
 
 		public static abstract class EventImpl implements Event {
@@ -143,6 +137,14 @@ public interface Handler {
 
 		public static final class Dispose extends EventImpl implements Event {}
 
-		public static final class Resize extends EventImpl implements Event {}
+		public static final class Resize extends EventImpl implements Event {
+			public int newWidth;
+			public int newHeight;
+
+			public Resize(int newWidth, int newHeight) {
+				this.newWidth = newWidth;
+				this.newHeight = newHeight;
+			}
+		}
 	}
 }

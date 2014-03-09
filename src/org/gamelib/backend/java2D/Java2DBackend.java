@@ -39,11 +39,9 @@ import org.gamelib.backend.Sound;
 import org.gamelib.util.Configuration;
 import org.gamelib.util.geom.Rectangle;
 
-/**
- * A {@link Backend} using Java2D for rendering and resources.
+/** A {@link Backend} using Java2D for rendering and resources.
  * 
- * @author pwnedary
- */
+ * @author pwnedary */
 public class Java2DBackend extends BackendImpl implements Backend {
 	/** {@linkplain Container AWT Container} for {@link #panel}. */
 	private final Container container;
@@ -189,8 +187,17 @@ public class Java2DBackend extends BackendImpl implements Backend {
 	public Image getImage(File file) throws IOException {
 		// return new Java2DImage(ImageIO.read(file));
 		// return new Java2DImage(ImageIO.read(getResourceAsStream(file.getPath())));
-		BufferedImage image = ImageIO.read(getResourceAsStream(file.getPath()));
-		tracker.addImage(image, nextAvailableId++);
+		BufferedImage image2 = ImageIO.read(getResourceAsStream(file.getPath()));
+		tracker.addImage(image2, nextAvailableId++);
+		try {
+			tracker.waitForID(nextAvailableId - 1);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		BufferedImage image = new BufferedImage(image2.getWidth(), image2.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		java.awt.Graphics g = image.getGraphics();
+		g.drawImage(image2, 0, 0, null);
+		g.dispose();
 		return new Java2DImage(image);
 	}
 
