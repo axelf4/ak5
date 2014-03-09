@@ -9,27 +9,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-/**
- * An aggregate of handlers.<br />
- * TODO make groups handlers and have handle iterate downwards
- * @author pwnedary
- */
-public class Group implements Handler {
-	public Map<Class<? extends Event>, List<Handler>> handlers = new HashMap<>();
-	protected Group parent;
+import org.gamelib.ui.Widget;
 
+/** An aggregate of handlers, whose {@linkplain #handle(org.gamelib.Handler.Event) handle} iterates downwards.
+ * 
+ * @author pwnedary */
+public class Group implements Handler {
+	/** Map of events to their subscribed handlers. */
+	public Map<Class<? extends Event>, List<Handler>> handlers = new HashMap<>();
+	/** The ancestor of this group. */
+	protected Group parent;
 	/** Whether the handlers should receive events. */
 	private boolean active = true;
-	private boolean alwaysActive = false;
 
 	public Group(Group parent) {
 		handlers.put(Event.class, new ArrayList<Handler>());
-		if ((this.parent = parent) != null) parent.handlers.get(Event.class).add(this);
-
-		// if ((this.parent = parent) != null || (parent = EventBus.MAIN_GROUP) != null) parent.children.add(this);
-		// if ((this.parent = parent) != null) parent.children.add(this);
-
-		// if (this instanceof Handler) register((Handler) this);
+		if ((this.parent = parent) != null) parent.register(this);
 	}
 
 	public Group() {
@@ -50,15 +45,16 @@ public class Group implements Handler {
 		return value;
 	}
 
-	/**
-	 * Registers the specified {@link Handler}, <code>handler</code>, for handling events.
-	 * @param handler the {@link Handler} to register
-	 */
+	/** Registers the specified {@link Handler}, <code>handler</code>, for handling events.
+	 * 
+	 * @param handler the {@link Handler} to register */
 	public void register(Handler handler) {
 		if (handler == null) throw new IllegalArgumentException("handler cannot be null");
 		// handlers.get(Event.class).add(handler);
 		for (List<Handler> handlers : this.handlers.values())
 			handlers.add(handler);
+		if (handler instanceof Group) ((Group) handler).setParent(this);
+		else if (handler instanceof Widget) ((Widget) handler).setParent(this);
 	}
 
 	public void unregister(Handler handler) {
@@ -66,57 +62,45 @@ public class Group implements Handler {
 			if (iterator.next().equals(handler)) iterator.remove();
 	}
 
-	/**
-	 * Returns all handler even in lower in hierarchy.
-	 */
-	public List<Handler> getChildren() {
-		List<Handler> list = new ArrayList<>();
-		// list.add(this);
-		// for (int i = 0; i < children.size(); i++) list.addAll(children.get(i).getHierarchy());
-		for (Handler handler : handlers.get(Event.class)) {
-			list.add(handler);
-			if (handler instanceof Group) list.addAll(((Group) handler).getChildren());
-		}
-		return list;
+	/** Returns this {@link Group}'s ancestor.
+	 * 
+	 * @return this Group's parent */
+	public Group getParent() {
+		return parent;
 	}
 
-	/**
-	 * Returns whether this {@link Group} is active.
-	 * @return whether active
-	 */
+	/** Sets this {@link Group}'s ancestor.
+	 * 
+	 * @param parent this Group's new parent */
+	public void setParent(Group parent) {
+		this.parent = parent;
+	}
+
+	/** Returns all direct children one level lower in hierarchy, added to this {@link Group}.
+	 * 
+	 * @return this Group's children */
+	public List<Handler> getChildren() {
+		return handlers.get(Event.class);
+	}
+
+	/** Returns whether this {@link Group} is active.
+	 * 
+	 * @return whether active */
 	public boolean isActive() {
 		return active;
 	}
 
-	/** Sets this and every underlying group to <code>active</code>. */
+	/** Sets this group to <code>active</code>. */
 	public void setActive(boolean active) {
 		this.active = active;
-		// for (Iterator<Group> iterator = children.iterator(); iterator.hasNext();) { Group group = (Group) iterator.next(); group.setActive(active); }
-	}
-
-	public Group setAlwaysActive(boolean b) {
-		this.alwaysActive = b;
-		return this;
 	}
 
 	/* Group utility */
 
 	/** Deactivates every other group except for this one and it's children. */
 	public void focus() {
-		for (Handler handler : EventBus.instance().getChildren())
-			if (handler instanceof Group && !((Group) handler).alwaysActive) ((Group) handler).setActive(false);
+		if (getParent() != null) for (Handler handler : getParent().getChildren())
+			if (handler instanceof Group) ((Group) handler).setActive(false);
 		setActive(true);
-	}
-
-	/* DEPRECATED */
-
-	// TODO remove:
-	@Deprecated
-	protected List<Group> children = new ArrayList<Group>();
-
-	@Deprecated
-	public void add(Group group) {
-		if (group == null) throw new IllegalArgumentException("group cannot be null");
-		children.add(group);
 	}
 }

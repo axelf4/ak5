@@ -7,21 +7,23 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 
-/**
- * A connection between a {@link Client} and a {@link Server}.
+import org.gamelib.Handler;
+import org.gamelib.Handler.Event;
+import org.gamelib.Handler.Event.EventImpl;
+
+/** A connection between a {@link Client} and a {@link Server}.
  * 
- * @author pwnedary
- */
+ * @author pwnedary */
 public class Connection {
-	final SocketListener listener;
+	final Handler handler;
 	TCP tcp;
 	UDP udp;
 	volatile boolean isConnected;
 	InetSocketAddress tcpAddress, udpAddress;
 	public InetSocketAddress udpRemoteAddress;
 
-	public Connection(final SocketListener listener) {
-		this.listener = listener;
+	public Connection(final Handler handler) {
+		this.handler = handler;
 	}
 
 	public Connection() {
@@ -54,12 +56,14 @@ public class Connection {
 		if (wasConnected) notifyDisconnected(this);
 	}
 
-	/** Returns the IP address and port of the remote end of the TCP connection, or null if this connection is not connected. */
+	/** Returns the IP address and port of the remote end of the TCP connection, or null if this connection is not
+	 * connected. */
 	public InetSocketAddress getRemoteTCPAddress() throws IOException {
-		return tcpConnected() ? (InetSocketAddress) tcp.socketChannel.getRemoteAddress() : null;
+		return tcpConnected() ? (InetSocketAddress) tcp.socketChannel.socket().getRemoteSocketAddress() : null;
 	}
 
-	/** Returns the IP address and port of the remote end of the UDP connection, or null if this connection is not connected. */
+	/** Returns the IP address and port of the remote end of the UDP connection, or null if this connection is not
+	 * connected. */
 	public InetSocketAddress getRemoteUDPAddress() {
 		return udpConnected() ? udpRemoteAddress : null;
 	}
@@ -78,18 +82,44 @@ public class Connection {
 
 	protected void notifyConnected(Connection connection) throws IOException {
 		isConnected = true;
-		if (listener != null) listener.connected(connection);
+		handler.handle(new Connection.Connected(connection));
 	}
 
 	protected void notifyDisconnected(Connection connection) throws IOException {
-		if (listener != null) listener.disconnected(connection);
+		handler.handle(new Connection.Disconnected(connection));
 	}
 
 	protected void notifyReceived(Object object) throws IOException {
-		if (listener != null) listener.received(object);
+		handler.handle(new Connection.Received(object));
 	}
 
-	protected void notifySent(Object object) throws IOException {
-		if (listener != null) listener.sent(object);
+	/** Dispatched when the remote end has been connected. This method should not block for long periods as other network
+	 * activity will not be processed until it returns. */
+	public static class Connected extends EventImpl implements Event {
+		public final Connection connection;
+
+		public Connected(Connection connection) {
+			this.connection = connection;
+		}
+	}
+
+	/** Dispatched when the remote end is no longer connected. This method should not block for long periods as other
+	 * network activity will not be processed until it returns. */
+	public static class Disconnected extends EventImpl implements Event {
+		public final Connection connection;
+
+		public Disconnected(Connection connection) {
+			this.connection = connection;
+		}
+	}
+
+	/** Dispatched when an object has been received from the remote end of the connection. This method should not block
+	 * for long periods as other network activity will not be processed until it returns. */
+	public static class Received extends EventImpl implements Event {
+		public final Object object;
+
+		public Received(Object object) {
+			this.object = object;
+		}
 	}
 }

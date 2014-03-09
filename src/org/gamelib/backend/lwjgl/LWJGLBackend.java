@@ -25,7 +25,6 @@ import java.util.Hashtable;
 import javax.imageio.ImageIO;
 
 import org.gamelib.Drawable;
-import org.gamelib.EventBus;
 import org.gamelib.Handler;
 import org.gamelib.Handler.Event;
 import org.gamelib.backend.Backend;
@@ -51,16 +50,14 @@ import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.Pbuffer;
 import org.lwjgl.util.WaveData;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public class LWJGLBackend extends BackendImpl implements Backend {
 	/** The color model including alpha for GL images */
 	private static final ColorModel glAlphaColorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[] { 8, 8, 8, 8 }, true, false, ComponentColorModel.TRANSLUCENT, DataBuffer.TYPE_BYTE);;
 	/** The color model for GL images */
 	private static final ColorModel glColorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[] { 8, 8, 8, 0 }, false, false, ComponentColorModel.OPAQUE, DataBuffer.TYPE_BYTE);;
 
-	private LWJGLGraphics graphics;
+	private ImmediateGraphics graphics;
 	private LWJGLInput input;
 	/** The Display's parent. */
 	private Canvas parent;
@@ -152,7 +149,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	@Override
 	public Graphics getGraphics() {
-		return graphics == null ? graphics = new LWJGLGraphics() : graphics;
+		return graphics == null ? graphics = new ImmediateGraphics() : graphics;
 	}
 
 	@Override
@@ -163,6 +160,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	@Override
 	public void draw(Drawable callback, float delta) {
 		Graphics g = getGraphics();
+		g.begin();
 		g.setColor(Color.WHITE);
 		g.clear();
 
@@ -178,9 +176,10 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 		// Game2.getInstance().screen.drawHandlers(getGraphics(), delta);
 		callback.draw(g, delta);
+		g.end();
 		Display.update();
 		// Util.checkGLError();
-		if (Display.wasResized()) EventBus.instance().dispatch(new Event.Resize());
+		if (Display.wasResized()) handler.handle(new Event.Resize(getWidth(), getHeight()));
 	}
 
 	@Override
@@ -255,13 +254,11 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		return image;
 	}
 
-	/**
-	 * Convert the buffered image to a texture
+	/** Convert the buffered image to a texture
 	 * 
 	 * @param bufferedImage The image to convert to a texture
 	 * @param image The texture to store the data into
-	 * @return a buffer containing the data
-	 */
+	 * @return a buffer containing the data */
 	private ByteBuffer convertImageData(BufferedImage bufferedImage, LWJGLImage image) {
 		// find the closest power of 2 for the width and height of the produced texture
 		int texWidth = Math2.pot(bufferedImage.getWidth());

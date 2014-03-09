@@ -12,24 +12,21 @@ import org.gamelib.Drawable;
 import org.gamelib.FixedTimestepLoop;
 import org.gamelib.Handler;
 import org.gamelib.Handler.Event;
+import org.gamelib.Loop;
 import org.gamelib.Loop.LoopListener;
 import org.gamelib.backend.Input.Key;
 import org.gamelib.util.Configuration;
 import org.gamelib.util.Disposable;
 import org.gamelib.util.geom.Rectangle;
 
-/**
- * The class responsible for the technical stuff, such as collecting input and processing it.
+/** The class responsible for the technical stuff, such as collecting input and processing it.
  * 
- * @author pwnedary
- */
+ * @author pwnedary */
 public interface Backend extends Disposable {
-	/**
-	 * Starts every aspect of this {@link Backend}.
+	/** Starts every aspect of this {@link Backend}.
 	 * 
 	 * @param configuration the configuration matching the Backend
-	 * @param handler Handler to be notified about Event.Create, Tick, Draw, etc.
-	 */
+	 * @param handler Handler to be notified about Event.Create, Tick, Draw, etc. */
 	void start(Configuration configuration, Handler handler);
 
 	/** Stops every used resource. */
@@ -43,6 +40,8 @@ public interface Backend extends Disposable {
 
 	/** @return whether the user hasn't clicked the 'X' */
 	boolean keepRunning();
+
+	Loop getLoop();
 
 	/** @param title the new window title */
 	void setTitle(String title);
@@ -84,7 +83,8 @@ public interface Backend extends Disposable {
 
 		/* * The {@link Thread} running in the background * / private Thread thread; */
 		private boolean running;
-		private Handler handler;
+		protected Handler handler;
+		private Loop loop;
 
 		@Override
 		public void start(Configuration configuration, Handler handler) {
@@ -92,7 +92,7 @@ public interface Backend extends Disposable {
 			this.handler = handler;
 
 			running = true;
-			new Thread(configuration.getProperty("loop", new FixedTimestepLoop(new DefaultLoopListener())), handler.toString()).start();
+			new Thread(loop = configuration.getProperty("loop", new FixedTimestepLoop(new DefaultLoopListener())), handler.toString()).start();
 		}
 
 		protected abstract void start();
@@ -105,6 +105,11 @@ public interface Backend extends Disposable {
 		@Override
 		public boolean keepRunning() {
 			return running;
+		}
+
+		@Override
+		public Loop getLoop() {
+			return loop;
 		}
 
 		@Override

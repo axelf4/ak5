@@ -6,9 +6,7 @@ package org.gamelib.ui;
 import org.gamelib.Group;
 import org.gamelib.Handler;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public interface Widget extends Handler {
 	void layout();
 
@@ -46,6 +44,8 @@ public interface Widget extends Handler {
 	int getMaximumHeight();
 
 	Group getParent();
+
+	void setParent(Group parent);
 
 	public static abstract class WidgetImpl implements Widget {
 		Group parent;
@@ -121,7 +121,7 @@ public interface Widget extends Handler {
 
 		@Override
 		public int getMinimumHeight() {
-			return Integer.MAX_VALUE;
+			return getPrefferedHeight();
 		}
 
 		@Override
@@ -131,12 +131,17 @@ public interface Widget extends Handler {
 
 		@Override
 		public int getMaximumHeight() {
-			return getPrefferedHeight();
+			return Integer.MAX_VALUE;
 		}
 
 		@Override
 		public Group getParent() {
 			return parent;
+		}
+
+		@Override
+		public void setParent(Group parent) {
+			this.parent = parent;
 		}
 	}
 }

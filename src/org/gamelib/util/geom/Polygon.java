@@ -5,10 +5,8 @@ package org.gamelib.util.geom;
 
 import org.gamelib.backend.Graphics;
 
-/**
- * @author pwnedary
- * @see java.awt.Polygon
- */
+/** @author pwnedary
+ * @see java.awt.Polygon */
 public class Polygon implements Shape {
 	/** The vertices in x, y order */
 	private int[] vertices;
@@ -19,24 +17,19 @@ public class Polygon implements Shape {
 	public int yCenter;
 	private double angle;
 
-	/**
-	 * Creates an empty polygon.
-	 */
+	/** Creates an empty polygon. */
 	public Polygon() {
-		vertices = new int[0];
+		this.transformed = this.vertices = new int[0];
 	}
 
-	/**
-	 * Constructs and initializes a <code>Polygon</code> from the specified parameters.
+	/** Constructs and initializes a <code>Polygon</code> from the specified parameters.
 	 * 
-	 * @param vertices the vertices in x, y order
-	 */
+	 * @param vertices the vertices in x, y order */
 	public Polygon(int[] vertices) {
 		this.transformed = this.vertices = vertices;
 		findCenter();
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean collides(Shape shape) {
 		if (shape instanceof Polygon) {
@@ -61,10 +54,10 @@ public class Polygon implements Shape {
 	private int min, max, mina, maxa, minb, maxb;
 
 	void calculateInterval(Point axis) {
-		this.min = this.max = getPointX(0) * axis.x + getPointY(0) * axis.y;
+		this.min = this.max = getPointX(0) * axis.getX() + getPointY(0) * axis.getY();
 
 		for (int i = 1; i < getLength(); i++) {
-			int d = getPointX(i) * axis.x + getPointY(i) * axis.y;
+			int d = getPointX(i) * axis.getX() + getPointY(i) * axis.getY();
 			if (d < this.min) this.min = d;
 			else if (d > this.max) this.max = d;
 		}
@@ -80,12 +73,10 @@ public class Polygon implements Shape {
 		return (mina > maxb) || (minb > maxa); // test if intervals are separated
 	}
 
-	/**
-	 * Appends the specified coordinates to this <code>Polygon</code>.
+	/** Appends the specified coordinates to this <code>Polygon</code>.
 	 * 
 	 * @param x the specified X coordinate
-	 * @param y the specified Y coordinate
-	 */
+	 * @param y the specified Y coordinate */
 	public void addPoint(int x, int y) {
 		int[] tmp = vertices;
 		vertices = new int[vertices.length + 2];
@@ -106,7 +97,7 @@ public class Polygon implements Shape {
 		// return ypoints[id] + y;
 		return transformed[id * 2 + 1] + y;
 	}
-	
+
 	public int getPointX2(int id) {
 		// return xpoints[id] + x;
 		return vertices[id * 2] + x;
@@ -121,14 +112,12 @@ public class Polygon implements Shape {
 		return vertices.length / 2;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void translate(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void rotate(double theta) {
 		this.angle += theta;
@@ -141,14 +130,9 @@ public class Polygon implements Shape {
 	}
 
 	public void findCenter() {
-		/*int greatestX = 0, greatestY = 0;
-		for (int i = 0; i < getLength(); i++)
-			if (i % 2 == 0) greatestX = Math.max(greatestX, vertices[i]); // x coordinate
-			else greatestY = Math.max(greatestY, vertices[i]); // y coordinate
-		xCenter = greatestX / 2;
-		yCenter = greatestY / 2;*/
-		
-		
+		/* int greatestX = 0, greatestY = 0; for (int i = 0; i < getLength(); i++) if (i % 2 == 0) greatestX =
+		 * Math.max(greatestX, vertices[i]); // x coordinate else greatestY = Math.max(greatestY, vertices[i]); // y
+		 * coordinate xCenter = greatestX / 2; yCenter = greatestY / 2; */
 
 		double area = 0;
 		int xSum = 0, ySum = 0; // find Area
@@ -165,7 +149,6 @@ public class Polygon implements Shape {
 		yCenter = (int) (ySum / (6 * area));
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void draw(Graphics g) {
 		// java.awt.Polygon polygon = new java.awt.Polygon(xpoints, ypoints, npoints); polygon.translate(deltaX, deltaY); g2d.draw(polygon);
@@ -175,13 +158,11 @@ public class Polygon implements Shape {
 		g.drawLine(getPointX(0), getPointY(0), prevX, prevY);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void fill(Graphics g) {
 		throw new UnsupportedOperationException();
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int[][] getPoints() {
 		int[][] value = new int[getLength()][2];
@@ -192,7 +173,6 @@ public class Polygon implements Shape {
 		return value;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public Rectangle getBounds() {
 		int boundsMinX = Integer.MAX_VALUE;
@@ -211,7 +191,6 @@ public class Polygon implements Shape {
 		return new Rectangle(boundsMinX, boundsMinY, boundsMaxX - boundsMinX, boundsMaxY - boundsMinY);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public java.awt.Shape toAWT() {
 		int[] xpoints = new int[getLength()];

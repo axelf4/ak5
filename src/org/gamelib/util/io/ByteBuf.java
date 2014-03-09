@@ -15,102 +15,79 @@ import java.nio.charset.StandardCharsets;
 
 import org.gamelib.util.io.Serializer.Serialization;
 
-/**
- * A random and sequential accessible sequence of zero or more bytes (octets), abstracting byte arrays ({@code byte[]}) and {@linkplain ByteBuffer NIO Buffers}.
+/** A random and sequential accessible sequence of zero or more bytes (octets), abstracting byte arrays ({@code byte[]})
+ * and {@linkplain ByteBuffer NIO Buffers}.
  * 
- * @author pwnedary
- */
-public interface Buf extends Strm, ObjectSerialization {
-	/**
-	 * Returns the number of bytes (octets) this buffer can contain.
+ * @author pwnedary */
+public interface ByteBuf extends ObjectSerialization {
+	/** Returns the number of bytes (octets) this buffer can contain.
 	 * 
-	 * @return the capacity
-	 */
+	 * @return the capacity */
 	int capacity();
 
-	/**
-	 * Returns this buffer's position. </p>
+	/** Returns this buffer's position. </p>
 	 * 
-	 * @return The position of this buffer
-	 */
+	 * @return The position of this buffer */
 	int position();
 
-	/**
-	 * Sets this buffer's position. If the mark is defined and larger than the new position then it is discarded.
+	/** Sets this buffer's position. If the mark is defined and larger than the new position then it is discarded.
 	 * 
 	 * @param newPosition The new position value; must be non-negative and no larger than the current limit
 	 * @return This buffer
-	 * @throws IllegalArgumentException If the preconditions on <tt>newPosition</tt> do not hold
-	 */
-	Buf position(int newPosition);
+	 * @throws IllegalArgumentException If the preconditions on <tt>newPosition</tt> do not hold */
+	ByteBuf position(int newPosition);
 
-	/**
-	 * Returns this buffer's limit.
+	/** Returns this buffer's limit.
 	 * 
-	 * @return The limit of this buffer
-	 */
+	 * @return The limit of this buffer */
 	int limit();
 
-	/**
-	 * Sets this buffer's limit. If the position is larger than the new limit then it is set to the new limit. If the mark is defined and larger than the new limit then it is discarded.
+	/** Sets this buffer's limit. If the position is larger than the new limit then it is set to the new limit. If the
+	 * mark is defined and larger than the new limit then it is discarded.
 	 * 
 	 * @param newLimit The new limit value; must be non-negative and no larger than this buffer's capacity
 	 * @return This buffer
-	 * @throws IllegalArgumentException If the preconditions on <tt>newLimit</tt> do not hold
-	 */
-	Buf limit(int newLimit);
+	 * @throws IllegalArgumentException If the preconditions on <tt>newLimit</tt> do not hold */
+	ByteBuf limit(int newLimit);
 
-	/**
-	 * Sets this buffer's mark at its position.
+	/** Sets this buffer's mark at its position.
+	 * 
+	 * @return This buffer */
+	ByteBuf mark();
+
+	/** Resets this buffer's position to the previously-marked position. Invoking this method neither changes nor
+	 * discards the mark's value.
 	 * 
 	 * @return This buffer
-	 */
-	Buf mark();
+	 * @throws InvalidMarkException If the mark has not been set */
+	ByteBuf reset();
 
-	/**
-	 * Resets this buffer's position to the previously-marked position. Invoking this method neither changes nor discards the mark's value.
+	/** Clears this buffer by setting the position to zero, the limit to the capacity and discarding the mark.
 	 * 
-	 * @return This buffer
-	 * @throws InvalidMarkException If the mark has not been set
-	 */
-	Buf reset();
+	 * @return This buffer */
+	ByteBuf clear();
 
-	/**
-	 * Clears this buffer by setting the position to zero, the limit to the capacity and discarding the mark.
+	/** Flips this buffer by setting the limit to the position, the position to zero and discarding the mark.
 	 * 
-	 * @return This buffer
-	 */
-	Buf clear();
+	 * @return This buffer */
+	ByteBuf flip();
 
-	/**
-	 * Flips this buffer by setting the limit to the position, the position to zero and discarding the mark.
+	/** Rewinds this buffer by setting the position to zero and discarding the mark.
 	 * 
-	 * @return This buffer
-	 */
-	Buf flip();
+	 * @return This buffer */
+	ByteBuf rewind();
 
-	/**
-	 * Rewinds this buffer by setting the position to zero and discarding the mark.
+	/** Returns the number of bytes between the current position and the limit.
 	 * 
-	 * @return This buffer
-	 */
-	Buf rewind();
-
-	/**
-	 * Returns the number of bytes between the current position and the limit.
-	 * 
-	 * @return The number of bytes remaining in this buffer
-	 */
+	 * @return The number of bytes remaining in this buffer */
 	int remaining();
 
-	/**
-	 * Tells whether there are any bytes between the current position and the limit.
+	/** Tells whether there are any bytes between the current position and the limit.
 	 * 
-	 * @return <tt>true</tt> if there's any bytes remaining
-	 */
+	 * @return <tt>true</tt> if there's any bytes remaining */
 	boolean hasRemaining();
 
-	Buf flush();
+	ByteBuf flush();
 
 	/** Returns a {@linkplain ByteBuffer NIO Byte Buffer} representing this buffer. */
 	ByteBuffer nio();
@@ -118,20 +95,72 @@ public interface Buf extends Strm, ObjectSerialization {
 	/* BYTE */
 
 	/** Reads a single byte. */
-	@Override
-	byte read();
+	byte get();
 
 	/** Reads count bytes and writes them to the specified byte[], starting at offset. */
-	@Override
-	public void read(byte[] dst, int off, int len);
+	public void get(byte[] dst, int off, int len);
 
 	/** Writes a byte. */
-	@Override
-	public void write(byte b);
+	public void put(byte b);
 
 	/** Writes the bytes. Note the byte[] length is not written. */
-	@Override
-	public void write(byte[] src, int off, int len);
+	public void put(byte[] src, int off, int len);
+
+	/* BOOLEAN */
+
+	/** Reads an 1 byte boolean. */
+	public boolean getBoolean();
+
+	/** Writes an 1 byte boolean. */
+	public void putBoolean(boolean value);
+
+	/* CHAR */
+
+	/** Reads a 2 byte char. */
+	public char getChar();
+
+	/** Writes a 2 byte char. Uses BIG_ENDIAN byte order. */
+	public void putChar(char value);
+
+	/* SHORT */
+
+	/** Reads a 2 byte short. */
+	public short getShort();
+
+	/** Writes a 2 byte short. Uses BIG_ENDIAN byte order. */
+	public void putShort(short value);
+
+	/* INTEGER */
+
+	/** Reads a 4 byte int. */
+	public int getInt();
+
+	/** Writes a 4 byte int. Uses BIG_ENDIAN byte order. */
+	public void putInt(int value);
+
+	/* LONG */
+
+	/** Reads an 8 byte long. */
+	public long getLong();
+
+	/** Writes an 8 byte long. Uses BIG_ENDIAN byte order. */
+	public void putLong(long value);
+
+	/* FLOAT */
+
+	/** Reads a 4 byte float. */
+	public float getFloat();
+
+	/** Writes a 4 byte float. */
+	public void putFloat(float value);
+
+	/* DOUBLE */
+
+	/** Reads an 8 bytes double. */
+	public double getDouble();
+
+	/** Writes an 8 byte double. */
+	public void putDouble(double value);
 
 	/** Enumeration of endianness or byte orders. */
 	public enum ByteOrder {
@@ -141,45 +170,28 @@ public interface Buf extends Strm, ObjectSerialization {
 		LITTLE_ENDIAN;
 	}
 
-	public static abstract class BufImpl extends ObjectSerializationImp implements Buf {
+	public static abstract class ByteBufImpl implements ByteBuf {
 		protected int mark = -1;
 
-		@Override
-		public int availible() {
-			return capacity() - position();
-		}
+		/* @Override public long skip(long n) { long remaining = n; int nr; if (n <= 0) return 0; int size = (int)
+		 * Math.min(2048, remaining); // MAX_SKIP_BUFFER_SIZE byte[] skipBuffer = new byte[size]; while (remaining > 0)
+		 * { int position = position(); get(skipBuffer, 0, (int) Math.min(size, remaining)); nr = position() - position;
+		 * if (nr < 0) break; remaining -= nr; } return 0; } */
 
 		@Override
-		public long skip(long n) {
-			long remaining = n;
-			int nr;
-			if (n <= 0) return 0;
-			int size = (int) Math.min(2048, remaining); // MAX_SKIP_BUFFER_SIZE
-			byte[] skipBuffer = new byte[size];
-			while (remaining > 0) {
-				int position = position();
-				read(skipBuffer, 0, (int) Math.min(size, remaining));
-				nr = position() - position;
-				if (nr < 0) break;
-				remaining -= nr;
-			}
-			return 0;
-		}
-
-		@Override
-		public Buf mark() {
+		public ByteBuf mark() {
 			this.mark = position();
 			return this;
 		}
 
 		@Override
-		public Buf reset() {
+		public ByteBuf reset() {
 			if (mark == -1) throw new InvalidMarkException();
 			return position(mark);
 		}
 
 		@Override
-		public Buf clear() {
+		public ByteBuf clear() {
 			position(0);
 			limit(capacity());
 			this.mark = -1;
@@ -187,7 +199,7 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public Buf flip() {
+		public ByteBuf flip() {
 			limit(position());
 			position(0);
 			this.mark = -1;
@@ -195,7 +207,7 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public Buf rewind() {
+		public ByteBuf rewind() {
 			position(0);
 			this.mark = -1;
 			return this;
@@ -212,7 +224,7 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public Buf flush() {
+		public ByteBuf flush() {
 			return this;
 		}
 
@@ -220,7 +232,7 @@ public interface Buf extends Strm, ObjectSerialization {
 		@SuppressWarnings("unchecked")
 		public <T extends Enum<T>> T readEnum() {
 			try {
-				return (T) Class.forName(readString()).getEnumConstants()[readInt()];
+				return (T) Class.forName(readString()).getEnumConstants()[getInt()];
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 				return null;
@@ -233,14 +245,14 @@ public interface Buf extends Strm, ObjectSerialization {
 			try {
 				String typeName = readString();
 				Class<T> type = (Class<T>) Class.forName(typeName);
-				if (type == boolean.class || type == Boolean.class) return readBoolean();
-				else if (type == byte.class || type == Byte.class) return read();
-				else if (type == char.class || type == Character.class) return readChar();
-				else if (type == short.class || type == Short.class) return readShort();
-				else if (type == int.class || type == Integer.class) return readInt();
-				else if (type == long.class || type == Long.class) return readLong();
-				else if (type == float.class || type == Float.class) return readFloat();
-				else if (type == double.class || type == Double.class) return readDouble();
+				if (type == boolean.class || type == Boolean.class) return getBoolean();
+				else if (type == byte.class || type == Byte.class) return get();
+				else if (type == char.class || type == Character.class) return getChar();
+				else if (type == short.class || type == Short.class) return getShort();
+				else if (type == int.class || type == Integer.class) return getInt();
+				else if (type == long.class || type == Long.class) return getLong();
+				else if (type == float.class || type == Float.class) return getFloat();
+				else if (type == double.class || type == Double.class) return getDouble();
 				else if (type == String.class) return readString();
 				else if (type.isEnum()) return readEnum();
 				else {
@@ -266,21 +278,21 @@ public interface Buf extends Strm, ObjectSerialization {
 		/** Writes an enum. */
 		public void writeEnum(Enum<?> value) {
 			writeString(value.getClass().getName());
-			writeInt(value.ordinal());
+			putInt(value.ordinal());
 		}
 
 		@Override
 		public void writeObject(Object value) {
 			Class<?> type = value.getClass();
 			writeString(type.getName());
-			if (type == boolean.class || type == Boolean.class) writeBoolean((boolean) value);
-			else if (type == byte.class || type == Byte.class) write((byte) value);
-			else if (type == char.class || type == Character.class) writeChar((char) value);
-			else if (type == short.class || type == Short.class) writeShort((short) value);
-			else if (type == int.class || type == Integer.class) writeInt((int) value);
-			else if (type == long.class || type == Long.class) writeLong((long) value);
-			else if (type == float.class || type == Float.class) writeFloat((float) value);
-			else if (type == double.class || type == Double.class) writeDouble((double) value);
+			if (type == boolean.class || type == Boolean.class) putBoolean((boolean) value);
+			else if (type == byte.class || type == Byte.class) put((byte) value);
+			else if (type == char.class || type == Character.class) putChar((char) value);
+			else if (type == short.class || type == Short.class) putShort((short) value);
+			else if (type == int.class || type == Integer.class) putInt((int) value);
+			else if (type == long.class || type == Long.class) putLong((long) value);
+			else if (type == float.class || type == Float.class) putFloat((float) value);
+			else if (type == double.class || type == Double.class) putDouble((double) value);
 			else if (type == String.class) writeString((String) value);
 			else if (type.isEnum()) writeEnum((Enum<?>) value);
 			else {
@@ -300,11 +312,11 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 	}
 
-	public static class NIOByteBuffer extends BufImpl implements Buf {
+	public static class NIOByteBuf extends ByteBufImpl implements ByteBuf {
 		protected ByteBuffer buffer;
 
-		/** Constructs a new Buf backed by buffer */
-		public NIOByteBuffer(ByteBuffer buffer) {
+		/** Constructs a new Buf backed by buffer. */
+		public NIOByteBuf(ByteBuffer buffer) {
 			this.buffer = buffer;
 		}
 
@@ -319,7 +331,7 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public Buf position(int newPosition) {
+		public ByteBuf position(int newPosition) {
 			buffer.position(newPosition);
 			return this;
 		}
@@ -330,37 +342,37 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public Buf limit(int newLimit) {
+		public ByteBuf limit(int newLimit) {
 			buffer.limit(newLimit);
 			return this;
 		}
 
 		@Override
-		public Buf mark() {
+		public ByteBuf mark() {
 			buffer.mark();
 			return this;
 		}
 
 		@Override
-		public Buf reset() {
+		public ByteBuf reset() {
 			buffer.reset();
 			return this;
 		}
 
 		@Override
-		public Buf clear() {
+		public ByteBuf clear() {
 			buffer.clear();
 			return this;
 		}
 
 		@Override
-		public Buf flip() {
+		public ByteBuf flip() {
 			buffer.flip();
 			return this;
 		}
 
 		@Override
-		public Buf rewind() {
+		public ByteBuf rewind() {
 			buffer.rewind();
 			return this;
 		}
@@ -371,110 +383,110 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public byte read() {
+		public byte get() {
 			return buffer.get();
 		}
 
 		@Override
-		public void read(byte[] dst, int off, int len) {
+		public void get(byte[] dst, int off, int len) {
 			buffer.get(dst, off, len);
 		}
 
 		@Override
-		public void write(byte b) {
+		public void put(byte b) {
 			buffer.put(b);
 		}
 
 		@Override
-		public void write(byte[] src, int off, int len) {
+		public void put(byte[] src, int off, int len) {
 			buffer.put(src, off, off);
 		}
 
 		@Override
-		public int readInt() {
+		public int getInt() {
 			return buffer.getInt();
 		}
 
 		@Override
-		public void writeInt(int value) {
+		public void putInt(int value) {
 			buffer.putInt(value);
 		}
 
 		@Override
-		public float readFloat() {
+		public float getFloat() {
 			return buffer.getFloat();
 		}
 
 		@Override
-		public void writeFloat(float value) {
+		public void putFloat(float value) {
 			buffer.putFloat(value);
 		}
 
 		@Override
-		public short readShort() {
+		public short getShort() {
 			return buffer.getShort();
 		}
 
 		@Override
-		public void writeShort(short value) {
+		public void putShort(short value) {
 			buffer.putShort(value);
 		}
 
 		@Override
-		public long readLong() {
+		public long getLong() {
 			return buffer.getLong();
 		}
 
 		@Override
-		public void writeLong(long value) {
+		public void putLong(long value) {
 			buffer.putLong(value);
 		}
 
 		@Override
-		public boolean readBoolean() {
+		public boolean getBoolean() {
 			return buffer.get() == 1;
 		}
 
 		@Override
-		public void writeBoolean(boolean value) {
+		public void putBoolean(boolean value) {
 			buffer.put((byte) (value ? 1 : 0));
 		}
 
 		@Override
-		public char readChar() {
+		public char getChar() {
 			return buffer.getChar();
 		}
 
 		@Override
-		public void writeChar(char value) {
+		public void putChar(char value) {
 			buffer.putChar(value);
 		}
 
 		@Override
-		public double readDouble() {
+		public double getDouble() {
 			return buffer.getDouble();
 		}
 
 		@Override
-		public void writeDouble(double value) {
+		public void putDouble(double value) {
 			buffer.putDouble(value);
 		}
 
 		@Override
 		public String readString() {
-			byte[] bytes = new byte[readInt()]; // UTF_8 1byte/ch
-			read(bytes, 0, bytes.length);
+			byte[] bytes = new byte[getInt()]; // UTF_8 1byte/ch
+			get(bytes, 0, bytes.length);
 			return new String(bytes, StandardCharsets.UTF_8);
 		}
 
 		@Override
 		public void writeString(String value) {
-			writeInt(value.length());
+			putInt(value.length());
 			buffer.put(value.getBytes(StandardCharsets.UTF_8));
 		}
 	}
 
-	public static class StreamByteBuffer extends BufImpl implements Buf {
+	public static class StreamByteBuf extends ByteBufImpl implements ByteBuf {
 		protected int maxCapacity;
 		protected int position;
 		protected int capacity;
@@ -483,13 +495,12 @@ public interface Buf extends Strm, ObjectSerialization {
 		protected InputStream inputStream;
 		protected OutputStream outputStream;
 
-		/**
-		 * Creates a new Output for writing to a byte array.
+		/** Creates a new Output for writing to a byte array.
 		 * 
 		 * @param bufferSize The initial size of the buffer.
-		 * @param maxBufferSize The buffer is doubled as needed until it exceeds maxBufferSize and an exception is thrown. Can be -1 for no maximum.
-		 */
-		public StreamByteBuffer(int bufferSize, int maxBufferSize) {
+		 * @param maxBufferSize The buffer is doubled as needed until it exceeds maxBufferSize and an exception is
+		 *            thrown. Can be -1 for no maximum. */
+		public StreamByteBuf(int bufferSize, int maxBufferSize) {
 			if (maxBufferSize < -1) throw new IllegalArgumentException("maxBufferSize cannot be < -1: " + maxBufferSize);
 			this.capacity = bufferSize;
 			this.maxCapacity = maxBufferSize == -1 ? Integer.MAX_VALUE : maxBufferSize;
@@ -497,18 +508,18 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		/** Creates a new Input for reading from an InputStream with a buffer size of 4096. */
-		public StreamByteBuffer(InputStream inputStream) {
+		public StreamByteBuf(InputStream inputStream) {
 			this(4096, 4096);
 			if ((this.inputStream = inputStream) == null) throw new IllegalArgumentException("inputStream cannot be null.");
 		}
 
 		/** Creates a new Output for writing to an OutputStream. A buffer size of 4096 is used. */
-		public StreamByteBuffer(OutputStream outputStream) {
+		public StreamByteBuf(OutputStream outputStream) {
 			this(4096, 4096);
 			if ((this.outputStream = outputStream) == null) throw new IllegalArgumentException("outputStream cannot be null.");
 		}
 
-		public StreamByteBuffer(InputStream inputStream, OutputStream outputStream) {
+		public StreamByteBuf(InputStream inputStream, OutputStream outputStream) {
 			this(4096, 4096);
 			if ((this.inputStream = inputStream) == null) throw new IllegalArgumentException("inputStream cannot be null.");
 			if ((this.outputStream = outputStream) == null) throw new IllegalArgumentException("outputStream cannot be null.");
@@ -525,7 +536,7 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public Buf position(int newPosition) {
+		public ByteBuf position(int newPosition) {
 			this.position = newPosition;
 			return this;
 		}
@@ -536,7 +547,7 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public Buf limit(int newLimit) {
+		public ByteBuf limit(int newLimit) {
 			this.limit = newLimit;
 			return this;
 		}
@@ -559,7 +570,7 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public Buf flush() {
+		public ByteBuf flush() {
 			if (outputStream == null) return this;
 			try {
 				outputStream.write(buffer, 0, position);
@@ -570,11 +581,9 @@ public interface Buf extends Strm, ObjectSerialization {
 			return this;
 		}
 
-		/**
-		 * @param required Must be > 0. The buffer is filled until it has at least this many bytes.
+		/** @param required Must be > 0. The buffer is filled until it has at least this many bytes.
 		 * @return the number of bytes remaining.
-		 * @throws RuntimeException if EOS is reached before required bytes are read (buffer underflow).
-		 */
+		 * @throws RuntimeException if EOS is reached before required bytes are read (buffer underflow). */
 		protected int require(int required) {
 			int remaining = limit - position;
 			if (remaining >= required) return remaining;
@@ -622,13 +631,13 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public byte read() {
+		public byte get() {
 			require(1);
 			return buffer[position++];
 		}
 
 		@Override
-		public void read(byte[] bytes, int offset, int count) {
+		public void get(byte[] bytes, int offset, int count) {
 			if (bytes == null) throw new IllegalArgumentException("bytes cannot be null.");
 			int copyCount = Math.min(limit - position, count);
 			while (true) {
@@ -643,13 +652,13 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public void write(byte value) {
+		public void put(byte value) {
 			if (position == capacity) require(1);
 			buffer[position++] = value;
 		}
 
 		@Override
-		public void write(byte[] bytes, int offset, int length) {
+		public void put(byte[] bytes, int offset, int length) {
 			if (bytes == null) throw new IllegalArgumentException("bytes cannot be null.");
 			int copyCount = Math.min(capacity - position, length);
 			while (true) {
@@ -663,7 +672,7 @@ public interface Buf extends Strm, ObjectSerialization {
 		}
 
 		@Override
-		public int readInt() {
+		public int getInt() {
 			require(4);
 			return (buffer[position++] & 0xFF) << 24 | //
 			(buffer[position++] & 0xFF) << 16 | //
@@ -674,30 +683,30 @@ public interface Buf extends Strm, ObjectSerialization {
 		// string
 		@Override
 		public String readString() {
-			int length = readInt();
+			int length = getInt();
 			StringBuilder builder = new StringBuilder(length);
 			for (int i = 0; i < length; i++) {
-				builder.append(readChar());
+				builder.append(getChar());
 			}
 			return builder.toString();
 		}
 
 		// float
 		@Override
-		public float readFloat() {
-			return Float.intBitsToFloat(readInt());
+		public float getFloat() {
+			return Float.intBitsToFloat(getInt());
 		}
 
 		// short
 		@Override
-		public short readShort() {
+		public short getShort() {
 			require(2);
 			return (short) (((buffer[position++] & 0xFF) << 8) | (buffer[position++] & 0xFF));
 		}
 
 		// long
 		@Override
-		public long readLong() {
+		public long getLong() {
 			require(8);
 			byte[] buffer = this.buffer;
 			return (long) buffer[position++] << 56 //
@@ -712,27 +721,27 @@ public interface Buf extends Strm, ObjectSerialization {
 
 		// boolean
 		@Override
-		public boolean readBoolean() {
+		public boolean getBoolean() {
 			require(1);
 			return buffer[position++] == 1;
 		}
 
 		// char
 		@Override
-		public char readChar() {
+		public char getChar() {
 			require(2);
 			return (char) (((buffer[position++] & 0xFF) << 8) | (buffer[position++] & 0xFF));
 		}
 
 		// double
 		@Override
-		public double readDouble() {
-			return Double.longBitsToDouble(readLong());
+		public double getDouble() {
+			return Double.longBitsToDouble(getLong());
 		}
 
 		// int
 		@Override
-		public void writeInt(int value) {
+		public void putInt(int value) {
 			require2(4);
 			buffer[position++] = (byte) (value >> 24);
 			buffer[position++] = (byte) (value >> 16);
@@ -745,24 +754,24 @@ public interface Buf extends Strm, ObjectSerialization {
 		/** Writes a UTF-8 string. */
 		@Override
 		public void writeString(String value) {
-			writeInt(value.length());
+			putInt(value.length());
 			for (int i = 0; i < value.length(); i++)
-				writeChar(value.charAt(i));
+				putChar(value.charAt(i));
 		}
 
 		// float
 
 		/** Writes a 4 byte float. */
 		@Override
-		public void writeFloat(float value) throws RuntimeException {
-			writeInt(Float.floatToIntBits(value));
+		public void putFloat(float value) throws RuntimeException {
+			putInt(Float.floatToIntBits(value));
 		}
 
 		// short
 
 		/** Writes a 2 byte short. Uses BIG_ENDIAN byte order. */
 		@Override
-		public void writeShort(short value) throws RuntimeException {
+		public void putShort(short value) throws RuntimeException {
 			require2(2);
 			buffer[position++] = (byte) (value >>> 8);
 			buffer[position++] = (byte) value;
@@ -772,7 +781,7 @@ public interface Buf extends Strm, ObjectSerialization {
 
 		/** Writes an 8 byte long. Uses BIG_ENDIAN byte order. */
 		@Override
-		public void writeLong(long value) throws RuntimeException {
+		public void putLong(long value) throws RuntimeException {
 			require2(8);
 			byte[] buffer = this.buffer;
 			buffer[position++] = (byte) (value >>> 56);
@@ -787,14 +796,14 @@ public interface Buf extends Strm, ObjectSerialization {
 
 		// boolean
 		@Override
-		public void writeBoolean(boolean value) throws RuntimeException {
+		public void putBoolean(boolean value) throws RuntimeException {
 			if (position == capacity) require2(1);
 			buffer[position++] = (byte) (value ? 1 : 0);
 		}
 
 		// char
 		@Override
-		public void writeChar(char value) throws RuntimeException {
+		public void putChar(char value) throws RuntimeException {
 			require2(2);
 			buffer[position++] = (byte) (value >>> 8);
 			buffer[position++] = (byte) value;
@@ -803,8 +812,8 @@ public interface Buf extends Strm, ObjectSerialization {
 		// double
 
 		@Override
-		public void writeDouble(double value) throws RuntimeException {
-			writeLong(Double.doubleToLongBits(value));
+		public void putDouble(double value) throws RuntimeException {
+			putLong(Double.doubleToLongBits(value));
 		}
 
 		@Override

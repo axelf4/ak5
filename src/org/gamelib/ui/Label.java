@@ -3,22 +3,24 @@
  */
 package org.gamelib.ui;
 
+import org.gamelib.backend.Color;
 import org.gamelib.backend.Graphics;
 import org.gamelib.ui.Widget.WidgetImpl;
 import org.gamelib.util.Font;
 import org.gamelib.util.geom.Rectangle;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public class Label extends WidgetImpl {
 	/** The text to be displayed. */
 	private String text, show;
+	/** The font to draw in. */
 	private final Font font;
 	/** Text's AABB */
-	Rectangle bounds = new Rectangle();
-	/** TODO shorten if needed */
+	private Rectangle bounds = new Rectangle();
+	/** If truncating if needed. */
 	private boolean ellipsis = false;
+	/** Color to draw text in. */
+	public Color fontColor = Color.BLACK;
 
 	public Label(String text, Font font) {
 		this.show = this.text = text;
@@ -34,8 +36,6 @@ public class Label extends WidgetImpl {
 
 	@Override
 	public void layout() {
-		computeSizes();
-
 		if (ellipsis && getWidth() < bounds.getWidth()) {
 			int ellipsisWidth = font.getWidth("...");
 			if (getWidth() >= ellipsisWidth) show = text.substring(0, font.visibleChars(text, getWidth() - ellipsisWidth)) + "...";
@@ -47,6 +47,7 @@ public class Label extends WidgetImpl {
 	}
 
 	public void setText(String text) {
+		if (text.equals(this.text)) return;
 		this.show = this.text = text;
 		invalidate();
 	}
@@ -65,14 +66,19 @@ public class Label extends WidgetImpl {
 
 	@Override
 	public boolean handle(Event event) {
-		super.handle(event);
 		if (event instanceof Event.Draw) {
+			validate();
 			Graphics g = ((Event.Draw) event).graphics;
+			g.setColor(fontColor);
 			font.drawString(g, show, getX(), getY());
 		} else return false;
 		return true;
 	}
 
+	/** Whether {@linkplain #text} should be truncated with an ellipsis punctuation mark if it's width exceeds the
+	 * bounds.
+	 * 
+	 * @param ellipsis whether to truncate text */
 	public void setEllipsis(boolean ellipsis) {
 		this.ellipsis = ellipsis;
 		invalidate();

@@ -22,11 +22,13 @@ public class ByteBufferInputStream extends InputStream {
 		buffer.flip();
 	}
 
+	@Override
 	public int read() throws IOException {
 		if (!buffer.hasRemaining()) return -1;
 		return buffer.get() & 0xFF; // unsigned & 0xFF
 	}
 
+	@Override
 	public int read(byte[] bytes, int off, int len) throws IOException {
 		len = Math.min(len, buffer.remaining());
 		if (len == 0) return -1;

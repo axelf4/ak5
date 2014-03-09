@@ -4,6 +4,7 @@
 package org.gamelib.backend.java2D;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
@@ -56,8 +57,35 @@ public class Java2DImage implements Image {
 	public void setWrap(Wrap u, Wrap v) {}
 
 	@Override
+	public int[][] getPixels() {
+		final byte[] pixels = ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData();
+		final int[][] result = new int[getWidth()][getHeight()];
+		final boolean hasAlpha = bufferedImage.getAlphaRaster() != null;
+		final int bitsPerPixel = hasAlpha ? 4 : 3;
+		for (int pixel = 0, row = 0, col = 0; col < width && row < height; pixel += bitsPerPixel) {
+			int abgr = (hasAlpha ? (pixels[pixel] & 0xFF) << 24 : 0) | // alpha
+			(pixels[pixel + 1] & 0xFF) << 16 | // blue
+			(pixels[pixel + 2] & 0xFF) << 8 | // green
+			(pixels[pixel + 3] & 0xFF); // red
+			result[col][row] = abgr;
+			if (++col == width) {
+				col = 0;
+				row++;
+			}
+			System.out.println("col: " + col + " row: " + row);
+		}
+		return result;
+	}
+
+	@Override
 	public int getPixel(int x, int y) {
 		return bufferedImage.getRGB(x, y);
+	}
+
+	@Deprecated
+	@Override
+	public byte[] getData() {
+		return ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData();
 	}
 
 	@Override

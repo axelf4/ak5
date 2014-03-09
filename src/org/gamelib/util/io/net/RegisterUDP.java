@@ -5,7 +5,7 @@ package org.gamelib.util.io.net;
 
 import java.net.InetSocketAddress;
 
-import org.gamelib.util.io.Buf;
+import org.gamelib.util.io.ByteBuf;
 
 /**
  * @author Axel
@@ -20,13 +20,13 @@ public class RegisterUDP implements FrameworkMessage<RegisterUDP> {
 	public RegisterUDP() {}
 
 	@Override
-	public void write(Buf output, RegisterUDP object) {
+	public void write(ByteBuf output, RegisterUDP object) {
 		output.writeString(udpRemoteAddress.getHostString());
-		output.writeInt(udpRemoteAddress.getPort());
+		output.putInt(udpRemoteAddress.getPort());
 	}
 
 	@Override
-	public RegisterUDP read(Buf input) {
-		return new RegisterUDP(InetSocketAddress.createUnresolved(input.readString(), input.readInt()));
+	public RegisterUDP read(ByteBuf input) {
+		return new RegisterUDP(InetSocketAddress.createUnresolved(input.readString(), input.getInt()));
 	}
 }

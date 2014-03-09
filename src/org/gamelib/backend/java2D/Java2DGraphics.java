@@ -13,10 +13,8 @@ import org.gamelib.backend.Color;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 
-/**
- * @author pwnedary
- * @see java.awt.Graphics
- */
+/** @author pwnedary
+ * @see java.awt.Graphics */
 public class Java2DGraphics implements Graphics {
 	protected Graphics2D g2d;
 	int width, height;
@@ -33,6 +31,7 @@ public class Java2DGraphics implements Graphics {
 	public void setColor(Color color) {
 		g2d.setColor((this.currentColor = color).toAWT());
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) color.getAlpha() / 255));
+		// g2d.setComposite(BlendComposite.Lighten.derive((float) color.getAlpha() / 255));
 	}
 
 	@Override

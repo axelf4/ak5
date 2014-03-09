@@ -15,7 +15,7 @@ public class FixedTimestepLoop implements Loop {
 	final int MAX_UPDATES_BEFORE_RENDER = 5;
 
 	// If we are able to get as high as this FPS, don't render again.
-	final double TARGET_FPS = 20; // 60
+	final double TARGET_FPS = 60;
 	final double TARGET_TIME_BETWEEN_RENDERS = 1000000000 / TARGET_FPS;
 
 	private LoopListener listener;

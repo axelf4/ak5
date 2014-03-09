@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GLContext;
  * TODO: rename to FrameBuffer TODO utilize renderbuffers if wanted
  * @author pwnedary
  */
-public class FBOGraphics extends LWJGLGraphics {
+public class FBOGraphics extends ImmediateGraphics {
 
 	private int frameBufferID; // FBO
 

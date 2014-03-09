@@ -16,16 +16,16 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * @author pwnedary
- */
+import org.gamelib.Handler;
+
+/** @author pwnedary */
 public class Client extends Connection implements EndPoint {
 	Selector selector;
 	private Object udpRegistrationLock = new Object();
 	boolean udpRegistered = false;
 
-	public Client(final SocketListener listener) throws IOException {
-		super(listener);
+	public Client(final Handler handler) throws IOException {
+		super(handler);
 		selector = Selector.open();
 	}
 
@@ -81,7 +81,6 @@ public class Client extends Connection implements EndPoint {
 				try {
 					if ((ops & SelectionKey.OP_READ) != 0) {
 						if (selectionKey.channel() == tcp.socketChannel) {
-							System.out.println("read tcp client");
 							Object object;
 							while ((object = tcp.readObject()) != null)
 								notifyReceived(object);

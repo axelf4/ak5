@@ -5,20 +5,18 @@ package org.gamelib.util;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.StringTokenizer;
 
 import org.gamelib.backend.Backend;
+import org.gamelib.backend.Color;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 import org.gamelib.util.Font.FontImpl;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public class BitmapFont extends FontImpl implements Font {
 	private static final int LOG2_PAGE_SIZE = 9;
 	private static final int PAGE_SIZE = 1 << LOG2_PAGE_SIZE;
@@ -42,6 +40,7 @@ public class BitmapFont extends FontImpl implements Font {
 				if (Integer.parseInt(page[1].substring(3)) != p) throw new IllegalArgumentException("Invalid font file; page ids should increment from 0."); // id=N
 				// File imgFile = new File(file.getParentFile().getPath() + File.separator + page[2].split("\"")[1]);
 				File imgFile = new File(file.getParentFile(), page[2].split("\"")[1]); // file=string
+				System.out.println(imgFile.getPath());
 				pageImgs[p] = backend.getImage(imgFile);
 			}
 
@@ -90,11 +89,8 @@ public class BitmapFont extends FontImpl implements Font {
 				int amount = Integer.parseInt(tokens.nextToken());
 				glyph.setKerning(second, amount);
 			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
-			// throw new IllegalArgumentException("Invalid font file.");
+			throw new IllegalArgumentException("Invalid font file.", e);
 		}
 	}
 
@@ -125,7 +121,11 @@ public class BitmapFont extends FontImpl implements Font {
 				lastGlyph = glyph;
 
 				int x1 = drawX + glyph.xoffset, y1 = y + glyph.yoffset, x2 = x1 + glyph.width, y2 = y1 + glyph.height;
+//				g.setColor(new Color(0, 0, 255, 200));
 				g.drawImage(pageImgs[glyph.page], x1, y1, x2, y2, glyph.x, glyph.y, glyph.x + glyph.width, glyph.y + glyph.height);
+
+				Image image = pageImgs[glyph.page];
+//				g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), 0, 0, image.getWidth(), image.getHeight());
 
 				drawX += glyph.xadvance;
 			}
@@ -139,7 +139,7 @@ public class BitmapFont extends FontImpl implements Font {
 		for (int i = 0; i < string.length(); i++) {
 			c = string.charAt(i);
 			Glyph glyph = getGlyph(c);
-			totalWidth += glyph.width;
+			totalWidth += glyph.xadvance;
 			if (prev != '\u0000') totalWidth += glyph.getKerning(prev);
 			prev = c;
 		}

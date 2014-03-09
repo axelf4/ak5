@@ -5,17 +5,19 @@ package org.gamelib.util.slow.collection;
 
 import java.util.Iterator;
 
+import org.gamelib.util.slow.collection.Node.BinaryNode;
+
 /**
  * @author pwnedary
  */
 public class LinkedRow<E> extends AbstractRow<E> {
-	private Node<E> head;
-	private Node<E> tail;
+	private BinaryNode<E> head;
+	private BinaryNode<E> tail;
 	private int size;
 
 	@Override
 	public E get(int index) {
-		Node<E> node = head;
+		BinaryNode<E> node = head;
 		for (; index > 0; index--)
 			node = node.getNext();
 		return node.get();
@@ -23,7 +25,7 @@ public class LinkedRow<E> extends AbstractRow<E> {
 
 	@Override
 	public int add(final E e) {
-		Node<E> node = new Node<>(e, null, null, tail);
+		BinaryNode<E> node = new BinaryNode<>(e, null, null, tail);
 		if (size() == 0) head = node;
 		else tail.setNext(node);
 		tail = node;
@@ -33,7 +35,7 @@ public class LinkedRow<E> extends AbstractRow<E> {
 	@Override
 	public E remove(int index) {
 		if (index >= size) throw new IndexOutOfBoundsException();
-		Node<E> node = head;
+		BinaryNode<E> node = head;
 		for (; index > 0; index--)
 			node = node.getNext();
 		if (node.getPrev() != null) node.getPrev().setNext(node.getNext());
@@ -57,7 +59,7 @@ public class LinkedRow<E> extends AbstractRow<E> {
 	@Override
 	public Iterator<E> iterator() {
 		return new AbstractIterator<E>() {
-			private Node<E> node = head, prev = node;
+			private BinaryNode<E> node = head, prev = node;
 
 			@Override
 			protected E computeNext() {

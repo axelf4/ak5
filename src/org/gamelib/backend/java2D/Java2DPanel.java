@@ -6,6 +6,7 @@ package org.gamelib.backend.java2D;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -17,9 +18,7 @@ import org.gamelib.Drawable;
 import org.gamelib.Handler;
 import org.gamelib.Handler.Event;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public class Java2DPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private VolatileImage volatileImage;
@@ -37,7 +36,7 @@ public class Java2DPanel extends JPanel {
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				Java2DPanel.this.handler.handle(new Event.Resize());
+				Java2DPanel.this.handler.handle(new Event.Resize(e.getComponent().getWidth(), e.getComponent().getHeight()));
 			}
 		});
 	}
@@ -49,7 +48,7 @@ public class Java2DPanel extends JPanel {
 			do {
 				if (volatileImage == null || volatileImage.validate(getGraphicsConfiguration()) == VolatileImage.IMAGE_INCOMPATIBLE) volatileImage = createVolatileImage(getWidth(), getHeight());
 				g2d = volatileImage.createGraphics();
-				// g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+				 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 				g2d.setColor(Color.WHITE);
 				g2d.fillRect(0, 0, getWidth(), getHeight()); // clear screen

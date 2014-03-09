@@ -6,15 +6,14 @@ package org.gamelib.backend.lwjgl;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
 
-/**
- * Textures are automatically made p^2 for compatibility.
+/** Textures are automatically made p^2 for compatibility.
  * 
- * @author pwnedary
- */
+ * @author pwnedary */
 public class LWJGLImage implements Image {
 	/** The GL target type */
 	public final int target;
@@ -36,11 +35,9 @@ public class LWJGLImage implements Image {
 		this.texture = texture;
 	}
 
-	/**
-	 * Binds the specified GL context to a texture.
+	/** Binds the specified GL context to a texture.
 	 * 
-	 * @param gl the GL context to bind to
-	 */
+	 * @param gl the GL context to bind to */
 	public void bind() {
 		glBindTexture(target, texture);
 	}
@@ -69,30 +66,22 @@ public class LWJGLImage implements Image {
 		this.height = height;
 	}
 
-	/**
-	 * @return the texWidth
-	 */
+	/** @return the texWidth */
 	public int getTexWidth() {
 		return texWidth;
 	}
 
-	/**
-	 * @param texWidth the texWidth to set
-	 */
+	/** @param texWidth the texWidth to set */
 	public void setTexWidth(int texWidth) {
 		this.texWidth = texWidth;
 	}
 
-	/**
-	 * @return the texHeight
-	 */
+	/** @return the texHeight */
 	public int getTexHeight() {
 		return texHeight;
 	}
 
-	/**
-	 * @param texHeight the texHeight to set
-	 */
+	/** @param texHeight the texHeight to set */
 	public void setTexHeight(int texHeight) {
 		this.texHeight = texHeight;
 	}
@@ -124,12 +113,37 @@ public class LWJGLImage implements Image {
 	}
 
 	@Override
+	public int[][] getPixels() {
+		int bpp = 16;
+		final ByteBuffer pixels = ByteBuffer.allocateDirect(getTexWidth() * getTexHeight() * 16).order(ByteOrder.nativeOrder());
+		bind();
+		glGetTexImage(target, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+		unbind();
+		final int[][] result = new int[getWidth()][getHeight()];
+		for (int i = 0, pixel = 0; i < getWidth(); i++) {
+			for (int j = 0; j < getHeight(); j++) {
+				result[i][j] = pixels.getInt(pixel++ * bpp) & 0xFF;
+			}
+		}
+		return result;
+	}
+
+	@Override
 	public int getPixel(int x, int y) {
 		ByteBuffer pixels = ByteBuffer.allocateDirect(getWidth() * getHeight() * 4);
 		bind();
 		glGetTexImage(target, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 		unbind();
 		return pixels.getInt(x * y * 4);
+	}
+
+	@Override
+	public byte[] getData() {
+		ByteBuffer pixels = ByteBuffer.allocateDirect(getWidth() * getHeight() * 4);
+		bind();
+		glGetTexImage(target, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+		unbind();
+		return pixels.array();
 	}
 
 	@Override

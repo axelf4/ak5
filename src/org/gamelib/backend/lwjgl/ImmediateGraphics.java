@@ -15,21 +15,21 @@ import org.lwjgl.util.glu.GLU;
 /**
  * @author pwnedary
  */
-public class LWJGLGraphics implements Graphics {
+public class ImmediateGraphics implements Graphics {
 	/** The current color */
 	private Color currentColor = Color.BLACK;
 	protected LWJGLImage image;
 
-	public LWJGLGraphics() {}
+	public ImmediateGraphics() {}
 
-	public LWJGLGraphics(LWJGLImage img) {
+	public ImmediateGraphics(LWJGLImage img) {
 		this.image = img;
 	}
 
 	static int dimension = 0;
 
 	private void predraw(int dimension) {
-		if (dimension != LWJGLGraphics.dimension) {
+		if (dimension != ImmediateGraphics.dimension) {
 			if (dimension == 2) {
 				glMatrixMode(GL_PROJECTION);
 				glLoadIdentity();
@@ -49,7 +49,7 @@ public class LWJGLGraphics implements Graphics {
 				GL11.glDepthFunc(GL11.GL_LEQUAL);
 				GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 			}
-			LWJGLGraphics.dimension = dimension;
+			ImmediateGraphics.dimension = dimension;
 		}
 	}
 
