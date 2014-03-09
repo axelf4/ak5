@@ -63,7 +63,7 @@ public class TCP {
 		close();
 		try {
 			this.socketChannel = selector.provider().openSocketChannel();
-			socketChannel.setOption(StandardSocketOptions.TCP_NODELAY, true); // socketChannel.socket().setTcpNoDelay(true);
+			socketChannel.socket().setTcpNoDelay(true); // socketChannel.setOption(StandardSocketOptions.TCP_NODELAY, true);
 			// socketChannel.socket().connect(address); // Connect using blocking mode for simplicity.
 			socketChannel.configureBlocking(false);
 			// selectionKey = socketChannel.register(selector, SelectionKey.OP_READ);

@@ -15,21 +15,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-/**
- * TODO add unified method/s for sending/sending to all clients using TCP/UDP - design issue
+import org.gamelib.Handler;
+
+/** TODO add unified method/s for sending/sending to all clients using TCP/UDP - design issue
  * 
- * @author pwnedary
- */
+ * @author pwnedary */
 public class Server implements EndPoint {
 	private final Selector selector;
 	private ServerSocketChannel serverChannel;
-	private final SocketListener listener;
+	private final Handler handler;
 	private UDP udp;
 	// private final Map<Integer, Connection> connections = new HashMap<>();
 	private final List<Connection> connections = new LinkedList<>();
 
-	public Server(final SocketListener listener) throws IOException {
-		this.listener = listener;
+	public Server(final Handler handler) throws IOException {
+		if (handler == null) throw new IllegalArgumentException("handler cannot be null");
+		this.handler = handler;
 		selector = Selector.open();
 	}
 
@@ -45,7 +46,7 @@ public class Server implements EndPoint {
 				serverChannel = selector.provider().openServerSocketChannel();
 				serverChannel.configureBlocking(false);
 				serverChannel.register(selector, SelectionKey.OP_ACCEPT);
-				serverChannel.bind(tcpPort);
+				serverChannel.socket().bind(tcpPort);
 			}
 			if (udpPort != null) (udp = new UDP()).bind(selector, udpPort);
 		} catch (IOException e) {
@@ -119,29 +120,25 @@ public class Server implements EndPoint {
 	}
 
 	protected void notifyConnected(Connection connection) throws IOException {
-		if (listener != null) listener.connected(connection);
+		handler.handle(new Connection.Connected(connection));
 	}
 
 	protected void notifyDisconnected(Connection connection) throws IOException {
-		if (listener != null) listener.disconnected(connection);
+		handler.handle(new Connection.Disconnected(connection));
 	}
 
 	protected void notifyReceived(Connection connection, Object object)
 			throws IOException {
 		if (!(object instanceof FrameworkMessage)) {
-			if (listener != null) listener.received(object);
+			handler.handle(new Connection.Received(object));
 		} else if (object instanceof RegisterUDP) {
 			// InetSocketAddress udpRemoteAddress = ((RegisterUDP) object).udpRemoteAddress;
-			/*
-			 * for (Connection connection2 : connections) { if (connection2.tcpAddress.getHostString() == udpRemoteAddress.getHostString()) { connection = connection2; break; } } if (connection == null) { connections.add(connection = new Connection()); connection.udp = udp; } notifyConnected(connection);
-			 */
+			/* for (Connection connection2 : connections) { if (connection2.tcpAddress.getHostString() ==
+			 * udpRemoteAddress.getHostString()) { connection = connection2; break; } } if (connection == null) {
+			 * connections.add(connection = new Connection()); connection.udp = udp; } notifyConnected(connection); */
 			connection.udp = udp;
 			connection.sendUDP(new RegisterUDP(new InetSocketAddress(9999)));
 			notifyConnected(connection);
 		} else if (object instanceof DiscoverHost) {}
-	}
-
-	protected void notifySent(Object object) throws IOException {
-		if (listener != null) listener.sent(object);
 	}
 }
