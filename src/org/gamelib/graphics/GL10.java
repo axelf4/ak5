@@ -4,15 +4,13 @@
 package org.gamelib.graphics;
 
 import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-/** Constants and methods from OpenGL 1.x, specifically 1.5 and OpenGL ES 1.1.
+/** Constants and commands from OpenGL 1.3 and therefore OpenGL ES 1.1.
  * 
  * @author pwnedary */
-public interface GL10 extends GL {
+public interface GL10 {
 	/* ClearBufferMask */
 	final int GL_DEPTH_BUFFER_BIT = 0x00000100;
 	final int GL_STENCIL_BUFFER_BIT = 0x00000400;
@@ -50,7 +48,6 @@ public interface GL10 extends GL {
 	final int GL_DST_COLOR = 0x0306;
 	final int GL_ONE_MINUS_DST_COLOR = 0x0307;
 	final int GL_SRC_ALPHA_SATURATE = 0x0308;
-	/* ClipPaneName */
 	/* CullFaceMode */
 	final int GL_FRONT = 0x0404;
 	final int GL_BACK = 0x0405;
@@ -122,9 +119,6 @@ public interface GL10 extends GL {
 	final int GL_ALPHA_BITS = 0x0D55;
 	final int GL_DEPTH_BITS = 0x0D56;
 	final int GL_STENCIL_BITS = 0x0D57;
-
-	final int GL_NUM_COMPRESSED_TEXTURE_FORMATS = 0x86A2;
-	final int GL_COMPRESSED_TEXTURE_FORMATS = 0x86A3;
 	/* HintMode */
 	final int GL_DONT_CARE = 0x1100;
 	final int GL_FASTEST = 0x1101;
@@ -135,7 +129,6 @@ public interface GL10 extends GL {
 	final int GL_LINE_SMOOTH_HINT = 0x0C52;
 	final int GL_POLYGON_SMOOTH_HINT = 0x0C53;
 	final int GL_FOG_HINT = 0x0C54;
-	final int GL_GENERATE_MIPMAP_HINT = 0x8192;
 	/* LightModelParameter */
 	final int GL_LIGHT_MODEL_AMBIENT = 0x0B53;
 	final int GL_LIGHT_MODEL_TWO_SIDE = 0x0B52;
@@ -263,42 +256,10 @@ public interface GL10 extends GL {
 	final int GL_TEXTURE29 = 0x84DD;
 	final int GL_TEXTURE30 = 0x84DE;
 	final int GL_TEXTURE31 = 0x84DF;
-	final int GL_ACTIVE_TEXTURE = 0x84E0;
-	final int GL_CLIENT_ACTIVE_TEXTURE = 0x84E1;
 	/* TextureWrapMode */
 	final int GL_REPEAT = 0x2901;
 	final int GL_CLAMP_TO_EDGE = 0x812F;
-	/* LightName */
-	final int GL_LIGHT0 = 0x4000;
-	final int GL_LIGHT1 = 0x4001;
-	final int GL_LIGHT2 = 0x4002;
-	final int GL_LIGHT3 = 0x4003;
-	final int GL_LIGHT4 = 0x4004;
-	final int GL_LIGHT5 = 0x4005;
-	final int GL_LIGHT6 = 0x4006;
-	final int GL_LIGHT7 = 0x4007;
-	/* Buffer Objects */
-	final int GL_ARRAY_BUFFER = 0x8892;
-	final int GL_ELEMENT_ARRAY_BUFFER = 0x8893;
-
-	final int GL_ARRAY_BUFFER_BINDING = 0x8894;
-	final int GL_ELEMENT_ARRAY_BUFFER_BINDING = 0x8895;
-	final int GL_VERTEX_ARRAY_BUFFER_BINDING = 0x8896;
-	final int GL_NORMAL_ARRAY_BUFFER_BINDING = 0x8897;
-	final int GL_COLOR_ARRAY_BUFFER_BINDING = 0x8898;
-	final int GL_TEXTURE_COORD_ARRAY_BUFFER_BINDING = 0x889A;
-
-	final int GL_STATIC_DRAW = 0x88E4;
-	final int GL_DYNAMIC_DRAW = 0x88E8;
-
-	final int GL_BUFFER_SIZE = 0x8764;
-	final int GL_BUFFER_USAGE = 0x8765;
-
-	/* OES extension tokens */
-	/* OES_read_format */
-	final int GL_IMPLEMENTATION_COLOR_READ_TYPE_OES = 0x8B9A;
-	final int GL_IMPLEMENTATION_COLOR_READ_FORMAT_OES = 0x8B9B;
-	/* GL_OES_compressed_paletted_texture */
+	/* PixelInternalFormat */
 	final int GL_PALETTE4_RGB8_OES = 0x8B90;
 	final int GL_PALETTE4_RGBA8_OES = 0x8B91;
 	final int GL_PALETTE4_R5_G6_B5_OES = 0x8B92;
@@ -309,12 +270,15 @@ public interface GL10 extends GL {
 	final int GL_PALETTE8_R5_G6_B5_OES = 0x8B97;
 	final int GL_PALETTE8_RGBA4_OES = 0x8B98;
 	final int GL_PALETTE8_RGB5_A1_OES = 0x8B99;
-	/* OES_point_size_array */
-	final int GL_POINT_SIZE_ARRAY_OES = 0x8B9C;
-	final int GL_POINT_SIZE_ARRAY_TYPE_OES = 0x898A;
-	final int GL_POINT_SIZE_ARRAY_STRIDE_OES = 0x898B;
-	final int GL_POINT_SIZE_ARRAY_POINTER_OES = 0x898C;
-	final int GL_POINT_SIZE_ARRAY_BUFFER_BINDING_OES = 0x8B9F;
+	/* LightName */
+	final int GL_LIGHT0 = 0x4000;
+	final int GL_LIGHT1 = 0x4001;
+	final int GL_LIGHT2 = 0x4002;
+	final int GL_LIGHT3 = 0x4003;
+	final int GL_LIGHT4 = 0x4004;
+	final int GL_LIGHT5 = 0x4005;
+	final int GL_LIGHT6 = 0x4006;
+	final int GL_LIGHT7 = 0x4007;
 
 	/* Available in both Common and Common-Lite profiles */
 
@@ -322,15 +286,9 @@ public interface GL10 extends GL {
 
 	void glAlphaFunc(int func, float ref);
 
-	void glBindBuffer(int target, int buffer);
-
 	void glBindTexture(int target, int texture);
 
 	void glBlendFunc(int sfactor, int dfactor);
-
-	void glBufferData(int target, Buffer data, int usage);
-
-	void glBufferSubData(int target, long offset, Buffer data);
 
 	void glClear(int mask);
 
@@ -341,8 +299,6 @@ public interface GL10 extends GL {
 	void glClearStencil(int s);
 
 	void glClientActiveTexture(int texture);
-
-	void glClipPlane(int plane, DoubleBuffer equation);
 
 	void glColor4f(float red, float green, float blue, float alpha);
 
@@ -359,8 +315,6 @@ public interface GL10 extends GL {
 	void glCopyTexSubImage2D(int target, int level, int xoffset, int yoffset, int x, int y, int width, int height);
 
 	void glCullFace(int mode);
-
-	void glDeleteBuffers(IntBuffer buffers);
 
 	void glDeleteTextures(IntBuffer textures);
 
@@ -394,45 +348,15 @@ public interface GL10 extends GL {
 
 	void glFrustum(double left, double right, double bottom, double top, double zNear, double zFar);
 
-	void glGenBuffers(IntBuffer buffers);
-
 	void glGenTextures(IntBuffer textures);
-	
-	boolean glGetBoolean(int pname);
-
-	int glGetBufferParameter(int target, int pname);
-
-	void glGetClipPlane(int plane, DoubleBuffer equation);
 
 	int glGetError();
 
 	int glGetInteger(int pname);
 
-	float glGetFloat(int pname);
-
-	void glGetLight(int light, int pname, FloatBuffer params);
-
-	void glGetMaterial(int face, int pname, FloatBuffer params);
-
-	ByteBuffer glGetPointer(int pname, long size);
-
 	String glGetString(int name);
 
-	int glGetTexEnvi(int coord, int pname);
-
-	float glGetTexEnvf(int coord, int pname);
-
-	int glGetTexParameteri(int target, int pname);
-
-	float glGetTexParameterf(int target, int pname);
-
 	void glHint(int target, int mode);
-
-	boolean glIsBuffer(int buffer);
-
-	boolean glIsEnabled(int cap);
-
-	boolean glIsTexture(int texture);
 
 	void glLightModel(int pname, float param);
 
@@ -468,10 +392,6 @@ public interface GL10 extends GL {
 
 	void glPixelStorei(int pname, int param);
 
-	void glPointParameterf(int pname, float param);
-
-	void glPointParameterf(int pname, FloatBuffer params);
-
 	void glPointSize(float size);
 
 	void glPolygonOffset(float factor, float units);
@@ -499,8 +419,6 @@ public interface GL10 extends GL {
 	void glStencilOp(int fail, int zfail, int zpass);
 
 	void glTexCoordPointer(int size, int type, int stride, Buffer pointer);
-
-	void glTexEnv(int target, int pname, int param);
 
 	void glTexEnv(int target, int pname, float param);
 

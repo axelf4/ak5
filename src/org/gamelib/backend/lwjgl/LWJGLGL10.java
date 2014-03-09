@@ -13,8 +13,6 @@ import java.nio.ShortBuffer;
 import org.gamelib.graphics.GL10;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL14;
-import org.lwjgl.opengl.GL15;
 
 /** @author pwnedary */
 public class LWJGLGL10 implements GL10 {
@@ -29,11 +27,6 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glBindBuffer(int target, int buffer) {
-		GL15.glBindBuffer(target, buffer);
-	}
-
-	@Override
 	public void glBindTexture(int target, int texture) {
 		GL11.glBindTexture(target, texture);
 	}
@@ -41,26 +34,6 @@ public class LWJGLGL10 implements GL10 {
 	@Override
 	public void glBlendFunc(int sfactor, int dfactor) {
 		glBlendFunc(sfactor, dfactor);
-	}
-
-	@Override
-	public void glBufferData(int target, Buffer data, int usage) {
-		if (data instanceof ByteBuffer) GL15.glBufferData(target, (ByteBuffer) data, usage);
-		else if (data instanceof ShortBuffer) GL15.glBufferData(target, (ShortBuffer) data, usage);
-		else if (data instanceof IntBuffer) GL15.glBufferData(target, (IntBuffer) data, usage);
-		else if (data instanceof FloatBuffer) GL15.glBufferData(target, (FloatBuffer) data, usage);
-		else if (data instanceof DoubleBuffer) GL15.glBufferData(target, (DoubleBuffer) data, usage);
-		else throw new RuntimeException("Bad type " + data.getClass().getName());
-	}
-
-	@Override
-	public void glBufferSubData(int target, long offset, Buffer data) {
-		if (data instanceof ByteBuffer) GL15.glBufferSubData(target, offset, (ByteBuffer) data);
-		else if (data instanceof ShortBuffer) GL15.glBufferSubData(target, offset, (ShortBuffer) data);
-		else if (data instanceof IntBuffer) GL15.glBufferSubData(target, offset, (IntBuffer) data);
-		else if (data instanceof FloatBuffer) GL15.glBufferSubData(target, offset, (FloatBuffer) data);
-		else if (data instanceof DoubleBuffer) GL15.glBufferSubData(target, offset, (DoubleBuffer) data);
-		else throw new RuntimeException("Bad type " + data.getClass().getName());
 	}
 
 	@Override
@@ -86,11 +59,6 @@ public class LWJGLGL10 implements GL10 {
 	@Override
 	public void glClientActiveTexture(int texture) {
 		GL13.glClientActiveTexture(texture);
-	}
-
-	@Override
-	public void glClipPlane(int plane, DoubleBuffer equation) {
-		GL11.glClipPlane(plane, equation);
 	}
 
 	@Override
@@ -136,11 +104,6 @@ public class LWJGLGL10 implements GL10 {
 	@Override
 	public void glCullFace(int mode) {
 		GL11.glCullFace(mode);
-	}
-
-	@Override
-	public void glDeleteBuffers(IntBuffer buffers) {
-		GL15.glDeleteBuffers(buffers);
 	}
 
 	@Override
@@ -227,28 +190,8 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glGenBuffers(IntBuffer buffers) {
-		GL15.glGenBuffers(buffers);
-	}
-
-	@Override
 	public void glGenTextures(IntBuffer textures) {
 		GL11.glGenTextures(textures);
-	}
-
-	@Override
-	public boolean glGetBoolean(int pname) {
-		return GL11.glGetBoolean(pname);
-	}
-
-	@Override
-	public int glGetBufferParameter(int target, int pname) {
-		return GL15.glGetBufferParameteri(target, pname);
-	}
-
-	@Override
-	public void glGetClipPlane(int plane, DoubleBuffer equation) {
-		GL11.glGetClipPlane(plane, equation);
 	}
 
 	@Override
@@ -262,68 +205,13 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public float glGetFloat(int pname) {
-		return GL11.glGetFloat(pname);
-	}
-
-	@Override
-	public void glGetLight(int light, int pname, FloatBuffer params) {
-		GL11.glGetLight(light, pname, params);
-	}
-
-	@Override
-	public void glGetMaterial(int face, int pname, FloatBuffer params) {
-		GL11.glGetMaterial(face, pname, params);
-	}
-
-	@Override
-	public ByteBuffer glGetPointer(int pname, long size) {
-		return GL11.glGetPointer(pname, size);
-	}
-
-	@Override
 	public String glGetString(int name) {
 		return GL11.glGetString(name);
 	}
 
 	@Override
-	public int glGetTexEnvi(int coord, int pname) {
-		return GL11.glGetTexEnvi(coord, pname);
-	}
-
-	@Override
-	public float glGetTexEnvf(int coord, int pname) {
-		return GL11.glGetTexEnvf(coord, pname);
-	}
-
-	@Override
-	public int glGetTexParameteri(int target, int pname) {
-		return GL11.glGetTexParameteri(target, pname);
-	}
-
-	@Override
-	public float glGetTexParameterf(int target, int pname) {
-		return GL11.glGetTexParameterf(target, pname);
-	}
-
-	@Override
 	public void glHint(int target, int mode) {
 		GL11.glHint(target, mode);
-	}
-
-	@Override
-	public boolean glIsBuffer(int buffer) {
-		return GL15.glIsBuffer(buffer);
-	}
-
-	@Override
-	public boolean glIsEnabled(int cap) {
-		return GL11.glIsEnabled(cap);
-	}
-
-	@Override
-	public boolean glIsTexture(int texture) {
-		return GL11.glIsTexture(texture);
 	}
 
 	@Override
@@ -415,16 +303,6 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glPointParameterf(int pname, float param) {
-		GL14.glPointParameterf(pname, param);
-	}
-
-	@Override
-	public void glPointParameterf(int pname, FloatBuffer params) {
-		GL14.glPointParameter(pname, params);
-	}
-
-	@Override
 	public void glPointSize(float size) {
 		GL11.glPointSize(size);
 	}
@@ -502,11 +380,6 @@ public class LWJGLGL10 implements GL10 {
 		else if (pointer instanceof ByteBuffer && type == GL10.GL_FLOAT) GL11.glTexCoordPointer(size, stride, ((ByteBuffer) pointer).asFloatBuffer());
 		else throw new RuntimeException("Bad type " + pointer.getClass().getName());
 
-	}
-
-	@Override
-	public void glTexEnv(int target, int pname, int param) {
-		GL11.glTexEnvi(target, pname, param);
 	}
 
 	@Override
