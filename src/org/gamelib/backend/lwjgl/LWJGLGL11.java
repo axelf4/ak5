@@ -14,7 +14,7 @@ import org.gamelib.graphics.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL15;
 
-/** @author Axel */
+/** @author pwnedary */
 public class LWJGLGL11 extends LWJGLGL10 implements GL11 {
 	@Override
 	public void glBindBuffer(int target, int buffer) {
@@ -91,6 +91,26 @@ public class LWJGLGL11 extends LWJGLGL10 implements GL11 {
 		return org.lwjgl.opengl.GL11.glGetPointer(pname, size);
 	}
 
+	//	@Override
+	//	public void glGetTexEnviv(int env, int pname, IntBuffer params) {
+	//		GL11.glGetTexEnv(env, pname, params);
+	//	}
+
+	@Override
+	public void glGetTexEnviv(int env, int pname, IntBuffer params) {
+		org.lwjgl.opengl.GL11.glGetTexEnv(env, pname, params);
+	}
+
+	//	@Override
+	//	public void glGetTexParameterfv(int target, int pname, FloatBuffer params) {
+	//		GL11.glGetTexParameter(target, pname, params);
+	//	}
+
+	@Override
+	public void glGetTexParameteriv(int target, int pname, IntBuffer params) {
+		org.lwjgl.opengl.GL11.glGetTexParameter(target, pname, params);
+	}
+
 	@Override
 	public boolean glIsBuffer(int buffer) {
 		return GL15.glIsBuffer(buffer);
@@ -129,5 +149,15 @@ public class LWJGLGL11 extends LWJGLGL10 implements GL11 {
 	@Override
 	public void glTexParameterf(int target, int pname, float param) {
 		org.lwjgl.opengl.GL11.glTexParameterf(target, pname, param);
+	}
+	
+	@Override
+	public void glTexParameterfv(int target, int pname, FloatBuffer params) {
+		org.lwjgl.opengl.GL11.glTexParameter(target, pname, params);
+	}
+	
+	@Override
+	public void glTexParameteriv(int target, int pname, IntBuffer params) {
+		org.lwjgl.opengl.GL11.glTexParameter(target, pname, params);
 	}
 }

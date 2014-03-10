@@ -84,6 +84,10 @@ public interface GL11 extends GL10 {
 	void glGetMaterial(int face, int pname, FloatBuffer params);
 
 	ByteBuffer glGetPointer(int pname, long size);
+	
+	void glGetTexEnviv(int env, int pname, IntBuffer params);
+
+	void glGetTexParameteriv(int target, int pname, IntBuffer params);
 
 	boolean glIsBuffer(int buffer);
 
@@ -99,5 +103,7 @@ public interface GL11 extends GL10 {
 
 	void glTexEnvfv(int target, int pname, FloatBuffer params);
 
-	void glTexParameterf(int target, int pname, float param);
+	void glTexParameterfv(int target, int pname, FloatBuffer params);
+
+	void glTexParameteriv(int target, int pname, IntBuffer params);
 }

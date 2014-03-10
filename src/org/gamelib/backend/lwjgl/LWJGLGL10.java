@@ -209,26 +209,6 @@ public class LWJGLGL10 implements GL10 {
 		return GL11.glGetString(name);
 	}
 
-	//	@Override
-	//	public void glGetTexEnviv(int env, int pname, IntBuffer params) {
-	//		GL11.glGetTexEnv(env, pname, params);
-	//	}
-
-	@Override
-	public void glGetTexEnviv(int env, int pname, IntBuffer params) {
-		GL11.glGetTexEnv(env, pname, params);
-	}
-
-	//	@Override
-	//	public void glGetTexParameterfv(int target, int pname, FloatBuffer params) {
-	//		GL11.glGetTexParameter(target, pname, params);
-	//	}
-
-	@Override
-	public void glGetTexParameteriv(int target, int pname, IntBuffer params) {
-		GL11.glGetTexParameter(target, pname, params);
-	}
-
 	@Override
 	public void glHint(int target, int mode) {
 		GL11.glHint(target, mode);
@@ -422,15 +402,15 @@ public class LWJGLGL10 implements GL10 {
 		else if (pixels instanceof DoubleBuffer) GL11.glTexImage2D(target, level, internalformat, width, height, border, format, type, (DoubleBuffer) pixels);
 		else throw new RuntimeException("Bad type " + pixels.getClass().getName());
 	}
-
+	
 	@Override
-	public void glTexParameteri(int target, int pname, int param) {
+	public void glTexParameterf(int target, int pname, float param) {
 		GL11.glTexParameterf(target, pname, param);
 	}
 
 	@Override
-	public void glTexParameteriv(int target, int pname, IntBuffer params) {
-		GL11.glTexParameter(target, pname, params);
+	public void glTexParameteri(int target, int pname, int param) {
+		GL11.glTexParameteri(target, pname, param);
 	}
 
 	@Override

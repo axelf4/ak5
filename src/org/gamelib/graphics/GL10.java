@@ -356,10 +356,6 @@ public interface GL10 {
 
 	String glGetString(int name);
 
-	void glGetTexEnviv(int env, int pname, IntBuffer params);
-
-	void glGetTexParameteriv(int target, int pname, IntBuffer params);
-
 	void glHint(int target, int mode);
 
 	void glLightModel(int pname, float param);
@@ -429,10 +425,10 @@ public interface GL10 {
 	void glTexEnviv(int target, int pname, IntBuffer params);
 
 	void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, Buffer pixels);
+	
+	void glTexParameterf(int target, int pname, float param);
 
 	void glTexParameteri(int target, int pname, int param);
-
-	void glTexParameteriv(int target, int pname, IntBuffer params);
 
 	void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, Buffer pixels);
 
