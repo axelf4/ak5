@@ -22,7 +22,7 @@ public class LWJGLGL11 extends LWJGLGL10 implements GL11 {
 	}
 
 	@Override
-	public void glBufferData(int target, Buffer data, int usage) {
+	public void glBufferData(int target, int size, Buffer data, int usage) {
 		if (data instanceof ByteBuffer) GL15.glBufferData(target, (ByteBuffer) data, usage);
 		else if (data instanceof ShortBuffer) GL15.glBufferData(target, (ShortBuffer) data, usage);
 		else if (data instanceof IntBuffer) GL15.glBufferData(target, (IntBuffer) data, usage);
@@ -32,7 +32,7 @@ public class LWJGLGL11 extends LWJGLGL10 implements GL11 {
 	}
 
 	@Override
-	public void glBufferSubData(int target, long offset, Buffer data) {
+	public void glBufferSubData(int target, int offset, int size, Buffer data) {
 		if (data instanceof ByteBuffer) GL15.glBufferSubData(target, offset, (ByteBuffer) data);
 		else if (data instanceof ShortBuffer) GL15.glBufferSubData(target, offset, (ShortBuffer) data);
 		else if (data instanceof IntBuffer) GL15.glBufferSubData(target, offset, (IntBuffer) data);
@@ -47,18 +47,18 @@ public class LWJGLGL11 extends LWJGLGL10 implements GL11 {
 	}
 
 	@Override
-	public void glDeleteBuffers(IntBuffer buffers) {
+	public void glDeleteBuffers(int n, IntBuffer buffers) {
 		GL15.glDeleteBuffers(buffers);
 	}
 
 	@Override
-	public void glGenBuffers(IntBuffer buffers) {
+	public void glGenBuffers(int n, IntBuffer buffers) {
 		GL15.glGenBuffers(buffers);
 	}
 
 	@Override
-	public boolean glGetBoolean(int pname) {
-		return org.lwjgl.opengl.GL11.glGetBoolean(pname);
+	public void glGetBooleanv(int pname, ByteBuffer params) {
+		org.lwjgl.opengl.GL11.glGetBoolean(pname, params);
 	}
 
 	@Override
@@ -72,8 +72,8 @@ public class LWJGLGL11 extends LWJGLGL10 implements GL11 {
 	}
 
 	@Override
-	public float glGetFloat(int pname) {
-		return org.lwjgl.opengl.GL11.glGetFloat(pname);
+	public void glGetFloatv(int pname, FloatBuffer params) {
+		org.lwjgl.opengl.GL11.glGetFloat(pname, params);
 	}
 
 	@Override
@@ -89,26 +89,6 @@ public class LWJGLGL11 extends LWJGLGL10 implements GL11 {
 	@Override
 	public ByteBuffer glGetPointer(int pname, long size) {
 		return org.lwjgl.opengl.GL11.glGetPointer(pname, size);
-	}
-
-	@Override
-	public int glGetTexEnvi(int coord, int pname) {
-		return org.lwjgl.opengl.GL11.glGetTexEnvi(coord, pname);
-	}
-
-	@Override
-	public float glGetTexEnvf(int coord, int pname) {
-		return org.lwjgl.opengl.GL11.glGetTexEnvf(coord, pname);
-	}
-
-	@Override
-	public int glGetTexParameteri(int target, int pname) {
-		return org.lwjgl.opengl.GL11.glGetTexParameteri(target, pname);
-	}
-
-	@Override
-	public float glGetTexParameterf(int target, int pname) {
-		return org.lwjgl.opengl.GL11.glGetTexParameterf(target, pname);
 	}
 
 	@Override
@@ -137,7 +117,17 @@ public class LWJGLGL11 extends LWJGLGL10 implements GL11 {
 	}
 
 	@Override
-	public void glTexEnv(int target, int pname, int param) {
-		org.lwjgl.opengl.GL11.glTexEnvi(target, pname, param);
+	public void glTexEnvf(int target, int pname, float param) {
+		org.lwjgl.opengl.GL11.glTexEnvf(target, pname, param);
+	}
+
+	@Override
+	public void glTexEnvfv(int target, int pname, FloatBuffer params) {
+		org.lwjgl.opengl.GL11.glTexEnv(target, pname, params);
+	}
+
+	@Override
+	public void glTexParameterf(int target, int pname, float param) {
+		org.lwjgl.opengl.GL11.glTexParameterf(target, pname, param);
 	}
 }

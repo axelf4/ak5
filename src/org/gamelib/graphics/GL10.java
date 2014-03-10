@@ -294,7 +294,7 @@ public interface GL10 {
 
 	void glClearColor(float red, float green, float blue, float alpha);
 
-	void glClearDepth(double depth);
+	void glClearDepthf(float depth);
 
 	void glClearStencil(int s);
 
@@ -316,13 +316,13 @@ public interface GL10 {
 
 	void glCullFace(int mode);
 
-	void glDeleteTextures(IntBuffer textures);
+	void glDeleteTextures(int n, IntBuffer textures);
 
 	void glDepthFunc(int func);
 
 	void glDepthMask(boolean flag);
 
-	void glDepthRange(double zNear, double zFar);
+	void glDepthRangef(float zNear, float zFar);
 
 	void glDisable(int cap);
 
@@ -348,13 +348,17 @@ public interface GL10 {
 
 	void glFrustum(double left, double right, double bottom, double top, double zNear, double zFar);
 
-	void glGenTextures(IntBuffer textures);
+	void glGenTextures(int n, IntBuffer textures);
 
 	int glGetError();
 
-	int glGetInteger(int pname);
+	void glGetIntegerv(int pname, IntBuffer params);
 
 	String glGetString(int name);
+
+	void glGetTexEnviv(int env, int pname, IntBuffer params);
+
+	void glGetTexParameteriv(int target, int pname, IntBuffer params);
 
 	void glHint(int target, int mode);
 
@@ -420,11 +424,15 @@ public interface GL10 {
 
 	void glTexCoordPointer(int size, int type, int stride, Buffer pointer);
 
-	void glTexEnv(int target, int pname, float param);
+	void glTexEnvi(int target, int pname, int param);
+
+	void glTexEnviv(int target, int pname, IntBuffer params);
 
 	void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, Buffer pixels);
 
-	void glTexParameter(int target, int pname, float param);
+	void glTexParameteri(int target, int pname, int param);
+
+	void glTexParameteriv(int target, int pname, IntBuffer params);
 
 	void glTexSubImage2D(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, Buffer pixels);
 

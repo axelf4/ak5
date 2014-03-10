@@ -61,37 +61,29 @@ public interface GL11 extends GL10 {
 
 	void glBindBuffer(int target, int buffer);
 
-	void glBufferData(int target, Buffer data, int usage);
+	void glBufferData(int target, int size, Buffer data, int usage);
 
-	void glBufferSubData(int target, long offset, Buffer data);
+	void glBufferSubData(int target, int offset, int size, Buffer data);
 
 	void glClipPlane(int plane, DoubleBuffer equation);
 
-	void glDeleteBuffers(IntBuffer buffers);
+	void glDeleteBuffers(int n, IntBuffer buffers);
 
-	void glGenBuffers(IntBuffer buffers);
+	void glGenBuffers(int n, IntBuffer buffers);
 
-	boolean glGetBoolean(int pname);
+	void glGetBooleanv(int pname, ByteBuffer params);
 
 	int glGetBufferParameter(int target, int pname);
 
 	void glGetClipPlane(int plane, DoubleBuffer equation);
 
-	float glGetFloat(int pname);
+	void glGetFloatv(int pname, FloatBuffer params);
 
 	void glGetLight(int light, int pname, FloatBuffer params);
 
 	void glGetMaterial(int face, int pname, FloatBuffer params);
 
 	ByteBuffer glGetPointer(int pname, long size);
-
-	int glGetTexEnvi(int coord, int pname);
-
-	float glGetTexEnvf(int coord, int pname);
-
-	int glGetTexParameteri(int target, int pname);
-
-	float glGetTexParameterf(int target, int pname);
 
 	boolean glIsBuffer(int buffer);
 
@@ -103,5 +95,9 @@ public interface GL11 extends GL10 {
 
 	void glPointParameterf(int pname, FloatBuffer params);
 
-	void glTexEnv(int target, int pname, int param);
+	void glTexEnvf(int target, int pname, float param);
+
+	void glTexEnvfv(int target, int pname, FloatBuffer params);
+
+	void glTexParameterf(int target, int pname, float param);
 }

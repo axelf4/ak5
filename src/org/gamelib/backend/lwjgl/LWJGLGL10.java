@@ -47,7 +47,7 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glClearDepth(double depth) {
+	public void glClearDepthf(float depth) {
 		GL11.glClearDepth(depth);
 	}
 
@@ -107,7 +107,7 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glDeleteTextures(IntBuffer textures) {
+	public void glDeleteTextures(int n, IntBuffer textures) {
 		GL11.glDeleteTextures(textures);
 	}
 
@@ -122,7 +122,7 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glDepthRange(double zNear, double zFar) {
+	public void glDepthRangef(float zNear, float zFar) {
 		GL11.glDepthRange(zNear, zFar);
 	}
 
@@ -190,7 +190,7 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glGenTextures(IntBuffer textures) {
+	public void glGenTextures(int n, IntBuffer textures) {
 		GL11.glGenTextures(textures);
 	}
 
@@ -200,13 +200,33 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public int glGetInteger(int pname) {
-		return GL11.glGetInteger(pname);
+	public void glGetIntegerv(int pname, IntBuffer params) {
+		GL11.glGetInteger(pname, params);
 	}
 
 	@Override
 	public String glGetString(int name) {
 		return GL11.glGetString(name);
+	}
+
+	//	@Override
+	//	public void glGetTexEnviv(int env, int pname, IntBuffer params) {
+	//		GL11.glGetTexEnv(env, pname, params);
+	//	}
+
+	@Override
+	public void glGetTexEnviv(int env, int pname, IntBuffer params) {
+		GL11.glGetTexEnv(env, pname, params);
+	}
+
+	//	@Override
+	//	public void glGetTexParameterfv(int target, int pname, FloatBuffer params) {
+	//		GL11.glGetTexParameter(target, pname, params);
+	//	}
+
+	@Override
+	public void glGetTexParameteriv(int target, int pname, IntBuffer params) {
+		GL11.glGetTexParameter(target, pname, params);
 	}
 
 	@Override
@@ -383,8 +403,13 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glTexEnv(int target, int pname, float param) {
+	public void glTexEnvi(int target, int pname, int param) {
 		GL11.glTexEnvf(target, pname, param);
+	}
+
+	@Override
+	public void glTexEnviv(int target, int pname, IntBuffer params) {
+		GL11.glTexEnv(target, pname, params);
 	}
 
 	@Override
@@ -399,8 +424,13 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glTexParameter(int target, int pname, float param) {
+	public void glTexParameteri(int target, int pname, int param) {
 		GL11.glTexParameterf(target, pname, param);
+	}
+
+	@Override
+	public void glTexParameteriv(int target, int pname, IntBuffer params) {
+		GL11.glTexParameter(target, pname, params);
 	}
 
 	@Override
