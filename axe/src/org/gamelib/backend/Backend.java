@@ -15,6 +15,8 @@ import org.gamelib.Handler.Event;
 import org.gamelib.Loop;
 import org.gamelib.Loop.LoopListener;
 import org.gamelib.backend.Input.Key;
+import org.gamelib.graphics.GL10;
+import org.gamelib.graphics.Texture;
 import org.gamelib.util.Configuration;
 import org.gamelib.util.Disposable;
 import org.gamelib.util.geom.Rectangle;
@@ -67,13 +69,13 @@ public interface Backend extends Disposable {
 	/** @return an {@link InputStream} for the specified resource. */
 	public InputStream getResourceAsStream(String name);
 
-	/** @return the image from the file */
-	public Image getImage(File file) throws IOException;
-
 	/** @return an empty image */
-	public Image createImage(int width, int height);
+	public Texture createTexture(int width, int height);
 
-	public Image getImage(BufferedImage img);
+	/** @return the image from the file */
+	public Texture getTexture(String name) throws IOException;
+
+	public Texture getTexture(BufferedImage img);
 
 	/** @return the sound from the file */
 	public Sound getSound(File file) throws IOException;
@@ -140,6 +142,11 @@ public interface Backend extends Disposable {
 			@Override
 			public void draw(float delta) {
 				BackendImpl.this.draw(new Drawable() {
+					@Override
+					public void draw(GL10 gl, float delta) {
+						handler.handle(new Event.Draw(gl, delta));
+					}
+					
 					@Override
 					public void draw(Graphics g, float delta) {
 						handler.handle(new Event.Draw(g, delta));

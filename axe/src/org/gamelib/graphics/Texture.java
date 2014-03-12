@@ -52,21 +52,19 @@ public interface Texture extends Drawable, Disposable {
 
 	int getTexture();
 
+	void bind();
+
+	void unbind();
+
 	/** Returns the width of this image.
 	 * 
 	 * @return the width of this image */
 	int getWidth();
 
-	/** Sets the width of this image. */
-	void setWidth(int width);
-
 	/** Returns the height of this image.
 	 * 
 	 * @return the height of this image */
 	int getHeight();
-
-	/** Sets the height of this image. */
-	void setHeight(int height);
 
 	/** Sets the {@link Filter} for minification and magnification.
 	 * 
@@ -109,6 +107,7 @@ public interface Texture extends Drawable, Disposable {
 		private final int target;
 		private final int texture;
 		private final int width, height;
+		private int texWidth, texHeight;
 
 		public GLTexture(GL10 gl, int target, int texture, int width, int height) {
 			this.gl = gl;
@@ -117,6 +116,9 @@ public interface Texture extends Drawable, Disposable {
 			this.width = width;
 			this.height = height;
 		}
+
+		@Override
+		public void draw(GL10 gl, float delta) {}
 
 		@Override
 		public void draw(Graphics g, float delta) {
@@ -130,10 +132,12 @@ public interface Texture extends Drawable, Disposable {
 
 		}
 
+		@Override
 		public void bind() {
 			gl.glBindTexture(target, texture);
 		}
 
+		@Override
 		public void unbind() {
 			gl.glBindTexture(target, 0);
 		}
@@ -154,20 +158,28 @@ public interface Texture extends Drawable, Disposable {
 		}
 
 		@Override
-		public void setWidth(int width) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
 		public int getHeight() {
 			return height;
 		}
 
-		@Override
-		public void setHeight(int height) {
-			// TODO Auto-generated method stub
+		/** @return the texWidth */
+		public int getTexWidth() {
+			return texWidth;
+		}
 
+		/** @param texWidth the texWidth to set */
+		public void setTexWidth(int texWidth) {
+			this.texWidth = texWidth;
+		}
+
+		/** @return the texHeight */
+		public int getTexHeight() {
+			return texHeight;
+		}
+
+		/** @param texHeight the texHeight to set */
+		public void setTexHeight(int texHeight) {
+			this.texHeight = texHeight;
 		}
 
 		@Override
