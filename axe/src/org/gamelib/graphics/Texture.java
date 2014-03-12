@@ -48,6 +48,10 @@ public interface Texture extends Drawable, Disposable {
 		}
 	}
 
+	int getTarget();
+
+	int getTexture();
+
 	/** Returns the width of this image.
 	 * 
 	 * @return the width of this image */
@@ -132,6 +136,16 @@ public interface Texture extends Drawable, Disposable {
 
 		public void unbind() {
 			gl.glBindTexture(target, 0);
+		}
+
+		@Override
+		public int getTarget() {
+			return target;
+		}
+
+		@Override
+		public int getTexture() {
+			return texture;
 		}
 
 		@Override
