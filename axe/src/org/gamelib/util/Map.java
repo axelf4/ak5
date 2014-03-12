@@ -154,11 +154,11 @@ public interface Map extends Serializable {
 			tilesAcross = Integer.parseInt(imageNode.getAttribute("width")) / tileWidth;
 			tilesDown = Integer.parseInt(imageNode.getAttribute("height")) / tileHeight;
 
-			try {
-				image = backend.getImage(new File(mapLocation + "/" + imageNode.getAttribute("source")));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				image = backend.getImage(new File(mapLocation + "/" + imageNode.getAttribute("source")));
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
 		}
 
 		public void draw(Graphics g, int x, int y, int gid) {

@@ -6,6 +6,7 @@ package org.gamelib.util;
 import org.gamelib.Drawable;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
+import org.gamelib.graphics.GL10;
 import org.gamelib.util.geom.Line;
 import org.gamelib.util.geom.Point;
 
@@ -43,7 +44,7 @@ public class NinePatch implements Drawable {
 		System.out.println("hor: " + horizontalStretch.length() + " ver: " + verticalStretch.length());
 		patches[TOP_LEFT] = rawImage.region(0, 0, horizontalStretch.getX1() - 1, verticalStretch.getY1() - 1);
 		patches[TOP_CENTER] = rawImage.region(horizontalStretch.getX1(), 0, horizontalStretch.getX2() - horizontalStretch.getX1(), verticalStretch.getY1() - 1);
-		patches[TOP_RIGHT] = rawImage.region(horizontalStretch.getX2() + 1, 0, rawImage.getWidth()- horizontalStretch.getX2(), verticalStretch.getY1() - 1);
+		patches[TOP_RIGHT] = rawImage.region(horizontalStretch.getX2() + 1, 0, rawImage.getWidth() - horizontalStretch.getX2(), verticalStretch.getY1() - 1);
 	}
 
 	Line parseInterval(Image image, IntervalType intervalType) {
@@ -70,7 +71,7 @@ public class NinePatch implements Drawable {
 				pixel = null;
 				break;
 			}
-			System.out.println("pixel: " + pixels[pixel.getX()][pixel.getY()] + " x: " +pixel.getX() + " y: " + pixel.getY());
+			System.out.println("pixel: " + pixels[pixel.getX()][pixel.getY()] + " x: " + pixel.getX() + " y: " + pixel.getY());
 			System.out.println(java.awt.Color.BLACK.getRGB());
 			if (pixels[pixel.getX()][pixel.getY()] == java.awt.Color.BLACK.getRGB()) {
 				if (x1 == -1 && y1 == -1) {
@@ -82,6 +83,9 @@ public class NinePatch implements Drawable {
 		}
 		return null;
 	}
+
+	@Override
+	public void draw(GL10 gl, float delta) {}
 
 	@Override
 	public void draw(Graphics g, float delta) {}

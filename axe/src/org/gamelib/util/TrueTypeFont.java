@@ -169,7 +169,7 @@ public class TrueTypeFont extends FontImpl {
 				fontImage = null;
 			}
 
-			fontImage = backend.getImage(imgTemp);
+//			fontImage = backend.getImage(imgTemp);
 		} catch (Exception e) {
 			System.err.println("Failed to create font.");
 			e.printStackTrace();

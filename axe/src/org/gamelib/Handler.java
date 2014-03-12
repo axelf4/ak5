@@ -10,6 +10,7 @@ import java.awt.event.MouseWheelEvent;
 
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Input;
+import org.gamelib.graphics.GL10;
 
 /** Callback SAM (Single Abstract Method)-interface for subscribed {@link Event}s. At registration all {@link Event}s
  * will be subscribed to, but excluded as {@link #handle(Event)} denies.
@@ -75,7 +76,7 @@ public interface Handler {
 
 		/** Event triggered each tick. */
 		public static class Tick extends EventImpl implements Event {
-			public float delta;
+			public final float delta;
 
 			public Tick(float delta) {
 				this.delta = delta;
@@ -84,18 +85,29 @@ public interface Handler {
 
 		/** Event triggered when the screen redraws. */
 		public static final class Draw extends EventImpl implements Event {
+			public final GL10 gl;
+			public final float delta;
+			
+			@Deprecated
 			public Graphics graphics;
-			public float delta;
-
-			public Draw(Graphics graphics, float delta) {
-				this.graphics = graphics;
+			
+			public Draw(GL10 gl, float delta) {
+				this.gl = gl;
 				this.delta = delta;
+			}
+
+			@Deprecated
+			public Draw(Graphics graphics, float delta) {
+				this.gl = null;
+				this.delta = delta;
+				
+				this.graphics = graphics;
 			}
 		}
 
 		/** Abstract event for input actions. */
 		public abstract static class Control<T extends InputEvent> extends EventImpl implements Event {
-			public Input input;
+			public final Input input;
 
 			public Control(Input input) {
 				this.input = input;
@@ -103,8 +115,8 @@ public interface Handler {
 		}
 
 		public static final class Key extends Control<KeyEvent> {
-			public int id;
-			public int keyCode;
+			public final int id;
+			public final int keyCode;
 
 			public Key(Input input, int id, int keyCode) {
 				super(input);
@@ -114,8 +126,8 @@ public interface Handler {
 		}
 
 		public static final class Mouse extends Control<MouseEvent> {
-			public int id;
-			public int button;
+			public final int id;
+			public final int button;
 
 			public Mouse(Input input, int id, int button) {
 				super(input);
@@ -125,7 +137,7 @@ public interface Handler {
 		}
 
 		public static final class MouseWheel extends Control<MouseWheelEvent> {
-			public double scrollAmount;
+			public final double scrollAmount;
 
 			public MouseWheel(Input input, double scrollAmount) {
 				super(input);
@@ -138,8 +150,8 @@ public interface Handler {
 		public static final class Dispose extends EventImpl implements Event {}
 
 		public static final class Resize extends EventImpl implements Event {
-			public int newWidth;
-			public int newHeight;
+			public final int newWidth;
+			public final int newHeight;
 
 			public Resize(int newWidth, int newHeight) {
 				this.newWidth = newWidth;

@@ -41,7 +41,7 @@ public class BitmapFont extends FontImpl implements Font {
 				// File imgFile = new File(file.getParentFile().getPath() + File.separator + page[2].split("\"")[1]);
 				File imgFile = new File(file.getParentFile(), page[2].split("\"")[1]); // file=string
 				System.out.println(imgFile.getPath());
-				pageImgs[p] = backend.getImage(imgFile);
+//				pageImgs[p] = backend.getImage(imgFile);
 			}
 
 			float descent = 0;

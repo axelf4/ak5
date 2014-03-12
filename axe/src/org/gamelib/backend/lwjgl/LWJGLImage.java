@@ -10,6 +10,7 @@ import java.nio.ByteOrder;
 
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
+import org.gamelib.graphics.GL10;
 
 /** Textures are automatically made p^2 for compatibility.
  * 
@@ -158,5 +159,11 @@ public class LWJGLImage implements Image {
 		image.u2 = (float) (x + width) / image.getTexWidth();
 		image.v2 = (float) (y + height) / image.getTexHeight();
 		return image;
+	}
+
+	@Override
+	public void draw(GL10 gl, float delta) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -4,6 +4,7 @@
 package org.gamelib;
 
 import org.gamelib.backend.Graphics;
+import org.gamelib.graphics.GL10;
 
 /**
  * An object with coordinates and movement in a 2d space.
@@ -197,6 +198,14 @@ public interface Entity extends Updateable, Drawable {
 				// entity.setY(entity.getY() + entity.getVSpeed());
 
 				entity.update(delta);
+			}
+		}
+		
+		@Override
+		public void draw(GL10 gl, float delta) {
+			for (int i = 0; i < living; i++) {
+				Entity entity = entities[i];
+				entity.draw(gl, delta);
 			}
 		}
 
