@@ -167,8 +167,6 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	public void draw(Drawable callback, float delta) {
 		Graphics g = getGraphics();
 		g.begin();
-		// g.setColor(Color.WHITE);
-		// g.clear();
 
 		gl.glMatrixMode(GL_PROJECTION);
 		gl.glLoadIdentity();
