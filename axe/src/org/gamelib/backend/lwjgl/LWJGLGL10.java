@@ -33,7 +33,7 @@ public class LWJGLGL10 implements GL10 {
 
 	@Override
 	public void glBlendFunc(int sfactor, int dfactor) {
-		glBlendFunc(sfactor, dfactor);
+		GL11.glBlendFunc(sfactor, dfactor);
 	}
 
 	@Override
