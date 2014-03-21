@@ -5,7 +5,6 @@ package org.gamelib.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.gamelib.Game;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Graphics;
 import org.w3c.dom.Document;
@@ -25,12 +23,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-/**
- * A map intended to parse TileED maps. Maps can be loaded with {@link FileLoader#load(String)}.
+/** A map intended to parse TileED maps. Maps can be loaded with {@link FileLoader#load(String)}.
  * 
  * @see TileED TileED map editor <a href="http://mapeditor.org/">http://mapeditor.org/</a>
- * @author pwnedary
- */
+ * @author pwnedary */
 public class TiledMap implements Map {
 	private static final long serialVersionUID = 3403715541913955133L;
 
@@ -145,7 +141,7 @@ public class TiledMap implements Map {
 		}
 	}
 
-	private TiledMap(int tileWidth, int tileHeight, List<TileSet> tileSets, List<Layer> layers, List<ObjectGroup> objectGroups, int orientation, Properties properties) {
+	public TiledMap(int tileWidth, int tileHeight, List<TileSet> tileSets, List<Layer> layers, List<ObjectGroup> objectGroups, int orientation, Properties properties) {
 		for (Layer layer : layers) {
 			int[][] data = layer.data;
 			width = data.length > width ? data.length : width;
@@ -193,12 +189,10 @@ public class TiledMap implements Map {
 		layers.get(layer).data[x][y] = tile;
 	}
 
-	/**
-	 * Get a tileset by a given global ID
+	/** Get a tileset by a given global ID
 	 * 
 	 * @param gid The global ID of the tileset to retrieve
-	 * @return The tileset requested or null if no tileset matches
-	 */
+	 * @return The tileset requested or null if no tileset matches */
 	public TileSet getTileSetByGID(int gid) {
 		for (int i = 0; i < tileSets.size(); i++) {
 			TileSet set = (TileSet) tileSets.get(i);
@@ -216,9 +210,7 @@ public class TiledMap implements Map {
 		public int index;
 		/** The name of this layer - read from the XML */
 		public String name;
-		/**
-		 * The tile data representing this data.
-		 */
+		/** The tile data representing this data. */
 		public int[][] data;
 		/** The width of this layer */
 		public int width;
@@ -252,11 +244,9 @@ public class TiledMap implements Map {
 		}
 	}
 
-	/**
-	 * A group of objects on the map (objects layer)
+	/** A group of objects on the map (objects layer)
 	 * 
-	 * @author kulpae
-	 */
+	 * @author kulpae */
 	public static class ObjectGroup {
 		/** The index of this group */
 		public int index;
@@ -272,12 +262,10 @@ public class TiledMap implements Map {
 		/** the properties of this group */
 		public Properties props;
 
-		/**
-		 * Create a new group based on the XML definition
+		/** Create a new group based on the XML definition
 		 * 
 		 * @param element The XML element describing the layer
-		 * @throws SlickException Indicates a failure to parse the XML group
-		 */
+		 * @throws SlickException Indicates a failure to parse the XML group */
 		private ObjectGroup(Element element) {
 			name = element.getAttribute("name");
 			width = Integer.parseInt(element.getAttribute("width"));
@@ -310,11 +298,9 @@ public class TiledMap implements Map {
 		}
 	}
 
-	/**
-	 * An object from a object-group on the map
+	/** An object from a object-group on the map
 	 * 
-	 * @author kulpae
-	 */
+	 * @author kulpae */
 	public static class GroupObject {
 		/** The index of this object */
 		public int index;
@@ -336,12 +322,10 @@ public class TiledMap implements Map {
 		/** the properties of this group */
 		public Properties props;
 
-		/**
-		 * Create a new group based on the XML definition
+		/** Create a new group based on the XML definition
 		 * 
 		 * @param element The XML element describing the layer
-		 * @throws SlickException Indicates a failure to parse the XML group
-		 */
+		 * @throws SlickException Indicates a failure to parse the XML group */
 		private GroupObject(Element element) {
 			name = element.getAttribute("name");
 			type = element.getAttribute("type");
@@ -373,12 +357,10 @@ public class TiledMap implements Map {
 		}
 	}
 
-	/**
-	 * Decode a Base64 string as encoded by TilED
+	/** Decode a Base64 string as encoded by TilED
 	 * 
 	 * @param data The string of character to decode
-	 * @return The byte array represented by character encoding
-	 */
+	 * @return The byte array represented by character encoding */
 	private static byte[] decodeBase64(char[] data) {
 		int temp = data.length;
 		for (int ix = 0; ix < data.length; ix++) {
@@ -419,9 +401,7 @@ public class TiledMap implements Map {
 	/** The code used to decode Base64 encoding */
 	private static final byte[] baseCodes = new byte[256];
 
-	/**
-	 * Static initializer for the codes created against Base64
-	 */
+	/** Static initializer for the codes created against Base64 */
 	static {
 		for (int i = 0; i < 256; i++)
 			baseCodes[i] = -1;
