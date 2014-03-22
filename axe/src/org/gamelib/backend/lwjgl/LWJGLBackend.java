@@ -204,7 +204,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	@Override
 	public Graphics getGraphics(Image image) {
-		if (GLContext.getCapabilities().GL_EXT_framebuffer_object) return new FBOGraphics((LWJGLImage) image);
+		if (GLContext.getCapabilities().GL_EXT_framebuffer_object) return null;
 		else if ((Pbuffer.getCapabilities() & Pbuffer.PBUFFER_SUPPORTED) != 0) return new PbufferGraphics((LWJGLImage) image);
 		else throw new Error("Your OpenGL card doesn't support offscreen buffers.");
 	}
