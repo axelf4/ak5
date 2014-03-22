@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 
+import org.gamelib.Event;
+import org.gamelib.Event.EventImpl;
 import org.gamelib.Handler;
-import org.gamelib.Handler.Event;
-import org.gamelib.Handler.Event.EventImpl;
 
 /** A connection between a {@link Client} and a {@link Server}.
  * 

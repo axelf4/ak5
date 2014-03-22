@@ -7,8 +7,8 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 
+import org.gamelib.Event;
 import org.gamelib.Handler;
-import org.gamelib.Handler.Event;
 
 /**
  * An instance is used for checking user input and derived by {@link Backend}.

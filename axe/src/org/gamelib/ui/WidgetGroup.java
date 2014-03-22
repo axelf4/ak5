@@ -3,11 +3,10 @@
  */
 package org.gamelib.ui;
 
+import org.gamelib.Event;
 import org.gamelib.Group;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public abstract class WidgetGroup extends Group implements Widget {
 	protected int x;
 	protected int y;

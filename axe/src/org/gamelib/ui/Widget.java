@@ -3,6 +3,7 @@
  */
 package org.gamelib.ui;
 
+import org.gamelib.Event;
 import org.gamelib.Group;
 import org.gamelib.Handler;
 

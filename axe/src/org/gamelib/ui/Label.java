@@ -3,6 +3,7 @@
  */
 package org.gamelib.ui;
 
+import org.gamelib.Event;
 import org.gamelib.backend.Color;
 import org.gamelib.backend.Graphics;
 import org.gamelib.ui.Widget.WidgetImpl;

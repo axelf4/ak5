@@ -8,7 +8,9 @@ import static org.gamelib.graphics.GL10.*;
 
 import java.awt.Canvas;
 import java.awt.Container;
+import java.awt.Graphics2D;
 import java.awt.color.ColorSpace;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
@@ -26,11 +28,10 @@ import java.util.Hashtable;
 import javax.imageio.ImageIO;
 
 import org.gamelib.Drawable;
+import org.gamelib.Event;
 import org.gamelib.Handler;
-import org.gamelib.Handler.Event;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Backend.BackendImpl;
-import org.gamelib.backend.Color;
 import org.gamelib.backend.DisplayConfiguration;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
@@ -38,6 +39,7 @@ import org.gamelib.backend.Input;
 import org.gamelib.backend.Sound;
 import org.gamelib.graphics.GL10;
 import org.gamelib.graphics.Texture;
+import org.gamelib.graphics.Texture.GLTexture;
 import org.gamelib.util.Configuration;
 import org.gamelib.util.Math2;
 import org.gamelib.util.geom.Matrix4;
@@ -52,7 +54,6 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.Pbuffer;
 import org.lwjgl.util.WaveData;
-import org.gamelib.graphics.Texture.GLTexture;
 
 /** @author pwnedary */
 public class LWJGLBackend extends BackendImpl implements Backend {
@@ -136,11 +137,11 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 			Display.setParent(parent);
 			Display.create();
 
-			// glMatrixMode(GL_PROJECTION);
-			// glLoadIdentity();
-			// glOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1); // 0,0 at bottom left
-			// // glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1); // 0,0 at top left
-			// glMatrixMode(GL_MODELVIEW);
+			//			gl.glMatrixMode(GL_PROJECTION);
+			//			gl.glLoadIdentity();
+			//			gl.glOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1); // 0,0 at bottom left
+			//			// glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1); // 0,0 at top left
+			//			gl.glMatrixMode(GL_MODELVIEW);
 
 			gl.glShadeModel(GL_SMOOTH);
 			gl.glEnable(GL_BLEND);
@@ -243,7 +244,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	@Override
 	public Texture getTexture(BufferedImage bufferedImage) {
-		IntBuffer buffer = IntBuffer.allocate(1);
+		IntBuffer buffer = BufferUtils.createIntBuffer(1);
 		gl.glGenTextures(1, buffer);
 		int textureID = buffer.get(0); // create the texture ID for this texture
 		int target = GL_TEXTURE_2D;
@@ -252,10 +253,11 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 		ByteBuffer textureBuffer = convertImageData(bufferedImage, texture); // convert that image into a byte buffer of texture data
 
-		texture.setFilter(Texture.Filter.NEAREST, Texture.Filter.NEAREST);
 		texture.bind();
+		texture.setFilter(Texture.Filter.NEAREST, Texture.Filter.NEAREST);
+		//		texture.setWrap(Texture.Wrap.CLAMP_TO_EDGE, Texture.Wrap.CLAMP_TO_EDGE);
+		gl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		gl.glTexImage2D(target, 0, GL_RGBA, ((GLTexture) texture).getTexWidth(), ((GLTexture) texture).getTexHeight(), 0, srcPixelFormat, GL_UNSIGNED_BYTE, textureBuffer); // produce a texture from the byte buffer
-		texture.unbind();
 		return texture;
 	}
 
@@ -265,19 +267,20 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	 * @param texture The texture to store the data into
 	 * @return a buffer containing the data */
 	private ByteBuffer convertImageData(BufferedImage bufferedImage, Texture texture) {
-		// find the closest power of 2 for the width and height of the produced texture
+		// Find the closest power of 2 for the width and height of the produced texture
 		int texWidth = Math2.pot(bufferedImage.getWidth());
 		int texHeight = Math2.pot(bufferedImage.getHeight());
 		((GLTexture) texture).setTexWidth(texWidth);
 		((GLTexture) texture).setTexHeight(texHeight);
 
-		BufferedImage texImage = bufferedImage.getColorModel().hasAlpha() ? new BufferedImage(glAlphaColorModel, Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 4, null), false, new Hashtable<>()) : new BufferedImage(glColorModel, Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 3, null), false, new Hashtable<>()); // create a raster that can be used by OpenGL as a source for a texture
+		BufferedImage image = bufferedImage.getColorModel().hasAlpha() ? new BufferedImage(glAlphaColorModel, Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 4, null), false, new Hashtable<>()) : new BufferedImage(glColorModel, Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 3, null), false, new Hashtable<>()); // Create a raster that can be used by OpenGL as a source for a texture
 
-		texImage.getGraphics().drawImage(bufferedImage, 0, 0, null); // copy the source image into the produced image
-		// Graphics2D g = (Graphics2D) texImage.getGraphics(); g.setColor(new Color(0f, 0f, 0f, 0f).toAWT()); g.fillRect(0, 0, texWidth, texHeight); g.drawImage(bufferedImage, 0, 0, null);
+		AffineTransform xform = AffineTransform.getScaleInstance(1, -1);
+		xform.translate(0, -bufferedImage.getHeight(null)); // Flip the image vertically
+		((Graphics2D) image.getGraphics()).drawImage(bufferedImage, xform, parent); // Copy source into the produced image
 
-		// build a byte buffer from the temporary image that be used by OpenGL to produce a texture.
-		byte[] data = ((DataBufferByte) texImage.getRaster().getDataBuffer()).getData();
+		// Build a byte buffer from the temporary image that be used by OpenGL to produce a texture.
+		byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 		return (ByteBuffer) ByteBuffer.allocateDirect(data.length).order(ByteOrder.nativeOrder()).put(data).flip();
 	}
 
@@ -301,6 +304,11 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		AL10.alBufferData(buffer.get(bufferIndex), waveFile.format, waveFile.data, waveFile.samplerate);
 		waveFile.dispose();
 		return new LWJGLSound(bufferIndex++);
+	}
+
+	@Override
+	public GL10 getGL() {
+		return gl;
 	}
 
 }

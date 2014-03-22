@@ -54,8 +54,6 @@ public interface Texture extends Drawable, Disposable {
 
 	void bind();
 
-	void unbind();
-
 	/** Returns the width of this image.
 	 * 
 	 * @return the width of this image */
@@ -128,18 +126,12 @@ public interface Texture extends Drawable, Disposable {
 
 		@Override
 		public void dispose() {
-			// TODO Auto-generated method stub
-
+			// gl.glDeleteTextures(1, textures);
 		}
 
 		@Override
 		public void bind() {
 			gl.glBindTexture(target, texture);
-		}
-
-		@Override
-		public void unbind() {
-			gl.glBindTexture(target, 0);
 		}
 
 		@Override
@@ -184,18 +176,14 @@ public interface Texture extends Drawable, Disposable {
 
 		@Override
 		public void setFilter(Filter min, Filter mag) {
-			bind();
 			gl.glTexParameteri(target, GL10.GL_TEXTURE_MIN_FILTER, min.getGLEnum());
 			gl.glTexParameteri(target, GL10.GL_TEXTURE_MAG_FILTER, mag.getGLEnum());
-			unbind();
 		}
 
 		@Override
 		public void setWrap(Wrap u, Wrap v) {
-			bind();
 			gl.glTexParameteri(target, GL10.GL_TEXTURE_WRAP_S, u.getGLEnum());
 			gl.glTexParameteri(target, GL10.GL_TEXTURE_WRAP_T, v.getGLEnum());
-			unbind();
 		}
 
 		@Override

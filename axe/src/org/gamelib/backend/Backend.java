@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.gamelib.Drawable;
+import org.gamelib.Event;
 import org.gamelib.FixedTimestepLoop;
 import org.gamelib.Handler;
-import org.gamelib.Handler.Event;
 import org.gamelib.Loop;
 import org.gamelib.Loop.LoopListener;
 import org.gamelib.backend.Input.Key;
@@ -79,6 +79,8 @@ public interface Backend extends Disposable {
 
 	/** @return the sound from the file */
 	public Sound getSound(File file) throws IOException;
+	
+	GL10 getGL();
 
 	public abstract class BackendImpl implements Backend {
 		protected Configuration configuration;

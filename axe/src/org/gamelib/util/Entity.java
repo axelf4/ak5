@@ -1,123 +1,136 @@
 /**
  * 
  */
-package org.gamelib;
+package org.gamelib.util;
 
+import org.gamelib.Drawable;
+import org.gamelib.Updatable;
 import org.gamelib.backend.Graphics;
 import org.gamelib.graphics.GL10;
 
-/**
- * An object with coordinates and movement in a 2d space.
- * @author pwnedary
- */
-public interface Entity extends Updateable, Drawable {
-	/** @return the x-axis coordinate. */
+/** An object with coordinates and movement in a 2d space.
+ * 
+ * @author pwnedary */
+public interface Entity extends Updatable, Drawable {
+	/** Returns the x-coordinate.
+	 * 
+	 * @return the x-coordinate */
 	public float getX();
 
-	/** @param the new x-axis coordinate. */
+	/** Sets the x-coordinate to <code>x</code>
+	 * 
+	 * @param x the new x-axis coordinate. */
 	public void setX(float x);
 
-	/** @return the y-axis coordinate. */
+	/** Returns the y-coordinate.
+	 * 
+	 * @return the y-coordinate */
 	public float getY();
 
-	/** @param the new y-axis coordinate. */
+	/** Sets the y-coordinate to <code>y</code>
+	 * 
+	 * @param y the new y-axis coordinate. */
 	public void setY(float y);
 
-	/** @return the last x-axis coordinate. */
+	/** Returns this {@link Entity}'s x-coordinate as during the last frame.
+	 * 
+	 * @return the last x-coordinate */
 	public float getLastX();
 
-	/** @param the last new x-axis coordinate. */
+	/** Sets this {@link Entity}'s x-coordinate from the last frame to <code>lastX</code>.
+	 * 
+	 * @param lastX the new last x-coordinate */
 	public void setLastX(float lastX);
 
-	/** @return the last x-axis coordinate. */
+	/** Returns this {@link Entity}'s y-coordinate as during the last frame.
+	 * 
+	 * @return the last y-coordinate */
 	public float getLastY();
 
-	/** @param the last new x-axis coordinate. */
+	/** Sets this {@link Entity}'s y-coordinate from the last frame to <code>lastY</code>.
+	 * 
+	 * @param lastY the new last y-coordinate */
 	public void setLastY(float lastY);
 
-	/** @return the speed traveling the x-axis coordinate. */
+	/** Returns the speed at which traveling the x-axis.
+	 * 
+	 * @return the speed at which traveling the x-axis */
 	public float getDX();
 
-	/** @param the new speed traveling the x-axis coordinate */
-	public void setDX(float hspeed);
+	/** Sets the speed at which to travel the x-axis.
+	 * 
+	 * @param dx the speed at which to travel the x-axis */
+	public void setDX(float dx);
 
-	/** @return the speed traveling the y-axis coordinate. */
+	/** Returns the speed at which traveling the y-axis.
+	 * 
+	 * @return the speed at which traveling the y-axis */
 	public float getDY();
 
-	/** @param the new speed traveling the y-axis coordinate. */
-	public void setDY(float vspeed);
+	/** Sets the speed at which to travel the y-axis.
+	 * 
+	 * @param dy the speed at which to travel the y-axis */
+	public void setDY(float dy);
 
-	/** An implementation for Entity with overriden getters and setters. */
+	/** An implementation for an {@link Entity} with overridden getters and setters. */
 	public static abstract class EntityImpl implements Entity {
 		protected float x, y, lastX, lastY, dx, dy;
 
-		/** {@inheritDoc} */
 		@Override
 		public float getX() {
 			return x;
 		}
 
-		/** {@inheritDoc} */
 		@Override
 		public void setX(float x) {
 			this.x = x;
 		}
 
-		/** {@inheritDoc} */
 		@Override
 		public float getY() {
 			return y;
 		}
 
-		/** {@inheritDoc} */
 		@Override
 		public void setY(float y) {
 			this.y = y;
 		}
 
-		/** {@inheritDoc} */
 		@Override
 		public float getLastX() {
 			return lastX;
 		}
 
-		/** {@inheritDoc} */
 		@Override
 		public void setLastX(float lastX) {
 			this.lastX = lastX;
 		}
 
-		/** {@inheritDoc} */
 		@Override
 		public float getLastY() {
 			return lastY;
 		}
 
-		/** {@inheritDoc} */
 		@Override
 		public void setLastY(float lastY) {
 			this.lastY = lastY;
 		}
 
-		/** {@inheritDoc} */
 		@Override
 		public float getDX() {
 			return dx;
 		}
 
-		/** {@inheritDoc} */
 		@Override
 		public void setDX(float hspeed) {
 			this.dx = hspeed;
 		}
 
-		/** {@inheritDoc} */
 		@Override
 		public float getDY() {
 			return dy;
 		}
 
-		/** {@inheritDoc} */
 		@Override
 		public void setDY(float vspeed) {
 			this.dy = vspeed;
@@ -125,24 +138,22 @@ public interface Entity extends Updateable, Drawable {
 	}
 
 	/** System for collecting and updating entities. */
-	public static class EntitySystem implements Updateable, Drawable {
-
-		/** Default size */
+	public static class EntitySystem implements Updatable, Drawable {
+		/** Default size. */
 		static final int INITIAL_SIZE = 10000;
 
-		/** Array of entities */
+		/** Array of entities. */
 		final Entity[] entities;
-		/** Number of active entities */
+		/** Number of active entities. */
 		int living;
 
 		public EntitySystem(int size) {
 			entities = new Entity[size];
 		}
 
-		/**
-		 * Notifies the entity about updates and draws.
-		 * @return the entity id
-		 */
+		/** Notifies the entity about updates and draws.
+		 * 
+		 * @return the entity id */
 		public int spawn(Entity entity) {
 			if (living >= entities.length) System.arraycopy(entities, 0, entities, 0, entities.length * 2);
 			entities[living++] = entity;
@@ -172,10 +183,9 @@ public interface Entity extends Updateable, Drawable {
 			return entities;
 		}
 
-		/**
-		 * Amount of actual used identifiers in {@link #getEntities()}.
-		 * @return amount of living entities
-		 */
+		/** Amount of actual used identifiers in {@link #getEntities()}.
+		 * 
+		 * @return amount of living entities */
 		public int getLiving() {
 			return living;
 		}
@@ -185,8 +195,7 @@ public interface Entity extends Updateable, Drawable {
 		public int getNextEntityId() {
 			return living;
 		}
-		
-		/** {@inheritDoc} */
+
 		@Override
 		public void update(float delta) {
 			for (int i = 0; i < living; i++) {
@@ -200,7 +209,7 @@ public interface Entity extends Updateable, Drawable {
 				entity.update(delta);
 			}
 		}
-		
+
 		@Override
 		public void draw(GL10 gl, float delta) {
 			for (int i = 0; i < living; i++) {
@@ -209,7 +218,6 @@ public interface Entity extends Updateable, Drawable {
 			}
 		}
 
-		/** {@inheritDoc} */
 		@Override
 		public void draw(Graphics g, float delta) {
 			for (int i = 0; i < living; i++) {
