@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.gamelib.graphics.VertexAttrib;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextCapabilities;
@@ -39,7 +40,7 @@ public class ShaderProgram {
 	public static final String ATTR_POSITION = "Position";
 	public static final String ATTR_TEXCOORD = "TexCoord";
 
-	public static final List<VertexAttrib> ATTRIBUTES = Arrays.asList(new VertexAttrib(0, ATTR_POSITION, 2), new VertexAttrib(1, ATTR_COLOR, 4), new VertexAttrib(2, ATTR_TEXCOORD, 2));
+	public static final List<VertexAttrib> ATTRIBUTES = null; // = Arrays.asList(new VertexAttrib(0, ATTR_POSITION, 2), new VertexAttrib(1, ATTR_COLOR, 4), new VertexAttrib(2, ATTR_TEXCOORD, 2));
 
 	/** The OpenGL handle for this shader program object. */
 	protected int program;
@@ -141,7 +142,7 @@ public class ShaderProgram {
 		uniforms.clear(); // bind user-defined attribute locations
 		if (attribLocations != null) {
 			for (VertexAttrib a : attribLocations) {
-				if (a != null) glBindAttribLocation(program, a.location, a.name);
+//				if (a != null) glBindAttribLocation(program, a.location, a.name);
 			}
 		}
 		attachShaders();
