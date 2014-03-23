@@ -3,6 +3,10 @@
  */
 package org.gamelib.graphics;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
+
 import org.gamelib.Drawable;
 import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Image;
@@ -126,7 +130,9 @@ public interface Texture extends Drawable, Disposable {
 
 		@Override
 		public void dispose() {
-			// gl.glDeleteTextures(1, textures);
+			IntBuffer buffer = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asIntBuffer();
+			buffer.put(texture);
+			gl.glDeleteTextures(1, buffer);
 		}
 
 		@Override
