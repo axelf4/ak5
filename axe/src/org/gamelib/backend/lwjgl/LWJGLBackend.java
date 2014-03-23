@@ -33,8 +33,6 @@ import org.gamelib.Handler;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.Backend.BackendImpl;
 import org.gamelib.backend.DisplayConfiguration;
-import org.gamelib.backend.Graphics;
-import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
 import org.gamelib.backend.Sound;
 import org.gamelib.graphics.GL10;
@@ -51,8 +49,6 @@ import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GLContext;
-import org.lwjgl.opengl.Pbuffer;
 import org.lwjgl.util.WaveData;
 
 /** @author pwnedary */
@@ -63,7 +59,6 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	private static final ColorModel glColorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[] { 8, 8, 8, 0 }, false, false, ComponentColorModel.OPAQUE, DataBuffer.TYPE_BYTE);;
 
 	private GL10 gl;
-	private ImmediateGraphics graphics;
 	private LWJGLInput input;
 	/** The Display's parent. */
 	private Canvas parent;
@@ -155,20 +150,12 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	}
 
 	@Override
-	public Graphics getGraphics() {
-		return graphics == null ? graphics = new ImmediateGraphics() : graphics;
-	}
-
-	@Override
 	public Input getInput() {
 		return input;
 	}
 
 	@Override
 	public void draw(Drawable callback, float delta) {
-		Graphics g = getGraphics();
-		g.begin();
-
 		gl.glMatrixMode(GL_PROJECTION);
 		gl.glLoadIdentity();
 		Matrix4 projection;
@@ -179,9 +166,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 		gl.glViewport(0, 0, Display.getWidth(), Display.getHeight());
 
-		// Game2.getInstance().screen.drawHandlers(getGraphics(), delta);
 		callback.draw(gl, delta);
-		g.end();
 		Display.update();
 		// Util.checkGLError();
 		if (Display.wasResized()) handler.handle(new Event.Resize(getWidth(), getHeight()));
@@ -200,13 +185,6 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	@Override
 	public void setTitle(String s) {
 		Display.setTitle(s);
-	}
-
-	@Override
-	public Graphics getGraphics(Image image) {
-		if (GLContext.getCapabilities().GL_EXT_framebuffer_object) return null;
-		else if ((Pbuffer.getCapabilities() & Pbuffer.PBUFFER_SUPPORTED) != 0) return new PbufferGraphics((LWJGLImage) image);
-		else throw new Error("Your OpenGL card doesn't support offscreen buffers.");
 	}
 
 	@Override

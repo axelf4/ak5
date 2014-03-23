@@ -57,12 +57,6 @@ public interface Backend extends Disposable {
 	/** @return the width of the canvas */
 	int getHeight();
 
-	/** @return a {@link Graphics} context to draw on */
-	Graphics getGraphics();
-
-	/** @return a {@link Graphics} context to draw on {@code image} */
-	Graphics getGraphics(Image image);
-
 	/** @return the processor for input */
 	Input getInput();
 
