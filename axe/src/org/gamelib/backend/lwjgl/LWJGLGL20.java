@@ -326,80 +326,67 @@ public class LWJGLGL20 extends LWJGLGL11 implements org.gamelib.graphics.GL20 {
 
 	@Override
 	public void glUniform1iv(int location, int count, IntBuffer value) {
-		// TODO Auto-generated method stub
-
+		GL20.glUniform1(location, value);
 	}
 
 	@Override
 	public void glUniform2f(int location, float v0, float v1) {
-		// TODO Auto-generated method stub
-
+		GL20.glUniform2f(location, v0, v1);
 	}
 
 	@Override
 	public void glUniform2fv(int location, int count, FloatBuffer value) {
-		// TODO Auto-generated method stub
-
+		GL20.glUniform2(location, value);
 	}
 
 	@Override
 	public void glUniform2i(int location, int v0, int v1) {
-		// TODO Auto-generated method stub
-
+		GL20.glUniform2i(location, v0, v1);
 	}
 
 	@Override
 	public void glUniform2iv(int location, int count, IntBuffer value) {
-		// TODO Auto-generated method stub
-
+		GL20.glUniform2(location, value);
 	}
 
 	@Override
 	public void glUniform3f(int location, float v0, float v1, float v2) {
-		// TODO Auto-generated method stub
-
+		GL20.glUniform3f(location, v0, v1, v2);
 	}
 
 	@Override
 	public void glUniform3fv(int location, int count, FloatBuffer value) {
-		// TODO Auto-generated method stub
-
+		GL20.glUniform3(location, value);
 	}
 
 	@Override
 	public void glUniform3i(int location, int v0, int v1, int v2) {
-		// TODO Auto-generated method stub
-
+		GL20.glUniform3i(location, v0, v1, v2);
 	}
 
 	@Override
 	public void glUniform3iv(int location, int count, IntBuffer value) {
-		// TODO Auto-generated method stub
-
+		GL20.glUniform3(location, value);
 	}
 
 	@Override
 	public void glUniform4f(int location, float v0, float v1, float v2, float v3) {
-		// TODO Auto-generated method stub
-
+		GL20.glUniform4f(location, v0, v1, v2, v3);
 	}
 
 	@Override
 	public void glUniform4fv(int location, int count, FloatBuffer value) {
-		// TODO Auto-generated method stub
-
+		GL20.glUniform4(location, value);
 	}
 
 	@Override
 	public void glUniform4i(int location, int v0, int v1, int v2, int v3) {
-		// TODO Auto-generated method stub
-
+		GL20.glUniform4i(location, v0, v1, v2, v3);
 	}
 
 	@Override
 	public void glUniform4iv(int location, int count, IntBuffer value) {
-		// TODO Auto-generated method stub
-
+		GL20.glUniform4(location, value);
 	}
 
 	@Override
@@ -439,38 +426,32 @@ public class LWJGLGL20 extends LWJGLGL11 implements org.gamelib.graphics.GL20 {
 
 	@Override
 	public void glVertexAttrib2f(int index, float x, float y) {
-		// TODO Auto-generated method stub
-
+		GL20.glVertexAttrib2f(index, x, y);
 	}
 
 	@Override
 	public void glVertexAttrib2fv(int index, FloatBuffer v) {
-		// TODO Auto-generated method stub
-
+		GL20.glVertexAttrib2f(index, v.get(), v.get());
 	}
 
 	@Override
 	public void glVertexAttrib3f(int index, float x, float y, float z) {
-		// TODO Auto-generated method stub
-
+		GL20.glVertexAttrib3f(index, x, y, z);
 	}
 
 	@Override
 	public void glVertexAttrib3fv(int index, FloatBuffer v) {
-		// TODO Auto-generated method stub
-
+		GL20.glVertexAttrib3f(index, v.get(), v.get(), v.get());
 	}
 
 	@Override
 	public void glVertexAttrib4f(int index, float x, float y, float z, float w) {
-		// TODO Auto-generated method stub
-
+		GL20.glVertexAttrib4f(index, x, y, z, w);
 	}
 
 	@Override
 	public void glVertexAttrib4fv(int index, FloatBuffer v) {
-		// TODO Auto-generated method stub
-
+		GL20.glVertexAttrib4f(index, v.get(), v.get(), v.get(), v.get());
 	}
 
 	@Override

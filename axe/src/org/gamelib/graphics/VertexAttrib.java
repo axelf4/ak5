@@ -10,13 +10,18 @@ public class VertexAttrib {
 	public final Type type;
 	public final int numComponents;
 	public int location;
-
-	//	public final String name;
+	public final String name;
 
 	public VertexAttrib(Type type, int numComponents) {
 		this.type = type;
 		this.numComponents = numComponents;
-		// this.name = name;
+		this.name = null;
+	}
+	
+	public VertexAttrib(Type type, int numComponents, String name) {
+		this.type = type;
+		this.numComponents = numComponents;
+		this.name = name;
 	}
 
 	public String toString() {
