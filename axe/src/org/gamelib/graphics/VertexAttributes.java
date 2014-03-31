@@ -5,11 +5,11 @@ package org.gamelib.graphics;
 
 /** @author pwnedary */
 public class VertexAttributes {
-	public VertexAttrib[] attributes;
+	public Attrib[] attributes;
 
 	public int vertexSize;
 
-	public VertexAttributes(VertexAttrib[] attributes) {
+	public VertexAttributes(Attrib[] attributes) {
 		this.attributes = attributes;
 
 		vertexSize = calculateOffsets();
@@ -18,9 +18,9 @@ public class VertexAttributes {
 	private int calculateOffsets() {
 		int count = 0;
 		for (int i = 0; i < attributes.length; i++) {
-			VertexAttrib attribute = attributes[i];
+			Attrib attribute = attributes[i];
 			attribute.location = count;
-			if (attribute.type == VertexAttrib.Type.COLOR_PACKED) count += 4;
+			if (attribute.type == Attrib.Type.COLOR_PACKED) count += 4;
 			else count += 4 * attribute.numComponents;
 		}
 
@@ -31,7 +31,7 @@ public class VertexAttributes {
 		return attributes.length;
 	}
 
-	public VertexAttrib get(int i) {
+	public Attrib get(int i) {
 		return attributes[i];
 	}
 }

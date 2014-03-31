@@ -4,15 +4,16 @@ package org.gamelib.util.geom;
  * 
  */
 
-/**
- * Encapsulates a <a href="http://en.wikipedia.org/wiki/Row-major_order#Column-major_order">column major</a> 4 by 4 matrix. Like the {@link Vector3} class it allows the chaining of methods by returning a reference to itself. For example:
+/** Encapsulates a <a href="http://en.wikipedia.org/wiki/Row-major_order#Column-major_order">column major</a> 4 by 4
+ * matrix. Like the {@link Vector3} class it allows the chaining of methods by returning a reference to itself. For
+ * example:
  * 
  * <pre>
  * Matrix4 mat = new Matrix4().trn(position).mul(camera.combined);
  * </pre>
- * @author pwnedary
- */
-public class Matrix4 {
+ * 
+ * @author pwnedary */
+public class Matrix4 implements Matrix<Matrix4> {
 	public static final int M00 = 0; // 0;
 	public static final int M01 = 4; // 1;
 	public static final int M02 = 8; // 2;
@@ -30,57 +31,96 @@ public class Matrix4 {
 	public static final int M32 = 11; // 14;
 	public static final int M33 = 15; // 15;
 
-	public final float val[] = new float[16];
+	public final float[] data = new float[16];
 
-	// private final float tmp[] = new float[16];
+	private final float tmp[] = new float[16];
 
 	/** Constructs an identity matrix */
 	public Matrix4() {
-		val[M00] = 1f;
-		val[M11] = 1f;
-		val[M22] = 1f;
-		val[M33] = 1f;
+		data[M00] = 1f;
+		data[M11] = 1f;
+		data[M22] = 1f;
+		data[M33] = 1f;
 	}
 
-	/** @return the backing float array */
-	public float[] getValues() {
-		return val;
+	@Override
+	public float[] get() {
+		return data;
 	}
 
-	/**
-	 * Sets the matrix to an identity matrix.
-	 * @return This matrix for the purpose of chaining methods together.
-	 */
-	public Matrix4 idt() {
-		val[M00] = 1;
-		val[M01] = 0;
-		val[M02] = 0;
-		val[M03] = 0;
-		val[M10] = 0;
-		val[M11] = 1;
-		val[M12] = 0;
-		val[M13] = 0;
-		val[M20] = 0;
-		val[M21] = 0;
-		val[M22] = 1;
-		val[M23] = 0;
-		val[M30] = 0;
-		val[M31] = 0;
-		val[M32] = 0;
-		val[M33] = 1;
+	@Override
+	public Matrix4 set(Matrix4 matrix) {
+		return this.set(matrix.data);
+	}
+
+	@Override
+	public Matrix4 set(float[] value) {
+		System.arraycopy(value, 0, data, 0, data.length);
 		return this;
 	}
 
-	/**
-	 * Sets the matrix to an orthographic projection like glOrtho (http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml) following the OpenGL equivalent
+	@Override
+	public int getNumRows() {
+		return 4;
+	}
+
+	@Override
+	public int getNumColumns() {
+		return 4;
+	}
+
+	@Override
+	public Matrix4 idt() {
+		data[M00] = 1;
+		data[M01] = 0;
+		data[M02] = 0;
+		data[M03] = 0;
+		data[M10] = 0;
+		data[M11] = 1;
+		data[M12] = 0;
+		data[M13] = 0;
+		data[M20] = 0;
+		data[M21] = 0;
+		data[M22] = 1;
+		data[M23] = 0;
+		data[M30] = 0;
+		data[M31] = 0;
+		data[M32] = 0;
+		data[M33] = 1;
+		return this;
+	}
+
+	@Override
+	public Matrix4 mul(Matrix4 matrix) {
+		for (int i = 0, aIndexStart = 0, cIndex = 0; i < getNumRows(); i++) {
+			for (int j = 0; j < matrix.getNumColumns(); j++) {
+				float total = 0;
+
+				int indexA = aIndexStart;
+				int indexB = j;
+				int end = indexA + matrix.getNumRows();
+				while (indexA < end) {
+					total += data[indexA++] * matrix.data[indexB];
+					indexB += matrix.getNumColumns();
+				}
+
+				tmp[cIndex++] = total;
+			}
+			aIndexStart += getNumColumns();
+		}
+		return set(tmp);
+	}
+
+	/** Sets the matrix to an orthographic projection like glOrtho (http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml)
+	 * following the OpenGL equivalent
+	 * 
 	 * @param left The left clipping plane
 	 * @param right The right clipping plane
 	 * @param bottom The bottom clipping plane
 	 * @param top The top clipping plane
 	 * @param near The near clipping plane
 	 * @param far The far clipping plane
-	 * @return This matrix for the purpose of chaining methods together.
-	 */
+	 * @return This matrix for the purpose of chaining methods together. */
 	public Matrix4 setToOrtho(float left, float right, float bottom, float top, float near, float far) {
 		this.idt();
 		float x_orth = 2 / (right - left);
@@ -91,22 +131,22 @@ public class Matrix4 {
 		float ty = -(top + bottom) / (top - bottom);
 		float tz = -(far + near) / (far - near);
 
-		val[M00] = x_orth;
-		val[M10] = 0;
-		val[M20] = 0;
-		val[M30] = 0;
-		val[M01] = 0;
-		val[M11] = y_orth;
-		val[M21] = 0;
-		val[M31] = 0;
-		val[M02] = 0;
-		val[M12] = 0;
-		val[M22] = z_orth;
-		val[M32] = 0;
-		val[M03] = tx;
-		val[M13] = ty;
-		val[M23] = tz;
-		val[M33] = 1;
+		data[M00] = x_orth;
+		data[M10] = 0;
+		data[M20] = 0;
+		data[M30] = 0;
+		data[M01] = 0;
+		data[M11] = y_orth;
+		data[M21] = 0;
+		data[M31] = 0;
+		data[M02] = 0;
+		data[M12] = 0;
+		data[M22] = z_orth;
+		data[M32] = 0;
+		data[M03] = tx;
+		data[M13] = ty;
+		data[M23] = tz;
+		data[M33] = 1;
 
 		return this;
 	}

@@ -11,7 +11,7 @@ public class Mesh {
 	private final VertexData vertices;
 	private final IndexData indices;
 
-	public Mesh(GL10 gl, boolean isStatic, int maxVertices, int maxIndices, VertexAttrib... attributes) {
+	public Mesh(GL10 gl, boolean isStatic, int maxVertices, int maxIndices, Attrib... attributes) {
 		this.gl = gl;
 		// if (gl instanceof GL11 || gl instanceof GL20)){
 		// 	vertices = null; // VBO
@@ -38,9 +38,45 @@ public class Mesh {
 		if (!(vertices instanceof VertexArray) && indices.getNumIndices() > 0) indices.bind();
 	}
 
+	/** Binds the underlying {@link VertexBufferObject} and {@link IndexBufferObject} if indices where given. Use this
+	 * with OpenGL ES 2.0.
+	 *
+	 * @param shader the shader (does not bind the shader) */
+	public void bind(final ShaderProgram shader) {
+		bind(shader, null);
+	}
+
+	/** Binds the underlying {@link VertexBufferObject} and {@link IndexBufferObject} if indices where given. Use this
+	 * with OpenGL ES 2.0.
+	 *
+	 * @param shader the shader (does not bind the shader)
+	 * @param locations array containing the attribute locations. */
+	public void bind(final ShaderProgram shader, final int[] locations) {
+		vertices.bind(shader, locations);
+		if (indices.getNumIndices() > 0) indices.bind();
+	}
+
 	public void unbind() {
 		vertices.unbind();
 		if (!(vertices instanceof VertexArray) && indices.getNumIndices() > 0) indices.unbind();
+	}
+
+	/** Unbinds the underlying {@link VertexBufferObject} and {@link IndexBufferObject} is indices were given. Use this
+	 * with OpenGL ES 1.x.
+	 *
+	 * @param shader the shader (does not unbind the shader) */
+	public void unbind(final ShaderProgram shader) {
+		unbind(shader, null);
+	}
+
+	/** Unbinds the underlying {@link VertexBufferObject} and {@link IndexBufferObject} is indices were given. Use this
+	 * with OpenGL ES 1.x.
+	 *
+	 * @param shader the shader (does not unbind the shader)
+	 * @param locations array containing the attribute locations. */
+	public void unbind(final ShaderProgram shader, final int[] locations) {
+		vertices.unbind(shader, locations);
+		if (indices.getNumIndices() > 0) indices.unbind();
 	}
 
 	public void render(int mode, int first, int count) {

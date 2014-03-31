@@ -8,7 +8,7 @@ package org.gamelib.util.geom;
  * 
  * @author pwnedary
  */
-public interface Vector<T extends Vector<?>> extends Cloneable {
+public interface Vector<T extends Vector<T>> extends Cloneable {
 
 	/** @return the x-axis coordinate */
 	public float getX();

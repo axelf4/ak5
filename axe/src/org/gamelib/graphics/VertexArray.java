@@ -5,7 +5,7 @@ package org.gamelib.graphics;
 
 import java.nio.FloatBuffer;
 
-import org.gamelib.graphics.VertexAttrib.Type;
+import org.gamelib.graphics.Attrib.Type;
 import org.lwjgl.BufferUtils;
 
 /** @author pwnedary */
@@ -14,7 +14,7 @@ public class VertexArray implements VertexData {
 	private final VertexAttributes attributes;
 	private final FloatBuffer buffer;
 
-	public VertexArray(GL10 gl, int numVertices, VertexAttrib... attributes) {
+	public VertexArray(GL10 gl, int numVertices, Attrib... attributes) {
 		this.gl = gl;
 		this.attributes = new VertexAttributes(attributes);
 		buffer = (FloatBuffer) BufferUtils.createFloatBuffer(this.attributes.vertexSize / 4 * numVertices).flip();
@@ -22,7 +22,7 @@ public class VertexArray implements VertexData {
 
 	public void bind() {
 		for (int i = 0, textureUnit = 0; i < attributes.size(); i++) {
-			VertexAttrib attrib = attributes.get(i);
+			Attrib attrib = attributes.get(i);
 			buffer.position(attrib.location / 4);
 
 			switch (attrib.type) {
@@ -48,9 +48,37 @@ public class VertexArray implements VertexData {
 		}
 	}
 
+	@Override
+	public void bind(ShaderProgram shader, int[] locations) {
+		final int numAttributes = attributes.size();
+		if (locations == null) {
+			for (int i = 0; i < numAttributes; i++) {
+				final Attrib attribute = attributes.get(i);
+				final int location = shader.getAttributeLocation(attribute.name);
+				if (location < 0) continue;
+				shader.enableVertexAttribute(location);
+
+				buffer.position(attribute.location);
+				if (attribute.type == Type.COLOR_PACKED) shader.setVertexAttribute(location, attribute.numComponents, GL20.GL_UNSIGNED_BYTE, true, attributes.vertexSize, buffer);
+				else shader.setVertexAttribute(location, attribute.numComponents, GL20.GL_FLOAT, false, attributes.vertexSize, buffer);
+			}
+		} else {
+			for (int i = 0; i < numAttributes; i++) {
+				final Attrib attribute = attributes.get(i);
+				final int location = locations[i];
+				if (location < 0) continue;
+				shader.enableVertexAttribute(location);
+
+				buffer.position(attribute.location);
+				if (attribute.type == Type.COLOR_PACKED) shader.setVertexAttribute(location, attribute.numComponents, GL20.GL_UNSIGNED_BYTE, true, attributes.vertexSize, buffer);
+				else shader.setVertexAttribute(location, attribute.numComponents, GL20.GL_FLOAT, false, attributes.vertexSize, buffer);
+			}
+		}
+	}
+
 	public void unbind() {
 		for (int i = 0, textureUnit = 0; i < attributes.size(); i++) {
-			VertexAttrib attrib = attributes.get(i);
+			Attrib attrib = attributes.get(i);
 
 			switch (attrib.type) {
 			case POSITION:
@@ -70,6 +98,21 @@ public class VertexArray implements VertexData {
 			}
 		}
 		buffer.position(0);
+	}
+
+	@Override
+	public void unbind(ShaderProgram shader, int[] locations) {
+		final int numAttributes = attributes.size();
+		if (locations == null) {
+			for (int i = 0; i < numAttributes; i++) {
+				shader.disableVertexAttribute(attributes.get(i).name);
+			}
+		} else {
+			for (int i = 0; i < numAttributes; i++) {
+				final int location = locations[i];
+				if (location >= 0) shader.disableVertexAttribute(location);
+			}
+		}
 	}
 
 	@Override

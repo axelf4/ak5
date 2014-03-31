@@ -161,7 +161,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		Matrix4 projection;
 		if (configuration instanceof LWJGLConfiguration && ((LWJGLConfiguration) configuration).originBottomLeft()) projection = new Matrix4().setToOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1);
 		else projection = new Matrix4().setToOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
-		gl.glLoadMatrix((FloatBuffer) BufferUtils.createFloatBuffer(projection.val.length).put(projection.val).flip());
+		gl.glLoadMatrix((FloatBuffer) BufferUtils.createFloatBuffer(projection.data.length).put(projection.data).flip());
 		gl.glMatrixMode(GL_MODELVIEW);
 
 		gl.glViewport(0, 0, Display.getWidth(), Display.getHeight());
