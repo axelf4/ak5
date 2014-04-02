@@ -91,7 +91,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	@Override
 	public void start(Configuration configuration, Handler handler) {
 		super.start(configuration, handler);
-		gl = new LWJGLGL20();
+		gl = new LWJGLGL30();
 		input = new LWJGLInput(handler);
 	}
 

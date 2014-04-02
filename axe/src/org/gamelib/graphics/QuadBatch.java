@@ -50,10 +50,10 @@ public class QuadBatch implements Batch {
 		}
 		mesh.setIndices(indices, 0, indices.length);
 
-//		if (gl instanceof GL20) this.shader = shader != null ? shader : createDefaultShader((GL20) gl);
+		// this.shader = shader != null ? shader : createDefaultShader(gl);
 	}
 
-	private static ShaderProgram createDefaultShader(GL20 gl) {
+	private static ShaderProgram createDefaultShader(GL10 gl) {
 		//		String vertexShader = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
 		//				+ "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
 		//				+ "attribute vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
@@ -80,29 +80,50 @@ public class QuadBatch implements Batch {
 		//				+ "{\n" //
 		//				+ " gl_FragColor = v_color * texture2D(u_texture, v_texCoords);\n" //
 		//				+ "}";
-		String vertexShader = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
-				+ "attribute vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
-				+ "uniform mat4 u_projTrans;\n" //
-				+ "varying vec2 v_texCoords;\n" //
-				+ "\n" //
-				+ "void main()\n" //
-				+ "{\n" //
-				+ " v_texCoords = " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
-				+ " gl_Position = u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
-				+ "}\n";
-		String fragmentShader = "#ifdef GL_ES\n" //
-				+ "#define LOWP lowp\n" //
-				+ "precision mediump float;\n" //
-				+ "#else\n" //
-				+ "#define LOWP \n" //
-				+ "#endif\n" //
-				+ "varying vec2 v_texCoords;\n" //
-				+ "uniform sampler2D u_texture;\n" //
-				+ "void main()\n"//
-				+ "{\n" //
-				+ " gl_FragColor = texture2D(u_texture, v_texCoords);\n" //
-				+ "}";
-		return new ShaderProgram(gl, vertexShader, fragmentShader);
+		String vertexShader, fragmentShader;
+		//		if (gl instanceof GL30) {
+		//			vertexShader = "layout(location = 0) in vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
+		//					+ "layout(location = 1) in vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
+		//					+ "out vec2 UV;\n" //
+		//					+ "uniform mat4 u_projTrans;\n" //
+		//					+ "void main(){\n" //
+		//					+ " gl_Position = u_projTrans * position;\n" //
+		//					+ " UV = " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
+		//					+ "}\n";
+		//			fragmentShader = "in vec2 UV;\n" //
+		//					+ "out vec3 color;\n" //
+		//					+ "uniform sampler2D u_texture;\n" //
+		//					+ "void main(){\n" //
+		//					+ " color = texture(texture, UV).rgb\n" //
+		//					+ "}\n";
+		//		} else
+		if (gl instanceof GL20) {
+			vertexShader = "in vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
+					+ "in vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
+					// + "uniform mat4 u_projTrans;\n" //
+					+ "out vec2 texCoords;\n" //
+					+ "void main(){\n" //
+					+ " texCoords = " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
+					+ " gl_Position = gl_ModelViewProjectionMatrix * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
+					+ "}\n";
+			fragmentShader = "in vec2 texCoords;\n" //
+			//					+ "uniform sampler2D u_texture;\n" //
+					+ "void main(){\n"//
+					+ " gl_FragColor = texture2D(0, texCoords);\n" //
+					+ "}";
+		} else return null;
+		//		String vertexShader = "varying vec4 vertColor;\n" //
+		//				+ "uniform mat4 u_projTrans;\n" //
+		//				+ "\n" //
+		//				+ "void main(){\n" //
+		//				+ " gl_Position = u_projTrans * gl_Vertex;\n" //
+		//				+ " vertColor = vec4(0.2, 0.6, 0.6, 1.0);\n" //
+		//				+ "}\n";
+		//		String fragmentShader = "varying vec4 vertColor;\n" //
+		//				+ "void main(){\n"//
+		//				+ " gl_FragColor = vertColor;\n" //
+		//				+ "}";
+		return new ShaderProgram((GL20) gl, vertexShader, fragmentShader);
 	}
 
 	public void begin() {
@@ -183,8 +204,8 @@ public class QuadBatch implements Batch {
 	private void setupMatrices() {
 		combinedMatrix.set(projectionMatrix).mul(transformMatrix);
 		if (shader != null) {
-			shader.setUniformMatrix("u_projTrans", combinedMatrix);
-			shader.setUniformi("u_texture", 0);
+			//			shader.setUniformMatrix("u_projTrans", combinedMatrix);
+			//			shader.setUniformi("u_texture", 0);
 		} else {
 			gl.glMatrixMode(GL10.GL_PROJECTION);
 			gl.glLoadIdentity();
