@@ -13,10 +13,9 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 
 import org.gamelib.util.io.ByteBuf;
+import org.gamelib.util.io.NIOByteBuf;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public class UDP {
 	DatagramChannel datagramChannel;
 	private SelectionKey selectionKey;
@@ -27,8 +26,8 @@ public class UDP {
 	public UDP(int bufferSize) {
 		readBuffer = ByteBuffer.allocate(bufferSize);
 		writeBuffer = ByteBuffer.allocateDirect(bufferSize);
-		readBufferHandle = new ByteBuf.NIOByteBuf(readBuffer);
-		writeBufferHandle = new ByteBuf.NIOByteBuf(writeBuffer);
+		readBufferHandle = new NIOByteBuf(readBuffer);
+		writeBufferHandle = new NIOByteBuf(writeBuffer);
 	}
 
 	public UDP() {

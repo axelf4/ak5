@@ -13,6 +13,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
 import org.gamelib.util.io.ByteBuf;
+import org.gamelib.util.io.NIOByteBuf;
 
 /** @author pwnedary */
 public class TCP {
@@ -25,8 +26,8 @@ public class TCP {
 	public TCP(int readBufferSize, int writeBufferSize) {
 		readBuffer = ByteBuffer.allocate(readBufferSize);
 		writeBuffer = ByteBuffer.allocate(writeBufferSize);
-		readBufferHandle = new ByteBuf.NIOByteBuf(readBuffer);
-		writeBufferHandle = new ByteBuf.NIOByteBuf(writeBuffer);
+		readBufferHandle = new NIOByteBuf(readBuffer);
+		writeBufferHandle = new NIOByteBuf(writeBuffer);
 	}
 
 	public TCP() {
