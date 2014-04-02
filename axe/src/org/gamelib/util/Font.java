@@ -3,12 +3,11 @@
  */
 package org.gamelib.util;
 
-import org.gamelib.backend.Graphics;
+import org.gamelib.graphics.Batch;
 
-/**
- * TODO add bitmap fonts
- * @author pwnedary
- */
+/** TODO add bitmap fonts
+ * 
+ * @author pwnedary */
 public interface Font {
 	/** The plain style constant. */
 	static final int PLAIN = 0;
@@ -28,7 +27,7 @@ public interface Font {
 	static final int ALIGN_RIGHT = 1;
 	static final int ALIGN_CENTER = 2;
 
-	void drawString(Graphics g, String str, int x, int y);
+	void drawString(Batch batch, String str, int x, int y);
 
 	int getWidth(String string);
 

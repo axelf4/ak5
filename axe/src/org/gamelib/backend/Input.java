@@ -4,6 +4,7 @@
 package org.gamelib.backend;
 
 import java.awt.AWTException;
+import java.awt.Image;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 

@@ -3,7 +3,7 @@
  */
 package org.gamelib.util.geom;
 
-import org.gamelib.backend.Graphics;
+import java.awt.Graphics;
 
 /** A <code>Rectangle</code> specifies an area in a coordinate space that is enclosed by the <code>Rectangle</code>
  * object's upper-left point {@code (x,y)} in the coordinate space, its width, and its height.

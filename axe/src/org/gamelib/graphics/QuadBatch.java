@@ -3,11 +3,13 @@
  */
 package org.gamelib.graphics;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import org.gamelib.graphics.Attrib.Type;
+import org.gamelib.graphics.Texture.GLTexture;
 import org.gamelib.util.geom.Matrix4;
-import org.lwjgl.BufferUtils;
 
 /** @author pwnedary */
 public class QuadBatch implements Batch {
@@ -126,6 +128,7 @@ public class QuadBatch implements Batch {
 		return new ShaderProgram((GL20) gl, vertexShader, fragmentShader);
 	}
 
+	@Override
 	public void begin() {
 		gl.glDepthMask(false);
 		gl.glEnable(GL10.GL_TEXTURE_2D);
@@ -134,6 +137,7 @@ public class QuadBatch implements Batch {
 		setupMatrices();
 	}
 
+	@Override
 	public void end() {
 		if (idx > 0) flush();
 		lastTexture = null;
@@ -144,36 +148,64 @@ public class QuadBatch implements Batch {
 		if (shader != null) shader.end();
 	}
 
+	@Override
 	public void draw(Texture texture, float x1, float y1, float x2, float y2) {
 		if (texture != lastTexture) switchTexture(texture);
 		else if (idx == vertices.length) flush();
 
-		final float u = 0.0f;
-		final float v = 0.0f;
-		final float u2 = 1.0f;
-		final float v2 = 1.0f;
-
 		vertices[idx++] = x1;
 		vertices[idx++] = y1;
+		vertices[idx++] = texture.getU();
+		vertices[idx++] = texture.getV();
+
+		vertices[idx++] = x1;
+		vertices[idx++] = y2;
+		vertices[idx++] = texture.getU();
+		vertices[idx++] = texture.getV2();
+
+		vertices[idx++] = x2;
+		vertices[idx++] = y2;
+		vertices[idx++] = texture.getU2();
+		vertices[idx++] = texture.getV2();
+
+		vertices[idx++] = x2;
+		vertices[idx++] = y1;
+		vertices[idx++] = texture.getU2();
+		vertices[idx++] = texture.getV();
+	}
+
+	@Override
+	public void draw(Texture texture, float dx1, float dy1, float dx2, float dy2, float sx1, float sy1, float sx2, float sy2) {
+		if (texture != lastTexture) switchTexture(texture);
+		else if (idx == vertices.length) flush();
+
+		final float u = (float) sx1 / ((GLTexture) texture).getTexWidth() + texture.getU();
+		final float v = (float) sy1 / ((GLTexture) texture).getTexHeight() + texture.getV();
+		final float u2 = (float) sx2 / ((GLTexture) texture).getTexWidth() + texture.getU();
+		final float v2 = (float) sy2 / ((GLTexture) texture).getTexHeight() + texture.getV();
+
+		vertices[idx++] = dx1;
+		vertices[idx++] = dy1;
 		vertices[idx++] = u;
 		vertices[idx++] = v;
 
-		vertices[idx++] = x1;
-		vertices[idx++] = y2;
+		vertices[idx++] = dx1;
+		vertices[idx++] = dy2;
 		vertices[idx++] = u;
 		vertices[idx++] = v2;
 
-		vertices[idx++] = x2;
-		vertices[idx++] = y2;
+		vertices[idx++] = dx2;
+		vertices[idx++] = dy2;
 		vertices[idx++] = u2;
 		vertices[idx++] = v2;
 
-		vertices[idx++] = x2;
-		vertices[idx++] = y1;
+		vertices[idx++] = dx2;
+		vertices[idx++] = dy1;
 		vertices[idx++] = u2;
 		vertices[idx++] = v;
 	}
 
+	@Override
 	public void flush() {
 		if (idx == 0) return;
 		int spritesInBatch = idx / 16;
@@ -209,7 +241,7 @@ public class QuadBatch implements Batch {
 		} else {
 			gl.glMatrixMode(GL10.GL_PROJECTION);
 			gl.glLoadIdentity();
-			gl.glLoadMatrix((FloatBuffer) BufferUtils.createFloatBuffer(combinedMatrix.data.length).put(combinedMatrix.data).flip());
+			gl.glLoadMatrix((FloatBuffer) ByteBuffer.allocateDirect(combinedMatrix.data.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer().put(combinedMatrix.data).flip());
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 		}
 	}

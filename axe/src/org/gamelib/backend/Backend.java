@@ -142,11 +142,6 @@ public interface Backend extends Disposable {
 					public void draw(GL10 gl, float delta) {
 						handler.handle(new Event.Draw(gl, delta));
 					}
-					
-					@Override
-					public void draw(Graphics g, float delta) {
-						handler.handle(new Event.Draw(g, delta));
-					}
 				}, delta);
 			}
 

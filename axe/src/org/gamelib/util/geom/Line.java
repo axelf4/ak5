@@ -3,9 +3,8 @@
  */
 package org.gamelib.util.geom;
 
+import java.awt.Graphics;
 import java.awt.geom.Line2D;
-
-import org.gamelib.backend.Graphics;
 
 /** A <code>Line</code> represents a line segment in {@code (x,y)} coordinate space.
  * 

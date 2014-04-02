@@ -3,7 +3,7 @@
  */
 package org.gamelib.util.geom;
 
-import org.gamelib.backend.Graphics;
+import java.awt.Graphics;
 
 /** @author pwnedary
  * @see java.awt.Polygon */

@@ -3,8 +3,9 @@
  */
 package org.gamelib.backend.lwjgl;
 
+import java.awt.Image;
+
 import org.gamelib.Handler;
-import org.gamelib.backend.Image;
 import org.gamelib.backend.Input;
 import org.gamelib.backend.Input.InputImpl;
 import org.lwjgl.input.Keyboard;

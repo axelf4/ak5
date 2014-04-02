@@ -3,10 +3,11 @@
  */
 package org.gamelib.graphics;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import org.gamelib.graphics.Attrib.Type;
-import org.lwjgl.BufferUtils;
 
 /** @author pwnedary */
 public class VertexArray implements VertexData {
@@ -17,7 +18,7 @@ public class VertexArray implements VertexData {
 	public VertexArray(GL10 gl, int numVertices, Attrib... attributes) {
 		this.gl = gl;
 		this.attributes = new VertexAttributes(attributes);
-		buffer = (FloatBuffer) BufferUtils.createFloatBuffer(this.attributes.vertexSize / 4 * numVertices).flip();
+		buffer = (FloatBuffer) ByteBuffer.allocateDirect(this.attributes.vertexSize * numVertices).order(ByteOrder.nativeOrder()).asFloatBuffer().flip();
 	}
 
 	public void bind() {

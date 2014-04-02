@@ -11,9 +11,8 @@ import java.nio.charset.Charset;
 import java.util.StringTokenizer;
 
 import org.gamelib.backend.Backend;
-import org.gamelib.backend.Color;
-import org.gamelib.backend.Graphics;
-import org.gamelib.backend.Image;
+import org.gamelib.graphics.Batch;
+import org.gamelib.graphics.Texture;
 import org.gamelib.util.Font.FontImpl;
 
 /** @author pwnedary */
@@ -23,7 +22,7 @@ public class BitmapFont extends FontImpl implements Font {
 	private static final int PAGES = 0x10000 / PAGE_SIZE;
 	private int lineHeight;
 	private int pages;
-	private Image[] pageImgs;
+	private Texture[] pageImgs;
 	private Glyph[][] glyphs;
 
 	public BitmapFont(Backend backend, File file) {
@@ -34,14 +33,14 @@ public class BitmapFont extends FontImpl implements Font {
 			lineHeight = Integer.parseInt(common[1].substring(11)); // lineHeight=N
 			float base = Integer.parseInt(common[2].substring(5)); // base=N
 			pages = Integer.parseInt(common[5].substring(6)); // pages=N
-			pageImgs = new Image[pages];
+			pageImgs = new Texture[pages];
 			for (int p = 0; p < pages; p++) {
 				String[] page = reader.readLine().split(" ", 3);
 				if (Integer.parseInt(page[1].substring(3)) != p) throw new IllegalArgumentException("Invalid font file; page ids should increment from 0."); // id=N
 				// File imgFile = new File(file.getParentFile().getPath() + File.separator + page[2].split("\"")[1]);
 				File imgFile = new File(file.getParentFile(), page[2].split("\"")[1]); // file=string
 				System.out.println(imgFile.getPath());
-//				pageImgs[p] = backend.getImage(imgFile);
+				//				pageImgs[p] = backend.getImage(imgFile);
 			}
 
 			float descent = 0;
@@ -105,7 +104,7 @@ public class BitmapFont extends FontImpl implements Font {
 	}
 
 	@Override
-	public void drawString(Graphics g, String str, int x, int y) {
+	public void drawString(Batch batch, String str, int x, int y) {
 		Glyph lastGlyph = null;
 		int drawX = x;
 		int i = 0;
@@ -121,11 +120,7 @@ public class BitmapFont extends FontImpl implements Font {
 				lastGlyph = glyph;
 
 				int x1 = drawX + glyph.xoffset, y1 = y + glyph.yoffset, x2 = x1 + glyph.width, y2 = y1 + glyph.height;
-//				g.setColor(new Color(0, 0, 255, 200));
-				g.drawImage(pageImgs[glyph.page], x1, y1, x2, y2, glyph.x, glyph.y, glyph.x + glyph.width, glyph.y + glyph.height);
-
-				Image image = pageImgs[glyph.page];
-//				g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), 0, 0, image.getWidth(), image.getHeight());
+				batch.draw(pageImgs[glyph.page], x1, y1, x2, y2, glyph.x, glyph.y, glyph.x + glyph.width, glyph.y + glyph.height);
 
 				drawX += glyph.xadvance;
 			}

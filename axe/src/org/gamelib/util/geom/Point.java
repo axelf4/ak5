@@ -3,7 +3,7 @@
  */
 package org.gamelib.util.geom;
 
-import org.gamelib.backend.Graphics;
+import java.awt.Graphics;
 
 /** A point representing a location in {@code (x,y)} coordinate space.
  * 

@@ -3,10 +3,9 @@
  */
 package org.gamelib.util.geom;
 
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-
-import org.gamelib.backend.Graphics;
 
 /**
  * A bounding box which edges are parallel to the coordinate axes. (AABB)
@@ -14,7 +13,6 @@ import org.gamelib.backend.Graphics;
  * @author pwnedary
  */
 public class AxisAlignedBoundingBox {
-
 	private int x, y, /** width of the box */
 	width, /** height of the box */
 	height;

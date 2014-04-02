@@ -8,7 +8,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-import org.gamelib.backend.Graphics;
 import org.gamelib.backend.Input;
 import org.gamelib.graphics.GL10;
 
@@ -67,20 +66,9 @@ public interface Event {
 		public final GL10 gl;
 		public final float delta;
 
-		@Deprecated
-		public Graphics graphics;
-
 		public Draw(GL10 gl, float delta) {
 			this.gl = gl;
 			this.delta = delta;
-		}
-
-		@Deprecated
-		public Draw(Graphics graphics, float delta) {
-			this.gl = null;
-			this.delta = delta;
-
-			this.graphics = graphics;
 		}
 	}
 

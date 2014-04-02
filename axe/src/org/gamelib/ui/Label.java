@@ -5,7 +5,7 @@ package org.gamelib.ui;
 
 import org.gamelib.Event;
 import org.gamelib.backend.Color;
-import org.gamelib.backend.Graphics;
+import org.gamelib.graphics.Batch;
 import org.gamelib.ui.Widget.WidgetImpl;
 import org.gamelib.util.Font;
 import org.gamelib.util.geom.Rectangle;
@@ -69,9 +69,9 @@ public class Label extends WidgetImpl {
 	public boolean handle(Event event) {
 		if (event instanceof Event.Draw) {
 			validate();
-			Graphics g = ((Event.Draw) event).graphics;
-			g.setColor(fontColor);
-			font.drawString(g, show, getX(), getY());
+			Batch batch = null; // ((Event.Draw) event).batch;
+//			g.setColor(fontColor);
+//			font.drawString(g, show, getX(), getY());
 		} else return false;
 		return true;
 	}

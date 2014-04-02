@@ -3,13 +3,12 @@
  */
 package org.gamelib.graphics;
 
+import java.awt.Image;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 
 import org.gamelib.Drawable;
-import org.gamelib.backend.Graphics;
-import org.gamelib.backend.Image;
 import org.gamelib.util.Disposable;
 
 /** @author pwnedary */
@@ -52,10 +51,17 @@ public interface Texture extends Drawable, Disposable {
 		}
 	}
 
+	/** Returns this texture's type; the arrangement of images within.
+	 * 
+	 * @return this texture's type */
 	int getTarget();
 
+	/** Returns the internal OpenGL Texture Object.
+	 * 
+	 * @return the OpenGL Object */
 	int getTexture();
 
+	/** Binds this texture to the specified target for future use. */
 	void bind();
 
 	/** Returns the width of this image.
@@ -102,7 +108,27 @@ public interface Texture extends Drawable, Disposable {
 	 * @param width the width of the rectangular region
 	 * @param height the height of the rectangular region
 	 * @return an Image that is a subimage of this Image */
-	Image region(int x, int y, int width, int height);
+	Texture region(int x, int y, int width, int height);
+
+	/** Returns the U coordinate as mapped when drawing.
+	 * 
+	 * @return the U coordinate */
+	float getU();
+
+	/** Returns the V coordinate as mapped when drawing.
+	 * 
+	 * @return the V coordinate */
+	float getV();
+
+	/** Returns the U2 coordinate as mapped when drawing.
+	 * 
+	 * @return the U2 coordinate */
+	float getU2();
+
+	/** Returns the V2 coordinate as mapped when drawing.
+	 * 
+	 * @return the V2 coordinate */
+	float getV2();
 
 	class GLTexture implements Texture {
 		private final GL10 gl;
@@ -110,6 +136,8 @@ public interface Texture extends Drawable, Disposable {
 		private final int texture;
 		private final int width, height;
 		private int texWidth, texHeight;
+		/* The texture coordinates. */
+		private float u = 0, v = 0, u2 = 1, v2 = 1;
 
 		public GLTexture(GL10 gl, int target, int texture, int width, int height) {
 			this.gl = gl;
@@ -121,12 +149,6 @@ public interface Texture extends Drawable, Disposable {
 
 		@Override
 		public void draw(GL10 gl, float delta) {}
-
-		@Override
-		public void draw(Graphics g, float delta) {
-			// TODO Auto-generated method stub
-
-		}
 
 		@Override
 		public void dispose() {
@@ -193,9 +215,35 @@ public interface Texture extends Drawable, Disposable {
 		}
 
 		@Override
-		public Image region(int x, int y, int width, int height) {
-			// TODO Auto-generated method stub
-			return null;
+		public Texture region(int x, int y, int width, int height) {
+			GLTexture texture = new GLTexture(gl, target, this.texture, width, height);
+			texture.setTexWidth(getTexWidth());
+			texture.setTexHeight(getTexHeight());
+			texture.u = (float) x / texture.getTexWidth();
+			texture.v = (float) y / texture.getTexHeight();
+			texture.u2 = (float) (x + width) / texture.getTexWidth();
+			texture.v2 = (float) (y + height) / texture.getTexHeight();
+			return texture;
+		}
+
+		@Override
+		public float getU() {
+			return u;
+		}
+
+		@Override
+		public float getV() {
+			return v;
+		}
+
+		@Override
+		public float getU2() {
+			return u2;
+		}
+
+		@Override
+		public float getV2() {
+			return v2;
 		}
 	}
 }

@@ -18,14 +18,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.gamelib.backend.Backend;
-import org.gamelib.backend.Graphics;
-import org.gamelib.backend.Image;
+import org.gamelib.graphics.Batch;
+import org.gamelib.graphics.Texture;
 import org.gamelib.util.Font.FontImpl;
 import org.gamelib.util.geom.Rectangle;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public class TrueTypeFont extends FontImpl {
 	/** Array that holds necessary information about the font characters positions */
 	private Rectangle[] glyphs = new Rectangle[256];
@@ -42,7 +40,7 @@ public class TrueTypeFont extends FontImpl {
 	private int fontHeight = 0;
 
 	/** Image to cache the font 0-255 characters */
-	public Image fontImage;
+	public Texture fontImage;
 
 	/** Default font texture width */
 	private int textureWidth = 512;
@@ -169,7 +167,7 @@ public class TrueTypeFont extends FontImpl {
 				fontImage = null;
 			}
 
-//			fontImage = backend.getImage(imgTemp);
+			//			fontImage = backend.getImage(imgTemp);
 		} catch (Exception e) {
 			System.err.println("Failed to create font.");
 			e.printStackTrace();
@@ -177,7 +175,7 @@ public class TrueTypeFont extends FontImpl {
 	}
 
 	@Override
-	public void drawString(Graphics g, String str, int x, int y) {
+	public void drawString(Batch batch, String str, int x, int y) {
 		Rectangle intObject = null;
 		int charCurrent;
 
@@ -236,7 +234,7 @@ public class TrueTypeFont extends FontImpl {
 					}
 					// if center get next lines total width/2;
 				} else {
-					g.drawImage(fontImage, (int) (totalwidth * scaleX + x), (int) (startY * scaleY + y), (int) ((totalwidth + intObject.getWidth()) * scaleX + x), (int) ((startY + intObject.getHeight()) * scaleY + y), intObject.getX(), intObject.getY(), intObject.getX() + intObject.getWidth(), intObject.getY() + intObject.getHeight());
+					batch.draw(fontImage, (int) (totalwidth * scaleX + x), (int) (startY * scaleY + y), (int) ((totalwidth + intObject.getWidth()) * scaleX + x), (int) ((startY + intObject.getHeight()) * scaleY + y), intObject.getX(), intObject.getY(), intObject.getX() + intObject.getWidth(), intObject.getY() + intObject.getHeight());
 					if (d > 0) totalwidth += (intObject.getWidth() - c) * d;
 				}
 				i += d;

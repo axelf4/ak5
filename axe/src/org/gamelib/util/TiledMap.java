@@ -16,7 +16,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.gamelib.backend.Backend;
-import org.gamelib.backend.Graphics;
+import org.gamelib.graphics.Batch;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -157,13 +157,13 @@ public class TiledMap implements Map {
 	}
 
 	@Override
-	public void draw(Graphics g, int x, int y, int sx, int sy, int layer) {
+	public void draw(Batch batch, int x, int y, int sx, int sy, int layer) {
 		int gid = getTileID(sx, sy, layer);
-		getTileSetByGID(gid).draw(g, gid, x, y);
+		getTileSetByGID(gid).draw(batch, gid, x, y);
 	}
 
 	@Override
-	public void draw(Graphics g, int x, int y, int rx, int ry, int rw, int rh) {
+	public void draw(Batch batch, int x, int y, int rx, int ry, int rw, int rh) {
 		for (int tileSet = 0; tileSet < tileSets.size(); tileSet++) {
 			TileSet set = tileSets.get(tileSet);
 
@@ -172,7 +172,7 @@ public class TiledMap implements Map {
 				for (int tx = rx; tx < data.length; tx++)
 					for (int ty = ry; ty < data[0].length; ty++) {
 						int gid = data[tx][ty];
-						if (gid >= set.firstGID && gid <= set.lastGID) set.draw(g, gid, tx * tileWidth, ty * tileHeight);
+						if (gid >= set.firstGID && gid <= set.lastGID) set.draw(batch, gid, tx * tileWidth, ty * tileHeight);
 					}
 			}
 			else if (orientation == ISOMETRIC) throw new UnsupportedOperationException();

@@ -3,7 +3,7 @@
  */
 package org.gamelib.util.geom;
 
-import org.gamelib.backend.Graphics;
+import java.awt.Graphics;
 
 /** Interface for geometric shapes. TODO add getX and getY that return the upper hand left corner
  * 

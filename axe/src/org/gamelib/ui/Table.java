@@ -3,13 +3,12 @@
  */
 package org.gamelib.ui;
 
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.gamelib.Group;
 import org.gamelib.Handler;
-import org.gamelib.backend.Color;
-import org.gamelib.backend.Graphics;
 import org.gamelib.ui.Table.TableToolkit.DebugRect;
 import org.gamelib.util.Pool;
 import org.gamelib.util.geom.Rectangle;
@@ -245,15 +244,15 @@ public class Table extends WidgetGroup {
 				else break;
 			}
 
-			g.begin();
-			for (int i = 0, n = debugRects.size(); i < n; i++) {
-				DebugRect rect = debugRects.get(i);
-				Color color = new Color(rect.type == Debug.cell ? 255 : 0, rect.type == Debug.widget ? 255 : 0, rect.type == Debug.table ? 255 : 0);
-
-				g.setColor(color);
-				g.drawRect(x + rect.getX(), y + rect.getY(), rect.getWidth(), rect.getHeight());
-			}
-			g.end();
+//			g.begin();
+//			for (int i = 0, n = debugRects.size(); i < n; i++) {
+//				DebugRect rect = debugRects.get(i);
+//				Color color = new Color(rect.type == Debug.cell ? 255 : 0, rect.type == Debug.widget ? 255 : 0, rect.type == Debug.table ? 255 : 0);
+//
+//				g.setColor(color);
+//				g.drawRect(x + rect.getX(), y + rect.getY(), rect.getWidth(), rect.getHeight());
+//			}
+//			g.end();
 		}
 	}
 

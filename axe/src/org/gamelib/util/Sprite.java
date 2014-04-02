@@ -3,18 +3,15 @@
  */
 package org.gamelib.util;
 
-
-import org.gamelib.backend.Graphics;
-import org.gamelib.backend.Image;
+import org.gamelib.graphics.Batch;
+import org.gamelib.graphics.Texture;
 import org.gamelib.util.geom.Rectangle;
 
-/**
- * A two-dimensional animation integrated into an larger image.
- * @author pwnedary
- */
+/** A two-dimensional animation integrated into an larger image.
+ * 
+ * @author pwnedary */
 public class Sprite {
-
-	public Image image;
+	public Texture image;
 	Rectangle[] subImages;
 	/** the current frame */
 	int frame;
@@ -28,8 +25,8 @@ public class Sprite {
 		this.subImages = subImages;
 		this.duration = duration;
 	}
-	
-	public Sprite(Image image, int duration, Rectangle... subImages) {
+
+	public Sprite(Texture image, int duration, Rectangle... subImages) {
 		this(duration, subImages);
 		this.image = image;
 	}
@@ -39,7 +36,7 @@ public class Sprite {
 	}
 
 	/** Draws the current sprite. */
-	public void draw(Graphics g, float delta, int x, int y) {
+	public void draw(Batch batch, float delta, int x, int y) {
 		Rectangle rectangle = subImages[frame];
 		int sx = rectangle.getX();
 		int sy = rectangle.getY();
@@ -48,14 +45,14 @@ public class Sprite {
 		int flip = (flipped ? width : 0);
 
 		// g.rotate(rotation, x + width / 2, y + height / 2);
-		g.drawImage(image, x + flip, y, x + width - flip, y + height, sx, sy, sx + width, sy + height);
+		batch.draw(image, x + flip, y, x + width - flip, y + height, sx, sy, sx + width, sy + height);
 		// g.rotate(-rotation, x + width / 2, y + height / 2);
 
 		if ((step_counter += 35f * delta) > duration && (step_counter = 0) == 0 && ++frame >= subImages.length) frame = 0;
 	}
 
-	/**
-	 * loads an image animation
+	/** loads an image animation
+	 * 
 	 * @param nFrames amount of frames
 	 * @param x start x coordinate
 	 * @param y start y coordinate
@@ -63,8 +60,7 @@ public class Sprite {
 	 * @param height height of each subimage
 	 * @param row amount on each row
 	 * @param spacing pixels between the subimages
-	 * @return rectangles as subimages
-	 */
+	 * @return rectangles as subimages */
 	public static final Rectangle[] load(int nFrames, int x, int y, int width, int height, int row, int spacing) {
 		Rectangle[] subImages = new Rectangle[nFrames];
 		for (int i = 0; i < nFrames; i++)
