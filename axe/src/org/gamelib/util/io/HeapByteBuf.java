@@ -4,6 +4,7 @@
 package org.gamelib.util.io;
 
 import java.nio.ByteBuffer;
+import java.nio.InvalidMarkException;
 import java.nio.charset.StandardCharsets;
 
 import org.gamelib.util.io.ByteBuf.ByteBufImpl;
@@ -57,6 +58,7 @@ public class HeapByteBuf extends ByteBufImpl implements ByteBuf {
 
 	@Override
 	public ByteBuf reset() {
+		if (mark == -1) throw new InvalidMarkException();
 		position = mark;
 		mark = -1;
 		return this;
