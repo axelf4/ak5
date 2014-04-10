@@ -123,8 +123,7 @@ public class GWTBackend implements Backend { //, EntryPoint {
 	}
 
 	public void setTitle(String title) {
-		// TODO Auto-generated method stub
-
+		Document.get().setTitle(title);
 	}
 
 	public int getWidth() {
