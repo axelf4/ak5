@@ -96,7 +96,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	@Override
 	public void start() {
 		try {
-			gl = new LWJGLGL30();
+			gl = new LWJGLGL20();
 			input = new LWJGLInput(handler);
 			
 			DisplayConfiguration config = (DisplayConfiguration) configuration;
