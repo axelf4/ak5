@@ -3,9 +3,7 @@
  */
 package org.gamelib;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public class FixedTimestepLoop implements Loop {
 	// This value would probably be stored elsewhere.
 	final double GAME_HERTZ = 30.0; // 30.0

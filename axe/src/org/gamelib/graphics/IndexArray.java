@@ -34,4 +34,7 @@ public class IndexArray implements IndexData {
 
 	@Override
 	public void unbind() {}
+
+	@Override
+	public void dispose() {}
 }

@@ -3,13 +3,9 @@
  */
 package org.gamelib.backend;
 
-import java.awt.AWTException;
-import java.awt.Image;
-import java.awt.Robot;
-import java.awt.event.KeyEvent;
-
 import org.gamelib.Event;
 import org.gamelib.Handler;
+import org.gamelib.graphics.Texture;
 
 /**
  * An instance is used for checking user input and derived by {@link Backend}.
@@ -22,9 +18,9 @@ public interface Input {
 	static final int MAX_REPEAT_RATE = 100;
 
 	/** The "key pressed" event. */
-	static final int KEY_PRESSED = KeyEvent.KEY_PRESSED;
+	static final int KEY_PRESSED = 401;
 	/** The "key released" event. */
-	static final int KEY_RELEASED = KeyEvent.KEY_RELEASED;
+	static final int KEY_RELEASED = 402;
 
 	/** The "mouse moved" event. */
 	static final int MOUSE_MOVED = 0;
@@ -76,9 +72,6 @@ public interface Input {
 	 */
 	int getMouseY();
 
-	/** Simulates a key press. */
-	void simulateKey(int id, int keycode);
-
 	/** Checks for queued input states. */
 	void poll();
 
@@ -96,9 +89,9 @@ public interface Input {
 	/**
 	 * Sets this window's cursor to show the given image.
 	 * 
-	 * @param image the new cursor image, if null the default
+	 * @param texture the new cursor image, if null the default
 	 */
-	void setCursor(Image image);
+	 void setCursor(Texture texture);
 
 	/**
 	 * Translates the keyCode to match the ones in {@link Input.Key}. The normal user should never have to use this method.
@@ -138,17 +131,6 @@ public interface Input {
 
 		public int getMouseY() {
 			return mouseY;
-		}
-
-		public void simulateKey(int id, int keycode) {
-			try {
-				Robot robot = new Robot();
-				if (id == KEY_PRESSED) robot.keyPress(keycode);
-				else if (id == KEY_RELEASED) robot.keyRelease(keycode);
-				else throw new IllegalArgumentException("Invalid key code");
-			} catch (AWTException e) {
-				e.printStackTrace();
-			}
 		}
 
 		protected void keyEvent(int id, int keycode) {

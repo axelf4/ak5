@@ -111,6 +111,39 @@ public class Matrix4 implements Matrix<Matrix4> {
 		return set(tmp);
 	}
 
+	/** Sets the matrix to a projection matrix with a near- and far plane, a field of view in degrees and an aspect
+	 * ratio.
+	 * 
+	 * @param near The near plane
+	 * @param far The far plane
+	 * @param fov The field of view in degrees
+	 * @param aspectRatio The "width over height" aspect ratio
+	 * @return This matrix for the purpose of chaining methods together. */
+	public Matrix4 setToProjection(float near, float far, float fov, float aspectRatio) {
+		idt();
+		float l_fd = (float) (1.0 / Math.tan((fov * (Math.PI / 180)) / 2.0));
+		float l_a1 = (far + near) / (near - far);
+		float l_a2 = (2 * far * near) / (near - far);
+		data[M00] = l_fd / aspectRatio;
+		data[M10] = 0;
+		data[M20] = 0;
+		data[M30] = 0;
+		data[M01] = 0;
+		data[M11] = l_fd;
+		data[M21] = 0;
+		data[M31] = 0;
+		data[M02] = 0;
+		data[M12] = 0;
+		data[M22] = l_a1;
+		data[M32] = -1;
+		data[M03] = 0;
+		data[M13] = 0;
+		data[M23] = l_a2;
+		data[M33] = 0;
+
+		return this;
+	}
+
 	/** Sets the matrix to an orthographic projection like glOrtho (http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml)
 	 * following the OpenGL equivalent
 	 * 

@@ -5,20 +5,23 @@ package org.gamelib.graphics;
 
 import java.nio.ByteBuffer;
 
+import org.gamelib.util.Disposable;
+
 /** @author pwnedary */
-public class Mesh {
+public class Mesh implements Disposable {
 	private final GL10 gl;
 	private final VertexData vertices;
 	private final IndexData indices;
 
-	public Mesh(GL10 gl, boolean isStatic, int maxVertices, int maxIndices, Attrib... attributes) {
+	public Mesh(GL10 gl, boolean isStatic, int maxVertices, int maxIndices, VertexAttribute... attributes) {
 		this.gl = gl;
-		// if (gl instanceof GL11 || gl instanceof GL20)){
-		// 	vertices = null; // VBO
-		// } else {
-		vertices = new VertexArray(gl, maxVertices, attributes); // VAO
-		indices = new IndexArray(maxIndices);
-		// }
+		if (gl instanceof GL20) { // VertexBufferObject
+			vertices = new VertexBufferObject((GL20) gl, isStatic, maxVertices, attributes);
+			indices = new IndexBufferObject((GL20) gl, isStatic, maxIndices);
+		} else { // Vertex array
+			vertices = new VertexArray(gl, maxVertices, attributes);
+			indices = new IndexArray(maxIndices);
+		}
 	}
 
 	public void setVertices(float[] vertices, int offset, int length) {
@@ -80,19 +83,27 @@ public class Mesh {
 	}
 
 	public void render(int mode, int first, int count) {
-		if (vertices instanceof VertexArray) if (indices.getNumIndices() > 0) {
-			ByteBuffer buffer = indices.getBuffer();
-			int oldPosition = buffer.position();
-			int oldLimit = buffer.limit();
-			buffer.position(first);
-			buffer.limit(first + count);
-			gl.glDrawElements(mode, count, GL10.GL_UNSIGNED_BYTE, buffer);
-			buffer.position(oldPosition);
-			buffer.limit(oldLimit);
+		if (indices.getNumIndices() > 0) {
+			if (vertices instanceof VertexArray) {
+				ByteBuffer buffer = indices.getBuffer();
+				int oldPosition = buffer.position();
+				int oldLimit = buffer.limit();
+				buffer.position(first);
+				buffer.limit(first + count);
+				gl.glDrawElements(mode, count, GL10.GL_UNSIGNED_BYTE, buffer); // Vertex array
+				buffer.position(oldPosition);
+				buffer.limit(oldLimit);
+			} // else gl.glDrawElements(mode, count, GL20.GL_UNSIGNED_SHORT, first * 2); // VertexBufferObject
 		} else gl.glDrawArrays(mode, first, count);
 	}
 
 	public enum VertexDataType {
 		VERTEX_ARRAY, VERTEX_BUFFER_OBJECT;
+	}
+
+	@Override
+	public void dispose() {
+		vertices.dispose();
+		indices.dispose();
 	}
 }

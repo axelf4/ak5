@@ -204,14 +204,14 @@ public interface Texture extends Drawable, Disposable {
 
 		@Override
 		public void setFilter(Filter min, Filter mag) {
-			gl.glTexParameteri(target, GL10.GL_TEXTURE_MIN_FILTER, min.getGLEnum());
-			gl.glTexParameteri(target, GL10.GL_TEXTURE_MAG_FILTER, mag.getGLEnum());
+			gl.glTexParameterf(target, GL10.GL_TEXTURE_MIN_FILTER, min.getGLEnum());
+			gl.glTexParameterf(target, GL10.GL_TEXTURE_MAG_FILTER, mag.getGLEnum());
 		}
 
 		@Override
 		public void setWrap(Wrap u, Wrap v) {
-			gl.glTexParameteri(target, GL10.GL_TEXTURE_WRAP_S, u.getGLEnum());
-			gl.glTexParameteri(target, GL10.GL_TEXTURE_WRAP_T, v.getGLEnum());
+			gl.glTexParameterf(target, GL10.GL_TEXTURE_WRAP_S, u.getGLEnum());
+			gl.glTexParameterf(target, GL10.GL_TEXTURE_WRAP_T, v.getGLEnum());
 		}
 
 		@Override

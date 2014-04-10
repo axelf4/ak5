@@ -31,7 +31,7 @@ import org.gamelib.Drawable;
 import org.gamelib.Event;
 import org.gamelib.Handler;
 import org.gamelib.backend.Backend;
-import org.gamelib.backend.Backend.BackendImpl;
+import org.gamelib.backend.BackendImpl;
 import org.gamelib.backend.DisplayConfiguration;
 import org.gamelib.backend.Input;
 import org.gamelib.backend.Sound;
@@ -91,13 +91,14 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	@Override
 	public void start(Configuration configuration, Handler handler) {
 		super.start(configuration, handler);
-		gl = new LWJGLGL30();
-		input = new LWJGLInput(handler);
 	}
 
 	@Override
 	public void start() {
 		try {
+			gl = new LWJGLGL30();
+			input = new LWJGLInput(handler);
+			
 			DisplayConfiguration config = (DisplayConfiguration) configuration;
 			DisplayMode targetDisplayMode = null;
 			if (config.fullscreen()) {
@@ -161,7 +162,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		Matrix4 projection;
 		if (configuration instanceof LWJGLConfiguration && ((LWJGLConfiguration) configuration).originBottomLeft()) projection = new Matrix4().setToOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1);
 		else projection = new Matrix4().setToOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
-		gl.glLoadMatrix((FloatBuffer) BufferUtils.createFloatBuffer(projection.data.length).put(projection.data).flip());
+		gl.glLoadMatrixf((FloatBuffer) BufferUtils.createFloatBuffer(projection.data.length).put(projection.data).flip());
 		gl.glMatrixMode(GL_MODELVIEW);
 
 		gl.glViewport(0, 0, Display.getWidth(), Display.getHeight());
@@ -195,7 +196,6 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		if (AL.isCreated()) AL.destroy();
 	}
 
-	@Override
 	public Rectangle getSize() {
 		return new Rectangle(Display.getX(), Display.getY(), Display.getWidth(), Display.getHeight());
 	}
@@ -220,7 +220,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		return getTexture(new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR)); // 4 bytes per pixel
 	}
 
-	@Override
+//	@Override
 	public Texture getTexture(BufferedImage bufferedImage) {
 		IntBuffer buffer = BufferUtils.createIntBuffer(1);
 		gl.glGenTextures(1, buffer);

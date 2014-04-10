@@ -170,12 +170,12 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glFog(int pname, float param) {
+	public void glFogf(int pname, float param) {
 		GL11.glFogf(pname, param);
 	}
 
 	@Override
-	public void glFog(int pname, FloatBuffer params) {
+	public void glFogfv(int pname, FloatBuffer params) {
 		GL11.glFog(pname, params);
 	}
 
@@ -183,9 +183,9 @@ public class LWJGLGL10 implements GL10 {
 	public void glFrontFace(int mode) {
 		GL11.glFrontFace(mode);
 	}
-
+	
 	@Override
-	public void glFrustum(double left, double right, double bottom, double top, double zNear, double zFar) {
+	public void glFrustumf(float left, float right, float bottom, float top, float zNear, float zFar) {
 		GL11.glFrustum(left, right, bottom, top, zNear, zFar);
 	}
 
@@ -215,22 +215,22 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glLightModel(int pname, float param) {
+	public void glLightModelf(int pname, float param) {
 		GL11.glLightModelf(pname, param);
 	}
 
 	@Override
-	public void glLightModel(int pname, FloatBuffer params) {
+	public void glLightModelfv(int pname, FloatBuffer params) {
 		GL11.glLightModel(pname, params);
 	}
 
 	@Override
-	public void glLight(int light, int pname, float param) {
+	public void glLightf(int light, int pname, float param) {
 		GL11.glLightf(light, pname, param);
 	}
 
 	@Override
-	public void glLight(int light, int pname, FloatBuffer params) {
+	public void glLightfv(int light, int pname, FloatBuffer params) {
 		GL11.glLight(light, pname, params);
 	}
 
@@ -245,7 +245,7 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glLoadMatrix(FloatBuffer m) {
+	public void glLoadMatrixf(FloatBuffer m) {
 		GL11.glLoadMatrix(m);
 	}
 
@@ -255,12 +255,12 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glMaterial(int face, int pname, float param) {
+	public void glMaterialf(int face, int pname, float param) {
 		GL11.glMaterialf(face, pname, param);
 	}
 
 	@Override
-	public void glMaterial(int face, int pname, FloatBuffer params) {
+	public void glMaterialfv(int face, int pname, FloatBuffer params) {
 		GL11.glMaterial(face, pname, params);
 	}
 
@@ -270,17 +270,17 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glMultMatrix(FloatBuffer m) {
+	public void glMultMatrixf(FloatBuffer m) {
 		GL11.glMultMatrix(m);
 	}
 
 	@Override
-	public void glMultiTexCoord4(int target, float s, float t, float r, float q) {
+	public void glMultiTexCoord4f(int target, float s, float t, float r, float q) {
 		GL13.glMultiTexCoord4f(target, s, t, r, q);
 	}
 
 	@Override
-	public void glNormal3(float nx, float ny, float nz) {
+	public void glNormal3f(float nx, float ny, float nz) {
 		GL11.glNormal3f(nx, ny, nz);
 	}
 
@@ -291,9 +291,9 @@ public class LWJGLGL10 implements GL10 {
 		else if (pointer instanceof ByteBuffer && type == GL11.GL_BYTE) GL11.glNormalPointer(stride, (ByteBuffer) pointer);
 		else throw new RuntimeException("Bad type " + pointer.getClass().getName());
 	}
-
+	
 	@Override
-	public void glOrtho(double left, double right, double bottom, double top, double zNear, double zFar) {
+	public void glOrthof(float left, float right, float bottom, float top, float zNear, float zFar) {
 		GL11.glOrtho(left, right, bottom, top, zNear, zFar);
 	}
 
@@ -333,7 +333,7 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glRotate(float angle, float x, float y, float z) {
+	public void glRotatef(float angle, float x, float y, float z) {
 		GL11.glRotatef(angle, x, y, z);
 	}
 
@@ -343,7 +343,7 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glScale(float x, float y, float z) {
+	public void glScalef(float x, float y, float z) {
 		GL11.glScalef(x, y, z);
 	}
 
@@ -381,14 +381,14 @@ public class LWJGLGL10 implements GL10 {
 		else throw new RuntimeException("Bad type " + pointer.getClass().getName());
 
 	}
-
+	
 	@Override
-	public void glTexEnvi(int target, int pname, int param) {
+	public void glTexEnvf(int target, int pname, float param) {
 		GL11.glTexEnvf(target, pname, param);
 	}
 
 	@Override
-	public void glTexEnviv(int target, int pname, IntBuffer params) {
+	public void glTexEnvfv(int target, int pname, FloatBuffer params) {
 		GL11.glTexEnv(target, pname, params);
 	}
 
@@ -402,15 +402,10 @@ public class LWJGLGL10 implements GL10 {
 		else if (pixels instanceof DoubleBuffer) GL11.glTexImage2D(target, level, internalformat, width, height, border, format, type, (DoubleBuffer) pixels);
 		else throw new RuntimeException("Bad type " + pixels.getClass().getName());
 	}
-	
+
 	@Override
 	public void glTexParameterf(int target, int pname, float param) {
 		GL11.glTexParameterf(target, pname, param);
-	}
-
-	@Override
-	public void glTexParameteri(int target, int pname, int param) {
-		GL11.glTexParameteri(target, pname, param);
 	}
 
 	@Override
@@ -424,7 +419,7 @@ public class LWJGLGL10 implements GL10 {
 	}
 
 	@Override
-	public void glTranslate(float x, float y, float z) {
+	public void glTranslatef(float x, float y, float z) {
 		GL11.glTranslatef(x, y, z);
 	}
 

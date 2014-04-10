@@ -3,14 +3,14 @@
  */
 package org.gamelib.backend;
 
+import org.gamelib.VariableConfiguration;
 import org.gamelib.util.Configuration;
-import org.gamelib.util.Configuration.VariableConfiguration;
 import org.gamelib.util.slow.reflection.NativeType;
 
 /**
  * @author pwnedary
  */
-public class DisplayConfiguration extends Configuration.VariableConfigurationImpl implements Configuration, VariableConfiguration {
+public class DisplayConfiguration extends VariableConfiguration.VariableConfigurationImpl implements Configuration, VariableConfiguration {
 	/* The different keys. */
 	public static final String WIDTH = "width", HEIGHT = "height",
 			FULLSCREEN = "fullscreen", RESIZABLE = "resizable",

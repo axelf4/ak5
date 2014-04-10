@@ -66,11 +66,9 @@ public class ShaderProgram implements Disposable {
 
 		vert = compileShader(GL20.GL_VERTEX_SHADER, vertexShader);
 		frag = compileShader(GL20.GL_FRAGMENT_SHADER, fragmentShader);
-		if (vert == 0 || frag == 0) throw new RuntimeException();
 
 		program = gl.glCreateProgram();
 		if (program == 0) throw new RuntimeException();
-
 		gl.glAttachShader(program, vert);
 		gl.glAttachShader(program, frag);
 		gl.glLinkProgram(program);
@@ -78,75 +76,80 @@ public class ShaderProgram implements Disposable {
 		gl.glGetProgramiv(program, GL20.GL_LINK_STATUS, intBuffer);
 		if (intBuffer.get(0) == 0) throw new RuntimeException();
 
-		gl.glValidateProgram(program);
-		gl.glGetProgramiv(program, GL20.GL_VALIDATE_STATUS, intBuffer);
-		if (intBuffer.get(0) == 0) throw new RuntimeException();
+//		gl.glValidateProgram(program);
+//		gl.glGetProgramiv(program, GL20.GL_VALIDATE_STATUS, intBuffer);
+//		if (intBuffer.get(0) == 0) throw new RuntimeException();
 
-		// Fetch attributes and uniforms
-		IntBuffer size = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asIntBuffer();
-		IntBuffer type = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asIntBuffer();
-		gl.glGetProgramiv(program, GL20.GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, intBuffer);
-		int strLen = intBuffer.get(0);
-		gl.glGetProgramiv(program, GL20.GL_ACTIVE_UNIFORM_MAX_LENGTH, intBuffer);
-		strLen = Math.max(strLen, intBuffer.get(0));
-		byte[] nameArray = new byte[strLen];
-		
-		// Fetch attributes
-		gl.glGetProgramiv(program, GL20.GL_ACTIVE_ATTRIBUTES, intBuffer);
-		int numAttributes = intBuffer.get(0);
-		attributeNames = new String[numAttributes];
-		for (int i = 0; i < numAttributes; i++) {
-			ByteBuffer nameBuffer = ByteBuffer.allocateDirect(strLen).order(ByteOrder.nativeOrder());
-			gl.glGetActiveAttrib(program, i, strLen, null, size, type, nameBuffer);
-			((ByteBuffer) nameBuffer.position(0)).get(nameArray);
-			String name = new String(nameArray).trim();
-			int location = gl.glGetAttribLocation(program, name);
-			attributes2.put(name, location);
-			attributeTypes.put(name, type.get(0));
-			attributeSizes.put(name, size.get(0));
-			attributeNames[i] = name;
+		boolean negative = false;
+		if (negative) {
+			// Fetch attributes and uniforms
+			IntBuffer size = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asIntBuffer();
+			IntBuffer type = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asIntBuffer();
+			//		gl.glGetProgramiv(program, GL20.GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, intBuffer);
+			//		int strLen = intBuffer.get(0);
+			//		gl.glGetProgramiv(program, GL20.GL_ACTIVE_UNIFORM_MAX_LENGTH, intBuffer);
+			//		strLen = Math.max(strLen, intBuffer.get(0));
+			int strLen = 50;
+			byte[] nameArray = new byte[strLen];
+
+			// Fetch attributes
+			gl.glGetProgramiv(program, GL20.GL_ACTIVE_ATTRIBUTES, intBuffer);
+			int numAttributes = intBuffer.get(0);
+			attributeNames = new String[numAttributes];
+			for (int i = 0; i < numAttributes; i++) {
+				ByteBuffer nameBuffer = ByteBuffer.allocateDirect(strLen).order(ByteOrder.nativeOrder());
+				gl.glGetActiveAttrib(program, i, strLen, null, size, type, nameBuffer);
+				((ByteBuffer) nameBuffer.position(0)).get(nameArray);
+				String name = new String(nameArray).trim();
+				int location = gl.glGetAttribLocation(program, name);
+				attributes2.put(name, location);
+				attributeTypes.put(name, type.get(0));
+				attributeSizes.put(name, size.get(0));
+				attributeNames[i] = name;
+			}
+			// Fetch uniforms
+			gl.glGetProgramiv(program, GL20.GL_ACTIVE_UNIFORMS, (IntBuffer) intBuffer.clear());
+			int numUniforms = intBuffer.get(0);
+			uniformNames = new String[numUniforms];
+			for (int i = 0; i < numUniforms; i++) {
+				ByteBuffer nameBuffer = ByteBuffer.allocateDirect(strLen).order(ByteOrder.nativeOrder());
+				gl.glGetActiveUniform(program, i, strLen, null, size, type, nameBuffer);
+				((ByteBuffer) nameBuffer.position(0)).get(nameArray);
+				String name = new String(nameArray).trim();
+				int location = gl.glGetUniformLocation(program, name);
+				uniforms.put(name, location);
+				uniformTypes.put(name, type.get(0));
+				uniformSizes.put(name, size.get(0));
+				uniformNames[i] = name;
+			}
 		}
-		// Fetch uniforms
-		gl.glGetProgramiv(program, GL20.GL_ACTIVE_UNIFORMS, (IntBuffer) intBuffer.clear());
-		int numUniforms = intBuffer.get(0);
-		uniformNames = new String[numUniforms];
-		for (int i = 0; i < numUniforms; i++) {
-			ByteBuffer nameBuffer = ByteBuffer.allocateDirect(strLen).order(ByteOrder.nativeOrder());
-			gl.glGetActiveUniform(program, i, strLen, null, size, type, nameBuffer);
-			((ByteBuffer) nameBuffer.position(0)).get(nameArray);
-			String name = new String(nameArray).trim();
-			int location = gl.glGetUniformLocation(program, name);
-			uniforms.put(name, location);
-			uniformTypes.put(name, type.get(0));
-			uniformSizes.put(name, size.get(0));
-			uniformNames[i] = name;
-		}
-		
+
 		System.out.println(getLog());
 	}
 
 	private int compileShader(int type, String source) {
 		int shader = gl.glCreateShader(type);
 
-		gl.glShaderSource(shader, 0, source, null);
+		gl.glShaderSource(shader, source.length(), source, null);
 		gl.glCompileShader(shader);
 
 		gl.glGetShaderiv(shader, GL20.GL_COMPILE_STATUS, intBuffer);
-		if (intBuffer.get(0) == 0) return -1;
+		if (intBuffer.get(0) == 0) throw new RuntimeException(getLog());
 
 		return shader;
 	}
 
 	public String getLog() {
 		// return gl.glGetProgramInfoLog(program, 0, null, null); // FIXME
-		gl.glGetProgramiv(program, GL20.GL_INFO_LOG_LENGTH, intBuffer);
-		int infoLogLen = intBuffer.get(0);
-		
+//		gl.glGetProgramiv(program, GL20.GL_INFO_LOG_LENGTH, intBuffer);
+//		int infoLogLen = intBuffer.get(0);
+		int infoLogLen = 60;
+
 		ByteBuffer logBuffer = ByteBuffer.allocateDirect(infoLogLen).order(ByteOrder.nativeOrder());
 		gl.glGetProgramInfoLog(program, infoLogLen, null, logBuffer);
 		byte[] logArray = new byte[infoLogLen];
 		((ByteBuffer) logBuffer.clear()).get(logArray);
-		return new String(logArray);
+		return new String(logArray).trim();
 	}
 
 	public void begin() {
@@ -168,33 +171,37 @@ public class ShaderProgram implements Disposable {
 	private int fetchAttributeLocation(String name) {
 		// -2 == not yet cached
 		// -1 == cached but not found
-		Integer location;
-		if ((location = attributes2.get(name)) == null) attributes2.put(name, location = gl.glGetAttribLocation(program, name));
-		return location;
+		//		Integer location;
+		//		if ((location = attributes2.get(name)) == null) attributes2.put(name, location = gl.glGetAttribLocation(program, name));
+		//		return location;
+		return gl.glGetAttribLocation(program, name);
 	}
 
 	public int fetchUniformLocation(String name) {
 		// -2 == not yet cached
 		// -1 == cached but not found
 		Integer location;
-		if ((location = uniforms.get(name)) == null) {
-			location = gl.glGetUniformLocation(program, name);
-			if (location == -1) throw new IllegalArgumentException("no uniform with name '" + name + "' in shader");
-			uniforms.put(name, location);
-		}
+		//		if ((location = uniforms.get(name)) == null) {
+		location = gl.glGetUniformLocation(program, name);
+		if (location == -1) throw new IllegalArgumentException("no uniform with name '" + name + "' in shader");
+		//			uniforms.put(name, location);
+		//		}
 		return location;
+
 	}
 
 	/** @param name the name of the attribute
 	 * @return the location of the attribute or -1. */
 	public int getAttributeLocation(String name) {
-		return attributes2.get(name);
+//		return attributes2.get(name);
+		return fetchAttributeLocation(name);
 	}
 
 	/** @param name the name of the uniform
 	 * @return the location of the uniform or -1. */
 	public int getUniformLocation(String name) {
-		return uniforms.get(name);
+//		return uniforms.get(name);
+		return fetchUniformLocation(name);
 	}
 
 	/** Sets the uniform with the given name. Throws an IllegalArgumentException in case it is not called in between a
@@ -203,13 +210,11 @@ public class ShaderProgram implements Disposable {
 	 * @param name the name of the uniform
 	 * @param value the value */
 	public void setUniformi(String name, int value) {
-
 		int location = fetchUniformLocation(name);
 		gl.glUniform1i(location, value);
 	}
 
 	public void setUniformi(int location, int value) {
-
 		gl.glUniform1i(location, value);
 	}
 
@@ -220,13 +225,11 @@ public class ShaderProgram implements Disposable {
 	 * @param value1 the first value
 	 * @param value2 the second value */
 	public void setUniformi(String name, int value1, int value2) {
-
 		int location = fetchUniformLocation(name);
 		gl.glUniform2i(location, value1, value2);
 	}
 
 	public void setUniformi(int location, int value1, int value2) {
-
 		gl.glUniform2i(location, value1, value2);
 	}
 
@@ -238,13 +241,11 @@ public class ShaderProgram implements Disposable {
 	 * @param value2 the second value
 	 * @param value3 the third value */
 	public void setUniformi(String name, int value1, int value2, int value3) {
-
 		int location = fetchUniformLocation(name);
 		gl.glUniform3i(location, value1, value2, value3);
 	}
 
 	public void setUniformi(int location, int value1, int value2, int value3) {
-
 		gl.glUniform3i(location, value1, value2, value3);
 	}
 
@@ -403,9 +404,7 @@ public class ShaderProgram implements Disposable {
 	 * @param matrix the matrix
 	 * @param transpose whether the matrix should be transposed */
 	public void setUniformMatrix(String name, Matrix4 matrix, boolean transpose) {
-		int location = fetchUniformLocation(name);
-		((FloatBuffer) floatBuffer.clear()).put(matrix.data);
-		gl.glUniformMatrix4fv(location, 1, transpose, floatBuffer);
+		setUniformMatrix(fetchUniformLocation(name), matrix, transpose);
 	}
 
 	public void setUniformMatrix(int location, Matrix4 matrix) {
@@ -413,7 +412,7 @@ public class ShaderProgram implements Disposable {
 	}
 
 	public void setUniformMatrix(int location, Matrix4 matrix, boolean transpose) {
-		((FloatBuffer) floatBuffer.clear()).put(matrix.data);
+		((FloatBuffer) floatBuffer.clear()).put(matrix.data).flip();
 		gl.glUniformMatrix4fv(location, 1, transpose, floatBuffer);
 	}
 
@@ -547,25 +546,25 @@ public class ShaderProgram implements Disposable {
 		gl.glVertexAttribPointer(location, size, type, normalize, stride, buffer);
 	}
 
-	//	/** Sets the vertex attribute with the given name. Throws an IllegalArgumentException in case it is not called in
-	//	 * between a {@link #begin()}/{@link #end()} block.
-	//	 *
-	//	 * @param name the attribute name
-	//	 * @param size the number of components, must be >= 1 and <= 4
-	//	 * @param type the type, must be one of GL20.GL_BYTE, GL20.GL_UNSIGNED_BYTE, GL20.GL_SHORT,
-	//	 *            GL20.GL_UNSIGNED_SHORT,GL20.GL_FIXED, or GL20.GL_FLOAT. GL_FIXED will not work on the desktop
-	//	 * @param normalize whether fixed point data should be normalized. Will not work on the desktop
-	//	 * @param stride the stride in bytes between successive attributes
-	//	 * @param offset byte offset into the vertex buffer object bound to GL20.GL_ARRAY_BUFFER. */
-	//	public void setVertexAttribute(String name, int size, int type, boolean normalize, int stride, int offset) {
-	//		int location = fetchAttributeLocation(name);
-	//		if (location == -1) return;
-	//		gl.glVertexAttribPointer(location, size, type, normalize, stride, offset);
-	//	}
-	//
-	//	public void setVertexAttribute(int location, int size, int type, boolean normalize, int stride, int offset) {
-	//		// gl.glVertexAttribPointer(location, size, type, normalize, stride, offset);
-	//	}
+	/** Sets the vertex attribute with the given name. Throws an IllegalArgumentException in case it is not called in
+	 * between a {@link #begin()}/{@link #end()} block.
+	 * 
+	 * @param name the attribute name
+	 * @param size the number of components, must be >= 1 and <= 4
+	 * @param type the type, must be one of GL20.GL_BYTE, GL20.GL_UNSIGNED_BYTE, GL20.GL_SHORT,
+	 *            GL20.GL_UNSIGNED_SHORT,GL20.GL_FIXED, or GL20.GL_FLOAT. GL_FIXED will not work on the desktop
+	 * @param normalize whether fixed point data should be normalized. Will not work on the desktop
+	 * @param stride the stride in bytes between successive attributes
+	 * @param offset byte offset into the vertex buffer object bound to GL20.GL_ARRAY_BUFFER. */
+	public void setVertexAttribute(String name, int size, int type, boolean normalize, int stride, int offset) {
+		int location = fetchAttributeLocation(name);
+		if (location == -1) return;
+		gl.glVertexAttribPointer(location, size, type, normalize, stride, offset);
+	}
+
+	public void setVertexAttribute(int location, int size, int type, boolean normalize, int stride, int offset) {
+		gl.glVertexAttribPointer(location, size, type, normalize, stride, offset);
+	}
 
 	/** Disables the vertex attribute with the given name
 	 *

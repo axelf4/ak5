@@ -3,14 +3,6 @@
  */
 package org.gamelib.backend.lwjgl;
 
-// import static org.lwjgl.opengl.GL11.*;
-// import static org.lwjgl.opengl.GL12.*;
-// import static org.lwjgl.opengl.GL13.*;
-// import static org.lwjgl.opengl.GL14.*;
-// import static org.lwjgl.opengl.GL15.*;
-// import static org.lwjgl.opengl.GL20.*;
-// import static org.lwjgl.opengl.GL21.*;
-
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -305,6 +297,11 @@ public class LWJGLGL20 extends LWJGLGL11 implements org.gamelib.graphics.GL20 {
 	}
 
 	@Override
+	public void glTexParameteri(int target, int pname, int param) {
+		GL11.glTexParameteri(target, pname, param);
+	}
+
+	@Override
 	public void glTexParameterfv(int target, int pname, FloatBuffer params) {
 		GL11.glTexParameter(target, pname, params);
 	}
@@ -456,14 +453,18 @@ public class LWJGLGL20 extends LWJGLGL11 implements org.gamelib.graphics.GL20 {
 
 	@Override
 	public void glVertexAttribPointer(int index, int size, int type, boolean normalized, int stride, Buffer pointer) {
-		if (type == GL10.GL_BYTE) GL20.glVertexAttribPointer(index, size, false, normalized, stride, (ByteBuffer) pointer);
-		else if (type == GL10.GL_UNSIGNED_BYTE) GL20.glVertexAttribPointer(index, size, true, normalized, stride, (ByteBuffer) pointer);
-		else if (type == GL10.GL_SHORT) GL20.glVertexAttribPointer(index, size, false, normalized, stride, (ShortBuffer) pointer);
-		else if (type == GL10.GL_UNSIGNED_SHORT) GL20.glVertexAttribPointer(index, size, true, normalized, stride, (ShortBuffer) pointer);
-		else if (type == org.gamelib.graphics.GL20.GL_INT) GL20.glVertexAttribPointer(index, size, false, normalized, stride, (IntBuffer) pointer);
-		else if (type == org.gamelib.graphics.GL20.GL_UNSIGNED_INT) GL20.glVertexAttribPointer(index, size, true, normalized, stride, (IntBuffer) pointer);
-		else if (type == GL10.GL_FLOAT) GL20.glVertexAttribPointer(index, size, normalized, stride, (FloatBuffer) pointer);
-		// else if (type == org.gamelib.graphics.GL20.GL_DOUBLE) GL20.glVertexAttribPointer(index, size, normalized, stride, (DoubleBuffer) pointer);
-		else throw new RuntimeException("Bad type " + pointer.getClass().getName());
+		if (pointer instanceof ByteBuffer) {
+			if (type == GL10.GL_BYTE) GL20.glVertexAttribPointer(index, size, false, normalized, stride, (ByteBuffer) pointer);
+			else if (type == GL10.GL_UNSIGNED_BYTE) GL20.glVertexAttribPointer(index, size, true, normalized, stride, (ByteBuffer) pointer);
+			else if (type == GL10.GL_SHORT) GL20.glVertexAttribPointer(index, size, false, normalized, stride, ((ByteBuffer) pointer).asShortBuffer());
+			else if (type == GL10.GL_UNSIGNED_SHORT) GL20.glVertexAttribPointer(index, size, true, normalized, stride, ((ByteBuffer) pointer).asShortBuffer());
+			else if (type == GL10.GL_FLOAT) GL20.glVertexAttribPointer(index, size, normalized, stride, ((ByteBuffer) pointer).asFloatBuffer());
+		}
+		throw new RuntimeException("Bad type " + pointer.getClass().getName());
+	}
+
+	@Override
+	public void glVertexAttribPointer(int index, int size, int type, boolean normalized, int stride, int pointer) {
+		GL20.glVertexAttribPointer(index, size, type, normalized, stride, pointer);
 	}
 }

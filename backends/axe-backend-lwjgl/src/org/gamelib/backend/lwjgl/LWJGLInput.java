@@ -3,11 +3,10 @@
  */
 package org.gamelib.backend.lwjgl;
 
-import java.awt.Image;
-
 import org.gamelib.Handler;
 import org.gamelib.backend.Input;
 import org.gamelib.backend.Input.InputImpl;
+import org.gamelib.graphics.Texture;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -71,16 +70,16 @@ public class LWJGLInput extends InputImpl implements Input {
 
 	@Override
 	public void mouseMove(int x, int y) {
-		org.lwjgl.input.Mouse.setCursorPosition(x, Display.getHeight() - y);
+		Mouse.setCursorPosition(x, Display.getHeight() - y);
 	}
 
 	@Override
 	public void setGrabbed(boolean grabbed) {
-		org.lwjgl.input.Mouse.setGrabbed(true);
+		Mouse.setGrabbed(true);
 	}
 
 	@Override
-	public void setCursor(Image image) {
+	public void setCursor(Texture texture) {
 		throw new UnsupportedOperationException();
 	}
 

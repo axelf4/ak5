@@ -3,11 +3,6 @@
  */
 package org.gamelib;
 
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-
 import org.gamelib.backend.Input;
 import org.gamelib.graphics.GL10;
 
@@ -72,8 +67,10 @@ public interface Event {
 		}
 	}
 
-	/** Abstract event for input actions. */
-	public abstract static class Control<T extends InputEvent> extends EventImpl implements Event {
+	/** Abstract event for input actions.
+	 * 
+	 * @see java.awt.event.InputEvent */
+	public abstract static class Control extends EventImpl implements Event {
 		public final Input input;
 
 		public Control(Input input) {
@@ -81,7 +78,8 @@ public interface Event {
 		}
 	}
 
-	public static final class Key extends Control<KeyEvent> {
+	/** @see java.awt.event.KeyEvent */
+	public static final class Key extends Control {
 		public final int id;
 		public final int keyCode;
 
@@ -92,7 +90,8 @@ public interface Event {
 		}
 	}
 
-	public static final class Mouse extends Control<MouseEvent> {
+	/** @see java.awt.event.MouseEvent */
+	public static final class Mouse extends Control {
 		public final int id;
 		public final int button;
 
@@ -103,7 +102,8 @@ public interface Event {
 		}
 	}
 
-	public static final class MouseWheel extends Control<MouseWheelEvent> {
+	/** @see java.awt.event.MouseWheelEvent */
+	public static final class MouseWheel extends Control {
 		public final double scrollAmount;
 
 		public MouseWheel(Input input, double scrollAmount) {

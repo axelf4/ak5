@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import org.gamelib.graphics.Attrib.Type;
+import org.gamelib.graphics.VertexAttribute.Type;
 import org.gamelib.graphics.Texture.GLTexture;
 import org.gamelib.util.geom.Matrix4;
 
@@ -36,8 +36,8 @@ public class QuadBatch implements Batch {
 	public QuadBatch(GL10 gl, int size, ShaderProgram shader) {
 		this.gl = gl;
 		mesh = new Mesh(gl, false, size * 4, size * 6, //
-		new Attrib(Type.POSITION, 2, ShaderProgram.POSITION_ATTRIBUTE), //
-		new Attrib(Type.TEXTURE_COORDINATES, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + '0'));
+		new VertexAttribute(Type.POSITION, 2, ShaderProgram.POSITION_ATTRIBUTE), //
+		new VertexAttribute(Type.TEXTURE_COORDINATES, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + '0'));
 		vertices = new float[size * 4];
 
 		byte[] indices = new byte[size * 6];
@@ -241,7 +241,7 @@ public class QuadBatch implements Batch {
 		} else {
 			gl.glMatrixMode(GL10.GL_PROJECTION);
 			gl.glLoadIdentity();
-			gl.glLoadMatrix((FloatBuffer) ByteBuffer.allocateDirect(combinedMatrix.data.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer().put(combinedMatrix.data).flip());
+			gl.glLoadMatrixf((FloatBuffer) ByteBuffer.allocateDirect(combinedMatrix.data.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer().put(combinedMatrix.data).flip());
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 		}
 	}

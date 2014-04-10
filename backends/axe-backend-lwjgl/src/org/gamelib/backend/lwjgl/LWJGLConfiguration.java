@@ -5,9 +5,7 @@ package org.gamelib.backend.lwjgl;
 
 import org.gamelib.backend.DisplayConfiguration;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public class LWJGLConfiguration extends DisplayConfiguration {
 	public static final String VSYNC = "vsync",
 			ORIGIN_BOTTOM_LEFT = "originBottomLeft";

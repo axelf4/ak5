@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import org.gamelib.graphics.Attrib.Type;
+import org.gamelib.graphics.VertexAttribute.Type;
 
 /** @author pwnedary */
 public class VertexArray implements VertexData {
@@ -15,7 +15,7 @@ public class VertexArray implements VertexData {
 	private final VertexAttributes attributes;
 	private final FloatBuffer buffer;
 
-	public VertexArray(GL10 gl, int numVertices, Attrib... attributes) {
+	public VertexArray(GL10 gl, int numVertices, VertexAttribute... attributes) {
 		this.gl = gl;
 		this.attributes = new VertexAttributes(attributes);
 		buffer = (FloatBuffer) ByteBuffer.allocateDirect(this.attributes.vertexSize * numVertices).order(ByteOrder.nativeOrder()).asFloatBuffer().flip();
@@ -23,7 +23,7 @@ public class VertexArray implements VertexData {
 
 	public void bind() {
 		for (int i = 0, textureUnit = 0; i < attributes.size(); i++) {
-			Attrib attrib = attributes.get(i);
+			VertexAttribute attrib = attributes.get(i);
 			buffer.position(attrib.location / 4);
 
 			switch (attrib.type) {
@@ -54,7 +54,7 @@ public class VertexArray implements VertexData {
 		final int numAttributes = attributes.size();
 		if (locations == null) {
 			for (int i = 0; i < numAttributes; i++) {
-				final Attrib attribute = attributes.get(i);
+				final VertexAttribute attribute = attributes.get(i);
 				final int location = shader.getAttributeLocation(attribute.name);
 				if (location < 0) continue;
 				shader.enableVertexAttribute(location);
@@ -65,7 +65,7 @@ public class VertexArray implements VertexData {
 			}
 		} else {
 			for (int i = 0; i < numAttributes; i++) {
-				final Attrib attribute = attributes.get(i);
+				final VertexAttribute attribute = attributes.get(i);
 				final int location = locations[i];
 				if (location < 0) continue;
 				shader.enableVertexAttribute(location);
@@ -79,7 +79,7 @@ public class VertexArray implements VertexData {
 
 	public void unbind() {
 		for (int i = 0, textureUnit = 0; i < attributes.size(); i++) {
-			Attrib attrib = attributes.get(i);
+			VertexAttribute attrib = attributes.get(i);
 
 			switch (attrib.type) {
 			case POSITION:
@@ -125,4 +125,7 @@ public class VertexArray implements VertexData {
 	public int getNumVertices() {
 		return buffer.limit() * 4 / attributes.vertexSize;
 	}
+
+	@Override
+	public void dispose() {}
 }
