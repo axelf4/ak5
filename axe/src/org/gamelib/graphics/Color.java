@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.backend;
+package org.gamelib.graphics;
 
 import java.beans.ConstructorProperties;
 import java.io.Serializable;
