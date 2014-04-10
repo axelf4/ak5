@@ -3,8 +3,8 @@
  */
 package org.gamelib.backend;
 
-import org.gamelib.VariableConfiguration;
 import org.gamelib.util.Configuration;
+import org.gamelib.util.VariableConfiguration;
 import org.gamelib.util.slow.reflection.NativeType;
 
 /**

@@ -1,11 +1,10 @@
 /**
  * 
  */
-package org.gamelib;
+package org.gamelib.util;
 
 import java.lang.reflect.Field;
 
-import org.gamelib.util.Configuration;
 import org.gamelib.util.slow.reflection.NativeType;
 
 /** A marker interface, which defines that it's implementors will be using variables for storing properties. No
