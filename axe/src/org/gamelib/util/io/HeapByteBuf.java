@@ -13,14 +13,14 @@ import org.gamelib.util.io.ByteBuf.ByteBufImpl;
  * 
  * @author pwnedary */
 public class HeapByteBuf extends ByteBufImpl implements ByteBuf {
-	private final byte[] array;
-	private int mark = -1;
-	private int position = 0;
-	private int limit;
-	private int capacity;
+	protected final byte[] b;
+	protected int mark = -1;
+	protected int position = 0;
+	protected int limit;
+	protected int capacity;
 
 	public HeapByteBuf(int capacity) {
-		array = new byte[limit = this.capacity = capacity];
+		b = new byte[limit = this.capacity = capacity];
 	}
 
 	@Override
@@ -88,9 +88,10 @@ public class HeapByteBuf extends ByteBufImpl implements ByteBuf {
 
 	@Override
 	public ByteBuffer nio() {
-		return ByteBuffer.wrap(array);
+		return ByteBuffer.wrap(b);
 	}
 
+	/** @return number of available bytes */
 	protected int require(int required) {
 		int remaining = limit - position;
 		if (remaining >= required) return required;
@@ -100,45 +101,45 @@ public class HeapByteBuf extends ByteBufImpl implements ByteBuf {
 	@Override
 	public byte get() {
 		require(1);
-		return array[position++];
+		return b[position++];
 	}
 
 	@Override
 	public void get(byte[] dst, int off, int len) {
 		require(len);
-		System.arraycopy(array, position, dst, off, len);
-		position -= len;
+		System.arraycopy(b, position, dst, off, len);
+		position += len;
 	}
 
 	@Override
 	public void put(byte b) {
 		require(1);
-		array[position++] = b;
+		this.b[position++] = b;
 	}
 
 	@Override
 	public void put(byte[] src, int off, int len) {
 		require(len);
-		System.arraycopy(src, off, array, position, len);
+		System.arraycopy(src, off, b, position, len);
 		position += len;
 	}
 
 	@Override
 	public int getInt() {
 		require(4);
-		return (array[position++] & 0xFF) << 24 | //
-		(array[position++] & 0xFF) << 16 | //
-		(array[position++] & 0xFF) << 8 | //
-		(array[position++] & 0xFF);
+		return (b[position++] & 0xFF) << 24 | //
+		(b[position++] & 0xFF) << 16 | //
+		(b[position++] & 0xFF) << 8 | //
+		(b[position++] & 0xFF);
 	}
 
 	@Override
 	public void putInt(int value) {
 		require(4);
-		array[position++] = (byte) (value >> 24);
-		array[position++] = (byte) (value >> 16);
-		array[position++] = (byte) (value >> 8);
-		array[position++] = (byte) value;
+		b[position++] = (byte) (value >> 24);
+		b[position++] = (byte) (value >> 16);
+		b[position++] = (byte) (value >> 8);
+		b[position++] = (byte) value;
 	}
 
 	@Override
@@ -154,20 +155,20 @@ public class HeapByteBuf extends ByteBufImpl implements ByteBuf {
 	@Override
 	public short getShort() {
 		require(2);
-		return (short) (((array[position++] & 0xFF) << 8) | (array[position++] & 0xFF));
+		return (short) (((b[position++] & 0xFF) << 8) | (b[position++] & 0xFF));
 	}
 
 	@Override
 	public void putShort(short value) throws RuntimeException {
 		require(2);
-		array[position++] = (byte) (value >>> 8);
-		array[position++] = (byte) value;
+		b[position++] = (byte) (value >>> 8);
+		b[position++] = (byte) value;
 	}
 
 	@Override
 	public long getLong() {
 		require(8);
-		byte[] array = this.array;
+		byte[] array = this.b;
 		return (long) array[position++] << 56 //
 				| (long) (array[position++] & 0xFF) << 48 //
 				| (long) (array[position++] & 0xFF) << 40 //
@@ -181,7 +182,7 @@ public class HeapByteBuf extends ByteBufImpl implements ByteBuf {
 	@Override
 	public void putLong(long value) throws RuntimeException {
 		require(8);
-		byte[] array = this.array;
+		byte[] array = this.b;
 		array[position++] = (byte) (value >>> 56);
 		array[position++] = (byte) (value >>> 48);
 		array[position++] = (byte) (value >>> 40);
@@ -195,26 +196,26 @@ public class HeapByteBuf extends ByteBufImpl implements ByteBuf {
 	@Override
 	public boolean getBoolean() {
 		require(1);
-		return array[position++] == 1;
+		return b[position++] == 1;
 	}
 
 	@Override
 	public void putBoolean(boolean value) throws RuntimeException {
 		if (position == capacity) require(1);
-		array[position++] = (byte) (value ? 1 : 0);
+		b[position++] = (byte) (value ? 1 : 0);
 	}
 
 	@Override
 	public char getChar() {
 		require(2);
-		return (char) (((array[position++] & 0xFF) << 8) | (array[position++] & 0xFF));
+		return (char) (((b[position++] & 0xFF) << 8) | (b[position++] & 0xFF));
 	}
 
 	@Override
 	public void putChar(char value) throws RuntimeException {
 		require(2);
-		array[position++] = (byte) (value >>> 8);
-		array[position++] = (byte) value;
+		b[position++] = (byte) (value >>> 8);
+		b[position++] = (byte) value;
 	}
 
 	@Override
