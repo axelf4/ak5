@@ -3,13 +3,12 @@
  */
 package org.gamelib.graphics;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import org.gamelib.graphics.VertexAttribute.Type;
 import org.gamelib.graphics.Texture.GLTexture;
+import org.gamelib.graphics.VertexAttribute.Type;
 import org.gamelib.util.geom.Matrix4;
+import org.gamelib.util.io.BufferUtil;
 
 /** @author pwnedary */
 public class QuadBatch implements Batch {
@@ -241,7 +240,7 @@ public class QuadBatch implements Batch {
 		} else {
 			gl.glMatrixMode(GL10.GL_PROJECTION);
 			gl.glLoadIdentity();
-			gl.glLoadMatrixf((FloatBuffer) ByteBuffer.allocateDirect(combinedMatrix.data.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer().put(combinedMatrix.data).flip());
+			gl.glLoadMatrixf((FloatBuffer) BufferUtil.newFloatBuffer(combinedMatrix.data.length * 4).put(combinedMatrix.data).flip());
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 		}
 	}

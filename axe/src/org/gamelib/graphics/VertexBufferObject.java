@@ -3,15 +3,15 @@
  */
 package org.gamelib.graphics;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import org.gamelib.graphics.VertexAttribute.Type;
+import org.gamelib.util.io.BufferUtil;
 
 /** @author pwnedary */
 public class VertexBufferObject implements VertexData {
-	private static final IntBuffer tmpHandle = ByteBuffer.allocateDirect(4).asIntBuffer();
+	private static final IntBuffer tmpHandle = BufferUtil.newIntBuffer(1);
 
 	private final GL20 gl;
 	private final VertexAttributes attributes;
@@ -39,7 +39,7 @@ public class VertexBufferObject implements VertexData {
 		this.gl = gl;
 		this.attributes = attributes;
 
-		buffer = (FloatBuffer) ByteBuffer.allocateDirect(attributes.vertexSize * numVertices).asFloatBuffer().flip();
+		buffer = (FloatBuffer) BufferUtil.newFloatBuffer(attributes.vertexSize * numVertices).flip();
 		gl.glGenBuffers(1, tmpHandle);
 		bufferHandle = tmpHandle.get(0);
 		type = isStatic ? GL20.GL_STATIC_DRAW : GL20.GL_DYNAMIC_DRAW;

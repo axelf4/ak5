@@ -4,12 +4,13 @@
 package org.gamelib.graphics;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.IntBuffer;
+
+import org.gamelib.util.io.BufferUtil;
 
 /** @author pwnedary */
 public class IndexBufferObject implements IndexData {
-	final static IntBuffer tmpHandle = ByteBuffer.allocateDirect(4).asIntBuffer();
+	final static IntBuffer tmpHandle = BufferUtil.newIntBuffer(1);
 
 	final GL11 gl;
 	ByteBuffer buffer;
@@ -25,7 +26,7 @@ public class IndexBufferObject implements IndexData {
 	 * @param maxIndices the maximum number of indices this buffer can hold */
 	public IndexBufferObject(GL11 gl, boolean isStatic, int maxIndices) {
 		this.gl = gl;
-		buffer = (ByteBuffer) ByteBuffer.allocateDirect(maxIndices * 2).order(ByteOrder.nativeOrder()).flip();
+		buffer = (ByteBuffer) BufferUtil.newByteBuffer(maxIndices * 2).flip();
 		isDirect = true;
 		gl.glGenBuffers(1, tmpHandle);
 		bufferHandle = tmpHandle.get(0);

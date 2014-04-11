@@ -10,6 +10,7 @@ import java.nio.IntBuffer;
 
 import org.gamelib.Drawable;
 import org.gamelib.util.Disposable;
+import org.gamelib.util.io.BufferUtil;
 
 /** @author pwnedary */
 public interface Texture extends Drawable, Disposable {
@@ -152,7 +153,7 @@ public interface Texture extends Drawable, Disposable {
 
 		@Override
 		public void dispose() {
-			IntBuffer buffer = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asIntBuffer();
+			IntBuffer buffer = BufferUtil.newIntBuffer(1);
 			buffer.put(texture);
 			gl.glDeleteTextures(1, buffer);
 		}

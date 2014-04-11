@@ -5,7 +5,6 @@ package org.gamelib.graphics;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
@@ -15,6 +14,7 @@ import org.gamelib.util.Disposable;
 import org.gamelib.util.geom.Matrix4;
 import org.gamelib.util.geom.Vector2;
 import org.gamelib.util.geom.Vector3;
+import org.gamelib.util.io.BufferUtil;
 
 /** @author pwnedary */
 public class ShaderProgram implements Disposable {
@@ -55,7 +55,7 @@ public class ShaderProgram implements Disposable {
 	/** attribute names **/
 	private String[] attributeNames;
 
-	private ByteBuffer buffer = ByteBuffer.allocateDirect(4 * 4 * 4).order(ByteOrder.nativeOrder());
+	private ByteBuffer buffer = BufferUtil.newByteBuffer(4 * 4 * 4);
 	private IntBuffer intBuffer = buffer.asIntBuffer();
 	private FloatBuffer floatBuffer = buffer.asFloatBuffer();
 
@@ -76,28 +76,28 @@ public class ShaderProgram implements Disposable {
 		gl.glGetProgramiv(program, GL20.GL_LINK_STATUS, intBuffer);
 		if (intBuffer.get(0) == 0) throw new RuntimeException();
 
-//		gl.glValidateProgram(program);
-//		gl.glGetProgramiv(program, GL20.GL_VALIDATE_STATUS, intBuffer);
-//		if (intBuffer.get(0) == 0) throw new RuntimeException();
+		//		gl.glValidateProgram(program);
+		//		gl.glGetProgramiv(program, GL20.GL_VALIDATE_STATUS, intBuffer);
+		//		if (intBuffer.get(0) == 0) throw new RuntimeException();
 
 		boolean negative = false;
 		if (negative) {
 			// Fetch attributes and uniforms
-			IntBuffer size = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asIntBuffer();
-			IntBuffer type = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asIntBuffer();
+			IntBuffer size = BufferUtil.newIntBuffer(1);
+			IntBuffer type = BufferUtil.newIntBuffer(1);
 			//		gl.glGetProgramiv(program, GL20.GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, intBuffer);
 			//		int strLen = intBuffer.get(0);
 			//		gl.glGetProgramiv(program, GL20.GL_ACTIVE_UNIFORM_MAX_LENGTH, intBuffer);
 			//		strLen = Math.max(strLen, intBuffer.get(0));
 			int strLen = 50;
 			byte[] nameArray = new byte[strLen];
+			ByteBuffer nameBuffer = BufferUtil.newByteBuffer(strLen);
 
 			// Fetch attributes
 			gl.glGetProgramiv(program, GL20.GL_ACTIVE_ATTRIBUTES, intBuffer);
 			int numAttributes = intBuffer.get(0);
 			attributeNames = new String[numAttributes];
 			for (int i = 0; i < numAttributes; i++) {
-				ByteBuffer nameBuffer = ByteBuffer.allocateDirect(strLen).order(ByteOrder.nativeOrder());
 				gl.glGetActiveAttrib(program, i, strLen, null, size, type, nameBuffer);
 				((ByteBuffer) nameBuffer.position(0)).get(nameArray);
 				String name = new String(nameArray).trim();
@@ -112,7 +112,6 @@ public class ShaderProgram implements Disposable {
 			int numUniforms = intBuffer.get(0);
 			uniformNames = new String[numUniforms];
 			for (int i = 0; i < numUniforms; i++) {
-				ByteBuffer nameBuffer = ByteBuffer.allocateDirect(strLen).order(ByteOrder.nativeOrder());
 				gl.glGetActiveUniform(program, i, strLen, null, size, type, nameBuffer);
 				((ByteBuffer) nameBuffer.position(0)).get(nameArray);
 				String name = new String(nameArray).trim();
@@ -141,11 +140,11 @@ public class ShaderProgram implements Disposable {
 
 	public String getLog() {
 		// return gl.glGetProgramInfoLog(program, 0, null, null); // FIXME
-//		gl.glGetProgramiv(program, GL20.GL_INFO_LOG_LENGTH, intBuffer);
-//		int infoLogLen = intBuffer.get(0);
+		//		gl.glGetProgramiv(program, GL20.GL_INFO_LOG_LENGTH, intBuffer);
+		//		int infoLogLen = intBuffer.get(0);
 		int infoLogLen = 60;
 
-		ByteBuffer logBuffer = ByteBuffer.allocateDirect(infoLogLen).order(ByteOrder.nativeOrder());
+		ByteBuffer logBuffer = BufferUtil.newByteBuffer(infoLogLen);
 		gl.glGetProgramInfoLog(program, infoLogLen, null, logBuffer);
 		byte[] logArray = new byte[infoLogLen];
 		((ByteBuffer) logBuffer.clear()).get(logArray);
@@ -193,14 +192,14 @@ public class ShaderProgram implements Disposable {
 	/** @param name the name of the attribute
 	 * @return the location of the attribute or -1. */
 	public int getAttributeLocation(String name) {
-//		return attributes2.get(name);
+		//		return attributes2.get(name);
 		return fetchAttributeLocation(name);
 	}
 
 	/** @param name the name of the uniform
 	 * @return the location of the uniform or -1. */
 	public int getUniformLocation(String name) {
-//		return uniforms.get(name);
+		//		return uniforms.get(name);
 		return fetchUniformLocation(name);
 	}
 

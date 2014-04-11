@@ -3,11 +3,11 @@
  */
 package org.gamelib.graphics;
 
-import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import org.gamelib.backend.Backend;
 import org.gamelib.util.Disposable;
+import org.gamelib.util.io.BufferUtil;
 
 /** @author pwnedary */
 public class FrameBufferObject implements Disposable {
@@ -20,7 +20,7 @@ public class FrameBufferObject implements Disposable {
 		this.backend = backend;
 		this.gl = (GL20) gl;
 
-		IntBuffer buffer = ByteBuffer.allocateDirect(4).asIntBuffer();
+		IntBuffer buffer = BufferUtil.newIntBuffer(1);
 		this.gl.glGenFramebuffers(1, buffer);
 		framebuffer = buffer.get(0);
 
@@ -60,7 +60,7 @@ public class FrameBufferObject implements Disposable {
 	@Override
 	public void dispose() {
 		unbind();
-		IntBuffer buffer = ByteBuffer.allocateDirect(4).asIntBuffer();
+		IntBuffer buffer = BufferUtil.newIntBuffer(1);
 		buffer.put(framebuffer);
 		gl.glDeleteFramebuffers(1, buffer);
 	}

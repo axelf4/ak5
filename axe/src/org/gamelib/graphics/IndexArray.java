@@ -4,14 +4,15 @@
 package org.gamelib.graphics;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+
+import org.gamelib.util.io.BufferUtil;
 
 /** @author pwnedary */
 public class IndexArray implements IndexData {
 	private ByteBuffer buffer;
 
 	public IndexArray(int maxIndices) {
-		buffer = (ByteBuffer) ByteBuffer.allocateDirect(maxIndices * 2).order(ByteOrder.nativeOrder()).flip();
+		buffer = (ByteBuffer) BufferUtil.newByteBuffer(maxIndices * 2).flip();
 	}
 
 	@Override

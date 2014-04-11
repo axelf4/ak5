@@ -7,7 +7,6 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
 
 import org.gamelib.graphics.GL10;
 import org.lwjgl.opengl.EXTFramebufferObject;
