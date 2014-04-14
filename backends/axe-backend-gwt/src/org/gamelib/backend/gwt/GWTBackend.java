@@ -111,7 +111,6 @@ public class GWTBackend implements Backend { //, EntryPoint {
 		this.gl = new GwtGL20(ctx);
 
 		glContext = ctx;
-		//		initWebGL();
 	}
 
 	public void stop() {

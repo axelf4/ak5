@@ -98,7 +98,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		try {
 			gl = new LWJGLGL20();
 			input = new LWJGLInput(handler);
-			
+
 			DisplayConfiguration config = (DisplayConfiguration) configuration;
 			DisplayMode targetDisplayMode = null;
 			if (config.fullscreen()) {
@@ -127,23 +127,12 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 			Display.setDisplayMode(targetDisplayMode);
 			Display.setFullscreen(config.fullscreen());
 			if (configuration instanceof LWJGLConfiguration) Display.setVSyncEnabled(((LWJGLConfiguration) configuration).vsync());
-			Display.setResizable(config.resizable());
+			Display.setResizable(config.resizable() | true);
 			setTitle(configuration.getProperty(DisplayConfiguration.TITLE, ""));
 			if (parent != null) parent.setSize(config.getWidth(), config.getHeight()); // parent.getParent().setSize(config.getWidth(), config.getHeight());
 			Display.setParent(parent);
 			Display.create();
 
-			//			gl.glMatrixMode(GL_PROJECTION);
-			//			gl.glLoadIdentity();
-			//			gl.glOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1); // 0,0 at bottom left
-			//			// glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1); // 0,0 at top left
-			//			gl.glMatrixMode(GL_MODELVIEW);
-
-			gl.glShadeModel(GL_SMOOTH);
-			gl.glEnable(GL_BLEND);
-			gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			// glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-			gl.glClearDepthf(1.0f);
 			gl.glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		} catch (LWJGLException e) {
 			e.printStackTrace();
@@ -157,20 +146,13 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 
 	@Override
 	public void draw(Drawable callback, float delta) {
-		gl.glMatrixMode(GL_PROJECTION);
-		gl.glLoadIdentity();
-		Matrix4 projection;
-		if (configuration instanceof LWJGLConfiguration && ((LWJGLConfiguration) configuration).originBottomLeft()) projection = new Matrix4().setToOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1);
-		else projection = new Matrix4().setToOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
-		gl.glLoadMatrixf((FloatBuffer) BufferUtils.createFloatBuffer(projection.data.length).put(projection.data).flip());
-		gl.glMatrixMode(GL_MODELVIEW);
-
-		gl.glViewport(0, 0, Display.getWidth(), Display.getHeight());
-
+		if (Display.wasResized()) {
+			gl.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+			handler.handle(new Event.Resize(getWidth(), getHeight()));
+		}
 		callback.draw(gl, delta);
 		Display.update();
 		// Util.checkGLError();
-		if (Display.wasResized()) handler.handle(new Event.Resize(getWidth(), getHeight()));
 	}
 
 	@Override
@@ -220,7 +202,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		return getTexture(new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR)); // 4 bytes per pixel
 	}
 
-//	@Override
+	//	@Override
 	public Texture getTexture(BufferedImage bufferedImage) {
 		IntBuffer buffer = BufferUtils.createIntBuffer(1);
 		gl.glGenTextures(1, buffer);
