@@ -36,7 +36,7 @@ public class ShaderProgram implements Disposable {
 	private int program;
 	private int vert;
 	private int frag;
-	private boolean compiled;
+	// private boolean compiled;
 
 	/** uniform lookup **/
 	private final Map<String, Integer> uniforms = new HashMap<String, Integer>();
@@ -541,10 +541,6 @@ public class ShaderProgram implements Disposable {
 		gl.glVertexAttribPointer(location, size, type, normalize, stride, buffer);
 	}
 
-	public void setVertexAttribute(int location, int size, int type, boolean normalize, int stride, Buffer buffer) {
-		gl.glVertexAttribPointer(location, size, type, normalize, stride, buffer);
-	}
-
 	/** Sets the vertex attribute with the given name. Throws an IllegalArgumentException in case it is not called in
 	 * between a {@link #begin()}/{@link #end()} block.
 	 * 
@@ -561,10 +557,6 @@ public class ShaderProgram implements Disposable {
 		gl.glVertexAttribPointer(location, size, type, normalize, stride, offset);
 	}
 
-	public void setVertexAttribute(int location, int size, int type, boolean normalize, int stride, int offset) {
-		gl.glVertexAttribPointer(location, size, type, normalize, stride, offset);
-	}
-
 	/** Disables the vertex attribute with the given name
 	 *
 	 * @param name the vertex attribute name */
@@ -574,20 +566,12 @@ public class ShaderProgram implements Disposable {
 		gl.glDisableVertexAttribArray(location);
 	}
 
-	public void disableVertexAttribute(int location) {
-		gl.glDisableVertexAttribArray(location);
-	}
-
 	/** Enables the vertex attribute with the given name
 	 *
 	 * @param name the vertex attribute name */
 	public void enableVertexAttribute(String name) {
 		int location = fetchAttributeLocation(name);
 		if (location == -1) return;
-		gl.glEnableVertexAttribArray(location);
-	}
-
-	public void enableVertexAttribute(int location) {
 		gl.glEnableVertexAttribArray(location);
 	}
 }

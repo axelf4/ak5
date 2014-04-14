@@ -3,7 +3,7 @@
  */
 package org.gamelib.graphics;
 
-import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
 
 import org.gamelib.util.Disposable;
 
@@ -32,7 +32,7 @@ public class Mesh implements Disposable {
 		return indices;
 	}
 
-	public void setIndices(byte[] indices, int offset, int length) {
+	public void setIndices(short[] indices, int offset, int length) {
 		this.indices.setIndices(indices, offset, length);
 	}
 
@@ -85,15 +85,15 @@ public class Mesh implements Disposable {
 	public void render(int mode, int first, int count) {
 		if (indices.getNumIndices() > 0) {
 			if (vertices instanceof VertexArray) {
-				ByteBuffer buffer = indices.getBuffer();
+				ShortBuffer buffer = indices.getBuffer();
 				int oldPosition = buffer.position();
 				int oldLimit = buffer.limit();
 				buffer.position(first);
 				buffer.limit(first + count);
-				gl.glDrawElements(mode, count, GL10.GL_UNSIGNED_BYTE, buffer); // Vertex array
+				gl.glDrawElements(mode, count, GL10.GL_UNSIGNED_BYTE, buffer);
 				buffer.position(oldPosition);
 				buffer.limit(oldLimit);
-			} // else gl.glDrawElements(mode, count, GL20.GL_UNSIGNED_SHORT, first * 2); // VertexBufferObject
+			} else ((GL11) gl).glDrawElements(mode, count, GL20.GL_UNSIGNED_SHORT, first * 2);
 		} else gl.glDrawArrays(mode, first, count);
 	}
 

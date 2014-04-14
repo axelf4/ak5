@@ -5,6 +5,7 @@ package org.gamelib.backend.lwjgl;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -458,8 +459,9 @@ public class LWJGLGL20 extends LWJGLGL11 implements org.gamelib.graphics.GL20 {
 			else if (type == GL10.GL_SHORT) GL20.glVertexAttribPointer(index, size, false, normalized, stride, ((ByteBuffer) pointer).asShortBuffer());
 			else if (type == GL10.GL_UNSIGNED_SHORT) GL20.glVertexAttribPointer(index, size, true, normalized, stride, ((ByteBuffer) pointer).asShortBuffer());
 			else if (type == GL10.GL_FLOAT) GL20.glVertexAttribPointer(index, size, normalized, stride, ((ByteBuffer) pointer).asFloatBuffer());
-		}
-		throw new RuntimeException("Bad type " + pointer.getClass().getName());
+		} else if (pointer instanceof FloatBuffer) GL20.glVertexAttribPointer(index, size, normalized, stride, (FloatBuffer) pointer);
+		else if (pointer instanceof DoubleBuffer) GL20.glVertexAttribPointer(index, size, normalized, stride, (DoubleBuffer) pointer);
+		else throw new RuntimeException("Bad type " + pointer.getClass().getName());
 	}
 
 	@Override

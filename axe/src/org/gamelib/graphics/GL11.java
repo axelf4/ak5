@@ -596,6 +596,8 @@ public interface GL11 extends GL10 {
 	void glDrawArrays(int mode, int first, int count);
 
 	void glDrawElements(int mode, int count, int type, Buffer indices);
+	
+	void glDrawElements(int mode, int count, int type, int offset);
 
 	void glEnable(int cap);
 

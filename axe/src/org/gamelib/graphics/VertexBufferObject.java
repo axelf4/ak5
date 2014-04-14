@@ -38,8 +38,8 @@ public class VertexBufferObject implements VertexData {
 	public VertexBufferObject(GL20 gl, boolean isStatic, int numVertices, VertexAttributes attributes) {
 		this.gl = gl;
 		this.attributes = attributes;
-
-		buffer = (FloatBuffer) BufferUtil.newFloatBuffer(attributes.vertexSize * numVertices).flip();
+		
+		buffer = (FloatBuffer) BufferUtil.newByteBuffer(attributes.vertexSize * numVertices).asFloatBuffer().flip();
 		gl.glGenBuffers(1, tmpHandle);
 		bufferHandle = tmpHandle.get(0);
 		type = isStatic ? GL20.GL_STATIC_DRAW : GL20.GL_DYNAMIC_DRAW;
@@ -92,7 +92,7 @@ public class VertexBufferObject implements VertexData {
 			if (location < 0) continue;
 			gl.glEnableVertexAttribArray(location);
 
-			if (attribute.type == Type.COLOR_PACKED) shader.setVertexAttribute(location, attribute.numComponents, GL20.GL_UNSIGNED_BYTE, true, attributes.vertexSize, attribute.location);
+			if (attribute.type == Type.COLOR_PACKED) gl.glVertexAttribPointer(location, attribute.numComponents, GL20.GL_UNSIGNED_BYTE, true, attributes.vertexSize, attribute.location);
 			else gl.glVertexAttribPointer(location, attribute.numComponents, GL20.GL_FLOAT, false, attributes.vertexSize, attribute.location);
 		}
 		isBound = true;
@@ -111,7 +111,7 @@ public class VertexBufferObject implements VertexData {
 		final int numAttributes = attributes.size();
 		for (int i = 0; i < numAttributes; i++)
 			if (locations == null) shader.disableVertexAttribute(attributes.get(i).name);
-			else shader.disableVertexAttribute(locations[i]);
+			else gl.glDisableVertexAttribArray(locations[i]);
 		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, 0);
 		isBound = false;
 	}

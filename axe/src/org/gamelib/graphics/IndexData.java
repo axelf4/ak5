@@ -3,7 +3,7 @@
  */
 package org.gamelib.graphics;
 
-import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
 
 import org.gamelib.util.Disposable;
 
@@ -11,9 +11,9 @@ import org.gamelib.util.Disposable;
 public interface IndexData extends Disposable {
 	int getNumIndices();
 
-	void setIndices(byte[] indices, int offset, int length);
+	void setIndices(short[] indices, int offset, int length);
 
-	ByteBuffer getBuffer();
+	ShortBuffer getBuffer();
 
 	void bind();
 

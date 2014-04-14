@@ -6,6 +6,7 @@ package org.gamelib.backend.gwt;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.IntBuffer;
 
 import org.gamelib.Drawable;
 import org.gamelib.Event;
@@ -18,13 +19,19 @@ import org.gamelib.backend.Sound;
 import org.gamelib.graphics.GL10;
 import org.gamelib.graphics.GL20;
 import org.gamelib.graphics.Texture;
+import org.gamelib.graphics.Texture.Filter;
 import org.gamelib.util.Configuration;
+import org.gamelib.util.io.BufferUtil;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.CanvasElement;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 
@@ -36,6 +43,7 @@ public class GWTBackend implements Backend { //, EntryPoint {
 	private Loop loop;
 	private Canvas canvas;
 	private GL20 gl;
+	private WebGLRenderingContext glContext;
 
 	//	@Override
 	//	public void onModuleLoad() {
@@ -101,6 +109,9 @@ public class GWTBackend implements Backend { //, EntryPoint {
 		if (ctx == null) ctx = (WebGLRenderingContext) canvas.getContext("experimental-webgl");
 		if (ctx == null) Window.alert("Sorry, Your Browser doesn't support WebGL!");
 		this.gl = new GwtGL20(ctx);
+
+		glContext = ctx;
+		//		initWebGL();
 	}
 
 	public void stop() {
@@ -110,6 +121,7 @@ public class GWTBackend implements Backend { //, EntryPoint {
 
 	public void draw(Drawable drawable, float delta) {
 		drawable.draw(gl, delta);
+		//		drawWebGL();
 	}
 
 	//	public native long getTime() /*-{
@@ -171,13 +183,76 @@ public class GWTBackend implements Backend { //, EntryPoint {
 
 	@Override
 	public Texture getTexture(String name) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		IntBuffer textures = BufferUtil.newIntBuffer(1);
+		gl.glGenTextures(1, textures);
+		final Texture texture = new Texture.GLTexture(gl, GL10.GL_TEXTURE_2D, textures.get(0), 0, 0);
+		texture.bind();
+		//		texture = glContext.createTexture();
+		//		glContext.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture);
+		final Image img = new Image(name); // url
+		img.setVisible(false);
+//		final Image img = getImage(Resources.INSTANCE.texture());
+		img.addLoadHandler(new LoadHandler() {
+			@Override
+			public void onLoad(LoadEvent event) {
+				RootPanel.get().remove(img);
+				GWT.log("texture image loaded", null);
+				texture.bind();
+				gl.glPixelStorei(WebGLRenderingContext.UNPACK_FLIP_Y_WEBGL, GL10.GL_TRUE);
+				glContext.texImage2D(WebGLRenderingContext.TEXTURE_2D, 0, WebGLRenderingContext.RGBA, WebGLRenderingContext.RGBA, WebGLRenderingContext.UNSIGNED_BYTE, img.getElement());
+			}
+		});
+		RootPanel.get().add(img);
+		texture.setFilter(Filter.LINEAR, Filter.LINEAR);
+		texture.unbind();
+		return texture;
 	}
 
 	@Override
 	public Sound getSound(File file) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	/** Initializes the texture of this example. */
+	public Texture initTexture() {
+		IntBuffer textures = BufferUtil.newIntBuffer(1);
+		gl.glGenTextures(1, textures);
+		final Texture texture = new Texture.GLTexture(gl, GL10.GL_TEXTURE_2D, textures.get(0), 0, 0);
+		texture.bind();
+		//		texture = glContext.createTexture();
+		//		glContext.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture);
+		final Image img = getImage(Resources.INSTANCE.texture());
+		img.addLoadHandler(new LoadHandler() {
+			@Override
+			public void onLoad(LoadEvent event) {
+				RootPanel.get().remove(img);
+				GWT.log("texture image loaded", null);
+				texture.bind();
+				//				glContext.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture);
+				gl.glPixelStorei(WebGLRenderingContext.UNPACK_FLIP_Y_WEBGL, GL10.GL_TRUE);
+				glContext.texImage2D(WebGLRenderingContext.TEXTURE_2D, 0, WebGLRenderingContext.RGBA, WebGLRenderingContext.RGBA, WebGLRenderingContext.UNSIGNED_BYTE, img.getElement());
+			}
+		});
+		texture.setFilter(Filter.LINEAR, Filter.LINEAR);
+		texture.unbind();
+		//		glContext.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MAG_FILTER, WebGLRenderingContext.LINEAR);
+		//		glContext.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MIN_FILTER, WebGLRenderingContext.LINEAR);
+		//		glContext.bindTexture(WebGLRenderingContext.TEXTURE_2D, null);
+		return texture;
+	}
+
+	/** Converts ImageResource to Image.
+	 * 
+	 * @param imageResource
+	 * @return {@link Image} to be used as a texture */
+	public Image getImage(final ImageResource imageResource) {
+		final Image img = new Image();
+		img.setVisible(false);
+		RootPanel.get().add(img);
+
+		img.setUrl(imageResource.getSafeUri());
+
+		return img;
 	}
 }

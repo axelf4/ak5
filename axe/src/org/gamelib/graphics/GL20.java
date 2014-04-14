@@ -396,6 +396,8 @@ public interface GL20 extends GL11 {
 
 	void glDrawElements(int mode, int count, int type, Buffer indices);
 
+	void glDrawElements(int mode, int count, int type, int offset);
+
 	void glEnable(int cap);
 
 	void glEnableVertexAttribArray(int index);
@@ -593,7 +595,7 @@ public interface GL20 extends GL11 {
 	void glVertexAttrib4fv(int index, FloatBuffer v);
 
 	void glVertexAttribPointer(int index, int size, int type, boolean normalized, int stride, Buffer pointer);
-	
+
 	void glVertexAttribPointer(int index, int size, int type, boolean normalized, int stride, int offset);
 
 	void glViewport(int x, int y, int width, int height);

@@ -3,9 +3,6 @@
  */
 package org.gamelib.graphics;
 
-import java.awt.Image;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 
 import org.gamelib.Drawable;
@@ -64,6 +61,9 @@ public interface Texture extends Drawable, Disposable {
 
 	/** Binds this texture to the specified target for future use. */
 	void bind();
+	
+	/** Unbinds this texture. */
+	void unbind();
 
 	/** Returns the width of this image.
 	 * 
@@ -161,6 +161,11 @@ public interface Texture extends Drawable, Disposable {
 		@Override
 		public void bind() {
 			gl.glBindTexture(target, texture);
+		}
+		
+		@Override
+		public void unbind() {
+			gl.glBindTexture(target, 0);
 		}
 
 		@Override

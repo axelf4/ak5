@@ -3,16 +3,16 @@
  */
 package org.gamelib.graphics;
 
-import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
 
 import org.gamelib.util.io.BufferUtil;
 
 /** @author pwnedary */
 public class IndexArray implements IndexData {
-	private ByteBuffer buffer;
+	private ShortBuffer buffer;
 
 	public IndexArray(int maxIndices) {
-		buffer = (ByteBuffer) BufferUtil.newByteBuffer(maxIndices * 2).flip();
+		buffer = (ShortBuffer) BufferUtil.newShortBuffer(maxIndices).flip();
 	}
 
 	@Override
@@ -21,12 +21,12 @@ public class IndexArray implements IndexData {
 	}
 
 	@Override
-	public void setIndices(byte[] indices, int offset, int length) {
-		((ByteBuffer) buffer.clear()).put(indices, offset, length).flip();
+	public void setIndices(short[] indices, int offset, int length) {
+		((ShortBuffer) buffer.clear()).put(indices, offset, length).flip();
 	}
 
 	@Override
-	public ByteBuffer getBuffer() {
+	public ShortBuffer getBuffer() {
 		return buffer;
 	}
 

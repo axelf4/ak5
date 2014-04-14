@@ -152,6 +152,11 @@ public class LWJGLGL11 implements org.gamelib.graphics.GL11 {
 	}
 
 	@Override
+	public void glDrawElements(int mode, int count, int type, int offset) {
+		GL11.glDrawElements(mode, count, type, offset);
+	}
+
+	@Override
 	public void glEnable(int cap) {
 		GL11.glEnable(cap);
 	}

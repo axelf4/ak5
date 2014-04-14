@@ -50,29 +50,17 @@ public class VertexArray implements VertexData {
 
 	@Override
 	public void bind(ShaderProgram shader, int[] locations) {
+		GL20 gl = (GL20) this.gl;
 		final int numAttributes = attributes.size();
-		if (locations == null) {
-			for (int i = 0; i < numAttributes; i++) {
-				final VertexAttribute attribute = attributes.get(i);
-				final int location = shader.getAttributeLocation(attribute.name);
-				if (location < 0) continue;
-				shader.enableVertexAttribute(location);
+		for (int i = 0; i < numAttributes; i++) {
+			final VertexAttribute attribute = attributes.get(i);
+			final int location = locations == null ? shader.getAttributeLocation(attribute.name) : locations[i];
+			if (location < 0) continue;
+			gl.glEnableVertexAttribArray(location);
+			buffer.position(attribute.location);
 
-				buffer.position(attribute.location);
-				if (attribute.type == Type.COLOR_PACKED) shader.setVertexAttribute(location, attribute.numComponents, GL20.GL_UNSIGNED_BYTE, true, attributes.vertexSize, buffer);
-				else shader.setVertexAttribute(location, attribute.numComponents, GL20.GL_FLOAT, false, attributes.vertexSize, buffer);
-			}
-		} else {
-			for (int i = 0; i < numAttributes; i++) {
-				final VertexAttribute attribute = attributes.get(i);
-				final int location = locations[i];
-				if (location < 0) continue;
-				shader.enableVertexAttribute(location);
-
-				buffer.position(attribute.location);
-				if (attribute.type == Type.COLOR_PACKED) shader.setVertexAttribute(location, attribute.numComponents, GL20.GL_UNSIGNED_BYTE, true, attributes.vertexSize, buffer);
-				else shader.setVertexAttribute(location, attribute.numComponents, GL20.GL_FLOAT, false, attributes.vertexSize, buffer);
-			}
+			if (attribute.type == Type.COLOR_PACKED) gl.glVertexAttribPointer(location, attribute.numComponents, GL20.GL_UNSIGNED_BYTE, true, attributes.vertexSize, buffer);
+			gl.glVertexAttribPointer(location, attribute.numComponents, GL20.GL_FLOAT, false, attributes.vertexSize, buffer);
 		}
 	}
 
@@ -103,16 +91,9 @@ public class VertexArray implements VertexData {
 	@Override
 	public void unbind(ShaderProgram shader, int[] locations) {
 		final int numAttributes = attributes.size();
-		if (locations == null) {
-			for (int i = 0; i < numAttributes; i++) {
-				shader.disableVertexAttribute(attributes.get(i).name);
-			}
-		} else {
-			for (int i = 0; i < numAttributes; i++) {
-				final int location = locations[i];
-				if (location >= 0) shader.disableVertexAttribute(location);
-			}
-		}
+		for (int i = 0; i < numAttributes; i++)
+			if (locations == null) shader.disableVertexAttribute(attributes.get(i).name);
+			else ((GL20) gl).glDisableVertexAttribArray(locations[i]);
 	}
 
 	@Override

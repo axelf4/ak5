@@ -128,6 +128,16 @@ public class GwtGL20 implements GL20 {
 	private WebGLUniformLocation getUniformLocation(int location) {
 		return uniforms.get(currProgram).get(location);
 	}
+	
+	private <T> int allocateId(Map<Integer, T> map, T value) {
+		int id = map.size();
+		map.put(id, value);
+		return id;
+	}
+	
+	private void deallocateId(Map<Integer, ?> map, int id) {
+		map.remove(id);
+	}
 
 	private int allocateShaderId(WebGLShader shader) {
 		int id = nextShaderId++;
@@ -179,16 +189,16 @@ public class GwtGL20 implements GL20 {
 	private void deallocateRenderBufferId(int id) {
 		renderBuffers.remove(id);
 	}
-
-	private int allocateTextureId(WebGLTexture texture) {
-		int id = nextTextureId++;
-		textures.put(id, texture);
-		return id;
-	}
-
-	private void deallocateTextureId(int id) {
-		textures.remove(id);
-	}
+//
+//	private int allocateTextureId(WebGLTexture texture) {
+//		int id = nextTextureId++;
+//		textures.put(id, texture);
+//		return id;
+//	}
+//
+//	private void deallocateTextureId(int id) {
+//		textures.remove(id);
+//	}
 
 	@Override
 	public void glActiveTexture(int texture) {
@@ -260,7 +270,7 @@ public class GwtGL20 implements GL20 {
 		for (int i = 0; i < n; i++) {
 			int id = textures.get();
 			WebGLTexture texture = this.textures.get(id);
-			deallocateTextureId(id);
+			deallocateId(this.textures, id);// deallocateTextureId(id);
 			gl.deleteTexture(texture);
 		}
 	}
@@ -294,6 +304,11 @@ public class GwtGL20 implements GL20 {
 	public void glDrawElements(int mode, int count, int type, Buffer indices) {
 		gl.drawElements(mode, count, type, indices.position()); // FIXME this is assuming WebGL supports client side buffers...
 	}
+	
+	@Override
+	public void glDrawElements(int mode, int count, int type, int offset) {
+		gl.drawElements(mode, count, type, offset);
+	}
 
 	@Override
 	public void glEnable(int cap) {
@@ -318,7 +333,7 @@ public class GwtGL20 implements GL20 {
 	@Override
 	public void glGenTextures(int n, IntBuffer textures) {
 		WebGLTexture texture = gl.createTexture();
-		int id = allocateTextureId(texture);
+		int id = allocateId(this.textures, texture); // allocateTextureId(texture);
 		textures.put(id);
 	}
 
@@ -581,7 +596,7 @@ public class GwtGL20 implements GL20 {
 		for (int i = 0; i < n; i++) {
 			WebGLBuffer buffer = gl.createBuffer();
 			int id = allocateBufferId(buffer);
-			buffers.put(id);
+			buffers.put(i, id);
 		}
 	}
 
@@ -750,7 +765,7 @@ public class GwtGL20 implements GL20 {
 
 	@Override
 	public ByteBuffer glGetVertexAttribPointerv(int index, int pname, long result_size) {
-		throw new UnsupportedOperationException("glGetVertexAttribPointer not supported by GWT WebGL backend");
+		throw new UnsupportedOperationException("glGetVertexAttribPointer not supported by GwtGL");
 	}
 
 	@Override

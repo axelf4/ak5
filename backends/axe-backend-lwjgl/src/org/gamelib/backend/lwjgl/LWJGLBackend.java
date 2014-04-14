@@ -234,8 +234,8 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 		texture.bind();
 		texture.setFilter(Texture.Filter.NEAREST, Texture.Filter.NEAREST);
 		//		texture.setWrap(Texture.Wrap.CLAMP_TO_EDGE, Texture.Wrap.CLAMP_TO_EDGE);
-		gl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		gl.glTexImage2D(target, 0, GL_RGBA, ((GLTexture) texture).getTexWidth(), ((GLTexture) texture).getTexHeight(), 0, srcPixelFormat, GL_UNSIGNED_BYTE, textureBuffer); // produce a texture from the byte buffer
+		gl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		return texture;
 	}
 
