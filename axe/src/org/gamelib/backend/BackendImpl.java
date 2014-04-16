@@ -56,8 +56,8 @@ public abstract class BackendImpl implements Backend {
 	}
 
 	@Override
-	public InputStream getResourceAsStream(String name) {
-		return Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
+	public InputStream getResourceAsStream(CharSequence name) {
+		return Thread.currentThread().getContextClassLoader().getResourceAsStream(name.toString());
 	}
 
 	public class DefaultLoopListener implements LoopListener {

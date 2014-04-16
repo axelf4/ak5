@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Hashtable;
 
@@ -40,8 +39,8 @@ import org.gamelib.graphics.Texture;
 import org.gamelib.graphics.Texture.GLTexture;
 import org.gamelib.util.Configuration;
 import org.gamelib.util.Math2;
-import org.gamelib.util.geom.Matrix4;
 import org.gamelib.util.geom.Rectangle;
+import org.gamelib.util.io.Asset;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
@@ -191,9 +190,15 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	public int getHeight() {
 		return Display.getHeight();
 	}
+	
+	@Override
+	public Asset<?> getAsset(CharSequence path) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
-	public Texture getTexture(String name) throws IOException {
+	public Texture getTexture(CharSequence name) throws IOException {
 		return getTexture(ImageIO.read(getResourceAsStream(name)));
 	}
 

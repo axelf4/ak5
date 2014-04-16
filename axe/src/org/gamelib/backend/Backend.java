@@ -14,6 +14,7 @@ import org.gamelib.graphics.GL10;
 import org.gamelib.graphics.Texture;
 import org.gamelib.util.Configuration;
 import org.gamelib.util.Disposable;
+import org.gamelib.util.io.Asset;
 
 /** The class responsible for the technical stuff, such as collecting input and processing it.
  * 
@@ -52,13 +53,15 @@ public interface Backend extends Disposable {
 	Input getInput();
 
 	/** @return an {@link InputStream} for the specified resource. */
-	public InputStream getResourceAsStream(String name);
+	public InputStream getResourceAsStream(CharSequence name);
+	
+	Asset<?> getAsset(CharSequence path);
 
 	/** @return an empty image */
 	public Texture createTexture(int width, int height);
 
 	/** @return the image from the file */
-	public Texture getTexture(String name) throws IOException;
+	public Texture getTexture(CharSequence name) throws IOException;
 
 //	public Texture getTexture(BufferedImage img);
 

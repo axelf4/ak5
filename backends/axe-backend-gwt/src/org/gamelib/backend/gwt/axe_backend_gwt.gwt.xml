@@ -6,8 +6,13 @@
 	<inherits name="org.gamelib.axe" />
 	<inherits name='com.googlecode.gwtgl.binding' />
 
-	<source path="">
-		<exclude name="emu/**" />
-	</source>
 	<super-source path="emu" />
+	<source path="">
+		<exclude name="**/emu/**" />
+		<exclude name="**/AssetBundleGenerator.java" />
+	</source>
+
+	<generate-with class="org.gamelib.backend.gwt.files.AutoClientBundleGenerator">
+		<when-type-assignable class="org.gamelib.backend.gwt.files.AutoClientBundle" />
+	</generate-with>
 </module>
