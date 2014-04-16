@@ -43,6 +43,7 @@ public class GWTBackend implements Backend, Handler { //, EntryPoint {
 	private boolean running;
 	private Loop loop;
 	private Canvas canvas;
+	private GwtInput input;
 	private GL20 gl;
 	private AssetLoader assetLoader;
 
@@ -61,6 +62,7 @@ public class GWTBackend implements Backend, Handler { //, EntryPoint {
 
 		this.running = true;
 		loop = new RequestAnimationFrameLoop(new DefaultLoopListener());
+		//		loop = new TimerLoop(new DefaultLoopListener());
 		start();
 	}
 
@@ -107,9 +109,9 @@ public class GWTBackend implements Backend, Handler { //, EntryPoint {
 		canvas.setCoordinateSpaceWidth(configuration.getProperty("width", 300));
 		canvas.setCoordinateSpaceHeight(configuration.getProperty("height", 150));
 		canvas.setPixelSize(configuration.getProperty("width", 300), configuration.getProperty("height", 150));
-
 		RootPanel.get().add(canvas);
 
+		input = new GwtInput(canvas, handler);
 		WebGLRenderingContext ctx = (WebGLRenderingContext) canvas.getContext("webgl");
 		if (ctx == null) ctx = (WebGLRenderingContext) canvas.getContext("experimental-webgl");
 		if (ctx == null) Window.alert("Sorry, Your Browser doesn't support WebGL!");
@@ -157,8 +159,7 @@ public class GWTBackend implements Backend, Handler { //, EntryPoint {
 	}
 
 	public Input getInput() {
-		// TODO Auto-generated method stub
-		return null;
+		return input;
 	}
 
 	public GL10 getGL() {

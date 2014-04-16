@@ -18,9 +18,11 @@ public interface Input {
 	static final int MAX_REPEAT_RATE = 100;
 
 	/** The "key pressed" event. */
-	static final int KEY_PRESSED = 401;
+	int KEY_PRESSED = 401;
 	/** The "key released" event. */
-	static final int KEY_RELEASED = 402;
+	int KEY_RELEASED = 402;
+	/** The "key typed" event. */
+	int KEY_TYPED = 403;
 
 	/** The "mouse moved" event. */
 	static final int MOUSE_MOVED = 0;
@@ -148,8 +150,8 @@ public interface Input {
 			handler.handle(new Event.Mouse(this, id, button));
 		}
 
-		protected void mouseWheelEvent(double scrollAmount) {
-			handler.handle(new Event.MouseWheel(this, scrollAmount));
+		protected void mouseWheelEvent(double deltaY) {
+			handler.handle(new Event.MouseWheel(this, deltaY));
 		}
 	}
 

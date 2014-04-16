@@ -104,11 +104,11 @@ public interface Event {
 
 	/** @see java.awt.event.MouseWheelEvent */
 	public static final class MouseWheel extends Control {
-		public final double scrollAmount;
+		public final double deltaY;
 
-		public MouseWheel(Input input, double scrollAmount) {
+		public MouseWheel(Input input, double deltaY) {
 			super(input);
-			this.scrollAmount = scrollAmount;
+			this.deltaY = deltaY;
 		}
 	}
 

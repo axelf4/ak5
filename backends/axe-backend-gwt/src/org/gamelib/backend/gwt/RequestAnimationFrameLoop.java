@@ -11,7 +11,7 @@ import com.google.gwt.animation.client.AnimationScheduler.AnimationCallback;
 /** @author pwnedary */
 public class RequestAnimationFrameLoop implements Loop, AnimationCallback {
 	private LoopListener listener;
-	private AnimationScheduler scheduler = AnimationScheduler.get();
+	private final AnimationScheduler scheduler = AnimationScheduler.get();
 
 	private double last;
 	private int fps = 0;
@@ -46,8 +46,7 @@ public class RequestAnimationFrameLoop implements Loop, AnimationCallback {
 		listener.draw(delta);
 
 		if (listener.keepRunning())
-		// AnimationHandle handle = 
-		scheduler.requestAnimationFrame(this);
+		/* AnimationHandle handle = */scheduler.requestAnimationFrame(this);
 		else listener.stop();
 	}
 }
