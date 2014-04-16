@@ -59,6 +59,10 @@ public class GwtGL20 implements GL20 {
 		gl.pixelStorei(WebGLRenderingContext.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
 	}
 
+	public WebGLRenderingContext getWebGLRenderingContext() {
+		return gl;
+	}
+
 	private void ensureCapacity(FloatBuffer buffer) {
 		if (buffer.remaining() > floatBuffer.getLength()) {
 			floatBuffer = Float32Array.create(buffer.remaining());
@@ -128,13 +132,13 @@ public class GwtGL20 implements GL20 {
 	private WebGLUniformLocation getUniformLocation(int location) {
 		return uniforms.get(currProgram).get(location);
 	}
-	
+
 	private <T> int allocateId(Map<Integer, T> map, T value) {
 		int id = map.size();
 		map.put(id, value);
 		return id;
 	}
-	
+
 	private void deallocateId(Map<Integer, ?> map, int id) {
 		map.remove(id);
 	}
@@ -189,16 +193,17 @@ public class GwtGL20 implements GL20 {
 	private void deallocateRenderBufferId(int id) {
 		renderBuffers.remove(id);
 	}
-//
-//	private int allocateTextureId(WebGLTexture texture) {
-//		int id = nextTextureId++;
-//		textures.put(id, texture);
-//		return id;
-//	}
-//
-//	private void deallocateTextureId(int id) {
-//		textures.remove(id);
-//	}
+
+	//
+	//	private int allocateTextureId(WebGLTexture texture) {
+	//		int id = nextTextureId++;
+	//		textures.put(id, texture);
+	//		return id;
+	//	}
+	//
+	//	private void deallocateTextureId(int id) {
+	//		textures.remove(id);
+	//	}
 
 	@Override
 	public void glActiveTexture(int texture) {
@@ -304,7 +309,7 @@ public class GwtGL20 implements GL20 {
 	public void glDrawElements(int mode, int count, int type, Buffer indices) {
 		gl.drawElements(mode, count, type, indices.position()); // FIXME this is assuming WebGL supports client side buffers...
 	}
-	
+
 	@Override
 	public void glDrawElements(int mode, int count, int type, int offset) {
 		gl.drawElements(mode, count, type, offset);
@@ -1035,511 +1040,511 @@ public class GwtGL20 implements GL20 {
 	@Override
 	public void glAlphaFunc(int func, float ref) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glClipPlanef(int plane, FloatBuffer equation) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glColor4f(float red, float green, float blue, float alpha) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glFogf(int pname, float param) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glFogfv(int pname, FloatBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glFrustumf(float left, float right, float bottom, float top, float zNear, float zFar) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glGetClipPlanef(int pname, FloatBuffer eqn) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glGetLightfv(int light, int pname, FloatBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glGetMaterialfv(int face, int pname, FloatBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glGetTexEnvfv(int env, int pname, FloatBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glLightModelf(int pname, float param) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glLightModelfv(int pname, FloatBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glLightf(int light, int pname, float param) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glLightfv(int light, int pname, FloatBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glLoadMatrixf(FloatBuffer m) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glMaterialf(int face, int pname, float param) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glMaterialfv(int face, int pname, FloatBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glMultMatrixf(FloatBuffer m) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glMultiTexCoord4f(int target, float s, float t, float r, float q) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glNormal3f(float nx, float ny, float nz) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glOrthof(float left, float right, float bottom, float top, float zNear, float zFar) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glPointParameterf(int pname, float param) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glPointParameterfv(int pname, FloatBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glPointSize(float size) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glRotatef(float angle, float x, float y, float z) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glScalef(float x, float y, float z) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glTexEnvf(int target, int pname, float param) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glTexEnvfv(int target, int pname, FloatBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glTranslatef(float x, float y, float z) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glAlphaFuncx(int func, int ref) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glClearColorx(int red, int green, int blue, int alpha) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glClearDepthx(int depth) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glClientActiveTexture(int texture) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glClipPlanex(int plane, IntBuffer equation) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glColor4ub(byte red, byte green, byte blue, byte alpha) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glColor4x(int red, int green, int blue, int alpha) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glColorPointer(int size, int type, int stride, Buffer pointer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glDepthRangex(int zNear, int zFar) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glDisableClientState(int array) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glEnableClientState(int array) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glFogx(int pname, int param) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glFogxv(int pname, IntBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glFrustumx(int left, int right, int bottom, int top, int zNear, int zFar) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glGetClipPlanex(int pname, IntBuffer eqn) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glGetFixedv(int pname, IntBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glGetLightxv(int light, int pname, IntBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glGetMaterialxv(int face, int pname, IntBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glGetPointerv(int pname, Buffer[] params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glGetTexEnviv(int env, int pname, IntBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glGetTexEnvxv(int env, int pname, IntBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glGetTexParameterxv(int target, int pname, IntBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glLightModelx(int pname, int param) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glLightModelxv(int pname, IntBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glLightx(int light, int pname, int param) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glLightxv(int light, int pname, IntBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glLineWidthx(int width) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glLoadIdentity() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glLoadMatrixx(IntBuffer m) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glLogicOp(int opcode) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glMaterialx(int face, int pname, int param) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glMaterialxv(int face, int pname, IntBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glMatrixMode(int mode) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glMultMatrixx(IntBuffer m) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glMultiTexCoord4x(int target, int s, int t, int r, int q) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glNormal3x(int nx, int ny, int nz) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glNormalPointer(int type, int stride, Buffer pointer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glOrthox(int left, int right, int bottom, int top, int zNear, int zFar) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glPointParameterx(int pname, int param) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glPointParameterxv(int pname, IntBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glPointSizex(int size) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glPolygonOffsetx(int factor, int units) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glPopMatrix() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glPushMatrix() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glRotatex(int angle, int x, int y, int z) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glSampleCoveragex(int value, boolean invert) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glScalex(int x, int y, int z) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glShadeModel(int mode) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glTexCoordPointer(int size, int type, int stride, Buffer pointer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glTexEnvi(int target, int pname, int param) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glTexEnvx(int target, int pname, int param) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glTexEnviv(int target, int pname, IntBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glTexEnvxv(int target, int pname, IntBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glTexParameterx(int target, int pname, int param) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glTexParameterxv(int target, int pname, IntBuffer params) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void glTranslatex(int x, int y, int z) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

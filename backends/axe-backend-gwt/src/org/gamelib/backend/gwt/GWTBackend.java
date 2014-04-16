@@ -44,7 +44,6 @@ public class GWTBackend implements Backend, Handler { //, EntryPoint {
 	private Loop loop;
 	private Canvas canvas;
 	private GL20 gl;
-	private WebGLRenderingContext glContext;
 	private AssetLoader assetLoader;
 
 	//	@Override
@@ -115,8 +114,6 @@ public class GWTBackend implements Backend, Handler { //, EntryPoint {
 		if (ctx == null) ctx = (WebGLRenderingContext) canvas.getContext("experimental-webgl");
 		if (ctx == null) Window.alert("Sorry, Your Browser doesn't support WebGL!");
 		this.gl = new GwtGL20(ctx);
-
-		glContext = ctx;
 	}
 
 	public void stop() {
@@ -210,10 +207,10 @@ public class GWTBackend implements Backend, Handler { //, EntryPoint {
 		final Texture texture = new Texture.GLTexture(gl, GL10.GL_TEXTURE_2D, textures.get(0), img.getWidth(), img.getHeight());
 		texture.bind();
 		gl.glPixelStorei(WebGLRenderingContext.UNPACK_FLIP_Y_WEBGL, GL10.GL_TRUE);
-		glContext.texImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, img.getElement());
+		((GwtGL20) gl).getWebGLRenderingContext().texImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, img.getElement());
 		texture.setFilter(Filter.LINEAR, Filter.LINEAR);
 		texture.unbind();
-		
+
 		return texture;
 	}
 
