@@ -37,7 +37,7 @@ public class AutoClientBundleGenerator extends Generator {
 		sourceWriter.println("public String[] getAssets() { return new String[] { ");
 
 		File assetPath = new File("../", getAssetPath(context));
-		File assetOutputPath = new File(getAssetOutputPath(context));
+		File assetOutputPath = new File("./" +getAssetOutputPath(context));
 		try {
 			copy(assetPath, assetOutputPath, sourceWriter);
 		} catch (IOException e) {
@@ -76,7 +76,7 @@ public class AutoClientBundleGenerator extends Generator {
 	}
 
 	private void copy(File src, File dest, SourceWriter sourceWriter)
-			throws IOException {
+			throws IOException, UnableToCompleteException {
 		if (src.isDirectory()) {
 			dest.mkdirs(); // If target directory doesn't exists, create it
 			// List all the directory contents
@@ -93,7 +93,22 @@ public class AutoClientBundleGenerator extends Generator {
 			in.close();
 			out.close();
 
-			sourceWriter.println("\"" + URLConnection.guessContentTypeFromName(dest.getPath()) + ":" + dest.getPath().replace('\\', '/') + "\", ");
+			sourceWriter.println("\"" + URLConnection.guessContentTypeFromName(dest.getPath()) + ":" + dest.getPath().replace('\\', '/').replace(getWarDirectory(null).getPath() + '/', "") + "\", ");
+		}
+	}
+
+	/** When invoking the GWT compiler from GPE, the working directory is the Eclipse project directory. However, when
+	 * launching a GPE project, the working directory is the project 'war' directory. This methods returns the war
+	 * directory in either case in a fairly naive and non-robust manner. */
+	private File getWarDirectory(TreeLogger logger)
+			throws UnableToCompleteException {
+		File currentDirectory = new File(".");
+		try {
+			if (currentDirectory.getCanonicalPath().endsWith("war")) return currentDirectory;
+			else return new File("war");
+		} catch (IOException e) {
+			logger.log(TreeLogger.ERROR, "Failed to get canonical path", e);
+			throw new UnableToCompleteException();
 		}
 	}
 }
