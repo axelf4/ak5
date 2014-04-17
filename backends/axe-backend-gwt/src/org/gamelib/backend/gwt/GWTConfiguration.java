@@ -4,7 +4,6 @@
 package org.gamelib.backend.gwt;
 
 import org.gamelib.util.Configuration;
-import org.gamelib.util.slow.reflection.NativeType;
 
 /** @author pwnedary */
 public class GWTConfiguration implements Configuration {
@@ -40,7 +39,7 @@ public class GWTConfiguration implements Configuration {
 				return (T) title;
 			}
 		}
-		return (T) (def.length == 0 ? new NativeType<>(def.getClass().getComponentType()).getDefaultValue() : (def.length == 1 ? def[0] : def));
+		return (T) (def.length == 0 ? null : (def.length == 1 ? def[0] : def));
 	}
 
 	@Override
