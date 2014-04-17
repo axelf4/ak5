@@ -3,7 +3,6 @@
  */
 package org.gamelib;
 
-import org.gamelib.backend.Input;
 import org.gamelib.graphics.GL10;
 
 /** An Event that occurred; may hold additional information.

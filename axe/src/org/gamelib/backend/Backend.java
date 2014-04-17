@@ -9,6 +9,7 @@ import java.io.InputStream;
 
 import org.gamelib.Drawable;
 import org.gamelib.Handler;
+import org.gamelib.Input;
 import org.gamelib.Loop;
 import org.gamelib.graphics.GL10;
 import org.gamelib.graphics.Texture;

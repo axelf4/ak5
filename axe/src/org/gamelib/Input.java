@@ -1,10 +1,9 @@
 /**
  * 
  */
-package org.gamelib.backend;
+package org.gamelib;
 
-import org.gamelib.Event;
-import org.gamelib.Handler;
+import org.gamelib.backend.Backend;
 import org.gamelib.graphics.Texture;
 
 /**

@@ -10,8 +10,8 @@ import org.gamelib.Event;
 import org.gamelib.FixedTimestepLoop;
 import org.gamelib.Handler;
 import org.gamelib.Loop;
+import org.gamelib.Input.Key;
 import org.gamelib.Loop.LoopListener;
-import org.gamelib.backend.Input.Key;
 import org.gamelib.graphics.GL10;
 import org.gamelib.util.Configuration;
 

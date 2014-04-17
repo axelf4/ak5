@@ -4,8 +4,8 @@
 package org.gamelib.backend.gwt;
 
 import org.gamelib.Handler;
-import org.gamelib.backend.Input;
-import org.gamelib.backend.Input.InputImpl;
+import org.gamelib.Input;
+import org.gamelib.Input.InputImpl;
 import org.gamelib.graphics.Texture;
 
 import com.google.gwt.canvas.client.Canvas;
