@@ -65,8 +65,6 @@ public interface VariableConfiguration extends Configuration {
 			else if (type == Short.TYPE || type == Short.class) return (T) new Short((short) 0);
 			else if (type == Byte.TYPE || type == Byte.class) return (T) new Byte((byte) 0);
 			else if (type == Boolean.TYPE || type == Boolean.class) return (T) Boolean.FALSE;
-			else if (type == String.class) return (T) "";
-			else if (type.isArray()) return (T) Array.newInstance(type.getComponentType(), 0);
 			else return null;
 		}
 	}
