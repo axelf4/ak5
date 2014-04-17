@@ -5,7 +5,6 @@ package org.gamelib.backend;
 
 import org.gamelib.util.Configuration;
 import org.gamelib.util.VariableConfiguration;
-import org.gamelib.util.slow.reflection.NativeType;
 
 /**
  * @author pwnedary
@@ -44,7 +43,7 @@ public class DisplayConfiguration extends VariableConfiguration.VariableConfigur
 				return (T) title;
 			}
 		}
-		return (T) (def.length == 0 ? new NativeType<>(def.getClass().getComponentType()).getDefaultValue() : (def.length == 1 ? def[0] : def));
+		return super.getProperty(key, def);
 	}
 
 	@Override

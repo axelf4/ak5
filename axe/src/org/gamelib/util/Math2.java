@@ -5,8 +5,6 @@ package org.gamelib.util;
 
 import static java.lang.Math.*;
 
-import org.gamelib.util.slow.Range;
-
 /**
  * rename to MathUtils or Math2
  * @author pwnedary
@@ -38,12 +36,6 @@ public class Math2 {
 
 	public static float clamp(float i, float min, float max) {
 		return i < min ? min : i > max ? max : i;
-	}
-
-	/** @deprecated in favor of {@link Range} */
-	@Deprecated
-	public static boolean inRange(int i, int min, int max) {
-		return i <= max && i >= min;
 	}
 
 	public static int log2(int i) {
