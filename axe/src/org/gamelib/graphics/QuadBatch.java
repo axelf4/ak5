@@ -19,7 +19,7 @@ public class QuadBatch implements Batch {
 	private int idx;
 	private Texture lastTexture;
 
-	private final Matrix4 transformMatrix = new Matrix4();
+	public final Matrix4 transformMatrix = new Matrix4();
 	public final Matrix4 projectionMatrix = new Matrix4();
 	private final Matrix4 combinedMatrix = new Matrix4();
 	private ShaderProgram shader;
@@ -234,7 +234,7 @@ public class QuadBatch implements Batch {
 	}
 
 	private void setupMatrices() {
-		combinedMatrix.set(projectionMatrix).mul(transformMatrix);
+		combinedMatrix.set(projectionMatrix).mult(transformMatrix);
 		if (shader != null) {
 			shader.setUniformMatrix("u_projTrans", combinedMatrix);
 			shader.setUniformi("u_texture", 0);
