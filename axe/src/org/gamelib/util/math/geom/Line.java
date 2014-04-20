@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.util.geom;
+package org.gamelib.util.math.geom;
 
 import java.awt.Graphics;
 import java.awt.geom.Line2D;

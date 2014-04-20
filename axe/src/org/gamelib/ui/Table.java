@@ -11,7 +11,7 @@ import org.gamelib.Group;
 import org.gamelib.Handler;
 import org.gamelib.ui.Table.TableToolkit.DebugRect;
 import org.gamelib.util.Pool;
-import org.gamelib.util.geom.Rectangle;
+import org.gamelib.util.math.geom.Rectangle;
 
 import com.esotericsoftware.tablelayout.BaseTableLayout;
 import com.esotericsoftware.tablelayout.BaseTableLayout.Debug;

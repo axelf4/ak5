@@ -1,34 +1,29 @@
 /**
  * 
  */
-package org.gamelib.util.geom;
+package org.gamelib.util.math;
 
-/**
- * A 2D vector. Allows chaining operations by returning a reference to itself in all modification methods.
+/** A 2-D vector. Allows chaining operations by returning a reference to itself in all modification methods.
  * 
- * @author pwnedary
- */
+ * @author pwnedary */
 public class Vector2 implements Vector<Vector2> {
-
-	/** the X coordinate **/
+	/** The x component of this vector. */
 	public float x;
-	/** the Y coordinate **/
+	/** The y component of this vector. */
 	public float y;
 
-	/**
-	 * Constructs a vector with the given coordinates
+	/** Constructs a vector with the given components.
 	 * 
-	 * @param x The X coordinate
-	 * @param y The Y coordinate
-	 */
+	 * @param x The X component
+	 * @param y The Y component */
 	public Vector2(float x, float y) {
 		this.x = x;
 		this.y = y;
 	}
 
-	/** Constructs a vector at 0, 0 */
+	/** Constructs a vector initialized with 0, 0. */
 	public Vector2() {
-		this(.0f, .0f);
+		this(0f, 0f);
 	}
 
 	@Override
@@ -40,19 +35,24 @@ public class Vector2 implements Vector<Vector2> {
 	public float getY() {
 		return y;
 	}
-	
+
 	@Override
 	public float getZ() {
-		return .0f;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public float length() {
+	public float getW() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public float len() {
 		return (float) Math.sqrt(x * x + y * y);
 	}
 
 	@Override
-	public float lengthSquared() {
+	public float len2() {
 		return x * x + y * y;
 	}
 
@@ -65,20 +65,18 @@ public class Vector2 implements Vector<Vector2> {
 
 	@Override
 	public Vector2 normalize() {
-		float length = length();
-		if (length != 0) {
+		if (len2() != 0) {
+			float length = len();
 			x /= length;
 			y /= length;
 		}
 		return this;
 	}
 
-	/**
-	 * Calculates the 2D cross product between this and the given vector.
+	/** Calculates the cross product between this and the other vector.
 	 * 
 	 * @param v the other vector
-	 * @return the cross product
-	 */
+	 * @return the cross product */
 	public float crs(Vector2 v) {
 		return this.x * v.y - this.y * v.x;
 	}
@@ -128,9 +126,8 @@ public class Vector2 implements Vector<Vector2> {
 		return new Vector2(x, y);
 	}
 
-	/**
-	 * @return the angle in degrees of this vector (point) relative to the x-axis. Angles are counter-clockwise and between 0 and 360.
-	 */
+	/** @return the angle in degrees of this vector (point) relative to the x-axis. Angles are counter-clockwise and
+	 *         between 0 and 360. */
 	public float angle() {
 		float angle = (float) Math.toDegrees(Math.atan2(y, x));
 		if (angle < 0) angle += 360;

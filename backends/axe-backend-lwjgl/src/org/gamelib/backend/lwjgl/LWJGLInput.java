@@ -11,10 +11,11 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
-/**
- * @author pwnedary
- */
+/** @author pwnedary */
 public class LWJGLInput extends InputImpl implements Input {
+	private int deltaX;
+	private int deltaY;
+
 	public LWJGLInput(Handler handler) {
 		super(handler);
 	}
@@ -35,7 +36,7 @@ public class LWJGLInput extends InputImpl implements Input {
 			int button = Mouse.getEventButton();
 			button = button == 1 ? BUTTON3 : button;
 			mouseEvent(pressed ? MOUSE_PRESSED : MOUSE_RELEASED, button, mouseX, mouseY); // pressed or released
-			if (Mouse.getEventDX() != 0 || Mouse.getEventDY() != 0) mouseEvent(pressed ? MOUSE_DRAGGED : MOUSE_MOVED, button, mouseX, mouseY); // mouse moved
+			if ((deltaX = Mouse.getEventDX()) != 0 || (deltaY = Mouse.getEventDY()) != 0) mouseEvent(pressed ? MOUSE_DRAGGED : MOUSE_MOVED, button, mouseX, mouseY); // mouse moved
 			// if (!pressed) mouseEvent(MOUSE_CLICKED, button, mouseX, mouseY);
 		}
 	}
@@ -58,6 +59,16 @@ public class LWJGLInput extends InputImpl implements Input {
 	@Override
 	public int getMouseY() {
 		return Display.getHeight() - 1 - Mouse.getY();
+	}
+
+	@Override
+	public int getDeltaX() {
+		return Mouse.getDX(); // return deltaX;
+	}
+
+	@Override
+	public int getDeltaY() {
+		return Mouse.getDY(); // return deltaY;
 	}
 
 	@Override

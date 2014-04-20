@@ -6,11 +6,9 @@ package org.gamelib;
 import org.gamelib.backend.Backend;
 import org.gamelib.graphics.Texture;
 
-/**
- * An instance is used for checking user input and derived by {@link Backend}.
+/** An instance is used for checking user input and derived by {@link Backend}.
  * 
- * @author pwnedary
- */
+ * @author pwnedary */
 public interface Input {
 	/** The rate at which to repeat key presses, in Hz. */
 	@Deprecated
@@ -42,64 +40,55 @@ public interface Input {
 	/** Indicates commonly the right mouse button; used by {@link #getButton}. */
 	static final int BUTTON3 = 2;
 
-	/**
-	 * Returns whether the <code>key</code> is pressed.
+	/** Returns whether the <code>key</code> is pressed.
 	 * 
 	 * @param keycode The key code as found in {@link Input.Key}
-	 * @return whether the key is pressed
-	 */
+	 * @return whether the key is pressed */
 	boolean keyPressed(int keycode);
 
-	/**
-	 * Returns whether the mouse <code>button</code> is pressed.<br />
+	/** Returns whether the mouse <code>button</code> is pressed.<br />
 	 * {@link #BUTTON1}, {@link #BUTTON2}, {@link #BUTTON3} or {@link #NOBUTTON} if none.
 	 * 
 	 * @param button which button to check for
-	 * @return whether the mouse button is pressed
-	 */
+	 * @return whether the mouse button is pressed */
 	boolean mousePressed(int button);
 
-	/**
-	 * Returns the <code>x</code> position of the mouse cursor within the container.
+	/** Returns the <code>x</code> position of the mouse cursor within the container.
 	 * 
-	 * @return The x position of the mouse
-	 */
+	 * @return The x position of the mouse */
 	int getMouseX();
 
-	/**
-	 * Returns the <code>y</code> position of the mouse cursor within the container.
+	/** Returns the <code>y</code> position of the mouse cursor within the container.
 	 * 
-	 * @return The y position of the mouse
-	 */
+	 * @return The y position of the mouse */
 	int getMouseY();
+
+	int getDeltaX();
+
+	int getDeltaY();
 
 	/** Checks for queued input states. */
 	void poll();
 
-	/**
-	 * Moves the mouse to the given coordinates, (<code>x</code>,<code>y</code>).
+	/** Moves the mouse to the given coordinates, (<code>x</code>,<code>y</code>).
 	 * 
 	 * @param x the mouse's new x-coordinate
-	 * @param y the mouse's new y-coordinate
-	 */
+	 * @param y the mouse's new y-coordinate */
 	void mouseMove(int x, int y);
 
 	/** Hides and captures the mouse at it's position. */
 	void setGrabbed(boolean grabbed);
 
-	/**
-	 * Sets this window's cursor to show the given image.
+	/** Sets this window's cursor to show the given image.
 	 * 
-	 * @param texture the new cursor image, if null the default
-	 */
-	 void setCursor(Texture texture);
+	 * @param texture the new cursor image, if null the default */
+	void setCursor(Texture texture);
 
-	/**
-	 * Translates the keyCode to match the ones in {@link Input.Key}. The normal user should never have to use this method.
+	/** Translates the keyCode to match the ones in {@link Input.Key}. The normal user should never have to use this
+	 * method.
 	 * 
 	 * @param keyCode the key to translate
-	 * @return the translated key
-	 */
+	 * @return the translated key */
 	int translateKeyCode(int keyCode);
 
 	public static abstract class InputImpl implements Input {
@@ -134,6 +123,16 @@ public interface Input {
 			return mouseY;
 		}
 
+		@Override
+		public int getDeltaX() {
+			return 0;
+		}
+
+		@Override
+		public int getDeltaY() {
+			return 0;
+		}
+
 		protected void keyEvent(int id, int keycode) {
 			keycode = translateKeyCode(keycode);
 			pressed[keycode] = id == KEY_PRESSED;
@@ -154,11 +153,9 @@ public interface Input {
 		}
 	}
 
-	/**
-	 * Constants for keyboard hardware. Virtual key codes.
+	/** Constants for keyboard hardware. Virtual key codes.
 	 * 
-	 * @see java.awt.event.KeyEvent
-	 */
+	 * @see java.awt.event.KeyEvent */
 	public static final class Key {
 		public static final int KEY_UNDEFINED = 0;
 		public static final int KEY_ESCAPE = 1;

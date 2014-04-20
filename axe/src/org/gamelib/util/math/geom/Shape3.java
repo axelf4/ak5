@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.util.geom;
+package org.gamelib.util.math.geom;
 
 /**
  * @author pwnedary

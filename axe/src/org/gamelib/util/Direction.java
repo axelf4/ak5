@@ -6,6 +6,8 @@ package org.gamelib.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gamelib.util.math.Math2;
+
 /**
  * @author pwnedary
  */

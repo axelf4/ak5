@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.util;
+package org.gamelib.util.math;
 
 import static java.lang.Math.*;
 

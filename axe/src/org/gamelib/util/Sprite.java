@@ -5,7 +5,7 @@ package org.gamelib.util;
 
 import org.gamelib.graphics.Batch;
 import org.gamelib.graphics.Texture;
-import org.gamelib.util.geom.Rectangle;
+import org.gamelib.util.math.geom.Rectangle;
 
 /** A two-dimensional animation integrated into an larger image.
  * 

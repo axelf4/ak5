@@ -1,38 +1,33 @@
 /**
  * 
  */
-package org.gamelib.util.geom;
+package org.gamelib.util.math;
 
-/**
- * A 3D vector. Allows chaining operations by returning a reference to itself in all modification methods.
+/** A 3-D vector. Allows chaining operations by returning a reference to itself in all modification methods.
  * 
- * @author pwnedary
- */
+ * @author pwnedary */
 public class Vector3 implements Vector<Vector3> {
-
-	/** the x coordinate of this vector **/
+	/** The x component of this vector. */
 	public float x;
-	/** the y coordinate of this vector **/
+	/** The y component of this vector. */
 	public float y;
-	/** the z coordinate of this vector **/
+	/** The z component of this vector. */
 	public float z;
 
-	/**
-	 * Creates a vector with the given components
+	/** Creates a vector with the given components.
 	 * 
 	 * @param x The x-component
 	 * @param y The y-component
-	 * @param z The z-component
-	 */
+	 * @param z The z-component */
 	public Vector3(float x, float y, float z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
 
-	/** Creates a vector at 0, 0, 0. */
+	/** Creates a vector initialized with 0, 0, 0. */
 	public Vector3() {
-		this(.0f, .0f, .0f);
+		this(0f, 0f, 0f);
 	}
 
 	@Override
@@ -51,12 +46,17 @@ public class Vector3 implements Vector<Vector3> {
 	}
 
 	@Override
-	public float length() {
+	public float getW() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public float len() {
 		return (float) Math.sqrt(x * x + y * y + z * z);
 	}
 
 	@Override
-	public float lengthSquared() {
+	public float len2() {
 		return x * x + y * y + z * z;
 	}
 
@@ -70,14 +70,13 @@ public class Vector3 implements Vector<Vector3> {
 
 	@Override
 	public Vector3 normalize() {
-		float length = this.length();
-		if (length == 0) return this;
-		else {
-			float x = this.x / length;
-			float y = this.y / length;
-			float z = this.z / length;
-			return new Vector3(x, y, z);
+		if (len2() != 0) {
+			float length = len();
+			x /= length;
+			y /= length;
+			z /= length;
 		}
+		return this;
 	}
 
 	public Vector3 cross(Vector3 v) {
@@ -86,7 +85,7 @@ public class Vector3 implements Vector<Vector3> {
 
 	@Override
 	public float dot(Vector3 v) {
-		throw new UnsupportedOperationException();
+		return this.x * v.x + this.y * v.y + this.z * v.z;
 	}
 
 	public Vector3 add(Vector3 v) {
@@ -131,5 +130,4 @@ public class Vector3 implements Vector<Vector3> {
 	public Object clone() throws CloneNotSupportedException {
 		return new Vector3(x, y, z);
 	}
-
 }

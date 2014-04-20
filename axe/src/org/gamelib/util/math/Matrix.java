@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.gamelib.util.geom;
+package org.gamelib.util.math;
 
 /** Encapsulates a <a href="http://en.wikipedia.org/wiki/Row-major_order#Column-major_order">column major</a> matrix.
  * 

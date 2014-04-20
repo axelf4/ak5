@@ -8,7 +8,7 @@ import org.gamelib.graphics.Batch;
 import org.gamelib.graphics.Color;
 import org.gamelib.ui.Widget.WidgetImpl;
 import org.gamelib.util.Font;
-import org.gamelib.util.geom.Rectangle;
+import org.gamelib.util.math.geom.Rectangle;
 
 /** @author pwnedary */
 public class Label extends WidgetImpl {

@@ -21,7 +21,7 @@ import org.gamelib.backend.Backend;
 import org.gamelib.graphics.Batch;
 import org.gamelib.graphics.Texture;
 import org.gamelib.util.Font.FontImpl;
-import org.gamelib.util.geom.Rectangle;
+import org.gamelib.util.math.geom.Rectangle;
 
 /** @author pwnedary */
 public class TrueTypeFont extends FontImpl {

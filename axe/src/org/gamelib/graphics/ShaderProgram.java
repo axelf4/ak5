@@ -11,10 +11,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.gamelib.util.Disposable;
-import org.gamelib.util.geom.Matrix4;
-import org.gamelib.util.geom.Vector2;
-import org.gamelib.util.geom.Vector3;
 import org.gamelib.util.io.BufferUtil;
+import org.gamelib.util.math.Matrix4;
+import org.gamelib.util.math.Vector2;
+import org.gamelib.util.math.Vector3;
 
 /** @author pwnedary */
 public class ShaderProgram implements Disposable {

@@ -7,8 +7,8 @@ import java.nio.FloatBuffer;
 
 import org.gamelib.graphics.Texture.GLTexture;
 import org.gamelib.graphics.VertexAttribute.Type;
-import org.gamelib.util.geom.Matrix4;
 import org.gamelib.util.io.BufferUtil;
+import org.gamelib.util.math.Matrix4;
 
 /** @author pwnedary */
 public class QuadBatch implements Batch {
