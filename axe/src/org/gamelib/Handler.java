@@ -8,10 +8,8 @@ package org.gamelib;
  * 
  * @author pwnedary */
 public interface Handler {
-	/** Handles the published {@code event}.
-	 * <p>
-	 * Returns <tt>false</tt> if this {@link Handler} isn't subscribing to {@link Event}s of
-	 * {@linkplain Event#getClass() <code>event</code>'s class}. For example:
+	/** Handles the published {@code event}. Returns <tt>false</tt> if this {@link Handler} isn't subscribing to {@link Event}s of
+	 * {@linkplain Event#getClass() <code>event</code>'s class}. ex:
 	 * 
 	 * <pre>
 	 * public boolean handle(Event event) {
@@ -22,7 +20,7 @@ public interface Handler {
 	 * }
 	 * </pre>
 	 * 
-	 * @param event the {@link Event} being published
+	 * @param event the {@link Event} published
 	 * @return <tt>true</tt> if subscribing to event */
 	public boolean handle(Event event);
 }
