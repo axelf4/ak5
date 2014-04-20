@@ -5,7 +5,7 @@ package org.gamelib;
 
 import org.gamelib.graphics.GL10;
 
-/** An Event that occurred; may hold additional information.
+/** An Event that occur; may hold additional information.
  * 
  * @author pwnedary */
 public interface Event {
