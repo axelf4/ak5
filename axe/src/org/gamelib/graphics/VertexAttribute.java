@@ -27,6 +27,17 @@ public class VertexAttribute {
 	public String toString() {
 		return type + " (" + numComponents + ")";
 	}
+	
+	public static int calculateOffsets(VertexAttribute[] attributes) {
+		int count = 0;
+		for (int i = 0; i < attributes.length; i++) {
+			VertexAttribute attribute = attributes[i];
+			attribute.location = count;
+			if (attribute.type == VertexAttribute.Type.COLOR_PACKED) count += 4;
+			else count += 4 * attribute.numComponents;
+		}
+		return count;
+	}
 
 	public enum Type {
 		POSITION, COLOR, COLOR_PACKED, NORMAL, TEXTURE_COORDINATES;
