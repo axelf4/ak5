@@ -30,6 +30,8 @@ public interface Input {
 	/** The "mouse released" event. */
 	static final int MOUSE_RELEASED = 3;
 	// /* The "mouse clicked" event. */ public static final int MOUSE_CLICKED = 4;
+	/** The "mouse scrolled" event. */
+	int MOUSE_SCROLLED = 5;
 
 	/** Indicates no mouse buttons; used by {@link #getButton}. */
 	static final int NOBUTTON = -1;
@@ -90,68 +92,6 @@ public interface Input {
 	 * @param keyCode the key to translate
 	 * @return the translated key */
 	int translateKeyCode(int keyCode);
-
-	public static abstract class InputImpl implements Input {
-		/** Array of keys pressed since last queries. */
-		protected boolean[] pressed = new boolean[1024];
-		// Timer keyRepeatTimer;
-		/** The x position of the mouse cursor. */
-		protected int mouseX;
-		/** The y position of the mouse cursor. */
-		protected int mouseY;
-		/** Array of pressed mouse buttons. */
-		protected boolean[] mousePressed = new boolean[3]; // 10
-		protected Handler handler;
-
-		public InputImpl(Handler handler) {
-			this.handler = handler;
-		}
-
-		public boolean keyPressed(int keycode) {
-			return pressed[keycode];
-		}
-
-		public boolean mousePressed(int button) {
-			return mousePressed[button];
-		}
-
-		public int getMouseX() {
-			return mouseX;
-		}
-
-		public int getMouseY() {
-			return mouseY;
-		}
-
-		@Override
-		public int getDeltaX() {
-			return 0;
-		}
-
-		@Override
-		public int getDeltaY() {
-			return 0;
-		}
-
-		protected void keyEvent(int id, int keycode) {
-			keycode = translateKeyCode(keycode);
-			pressed[keycode] = id == KEY_PRESSED;
-			// if (keycode == Key.KEY_ESCAPE) Game2.instance().stop(); // debugging
-			handler.handle(new Event.Key(this, id, keycode));
-		}
-
-		protected void mouseEvent(int id, int button, int mouseX, int mouseY) {
-			this.mouseX = mouseX;
-			this.mouseY = mouseY;
-			if (button != -1 && (id == MOUSE_PRESSED || id == MOUSE_RELEASED)) mousePressed[button] = id == MOUSE_PRESSED;
-			// System.out.println("x: " + getMouseX() + " y: " + getMouseY());
-			handler.handle(new Event.Mouse(this, id, button));
-		}
-
-		protected void mouseWheelEvent(double deltaY) {
-			handler.handle(new Event.MouseWheel(this, deltaY));
-		}
-	}
 
 	/** Constants for keyboard hardware. Virtual key codes.
 	 * 

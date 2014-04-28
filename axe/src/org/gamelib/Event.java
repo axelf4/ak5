@@ -89,24 +89,24 @@ public interface Event {
 		}
 	}
 
-	/** @see java.awt.event.MouseEvent */
+	/** @see java.awt.event.MouseEvent
+	 * @see java.awt.event.MouseWheelEvent */
 	public static final class Mouse extends Control {
 		public final int id;
 		public final int button;
+		public final double deltaY;
 
 		public Mouse(Input input, int id, int button) {
 			super(input);
 			this.id = id;
 			this.button = button;
+			this.deltaY = 0.0d;
 		}
-	}
-
-	/** @see java.awt.event.MouseWheelEvent */
-	public static final class MouseWheel extends Control {
-		public final double deltaY;
-
-		public MouseWheel(Input input, double deltaY) {
+		
+		public Mouse(Input input, double deltaY) {
 			super(input);
+			this.id = Input.MOUSE_SCROLLED;
+			this.button = -1;
 			this.deltaY = deltaY;
 		}
 	}

@@ -3,40 +3,41 @@
  */
 package org.gamelib.backend.lwjgl;
 
+import org.gamelib.Event;
 import org.gamelib.Handler;
 import org.gamelib.Input;
-import org.gamelib.Input.InputImpl;
 import org.gamelib.graphics.Texture;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 /** @author pwnedary */
-public class LWJGLInput extends InputImpl implements Input {
+public class LWJGLInput implements Input {
+	private final Handler handler;
 	private int deltaX;
 	private int deltaY;
 
 	public LWJGLInput(Handler handler) {
-		super(handler);
+		this.handler = handler;
 	}
 
 	@Override
 	public void poll() {
 		while (Keyboard.next())
-			keyEvent(Keyboard.getEventKeyState() ? KEY_PRESSED : KEY_RELEASED, translateKeyCode(Keyboard.getEventKey())); // poll key events
+			handler.handle(new Event.Key(this, Keyboard.getEventKeyState() ? KEY_PRESSED : KEY_RELEASED, translateKeyCode(Keyboard.getEventKey()))); // poll key events
 
-		// Point p = new Point(org.lwjgl.input.Mouse.getX(), Display.getHeight() - org.lwjgl.input.Mouse.getY());
-		int mouseX = getMouseX(), mouseY = getMouseY(); // mouse position
-		// if (!Mouse.isGrabbed()) {
-		// mouseX = getMouseX();
-		// mouseY = getMouseY();
-		// }
+		deltaX = 0;
+		deltaY = 0;
 		while (Mouse.next()) { // poll mouse events
 			boolean pressed = Mouse.getEventButtonState();
 			int button = Mouse.getEventButton();
 			button = button == 1 ? BUTTON3 : button;
-			mouseEvent(pressed ? MOUSE_PRESSED : MOUSE_RELEASED, button, mouseX, mouseY); // pressed or released
-			if ((deltaX = Mouse.getEventDX()) != 0 || (deltaY = Mouse.getEventDY()) != 0) mouseEvent(pressed ? MOUSE_DRAGGED : MOUSE_MOVED, button, mouseX, mouseY); // mouse moved
+			deltaX = Mouse.getEventDX();
+			deltaY = Mouse.getEventDY();
+
+			if (button != -1) handler.handle(new Event.Mouse(this, pressed ? MOUSE_PRESSED : MOUSE_RELEASED, button)); // simple button event
+			else if (deltaX != 0 || deltaY != 0) handler.handle(new Event.Mouse(this, pressed ? MOUSE_DRAGGED : MOUSE_MOVED, button)); // mouse's been moved
+			else if (Mouse.getEventDWheel() == 0) handler.handle(new Event.Mouse(this, Mouse.getEventDWheel())); // wheel event
 			// if (!pressed) mouseEvent(MOUSE_CLICKED, button, mouseX, mouseY);
 		}
 	}
@@ -63,12 +64,12 @@ public class LWJGLInput extends InputImpl implements Input {
 
 	@Override
 	public int getDeltaX() {
-		return Mouse.getDX(); // return deltaX;
+		return deltaX; // Mouse.getDX()
 	}
 
 	@Override
 	public int getDeltaY() {
-		return Mouse.getDY(); // return deltaY;
+		return deltaY; // Mouse.getDY();
 	}
 
 	@Override
@@ -81,7 +82,7 @@ public class LWJGLInput extends InputImpl implements Input {
 
 	@Override
 	public void mouseMove(int x, int y) {
-		Mouse.setCursorPosition(x, Display.getHeight() - y);
+		Mouse.setCursorPosition(x, Display.getHeight() - 1 - y);
 	}
 
 	@Override

@@ -3,9 +3,9 @@
  */
 package org.gamelib.backend.gwt;
 
+import org.gamelib.Event;
 import org.gamelib.Handler;
 import org.gamelib.Input;
-import org.gamelib.Input.InputImpl;
 import org.gamelib.graphics.Texture;
 
 import com.google.gwt.canvas.client.Canvas;
@@ -26,12 +26,21 @@ import com.google.gwt.event.dom.client.MouseWheelEvent;
 import com.google.gwt.event.dom.client.MouseWheelHandler;
 
 /** @author pwnedary */
-public class GwtInput extends InputImpl implements Input, KeyDownHandler, KeyUpHandler, KeyPressHandler, MouseDownHandler, MouseUpHandler, MouseMoveHandler, MouseWheelHandler {
+public class GwtInput implements Input, KeyDownHandler, KeyUpHandler, KeyPressHandler, MouseDownHandler, MouseUpHandler, MouseMoveHandler, MouseWheelHandler {
 	private final Canvas canvas;
+	private final Handler handler;
+	/** Array of keys pressed since last queries. */
+	protected boolean[] pressed = new boolean[1024];
+	/** The x position of the mouse cursor. */
+	protected int mouseX;
+	/** The y position of the mouse cursor. */
+	protected int mouseY;
+	/** Array of pressed mouse buttons. */
+	protected boolean[] mousePressed = new boolean[3]; // 10
 
 	public GwtInput(Canvas canvas, Handler handler) {
-		super(handler);
 		this.canvas = canvas;
+		this.handler = handler;
 		canvas.addKeyDownHandler(this);
 		canvas.addKeyUpHandler(this);
 		canvas.addKeyPressHandler(this);
@@ -382,6 +391,57 @@ public class GwtInput extends InputImpl implements Input, KeyDownHandler, KeyUpH
 
 	@Override
 	public void onMouseWheel(MouseWheelEvent event) {
-		mouseWheelEvent(event.getDeltaY());
+		handler.handle(new Event.Mouse(this, event.getDeltaY()));
+	}
+
+	protected void keyEvent(int id, int keycode) {
+		keycode = translateKeyCode(keycode);
+		pressed[keycode] = id == KEY_PRESSED;
+		// if (keycode == Key.KEY_ESCAPE) Game2.instance().stop(); // debugging
+		handler.handle(new Event.Key(this, id, keycode));
+	}
+
+	protected void mouseEvent(int id, int button, int mouseX, int mouseY) {
+		this.mouseX = mouseX;
+		this.mouseY = mouseY;
+		if (button != -1 && (id == MOUSE_PRESSED || id == MOUSE_RELEASED)) mousePressed[button] = id == MOUSE_PRESSED;
+		// System.out.println("x: " + getMouseX() + " y: " + getMouseY());
+		handler.handle(new Event.Mouse(this, id, button));
+	}
+
+	@Override
+	public boolean keyPressed(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean mousePressed(int button) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int getMouseX() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getMouseY() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getDeltaX() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getDeltaY() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
