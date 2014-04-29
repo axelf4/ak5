@@ -4,12 +4,11 @@
 package org.gamelib.backend;
 
 import org.gamelib.util.Configuration;
-import org.gamelib.util.VariableConfiguration;
+import org.gamelib.util.Configuration.VariableConfiguration;
+import org.gamelib.util.VariableConfigurationImpl;
 
-/**
- * @author pwnedary
- */
-public class DisplayConfiguration extends VariableConfiguration.VariableConfigurationImpl implements Configuration, VariableConfiguration {
+/** @author pwnedary */
+public class DisplayConfiguration extends VariableConfigurationImpl implements Configuration, VariableConfiguration {
 	/* The different keys. */
 	public static final String WIDTH = "width", HEIGHT = "height",
 			FULLSCREEN = "fullscreen", RESIZABLE = "resizable",
@@ -79,14 +78,9 @@ public class DisplayConfiguration extends VariableConfiguration.VariableConfigur
 		return string.equals(WIDTH) && string.equals(HEIGHT) && string.equals(FULLSCREEN) && string.equals(RESIZABLE);
 	}
 
-	@Override
-	public void flush() {}
-
-	/**
-	 * Returns the width of the canvas.
+	/** Returns the width of the canvas.
 	 * 
-	 * @return the canvas's width
-	 */
+	 * @return the canvas's width */
 	public int getWidth() {
 		return width;
 	}
@@ -95,11 +89,9 @@ public class DisplayConfiguration extends VariableConfiguration.VariableConfigur
 		this.width = width;
 	}
 
-	/**
-	 * Returns the height of the canvas.
+	/** Returns the height of the canvas.
 	 * 
-	 * @return the canvas's height
-	 */
+	 * @return the canvas's height */
 	public int getHeight() {
 		return height;
 	}
@@ -116,11 +108,9 @@ public class DisplayConfiguration extends VariableConfiguration.VariableConfigur
 		this.fullscreen = fullscreen;
 	}
 
-	/**
-	 * Returns, if using a window, allowing it to be resized.
+	/** Returns, if using a window, allowing it to be resized.
 	 * 
-	 * @return if the window is resizable
-	 */
+	 * @return if the window is resizable */
 	public boolean resizable() {
 		return resizable;
 	}

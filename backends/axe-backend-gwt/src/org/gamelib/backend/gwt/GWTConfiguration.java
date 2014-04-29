@@ -3,10 +3,10 @@
  */
 package org.gamelib.backend.gwt;
 
-import org.gamelib.util.Configuration;
+import org.gamelib.util.Configuration.VariableConfiguration;
 
 /** @author pwnedary */
-public class GWTConfiguration implements Configuration {
+public class GWTConfiguration implements VariableConfiguration {
 	/* The different keys. */
 	public static final String WIDTH = "width", HEIGHT = "height",
 			FULLSCREEN = "fullscreen", RESIZABLE = "resizable",
@@ -74,7 +74,4 @@ public class GWTConfiguration implements Configuration {
 		String string = (String) key;
 		return string.equals(WIDTH) && string.equals(HEIGHT) && string.equals(FULLSCREEN) && string.equals(RESIZABLE);
 	}
-
-	@Override
-	public void flush() {}
 }
