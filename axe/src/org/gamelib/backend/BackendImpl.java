@@ -7,10 +7,9 @@ import java.io.InputStream;
 
 import org.gamelib.Drawable;
 import org.gamelib.Event;
-import org.gamelib.FixedTimestepLoop;
 import org.gamelib.Handler;
-import org.gamelib.Loop;
 import org.gamelib.Input.Key;
+import org.gamelib.Loop;
 import org.gamelib.Loop.LoopListener;
 import org.gamelib.graphics.GL10;
 import org.gamelib.util.Configuration;
@@ -34,7 +33,7 @@ public abstract class BackendImpl implements Backend {
 
 		running = true;
 		// new Thread(loop = configuration.getProperty("loop", new FixedTimestepLoop(new DefaultLoopListener())), handler.toString()).start();
-		loop = configuration.getProperty("loop", new FixedTimestepLoop(new DefaultLoopListener()));
+		loop = configuration.getProperty("loop", new Loop.FixedTimestep(new DefaultLoopListener()));
 		loop.run();
 	}
 
