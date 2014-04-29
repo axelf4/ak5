@@ -102,7 +102,7 @@ public interface Event {
 			this.button = button;
 			this.deltaY = 0.0d;
 		}
-		
+
 		public Mouse(Input input, double deltaY) {
 			super(input);
 			this.id = Input.MOUSE_SCROLLED;
