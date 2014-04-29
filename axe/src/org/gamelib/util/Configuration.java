@@ -34,16 +34,13 @@ public interface Configuration {
 	 * @return whether there already is a value associated with key */
 	boolean hasProperty(Object key);
 
-	/** Forces changes to become available from {@link #getProperty(Object, Object...)}. */
-	void flush();
-
 	/** A marker interface, which defines that it's implementors will be using a {@link Map} structure for storing
 	 * properties. */
 	interface HashConfiguration extends Configuration {}
 
-	/*  * A marker interface, which defines that it's implementors will be using variables for storing properties. No
+	/** A marker interface, which defines that it's implementors will be using variables for storing properties. No
 	 * restrictions on their visibility. */
-	// interface VariableConfiguration extends Configuration {}
+	interface VariableConfiguration extends Configuration {}
 
 	class HashConfigurationImpl implements HashConfiguration {
 		private final Map<Object, Object> properties = new HashMap<>();
@@ -65,9 +62,6 @@ public interface Configuration {
 			return properties.containsKey(key);
 		}
 
-		@Override
-		public void flush() {}
-
 		@SuppressWarnings("unchecked")
 		public <T> T getDefaultValue(Class<T> type) {
 			if (type == Integer.TYPE || type == Integer.class) return (T) new Integer(0);
@@ -82,7 +76,7 @@ public interface Configuration {
 		}
 	}
 
-	public static class Configurations {
+	class Configurations {
 		public static Configuration newConfiguration() {
 			return new HashConfigurationImpl();
 		}
