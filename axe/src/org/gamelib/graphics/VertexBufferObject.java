@@ -100,7 +100,7 @@ public class VertexBufferObject implements VertexData {
 	@Override
 	public void unbind(final ShaderProgram shader, final int[] locations) {
 		for (int i = 0; i < attributes.length; i++)
-			if (locations == null) shader.disableVertexAttribute(attributes[i].name);
+			if (locations == null) ((GL20) gl).glEnableVertexAttribArray(shader.getAttribLocation(attributes[i].name));
 			else gl.glDisableVertexAttribArray(locations[i]);
 		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, 0);
 		isBound = false;

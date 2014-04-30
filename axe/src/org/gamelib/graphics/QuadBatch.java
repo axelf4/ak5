@@ -236,8 +236,8 @@ public class QuadBatch implements Batch {
 	private void setupMatrices() {
 		combinedMatrix.set(projectionMatrix).mult(transformMatrix);
 		if (shader != null) {
-			shader.setUniformMatrix("u_projTrans", combinedMatrix);
-			shader.setUniformi("u_texture", 0);
+			((GL20) gl).glUniformMatrix4fv(shader.getUniformLocation("u_projTrans"), 1, false, (FloatBuffer) BufferUtil.newFloatBuffer(16).put(combinedMatrix.data).flip());
+			((GL20) gl).glUniform1i(shader.getUniformLocation("u_texture"), 0);
 		} else {
 			gl.glMatrixMode(GL10.GL_PROJECTION);
 			gl.glLoadIdentity();

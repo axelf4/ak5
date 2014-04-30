@@ -89,7 +89,7 @@ public class VertexArray implements VertexData {
 	@Override
 	public void unbind(ShaderProgram shader, int[] locations) {
 		for (int i = 0; i < attributes.length; i++)
-			if (locations == null) shader.disableVertexAttribute(attributes[i].name);
+			if (locations == null) ((GL20) gl).glEnableVertexAttribArray(shader.getAttribLocation(attributes[i].name));
 			else ((GL20) gl).glDisableVertexAttribArray(locations[i]);
 	}
 
