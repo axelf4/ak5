@@ -14,6 +14,15 @@ public class Vector4 implements Vector<Vector4> {
 	/** The w component of this vector. */
 	public float w;
 
+	public Vector4() {}
+
+	public Vector4(float x, float y, float z, float w) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.w = w;
+	}
+
 	@Override
 	public float getX() {
 		return x;
