@@ -79,7 +79,7 @@ public class VertexBufferObject implements VertexData {
 
 		for (int i = 0; i < attributes.length; i++) {
 			final VertexAttribute attribute = attributes[i];
-			final int location = locations == null ? shader.getAttributeLocation(attribute.name) : locations[i];
+			final int location = locations == null ? shader.getAttribLocation(attribute.name) : locations[i];
 			if (location < 0) continue;
 			gl.glEnableVertexAttribArray(location);
 
