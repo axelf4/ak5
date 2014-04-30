@@ -52,10 +52,4 @@ public class LWJGLConfiguration extends DisplayConfiguration {
 		this.vsync = vsync;
 		return this;
 	}
-
-	@Override
-	public void flush() {
-		super.flush();
-		setProperty(VSYNC, vsync());
-	}
 }
