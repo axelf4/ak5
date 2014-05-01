@@ -28,8 +28,8 @@ public class BitmapFont extends FontImpl implements Font {
 	public BitmapFont(Backend backend, File file) {
 		try (InputStream stream = backend.getResourceAsStream(file.getPath());
 				BufferedReader reader = new BufferedReader(new InputStreamReader(stream, Charset.forName("UTF-8")))) {
-			reader.readLine(); // info
-			String[] common = reader.readLine().split(" ", 7);
+			reader.readLine(); // skip the information on how the font was generated
+			String[] common = reader.readLine().split(" ", 7); // information common to all characters
 			lineHeight = Integer.parseInt(common[1].substring(11)); // lineHeight=N
 			float base = Integer.parseInt(common[2].substring(5)); // base=N
 			pages = Integer.parseInt(common[5].substring(6)); // pages=N
@@ -37,15 +37,12 @@ public class BitmapFont extends FontImpl implements Font {
 			for (int p = 0; p < pages; p++) {
 				String[] page = reader.readLine().split(" ", 3);
 				if (Integer.parseInt(page[1].substring(3)) != p) throw new IllegalArgumentException("Invalid font file; page ids should increment from 0."); // id=N
-				// File imgFile = new File(file.getParentFile().getPath() + File.separator + page[2].split("\"")[1]);
 				File imgFile = new File(file.getParentFile(), page[2].split("\"")[1]); // file=string
-				System.out.println(imgFile.getPath());
-				//				pageImgs[p] = backend.getImage(imgFile);
+				pageImgs[p] = backend.getTexture(imgFile.getPath());
 			}
 
 			float descent = 0;
-			reader.readLine(); // chars count=N
-			// pageSize = Integer.parseInt(reader.readLine().substring(12)); // chars count=N
+			/* int pageSize = Integer.parseInt( */reader.readLine() /* ) */; // chars count=N
 			glyphs = new Glyph[PAGES][];
 			for (String line = reader.readLine(); line != null && line.startsWith("char "); line = reader.readLine()) {
 				Glyph glyph = new Glyph();
@@ -119,8 +116,9 @@ public class BitmapFont extends FontImpl implements Font {
 				if (lastGlyph != null) drawX += lastGlyph.getKerning(c);
 				lastGlyph = glyph;
 
-				int x1 = drawX + glyph.xoffset, y1 = y + glyph.yoffset, x2 = x1 + glyph.width, y2 = y1 + glyph.height;
-				batch.draw(pageImgs[glyph.page], x1, y1, x2, y2, glyph.x, glyph.y, glyph.x + glyph.width, glyph.y + glyph.height);
+				int x1 = drawX + glyph.xoffset, y2 = y + lineHeight - glyph.yoffset, x2 = x1 + glyph.width, y1 = y2 - glyph.height, //
+				sx1 = glyph.x, sy1 = pageImgs[glyph.page].getHeight() - glyph.y, sx2 = sx1 + glyph.width, sy2 = sy1 - glyph.height;
+				batch.draw(pageImgs[glyph.page], x1, y1, x2, y2, sx1, sy2, sx2, sy1);
 
 				drawX += glyph.xadvance;
 			}
@@ -144,6 +142,12 @@ public class BitmapFont extends FontImpl implements Font {
 	@Override
 	public int getHeight() {
 		return lineHeight;
+	}
+
+	@Override
+	public void dispose() {
+		for (Texture texture : pageImgs)
+			texture.dispose();
 	}
 
 	public class Glyph {

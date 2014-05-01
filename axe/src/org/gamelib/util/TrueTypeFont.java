@@ -24,6 +24,7 @@ import org.gamelib.util.Font.FontImpl;
 import org.gamelib.util.math.geom.Rectangle;
 
 /** @author pwnedary */
+@Deprecated
 public class TrueTypeFont extends FontImpl {
 	/** Array that holds necessary information about the font characters positions */
 	private Rectangle[] glyphs = new Rectangle[256];
@@ -289,4 +290,6 @@ public class TrueTypeFont extends FontImpl {
 		}
 	}
 
+	@Override
+	public void dispose() {}
 }

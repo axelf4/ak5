@@ -5,10 +5,8 @@ package org.gamelib.util;
 
 import org.gamelib.graphics.Batch;
 
-/** TODO add bitmap fonts
- * 
- * @author pwnedary */
-public interface Font {
+/** @author pwnedary */
+public interface Font extends Disposable {
 	/** The plain style constant. */
 	static final int PLAIN = 0;
 	/** The bold style constant. */
