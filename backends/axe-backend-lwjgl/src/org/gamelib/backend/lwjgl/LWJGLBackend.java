@@ -32,7 +32,6 @@ import org.gamelib.Handler;
 import org.gamelib.Input;
 import org.gamelib.backend.Backend;
 import org.gamelib.backend.BackendImpl;
-import org.gamelib.backend.DisplayConfiguration;
 import org.gamelib.backend.Sound;
 import org.gamelib.graphics.GL10;
 import org.gamelib.graphics.Texture;
@@ -98,16 +97,16 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 			gl = new LWJGLGL20();
 			input = new LWJGLInput(handler);
 
-			DisplayConfiguration config = (DisplayConfiguration) configuration;
+			LWJGLConfiguration config = (LWJGLConfiguration) configuration;
 			DisplayMode targetDisplayMode = null;
-			if (config.fullscreen()) {
+			if (config.fullscreen) {
 				DisplayMode[] modes = Display.getAvailableDisplayModes();
 				int freq = 0;
 
 				for (int i = 0; i < modes.length; i++) {
 					DisplayMode current = modes[i];
 
-					if ((current.getWidth() == config.getWidth()) && (current.getHeight() == config.getHeight())) {
+					if ((current.getWidth() == config.width) && (current.getHeight() == config.height)) {
 						if ((targetDisplayMode == null) || (current.getFrequency() >= freq)) {
 							if ((targetDisplayMode == null) || (current.getBitsPerPixel() > targetDisplayMode.getBitsPerPixel())) {
 								targetDisplayMode = current;
@@ -121,14 +120,14 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 						}
 					}
 				}
-			} else targetDisplayMode = new DisplayMode(config.getWidth(), config.getHeight());
+			} else targetDisplayMode = new DisplayMode(config.width, config.height);
 
 			Display.setDisplayMode(targetDisplayMode);
-			Display.setFullscreen(config.fullscreen());
+			Display.setFullscreen(config.fullscreen);
 			if (configuration instanceof LWJGLConfiguration) Display.setVSyncEnabled(((LWJGLConfiguration) configuration).vsync());
-			Display.setResizable(config.resizable() | true);
-			setTitle(configuration.getProperty(DisplayConfiguration.TITLE, ""));
-			if (parent != null) parent.setSize(config.getWidth(), config.getHeight()); // parent.getParent().setSize(config.getWidth(), config.getHeight());
+			Display.setResizable(config.resizable);
+			setTitle(configuration.getProperty(LWJGLConfiguration.TITLE, ""));
+			if (parent != null) parent.setSize(config.width, config.height); // parent.getParent().setSize(config.getWidth(), config.getHeight());
 			Display.setParent(parent);
 			Display.create();
 
@@ -190,7 +189,7 @@ public class LWJGLBackend extends BackendImpl implements Backend {
 	public int getHeight() {
 		return Display.getHeight();
 	}
-	
+
 	@Override
 	public Asset<?> getAsset(CharSequence path) {
 		// TODO Auto-generated method stub

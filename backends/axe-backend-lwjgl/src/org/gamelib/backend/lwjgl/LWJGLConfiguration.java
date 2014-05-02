@@ -3,25 +3,44 @@
  */
 package org.gamelib.backend.lwjgl;
 
-import org.gamelib.backend.DisplayConfiguration;
+import org.gamelib.util.Configuration;
+import org.gamelib.util.VariableConfigurationImpl;
 
 /** @author pwnedary */
-public class LWJGLConfiguration extends DisplayConfiguration {
-	public static final String VSYNC = "vsync";
-	public boolean vsync = false;
+public class LWJGLConfiguration extends VariableConfigurationImpl implements Configuration {
+	/* The different keys. */
+	public static final String WIDTH = "width", HEIGHT = "height",
+			FULLSCREEN = "fullscreen", RESIZABLE = "resizable",
+			TITLE = "title", VSYNC = "vsync";
 
-	public LWJGLConfiguration(int width, int height) {
-		super(width, height);
+	public int width;
+	public int height;
+	public boolean fullscreen;
+	public boolean resizable;
+	public String title;
+	public boolean vsync;
+
+	public LWJGLConfiguration() {
+		this.width = 800;
+		this.height = 600;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(Object key, T... def) {
-		if (key instanceof String) {
-			switch ((String) key) {
-			case VSYNC:
-				return (T) Boolean.valueOf(vsync);
-			}
+		if (key instanceof String) switch ((String) key) {
+		case WIDTH:
+			return (T) Integer.valueOf(width);
+		case HEIGHT:
+			return (T) Integer.valueOf(height);
+		case FULLSCREEN:
+			return (T) Boolean.valueOf(fullscreen);
+		case RESIZABLE:
+			return (T) Boolean.valueOf(resizable);
+		case TITLE:
+			return (T) title;
+		case VSYNC:
+			return (T) Boolean.valueOf(vsync);
 		}
 		return super.getProperty(key, def);
 	}
@@ -30,10 +49,28 @@ public class LWJGLConfiguration extends DisplayConfiguration {
 	public <T> T setProperty(Object key, T value) {
 		if (key instanceof String) {
 			switch ((String) key) {
+			case WIDTH:
+				width = (Integer) value;
+				break;
+			case HEIGHT:
+				height = (Integer) value;
+				break;
+			case FULLSCREEN:
+				fullscreen = (Boolean) value;
+				break;
+			case RESIZABLE:
+				resizable = (Boolean) value;
+				break;
+			case TITLE:
+				title = (String) value;
+				break;
 			case VSYNC:
 				vsync = (Boolean) value;
 				break;
+			default:
+				return super.setProperty(key, value);
 			}
+			return null;
 		}
 		return super.setProperty(key, value);
 	}
