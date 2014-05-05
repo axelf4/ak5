@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="org/gamelib/backend/gwt/emu/|bad/|org/gamelib/backend/gwt/bad/|arn/backend/gwt/emu/|ak5/backend/gwt/emu/" kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/gwtgl-0.9.1-dist/gwtgl-0.9.1/gwtgl-0.9.1.jar" sourcepath="C:/Program Files/Java/gwtgl-0.9.1-dist/gwtgl-0.9.1/gwtgl-0.9.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Program%20Files/Java/gwtgl-0.9.1-dist/gwtgl-0.9.1/gwtgl-0.9.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Program Files/Java/gwtgl-0.9.1-dist/gwtgl-0.9.1/gwtgl-0.9.1-sources.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ak5"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,7 +1,0 @@
-add shapemath that handles collisions between shapes
-in graphics add drawPoint
-add Model interface in org.gamelib.backend
-avoid WOP
-add bitmap fonts
-add rmi to networking api, such as Remote interface
-create transformation methods in Graphics for pushing/popping
