@@ -11,7 +11,7 @@ import java.util.Map;
 
 import ak5.ui.Widget;
 
-/** An aggregate of handlers, whose {@linkplain #handle(ak5.Handler.Event) handle} iterates downwards.
+/** An aggregate of handlers, whose {@linkplain #handle(ak5.Event) handle} iterates downwards.
  * 
  * @author pwnedary */
 public class Group implements Handler {
