@@ -15,19 +15,22 @@ import java.util.Map;
 import ak5.util.Disposable;
 import ak5.util.io.BufferUtil;
 
-/** @author pwnedary */
+/** A shader program with a vertex- and fragment shader (in <a href="https://www.opengl.org/wiki/OpenGL_Shading_Language"
+ * />GLSL</a>) executing as stages in the <i>rendering pipeline</i> on a graphics processor, requiring OpenGL ES 2.0.
+ * 
+ * @author pwnedary */
 public class ShaderProgram implements Disposable {
-	/** default name for position attributes **/
+	/** Default name for position attributes. **/
 	public static final String POSITION_ATTRIBUTE = "a_position";
-	/** default name for normal attributes **/
+	/** Default name for normal attributes. **/
 	public static final String NORMAL_ATTRIBUTE = "a_normal";
-	/** default name for color attributes **/
+	/** Default name for color attributes. **/
 	public static final String COLOR_ATTRIBUTE = "a_color";
-	/** default name for texcoords attributes, append texture unit number **/
+	/** Default name for texcoords attributes, append texture unit number. **/
 	public static final String TEXCOORD_ATTRIBUTE = "a_texCoord";
-	/** default name for tangent attribute **/
+	/** Default name for tangent attribute. **/
 	public static final String TANGENT_ATTRIBUTE = "a_tangent";
-	/** default name for binormal attribute **/
+	/** Default name for binormal attribute. **/
 	public static final String BINORMAL_ATTRIBUTE = "a_binormal";
 
 	private GL20 gl;
@@ -72,7 +75,7 @@ public class ShaderProgram implements Disposable {
 		gl.glLinkProgram(program);
 
 		gl.glGetProgramiv(program, GL20.GL_LINK_STATUS, intBuffer);
-		if (intBuffer.get(0) == 0) throw new RuntimeException();
+		if (intBuffer.get(0) == 0) throw new RuntimeException(getProgramInfoLog());
 
 		// gl.glValidateProgram(program);
 		// gl.glGetProgramiv(program, GL20.GL_VALIDATE_STATUS, intBuffer);
