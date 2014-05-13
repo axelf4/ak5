@@ -25,9 +25,8 @@ public abstract class PlatformImpl implements Platform {
 		this.handler = handler;
 
 		running = true;
-		// new Thread(loop = configuration.getProperty("loop", new FixedTimestepLoop(new DefaultLoopListener())), handler.toString()).start();
-		loop = configuration.getProperty("loop", new Loop.FixedTimestep(new DefaultLoopListener()));
-		loop.run();
+		new Thread(loop = configuration.getProperty("loop", new Loop.FixedTimestep(new DefaultLoopListener())), handler.toString()).start();
+		// (loop = configuration.getProperty("loop", new Loop.FixedTimestep(new DefaultLoopListener()))).run();;
 	}
 
 	protected abstract void start();
