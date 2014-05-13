@@ -3,10 +3,9 @@
  */
 package ak5;
 
-import ak5.backend.Backend;
 import ak5.graphics.Texture;
 
-/** An instance is used for checking user input and derived by {@link Backend}.
+/** An instance is used for checking user input and derived by {@link Platform}.
  * 
  * @author pwnedary */
 public interface Input {

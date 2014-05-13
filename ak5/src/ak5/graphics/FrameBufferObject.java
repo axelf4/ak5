@@ -5,19 +5,19 @@ package ak5.graphics;
 
 import java.nio.IntBuffer;
 
-import ak5.backend.Backend;
+import ak5.Platform;
 import ak5.util.Disposable;
 import ak5.util.io.BufferUtil;
 
 /** @author pwnedary */
 public class FrameBufferObject implements Disposable {
-	private Backend backend;
+	private Platform platform;
 	private GL20 gl;
 	private int framebuffer;
 	private Texture texture;
 
-	public FrameBufferObject(Backend backend, GL10 gl, Texture texture) {
-		this.backend = backend;
+	public FrameBufferObject(Platform platform, GL10 gl, Texture texture) {
+		this.platform = platform;
 		this.gl = (GL20) gl;
 
 		IntBuffer buffer = BufferUtil.newIntBuffer(1);
@@ -54,7 +54,7 @@ public class FrameBufferObject implements Disposable {
 
 	public void unbind() {
 		gl.glBindFramebuffer(GL20.GL_FRAMEBUFFER, 0);
-		gl.glViewport(0, 0, backend.getWidth(), backend.getHeight());
+		gl.glViewport(0, 0, platform.getWidth(), platform.getHeight());
 	}
 
 	@Override

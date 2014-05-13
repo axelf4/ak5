@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.StringTokenizer;
 
-import ak5.backend.Backend;
+import ak5.Platform;
 import ak5.graphics.Batch;
 import ak5.graphics.Texture;
 import ak5.util.Font.FontImpl;
@@ -25,8 +25,8 @@ public class BitmapFont extends FontImpl implements Font {
 	private Texture[] pageImgs;
 	private Glyph[][] glyphs;
 
-	public BitmapFont(Backend backend, File file) {
-		try (InputStream stream = backend.getResourceAsStream(file.getPath());
+	public BitmapFont(Platform platform, File file) {
+		try (InputStream stream = platform.getResourceAsStream(file.getPath());
 				BufferedReader reader = new BufferedReader(new InputStreamReader(stream, Charset.forName("UTF-8")))) {
 			reader.readLine(); // skip the information on how the font was generated
 			String[] common = reader.readLine().split(" ", 7); // information common to all characters
@@ -38,7 +38,7 @@ public class BitmapFont extends FontImpl implements Font {
 				String[] page = reader.readLine().split(" ", 3);
 				if (Integer.parseInt(page[1].substring(3)) != p) throw new IllegalArgumentException("Invalid font file; page ids should increment from 0."); // id=N
 				File imgFile = new File(file.getParentFile(), page[2].split("\"")[1]); // file=string
-				pageImgs[p] = backend.getTexture(imgFile.getPath());
+				pageImgs[p] = platform.getTexture(imgFile.getPath());
 			}
 
 			float descent = 0;

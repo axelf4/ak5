@@ -21,7 +21,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import ak5.backend.Backend;
+import ak5.Platform;
 import ak5.graphics.Batch;
 
 /** A map intended to parse TileED maps. Maps can be loaded with {@link FileLoader#load(String)}.
@@ -52,12 +52,12 @@ public class TiledMap implements Map {
 	/** The list of object-groups defined in the map */
 	public final List<ObjectGroup> objectGroups;
 
-	public TiledMap(Backend backend, File file) {
+	public TiledMap(Platform platform, File file) {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setValidating(false);
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(backend.getResourceAsStream(file.getPath()));
+			Document doc = builder.parse(platform.getResourceAsStream(file.getPath()));
 			Element root = doc.getDocumentElement();
 
 			width = Integer.parseInt(root.getAttribute("width"));
@@ -86,7 +86,7 @@ public class TiledMap implements Map {
 			NodeList setNodes = root.getElementsByTagName("tileset");
 			for (int i = 0; i < setNodes.getLength(); i++) {
 				Element element = (Element) setNodes.item(i);
-				TileSet tileSet = new TileSet(backend, element, mapLocation);
+				TileSet tileSet = new TileSet(platform, element, mapLocation);
 				tileSet.index = i;
 				if (lastSet != null) lastSet.lastGID = tileSet.firstGID - 1;
 				lastSet = tileSet;

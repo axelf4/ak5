@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 import org.w3c.dom.Element;
 
-import ak5.backend.Backend;
+import ak5.Platform;
 import ak5.graphics.Batch;
 import ak5.graphics.Texture;
 
@@ -117,7 +117,7 @@ public interface Map extends Serializable {
 
 		public TileSet() {}
 
-		public TileSet(Backend backend, Element element, String mapLocation) {
+		public TileSet(Platform platform, Element element, String mapLocation) {
 			name = element.getAttribute("name");
 			firstGID = Integer.parseInt(element.getAttribute("firstgid"));
 
@@ -133,7 +133,7 @@ public interface Map extends Serializable {
 			tilesDown = Integer.parseInt(imageNode.getAttribute("height")) / tileHeight;
 
 			//			try {
-			//				image = backend.getImage(new File(mapLocation + "/" + imageNode.getAttribute("source")));
+			//				image = platform.getImage(new File(mapLocation + "/" + imageNode.getAttribute("source")));
 			//			} catch (IOException e) {
 			//				e.printStackTrace();
 			//			}

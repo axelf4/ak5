@@ -17,7 +17,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import ak5.backend.Backend;
+import ak5.Platform;
 import ak5.graphics.Batch;
 import ak5.graphics.Texture;
 import ak5.util.Font.FontImpl;
@@ -60,26 +60,26 @@ public class TrueTypeFont extends FontImpl {
 	private int correctL = 9, correctR = 8;
 	int format = ALIGN_LEFT;
 
-	public TrueTypeFont(Backend backend, java.awt.Font font, boolean antiAlias, char[] additionalChars, ak5.graphics.Color fontColor) {
+	public TrueTypeFont(Platform platform, java.awt.Font font, boolean antiAlias, char[] additionalChars, ak5.graphics.Color fontColor) {
 		this.font = font;
 		this.fontSize = font.getSize() + 3;
 		this.antiAlias = antiAlias;
 		this.fontColor = fontColor;
 
-		createSet(backend, additionalChars);
+		createSet(platform, additionalChars);
 
 		fontHeight -= 1;
 		if (fontHeight <= 0) fontHeight = 1;
 	}
 
-	public TrueTypeFont(Backend backend, java.awt.Font font) {
-		this(backend, font, true, null, ak5.graphics.Color.BLACK);
+	public TrueTypeFont(Platform platform, java.awt.Font font) {
+		this(platform, font, true, null, ak5.graphics.Color.BLACK);
 	}
 
-	public TrueTypeFont(Backend backend) {
+	public TrueTypeFont(Platform platform) {
 		// this(new java.awt.Font(null, Font.PLAIN, 15), true, null, org.gamelib.util.Color.BLACK);
 		// this(getFont(new File("org/gamelib/util/arial.ttf"), PLAIN, DEFAULT_SIZE));
-		this(backend, getFont(new File("arial.ttf"), PLAIN, DEFAULT_SIZE));
+		this(platform, getFont(new File("arial.ttf"), PLAIN, DEFAULT_SIZE));
 	}
 
 	public void setCorrection(boolean on) {
@@ -119,7 +119,7 @@ public class TrueTypeFont extends FontImpl {
 
 	}
 
-	private void createSet(Backend backend, char[] customCharsArray) {
+	private void createSet(Platform platform, char[] customCharsArray) {
 		// If there are custom chars then I expand the font texture twice
 		if (customCharsArray != null && customCharsArray.length > 0) textureWidth *= 2;
 
@@ -168,7 +168,7 @@ public class TrueTypeFont extends FontImpl {
 				fontImage = null;
 			}
 
-			//			fontImage = backend.getImage(imgTemp);
+			//			fontImage = platform.getImage(imgTemp);
 		} catch (Exception e) {
 			System.err.println("Failed to create font.");
 			e.printStackTrace();
